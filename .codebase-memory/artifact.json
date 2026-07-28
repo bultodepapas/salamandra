@@ -1,0 +1,11 @@
+{
+    "schema_version": 1,
+    "commit": "",
+    "indexed_at": "2026-07-28T15:33:32Z",
+    "project": "C-salmandra",
+    "nodes": 406,
+    "edges": 450,
+    "original_size": 1441792,
+    "compressed_size": 83225,
+    "compression_level": 9
+}

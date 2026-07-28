@@ -1,0 +1,1 @@
+Stinger V2 by StuntDouble on Thingiverse: https://www.thingiverse.com/thing:6760208
