@@ -6,6 +6,7 @@
 | [`02-referencias-medidas.md`](02-referencias-medidas.md) | Datos primarios `[M]` medidos por el proyecto |
 | [`03-plan-fase1.md`](03-plan-fase1.md) | Plan de ejecución de Fase 1 |
 | [`04-convenciones.md`](04-convenciones.md) | Etiquetas, identificadores, símbolos, signos |
+| [`05-plan-maestro.md`](05-plan-maestro.md) | Hoja de ruta F1→F6 hasta el primer prototipo, integra el flujo de CAD |
 | `first_investigation.md` | Rev. 1.0, investigación preliminar *(añadir manualmente)* |
 
 Las **decisiones** viven en [`../decisiones/`](../decisiones/), el **porqué** en [`../investigacion/`](../investigacion/), lo que **no sabemos** en [`../brechas/`](../brechas/).

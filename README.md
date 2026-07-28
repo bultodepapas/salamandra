@@ -32,7 +32,7 @@ El análisis de partida demostró que el Mojito **no es energéticamente eficien
 
 | Carpeta | Qué contiene |
 |---|---|
-| [`docs/`](docs/) | Pliego, estado, plan de fase, convenciones |
+| [`docs/`](docs/) | Pliego, estado, plan de fase, convenciones, [plan maestro hasta el primer prototipo](docs/05-plan-maestro.md) |
 | [`decisiones/`](decisiones/) | **Un archivo por decisión (ADR)**: contexto, alternativas, consecuencias |
 | [`investigacion/`](investigacion/) | **Líneas de investigación**: qué se buscó, qué se encontró, qué fuentes |
 | [`brechas/`](brechas/) | Registro de lo que **no** sabemos y cómo se cierra |
