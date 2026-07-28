@@ -1,6 +1,6 @@
 # Plan de Fase 1 — Geometría y estabilidad
 
-**Revisión 1.1** · 28 julio 2026
+**Revisión 1.2** · 28 julio 2026
 Cierra G1, G2 y G8. **Puerta de salida: OML congelada y margen estático verificado.**
 
 ---
@@ -46,10 +46,13 @@ Y hay que **dejar hueco al wash-in elástico**, que crece con la presión dinám
 | A1 | Planta del panel Peregrine: flecha c/4, estrechamiento, cuerdas | G1, R1 | Bloqueada — falta archivo de alas |
 | **A2** | **Distribución de torsión del Peregrine** | G1, valida ADR-0003 | Bloqueada |
 | A3 | Coordenadas de perfil a 3–5 estaciones | R2 | Parcial — t/c hecho |
-| A4 | Familia StuntDouble (Nemesis + Stinger/Stormbird) | R3, R4 | **Vía alternativa disponible** |
+| A4 | Familia StuntDouble (Nemesis + Stinger/Stormbird) | R3, R4 | **Parcial** — fuentes adquiridas e [I-08](../investigacion/I-08-familia-stuntdouble.md) publicada; falta reconstruir planta y torsión |
 
 **A2 es la de mayor valor:** responde empíricamente la pregunta de §2 antes de calcular nada.
-**A4 da comparación controlada** flecha invertida vs plank recto, mismo autor y fabricación: experimento natural ya realizado.
+**A4 da una comparación cuasi-controlada** entre flecha invertida y *plank*: mismo autor,
+familia constructiva y AR comparable, pero perfiles PW51/PW75 y propulsiones no idénticas.
+Sirve para acotar geometría; **no permite atribuir causalidad a la flecha**. Ver
+[I-08](../investigacion/I-08-familia-stuntdouble.md).
 
 ## B — Perfil y polares *(bloqueante, G2)*
 
@@ -57,8 +60,8 @@ Se resuelve por **calibración**, no por búsqueda.
 
 | # | Tarea | Método |
 |---|---|---|
-| **B1** | **Calibrar XFOIL contra dato medido** | Correr E387 a Re 60–200×10³ y comparar con túnel (Spedding & McArthur, UIUC). Ajustar N_crit hasta reproducir la polar medida |
-| B2 | Criterios de cribado | t/c 13,5 % · C_Lmax ≥ 0,65 · C_m0 ≥ 0 o cercano · L/D al CL de crucero |
+| **B1** | **Calibrar XFOIL contra dato medido** | **Parcial — [I-06](../investigacion/I-06-perfiles-reflexados.md).** E387 (C) muestra que no hay Ncrit único; validar la banda 10–12 contra un segundo modelo E387 |
+| B2 | Criterios de cribado | t/c 13,5 % · C_Lmax ≥ 0,65 · **C_m0 ≥ +0,008, preferible +0,010–0,015** (R-PERFIL) · L/D al CL de crucero |
 | B3 | Cribar candidatos con N_crit calibrado | Familias MH y EH (aerodesign.de), más candidatos poco reflexados si A2 confirma wash-in suficiente |
 | B4 | Publicar polares con su calibración | Salida `[D]`, declararlo |
 
@@ -100,7 +103,7 @@ Se resuelve por **calibración**, no por búsqueda.
 # 4. Secuencia
 
 ```
-AHORA          A3 A4            ──┐
+AHORA          A3 A4 (parcial)  ──┐
                B1                ─┼──► pueden empezar hoy
                D1 D2             ─┘
 
@@ -149,6 +152,8 @@ PARALELO       D3 D4  (en cualquier momento tras D2)
 
 # 6. Qué se puede empezar hoy
 
-1. **B1** — calibración de XFOIL contra el E387 medido. No depende de nada; los datos están publicados.
+1. **B1** — completar el *holdout* de la banda Ncrit 10–12 contra E387 (E).
+   La primera calibración reproducible ya está en [I-06](../investigacion/I-06-perfiles-reflexados.md).
 2. **D1** — pedir el pitot. Material con plazo de entrega; bloquea E2, E3 y E7.
-3. **A4** — descargar los STL de la familia StuntDouble. Vía alternativa a A1/A2 y única fuente de comparación controlada de planta.
+3. **A4** — completar la reconstrucción de planta y torsión de la familia StuntDouble.
+   Las fuentes ya están adquiridas; la comparación es cuasi-controlada, no causal.

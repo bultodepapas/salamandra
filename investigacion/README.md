@@ -11,8 +11,9 @@ Separado de `decisiones/` a propósito: una ADR dice *qué se decidió*; una lí
 | [I-03](I-03-cadena-propulsiva.md) | Cadena propulsiva | Cerrada | ADR-0007, ADR-0008, O1 |
 | [I-04](I-04-materiales-impresion.md) | Materiales de impresión | Cerrada | ADR-0016, ADR-0018, ADR-0021 |
 | [I-05](I-05-divergencia-flutter.md) | Divergencia aeroelástica y flutter | **Abierta** | ADR-0002, ADR-0025, ADR-0028 |
-| I-06 | Perfiles reflexados a Re 3–5×10⁵ | **No iniciada** | Brecha G2 |
+| [I-06](I-06-perfiles-reflexados.md) | Perfiles reflexados a Re 3–5×10⁵ | **Abierta — B1 parcial** | Brecha G2 |
 | [I-07](I-07-punto-neutro-ventana-torsion.md) | **Punto neutro, margen estático y ventana de torsión** | **Abierta — resultado preliminar** | ADR-0003, ADR-0032, G8, G2 |
+| [I-08](I-08-familia-stuntdouble.md) | **Familia StuntDouble: geometría comparada** | **Abierta — comparación base** | A4, R3, R4 |
 
 ## Calidad de fuentes
 

@@ -76,19 +76,22 @@ Fuente: Noah Waldner, 3,5 meses de ensayo, cientos de baterías.
 |---|---|
 | Envergadura | 1200 mm |
 | Configuración | Ala volante, flecha invertida, bimotor tractor |
-| Perfil | «Delgado» — sin especificar |
+| Perfil | PW51 |
 | Construcción | Impresión 3D, archivos STL abiertos |
 | Coste | Gratuito |
 
-Pertenece a una familia de diseños del mismo autor que constituye un **experimento controlado disponible**: misma fabricación, misma escala, dos plantas distintas.
+Pertenece a una familia de diseños del mismo autor que permite una **comparación
+cuasi-controlada**: misma familia de fabricación y AR comparable, pero no la misma escala,
+perfil ni propulsión. Ver corrección C19 e
+[I-08](investigacion/I-08-familia-stuntdouble.md).
 
 | Modelo | Planta | Nota |
 |---|---|---|
 | Interceptor V1/V2 | Flecha invertida, bimotor | Origen de la línea |
 | **Eliminator** | Flecha invertida, bimotor | **Récord: 360 km/h, nov. 2025 (P. Heiniger)** |
 | Nemesis | Flecha invertida, bimotor | Versión crucero FPV |
-| Stinger V2 | Plank recto, bimotor, 1,3 m | Control sin flecha |
-| Stormbird | Plank recto, 1,1 m | Control sin flecha |
+| Stinger V2 | Plank recto, bimotor, 1,3 m | Comparador sin flecha; perfil PW75 |
+| Stormbird | Plank recto, 1,1 m | Comparador sin flecha; perfil PW75 e impulsor único |
 
 ---
 
@@ -370,7 +373,10 @@ Ordenado por relación resultado/esfuerzo.
 
 Cortar secciones de la malla del Nemesis a distintas estaciones de envergadura. Obtener coordenadas de perfil, superficie, alargamiento, estrechamiento, flecha del c/4 y **distribución de torsión** — verificando si efectivamente emplea wash-in y en qué magnitud.
 
-Repetir sobre el Stormbird o Stinger (plank recto, mismo autor, misma fabricación) para obtener **comparación controlada de planta**.
+Repetir sobre el Stormbird o Stinger (*plank* recto, mismo autor y familia de fabricación)
+para obtener una **comparación cuasi-controlada de planta**. El perfil PW51/PW75 y la
+propulsión no permanecen constantes, por lo que no puede aislarse causalmente el efecto de
+la flecha. Ver corrección C19 e [I-08](investigacion/I-08-familia-stuntdouble.md).
 
 ### E2 — Ensayo de planeo para polar completa
 **Esfuerzo:** medio. **Cierra:** G3; alimenta las tres líneas.

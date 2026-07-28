@@ -2,7 +2,7 @@
 
 Ala volante de flecha invertida impresa en PETG, **modular y configurable**: módulo central estándar y paneles de ala intercambiables. Vuelo FPV de crucero eficiente, con electrónica a elección del constructor.
 
-**Revisión 1.4** · 28 julio 2026 · **Fase 0 cerrada · Fase 1 en curso**
+**Revisión 1.5** · 28 julio 2026 · **Fase 0 cerrada · Fase 1 en curso**
 
 ---
 
@@ -57,7 +57,7 @@ Es la regla central del proyecto. Toda afirmación cuantitativa lleva etiqueta:
 
 > **Regla dura:** ningún dato `[E]` o `[I]` sostiene una decisión irreversible sin verificación previa.
 >
-> **Corolario:** cuando un dato mejor tumba una conclusión, se anota en el [CHANGELOG](CHANGELOG.md) con número de corrección. Van 16.
+> **Corolario:** cuando un dato mejor tumba una conclusión, se anota en el [CHANGELOG](CHANGELOG.md) con número de corrección. Van 21.
 
 ---
 

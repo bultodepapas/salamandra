@@ -81,7 +81,7 @@ Actualiza el índice de `decisiones/README.md` con el estado.
 
 **No lo silencies editando el texto.** Corrígelo **y** añade entrada al [`CHANGELOG.md`](CHANGELOG.md) con número `C`. Alguien que leyó la versión anterior necesita saber que cambió y por qué.
 
-Van 18 correcciones. Varias son errores del análisis original tumbados por datos posteriores. **Documentarlas es lo que permite confiar en lo que queda en pie.**
+Van 21 correcciones. Varias son errores del análisis original tumbados por datos posteriores. **Documentarlas es lo que permite confiar en lo que queda en pie.**
 
 ### Al anular una decisión
 

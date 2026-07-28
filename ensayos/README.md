@@ -23,7 +23,10 @@ Cortar secciones de las mallas de referencia a distintas estaciones. Obtener coo
 
 **Hecho:** t/c del Peregrine = 13,5 % `[M]`, perfil de impresión del diseñador.
 **Falta:** planta completa; requiere el archivo de los paneles exteriores.
-**Alternativa:** familia StuntDouble (Nemesis + Stinger/Stormbird) — da además **comparación controlada de planta**: flecha invertida contra plank recto, mismo autor, misma fabricación, misma escala. Es un experimento natural ya realizado.
+**Alternativa:** familia StuntDouble (Nemesis + Stinger/Stormbird) — da una
+**comparación cuasi-controlada de planta**: mismo autor, familia constructiva y AR
+comparable, pero cambian perfil, escala y propulsión. Sirve como prior geométrico; no
+permite atribuir causalidad a la flecha. Ver [I-08](../investigacion/I-08-familia-stuntdouble.md).
 
 ## E2 — polar de planeo
 

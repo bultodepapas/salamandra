@@ -4,6 +4,39 @@ Continúa el registro de correcciones del proyecto. **Los errores se documentan 
 
 ---
 
+## [1.5] — 2026-07-28
+
+**A4 iniciada con fuentes primarias de la familia StuntDouble.**
+
+### Añadido
+- **[I-08](investigacion/I-08-familia-stuntdouble.md)** — comparación base de Nemesis,
+  Stinger V2 y Stormbird.
+- **[I-06](investigacion/I-06-perfiles-reflexados.md)** y
+  **`calculo/calibra_xfoil_e387.py`** — primera calibración reproducible de XFOIL contra
+  la polar medida E387 (C).
+- Archivos primarios de Stinger V2 y Stormbird para la reconstrucción posterior de planta,
+  perfil y torsión.
+
+### Resultados
+- Los tres diseños publicados convergen en **AR = 6,05–6,55** `[D]`.
+- Nemesis y Stinger conservan doble tractor y carga alar comparable, pero cambian de
+  PW51 a PW75; Stormbird además cambia a impulsor único.
+- Nemesis publica 2 mm de reflex y Stormbird 1–2 mm `[M]`; falta la cuerda local para
+  convertir esos ajustes a ángulo.
+- Ncrit 10 minimiza el desacuerdo global de `Cd(Cl)` con un factor RMS 1,208 `[D]`
+  (Ncrit 11: 1,209), pero el óptimo deriva hasta Ncrit 12 en Re 3–5×10⁵. B3 debe
+  usar una banda 10–12.
+
+### Correcciones
+
+| # | Error | Corrección |
+|---|---|---|
+| **C19** | A4 describía Nemesis vs. Stinger/Stormbird como una «comparación controlada» capaz de aislar el efecto de la flecha | Es una **comparación cuasi-controlada**: mismo autor, familia constructiva y AR comparable, pero perfil, tamaño y propulsión no permanecen todos constantes. Sirve como prior geométrico; no demuestra causalidad de la flecha |
+| **C20** | B1 suponía que ajustar un único Ncrit permitiría «reproducir la polar medida» del E387 en todo el rango | El óptimo cambia con Reynolds: Ncrit 10–12 en la rejilla probada. Se sustituye el número único por una **banda con sensibilidad publicada** y validación contra un segundo modelo físico antes de cribar perfiles |
+| **C21** | B2 todavía aceptaba `C_m0 ≥ 0 o cercano` después de que I-07 derivara R-PERFIL | Criterio re-derivado aguas abajo: **C_m0 ≥ +0,008**, preferible +0,010–0,015. El criterio antiguo podía admitir perfiles incapaces de cerrar el trim dentro de R-TORSION |
+
+---
+
 ## [1.4] — 2026-07-28
 
 **Primer cálculo propio de estabilidad.** G8 pasa de abierta a parcial.

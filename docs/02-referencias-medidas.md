@@ -118,5 +118,5 @@ Un ejemplar impreso en PETG con la geometría de un perfil calculado para LW-PLA
 |---|---|---|
 | R1 | Planta del panel Peregrine: flecha c/4, estrechamiento, **torsión** | Archivo de alas |
 | R2 | Coordenadas de perfil a varias estaciones | Corte de malla |
-| R3 | Geometría de la familia StuntDouble | STL abiertos |
-| R4 | **Comparación controlada de planta**: flecha invertida vs plank recto | R3, mismo autor y fabricación |
+| R3 | Geometría de la familia StuntDouble | **Parcial** — ficha comparada en [I-08](../investigacion/I-08-familia-stuntdouble.md); falta reconstruir planta y torsión de STL |
+| R4 | **Comparación cuasi-controlada de planta**: flecha invertida vs *plank* | **Parcial** — mismo autor y AR comparable, pero PW51/PW75 y propulsión confunden el efecto de flecha |

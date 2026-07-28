@@ -7,7 +7,7 @@ Es tan importante como el registro de decisiones: la regla del proyecto es que *
 | # | Brecha | Impacto | Estado | Cierra con |
 |---|---|---|---|---|
 | **G1** | Geometría de referencia: superficie, perfil, torsión | Todos los cálculos dependen de S ≈ 0,282 m² `[E]` | 🔄 **Parcial** — t/c medido `[M]`, falta planta | E1 |
-| **G2** | Sin polares medidas de reflexados a Re 3–5×10⁵ | Bloquea selección de perfil | ⬜ Abierta | I-06, E2 |
+| **G2** | Sin polares medidas de reflexados a Re 3–5×10⁵ | Bloquea selección de perfil | 🔄 **Parcial** — XFOIL acotado con E387; falta cribar y medir reflexados | I-06, E2 |
 | **G3** | Reparto de C_D0 por componente | Impide priorizar reducción de parásita | ⬜ Abierta | E2 |
 | **G4** | Rigidez torsional real | ADR-0002 sin verificar | 🔄 `[E]` ±35 %, anclada a referencia medida | E5, E7 |
 | **G5** | Efecto de estela de hélice sobre perfil delgado a Re 4×10⁵ | ADR-0006 en disputa | ⬜ Abierta | Ensayo comparativo en vuelo |
@@ -52,6 +52,11 @@ El análisis de I-07 convierte la selección de perfil de problema abierto en pr
 | **R-TORSION** | Wash-in ≤ 2,5° |
 
 Y destapa el conflicto central: **el reflex que da Cm0 positivo cuesta cl_max**, y con cl_max 0,65 la velocidad de pérdida sale a 44,5 km/h, justo dentro del requisito de 45. Si el reflex baja cl_max a 0,60, el requisito se incumple.
+
+[I-06](../investigacion/I-06-perfiles-reflexados.md) acota además el modelo de transición:
+la calibración E387 (C) da una banda Ncrit 10–12 `[D]`, no un valor único. En
+Re ≈ 3–5×10⁵, Ncrit 12 minimiza el desacuerdo de la rejilla `[D]`, pero falta validarlo
+contra un segundo modelo físico y cribar los perfiles reflexados. **G2 no está cerrada.**
 
 ### G9 — porpoising
 

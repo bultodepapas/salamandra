@@ -35,7 +35,7 @@ Tampoco se aceptan decisiones irreversibles apoyadas en `[E]` o `[I]` sin declar
 
 ## Sobre las correcciones
 
-**El registro de correcciones es parte del producto, no una lista de vergüenzas.** Van 16, varias de ellas errores del análisis original corregidos por datos posteriores. Documentarlas es lo que permite confiar en lo que queda en pie.
+**El registro de correcciones es parte del producto, no una lista de vergüenzas.** Van 21, varias de ellas errores del análisis original corregidos por datos posteriores. Documentarlas es lo que permite confiar en lo que queda en pie.
 
 Si encuentras un error, **no lo silencies editando el texto**: corrígelo y anótalo. Alguien que leyó la versión anterior necesita saber que cambió y por qué.
 
