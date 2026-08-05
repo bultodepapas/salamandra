@@ -4,6 +4,38 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.14] — 2026-08-05
+
+**Component catalogs integrated: batteries (I-16), FC (I-17), servos (I-18), FPV DJI O4 (I-19).**
+
+### Integration
+- **Mass balance re-run with the FPV unit** (`balance_cg.py` `[D]`): DJI O4/Pro
+  (camera 16.4 g at the boom front ≈ −450, VTX 16.6 g at the avionics station, 2×
+  antennas 4.2 g) → AUW **1697 g**; 6S1P pack station **−415 mm** (was −421), bay
+  **−516…−315** (200 mm, was −521), boom ≈ 385 mm. The FPV camera in the boom helps the
+  balance (≈ 4 mm forward).
+- **Guide v0.5:** §7.5 servo class 12–15 g metal-gear (I-18), cavity 34×16×39 mm,
+  hinge moment 10–48 mN·m/servo NOT binding (≥ 3.7× margin, `servo_torque.py`), current
+  avg 1.2–2.8 A / peaks 5–9 A with capacitance guidance; §7.6 avionics station cavity
+  64×45×21 + 30.5×30.5 boss (I-17), FPV camera mount (2× M2, 16 mm) and VTX tray with
+  airflow (I-19); §8.1 FPV row 37 g `[M]`; §11 FC reference class (F405-WING-V2 /
+  SpeedyBee; F411 no blackbox, Foxeer no current, H7A3 no INAV target), avionics
+  6.6 W ≈ 6 % of cruise ≈ 7.3 % of pack per flight-hour, FPV power (Pro on the 9 V/2 A
+  rail ≥ 13.5 W, NOT the 5 V rail; total electronics 17.0 W Pro = 18.8 %/h); §10.1
+  battery energy reference 90.7 Wh P42A / 108 Wh 50E (I-16); §4 stall flag updated.
+- **Open points v0.5:** OP-06 partial closure (torque not binding); OP-18 catalog check;
+  OP-24 (three mass levers, AUW 1697 → 46.1 km/h, borderline); OP-25 (FPV selection)
+  added.
+- **I-18 collision fixed:** the DJI O4 catalog was numbered I-18 twice — the FPV system
+  is now **I-19** (`git mv`, references updated in `research/README.md`,
+  `calculations/README.md`, `fpv_power_budget.py`).
+
+### Stall flag (honest, not silent)
+AUW 1697 g → V_stall ≈ **46.1 km/h** vs ≤ 45 required. Levers: shell 550 g + boom
+≤ 40 g + servos 48 g → ≈ 45.1 km/h — **borderline; F2 must arbitrate the mass budget
+against C16 (OP-24).**
+---
+
 ## [1.13] — 2026-08-05
 
 **Bay re-derived with the real pack envelope (I-16).**

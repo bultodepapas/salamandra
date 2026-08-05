@@ -54,7 +54,7 @@ A preliminary moment balance of the §8.1 mass budget (component positions taken
 physical stations of the v0.2 geometry) gives:
 
 | Component | m (g) | x (mm from root c/4) | m·x (g·mm) |
-|---|---|---:|---:|
+|---|---:|---:|---:|
 | Shell (area centroid) | 600 | −49 | −29,400 |
 | Carbon (tube at c/4 line) | 70 | −142 | −9,940 |
 | Motor + prop | 210 | +217 | +45,570 |
@@ -62,6 +62,10 @@ physical stations of the v0.2 geometry) gives:
 | Avionics (FC, pitot, GPS, RX, wiring) | 110 | −10 | −1,100 |
 | Servos + balance mass | 120 | −5 | −600 |
 | Hardware | 20 | +50 | +1,000 |
+| FPV camera (DJI O4/Pro, nose boom) | 16.4 | −450 | −7,380 |
+| FPV VTX (DJI O4/Pro, CORE) | 16.6 | +10 | +166 |
+| FPV antennas (2 × 2.1 g, CORE) | 4.2 | +20 | +84 |
+| Battery boom structure | 40 | −320 | −12,800 |
 | Battery 6S1P | 455 | variable | variable |
 
 Motor+prop station corrected from v0.1 (+190): the prop disk must be aft of the root
@@ -103,27 +107,29 @@ The reachability analysis is now a reproducible tool, `calculations/balance_cg.p
 centroid of the planform = **−48.9 mm** vs the −49 mm assumed for the shell — OK,
 self-consistency check) and solves the pack stations for the target CG.
 
-**Design point (SM 8 %, CG −119 mm, reference config 6S1P):**
+**Design point (SM 8 %, CG −119 mm, reference config 6S1P, FPV DJI O4/Pro included):**
 
 | Pack | m (g) | AUW (g) | Pack CG station required (mm) | R-CG band (mm) | In bay? |
 |---|---:|---:|---:|---:|---|
-| 4S1P | 300 | 1505 | **−577** | −602…−552 | fits, but outside the bay (OP-23) |
-| **6S1P** | **455** | **1660** | **−421** | −439…−403 | **yes (reference)** |
-| 4S2P | 605 | 1810 | −346 | −361…−331 | **no — does not fit the bay (I-16)** |
-| 6S2P | 910 | 2115 | −270 | −282…−258 | **no — does not fit the bay (I-16)** |
+| 4S1P | 300 | 1542 | **−568** | −594…−543 | fits, but outside the bay (OP-23) |
+| **6S1P** | **455** | **1697** | **−415** | −434…−397 | **yes (reference)** |
+| 4S2P | 605 | 1847 | −342 | −357…−327 | **no — does not fit the bay (I-16)** |
+| 6S2P | 910 | 2152 | −267 | −279…−255 | **no — does not fit the bay (I-16)** |
 
 **Adopted geometry** (guide §7.6): nose boom carrying the battery bay, forward end
-x ≈ **−521 mm**, bay 200 × 70 × 32 mm, boom ≈ 390 mm forward of the nose pod tip
-(x = −132), skid at the boom tip, wiring conduit. Boom structure budget **≤ 40 g**
-(OP-24). This is the Mojito pattern (I-02): the forward sweep makes the neutral point
-lie ≈ 100 mm ahead of the root c/4, so the battery (28 % of AUW) is the only mass with
-enough lever to balance it; no other component move closes the 95 mm gap.
+x ≈ **−516 mm**, bay 200 × 70 × 32 mm, boom ≈ 385 mm forward of the nose pod tip
+(x = −132), FPV camera mount at the boom front (≈ x = −450), skid at the boom tip,
+wiring conduit. Boom structure budget **≤ 40 g** (OP-24). This is the Mojito pattern
+(I-02): the forward sweep makes the neutral point lie ≈ 100 mm ahead of the root c/4,
+so the battery (28 % of AUW) is the only mass with enough lever to balance it; no other
+component move closes the 95 mm gap. The FPV camera in the boom helps the balance
+(≈ 4 mm forward CG shift, `balance_cg.py` `[D]`).
 
 **Bay fit with the real pack envelope (I-16 `[D]`):** the finished 6S1P pack is
 **153 × 64.5 × 22.2 mm** (2×3 cells, orientation A, leads included — `battery_pack_layout.py`),
-which with the ±5 mm R-CG slide (36.5 mm) and 5 mm end clearances sizes the bay at
-200 mm and places its forward end at ≈ −521 (`balance_cg.py`). **Only 6S1P fits the
-single-layer bay and reaches its band; 4S1P fits physically but needs x ≈ −577 (outside
+which with the ±5 mm R-CG slide (37 mm) and 5 mm end clearances sizes the bay at
+200 mm and places its forward end at ≈ −516 (`balance_cg.py`). **Only 6S1P fits the
+single-layer bay and reaches its band; 4S1P fits physically but needs x ≈ −568 (outside
 the bay); 4S2P/6S2P fit no n_z = 1 arrangement of 8/12 cells (I-16).**
 
 **Honest flags (not silent fixes):**
@@ -132,12 +138,14 @@ the bay); 4S2P/6S2P fit no n_z = 1 arrangement of 8/12 cells (I-16).**
    envelope analysis (I-16) sharpens it: 4S2P/6S2P cannot be carried in the single-layer
    bay at all, and 4S1P cannot reach its station. The requirement (docs/00 §3.3) is
    re-derived in F2 (OP-23); the reference 6S1P is the only fully compliant config.
-2. **Mass/stall tension:** AUW 1660 g → V_stall ≈ 45.6 km/h vs ≤ 45 required. Declared
-   lever: shell at 550 g (low end of its band) + boom ≤ 40 g → ≈ 44.7 km/h. Tracked as
-   OP-24; the stall-margin flag (§4 of the guide) is updated.
+2. **Mass/stall tension:** AUW 1697 g (FPV included) → V_stall ≈ 46.1 km/h vs ≤ 45
+   required. Declared levers: shell at 550 g (low end of its band) + boom ≤ 40 g +
+   servos at the real 12–15 g class (48 g) → AUW ≈ 1625 g → ≈ 45.1 km/h — borderline;
+   F2 must arbitrate the mass budget against C16. Tracked as OP-24; the stall-margin
+   flag (§4 of the guide) is updated.
 3. **Central body effect** (I-07 §6) moves the NP forward — direction known, magnitude
    unquantified; F2 applies the margin. It reinforces the tension but does not reverse
-   the solution (the bay retains ≈ 36.5 mm of slide).
+   the solution (the bay retains ≈ 37 mm of slide).
 4. The trim closure at SM 8 % with ε = 3.0° leaves ≤ 0.6° of permanent elevon reflex in
    the worst B3 case; authority is verified (`elevon_authority.py`, §5.3 of the guide).
 
@@ -205,9 +213,9 @@ everything else now and swap the profile later.
 - Stall speed: V = √(2W/(ρ·S·CL_max)) with CL_max = 0.60 (92 % of section cl_max 0.65 by
   non-elliptic distribution, I-07) → **44.6 km/h** at AUW 1620 g (requirement ≤ 45, margin
   0.4 km/h — the tightest margin in the design; R-AIRFOIL and the stall requirement
-  compete, I-07 §4.2). **v0.3:** with the OP-01 boom (40 g) AUW = 1660 g →
-  ≈ **45.6 km/h** — over the requirement; the declared lever is shell 550 g + boom ≤ 40 g
-  → ≈ 44.7 km/h (guide §4, OP-24)
+  compete, I-07 §4.2). **v0.5:** with the OP-01 boom (40 g) and the FPV unit (37 g, I-19)
+  AUW = 1697 g → ≈ **46.1 km/h** — over the requirement; declared levers: shell 550 g +
+  boom ≤ 40 g + servos 48 g (I-18 class) → ≈ 45.1 km/h, borderline (guide §4, OP-24)
 - Required CL_max (wing): 0.589 (I-07) vs section cl_max 0.65 `[M]`
 - Cruise electrical power: 1.15 Wh/km × 95 km/h ≈ **110 W**
 
@@ -217,7 +225,7 @@ everything else now and swap the profile later.
 |---|---|---|
 | 200 × 70 × 32 mm | Fits the finished 6S1P pack 153 × 64.5 × 22.2 mm (2×3, orient. A, I-16 `[D]`) with the ±5 mm R-CG slide (36.5 mm) and end clearances; 4S1P (153 × 43 × 22) also fits. 4S2P/6S2P (8/12 cells) fit no single-layer arrangement — I-16 | `[D]` |
 | Longitudinal slide | R-CG ±5 mm; v0.3 slide ≈ 36 mm covers the 6S1P band −439…−403 (`balance_cg.py`); 4S1P/6S2P outside — see OP-23 | `[D]` |
-| Nose boom | OP-01 resolution (§3.2). v0.3/v0.4: **nose boom from x ≈ −132 to x ≈ −521** carrying the bay (200 × 70 × 32, forward end ≈ −521); 6S1P pack CG at ≈ −421 mm; skid at the tip | `[D]` |
+| Nose boom | OP-01 resolution (§3.2). v0.5: **nose boom from x ≈ −132 to x ≈ −516** carrying the bay (200 × 70 × 32, forward end ≈ −516); 6S1P pack CG at ≈ −415 mm (FPV included); FPV camera at the boom front; skid at the tip | `[D]` |
 
 ## 10. References
 

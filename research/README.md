@@ -23,8 +23,8 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-15](I-15-airfoil-evidence-campaign.md) | **Airfoil evidence campaign (root + tip)** | 🔄 **Running — 11 investigations, 6 partial** | B3/G2, OP-02, R-AIRFOIL |
 | [I-16](I-16-battery-pack-layout.md) | **Battery pack layout: physical envelope of 4S / 6S · 21700** | 🔄 **Sizing baseline — open** | Guide §9, `balance_cg.py` OP-01/OP-23, R-CG |
 | [I-17](I-17-inav-flight-controllers.md) | **INAV flight controllers: popular boards and data sheets** | 🔄 **Reference catalog — open** | Guide §11, CORE avionics station, O2/O10 |
-| [I-18](I-18-fpv-system-dji-o4.md) | **DJI O4 FPV system: O4 / Pro / Lite — data sheets + electrical data** | 🔄 **Reference catalog — open** | Guide §11, nose-pod/camera, O1, I-17 |
 | [I-18](I-18-servo-catalog.md) | **Elevon servos: popular models and data sheets** | 🔄 **Reference catalog — open** | Guide §5.3/§7.5, ADR-0025, ADR-0026, CORE servo bays |
+| [I-19](I-19-fpv-system-dji-o4.md) | **DJI O4 FPV system: O4 / Pro / Lite — data sheets + electrical data** | 🔄 **Reference catalog — open** | Guide §11, nose-pod/camera, O1, I-17 |
 
 ## Source quality
 

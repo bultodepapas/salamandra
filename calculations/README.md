@@ -42,9 +42,10 @@ Data sources consumed (all `[M]`):
 | `b3_screening.py` | **B3: airfoil screening** — batch XFOIL polars (Re 3e5/5e5 × Ncrit 10/12) for the shortlist in `../geometry/airfoils/`; generates the scaled variants; parses cm0/clmax/α_stall/L/D/cd@cruise | B3, G2, OP-02 | numpy + XFOIL |
 | `balance_cg.py` | **OP-01: mass/CG balance** — pack-station solver for the CG target; planform-centroid self-check; bay sizing for the nose boom; envelope checks (AUW, V_stall) | OP-01, justification §3.1–3.2 | numpy |
 | `elevon_authority.py` | **Elevon control power** — ΔCm per degree of elevon deflection (step incidence over 30–90 % half-span) via the VLM; trim closure and control margin at SM 8 % | Guide §5.3/§6.1, C6 (partial) | numpy |
-| `battery_pack_layout.py` | **I-16: pack envelope** — enumerates every rectangular (n_x,n_y,n_z) layout of the 4S/6S 21700 pack, computes finished envelope (wrapper, nickel, leads) and fit-checks against the 190 × 70 × 32 bay | I-16, guide §9, OP-23 | stdlib only |
+| `battery_pack_layout.py` | **I-16: pack envelope** — enumerates every rectangular (n_x,n_y,n_z) layout of the 4S/6S 21700 pack, computes finished envelope (wrapper, nickel, leads) and fit-checks against the 200 × 70 × 32 bay | I-16, guide §9, OP-23 | stdlib only |
 | `inav_fc_match.py` | **I-17: FC compatibility** — cross-checks the popular INAV boards (Matek WING, SpeedyBee, Foxeer) against the Salamandra avionics requirements (≥5 PWM, ≥2 UART, ≥1 I2C, blackbox, current, baro, 6S voltage); footprint summary + power budget | I-17, guide §11, CORE avionics | stdlib only |
-| `fpv_power_budget.py` | **I-18: FPV power budget** — DJI O4 / Pro / Lite current-per-level (measured `[M]`), power at any input voltage, BEC margin vs the Matek 9V/2A and 5V/2A rails, energy impact on the 6S1P P42A pack | I-18, guide §11, O1 | stdlib only |
+| `fpv_power_budget.py` | **I-19: FPV power budget** — DJI O4 / Pro / Lite current-per-level (measured `[M]`), power at any input voltage, BEC margin vs the Matek 9V/2A and 5V/2A rails, energy impact on the 6S1P P42A pack | I-19, guide §11, O1 | stdlib only |
+| `servo_torque.py` | **I-18: hinge moment** — elevon hinge moment (Ch 0.01–0.05 `[E]`) at V_NE, per-servo with dual actuation, margin vs the catalog | I-18, guide §7.5, OP-06, ADR-0025 | stdlib only |
 
 ## Reproducing the published results
 
@@ -148,7 +149,7 @@ python3 battery_pack_layout.py
 
 Self-validating by construction: it prints the full enumeration of cell
 arrangements (12 envelopes for 4S, 18 for 6S) with a fit check against the
-`190 × 70 × 32 mm` reference bay (guide §9), plus per-cell and per-pack mass /
+`200 × 70 × 32 mm` reference bay (guide §9), plus per-cell and per-pack mass /
 energy / discharge for the two reference cells (Molicel P42A, Samsung 50E) and
 their average. Published results (I-16 §4–§5, §6.1):
 **6S1P = 2×3 orient. A → 153.2 × 64.5 × 22.2 mm**,
@@ -156,6 +157,18 @@ their average. Published results (I-16 §4–§5, §6.1):
 provisional bay (all others are buildable with a resized bay). Pack masses:
 6S1P P42A 445 g / 50E 433 g / avg 439 g; 4S1P 305 / 297 / 301 g. A change to the
 fit test, assembly allowances, or cell specs must reproduce these values.
+
+### 7.1 Servo hinge moment (I-18)
+
+```bash
+python3 servo_torque.py
+```
+
+Hinge moment of the 0.28 c elevon (390 mm span) at V_NE 180 km/h over Ch
+0.01–0.05 `[E]`: **19–96 mN·m per elevon → 10–48 mN·m per servo** (dual
+actuation). The most modest catalog servo (MG90S ≈ 180 g·cm) has ≥ 3.7× margin —
+**static torque is not the binding constraint** (I-18 §2). A change to the
+geometry, Ch band, or V_NE must reproduce the margin table.
 
 ### 8. INAV flight-controller compatibility (I-17)
 
@@ -173,14 +186,14 @@ prints the footprint summary (I-17 §4.1): min 28×28×7, avg 45×34×12, max
 6S1P P42A pack per flight-hour. A change to the requirement set or board specs
 must reproduce these lines.
 
-### 9. FPV power budget (I-18)
+### 9. FPV power budget (I-19)
 
 ```bash
 python3 fpv_power_budget.py [input_V]
 ```
 
 Per-level power of the DJI O4 / Pro / Lite from measured currents `[M]`.
-Published results (I-18 §5): O4 Pro 1200 mW = 10.4 W, O4 standard max 9.5 W
+Published results (I-19 §5): O4 Pro 1200 mW = 10.4 W, O4 standard max 9.5 W
 (700 mW cap), O4 Lite 6.0 W; 9 V rail utilization ≤ 58 %; total electronics
 avionics+FPV = 17.0 W (15.5 % of cruise) and 18.8 % of the 6S1P P42A pack per
 flight-hour with the Pro. A change to the current table or BEC assumptions must

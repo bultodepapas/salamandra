@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FPV system power budget — DJI O4 / O4 Pro / O4 Lite (research/I-18).
+FPV system power budget — DJI O4 / O4 Pro / O4 Lite (research/I-19).
 
 Power draw values are measured [M] (Oscar Liang, armed + recording unless noted):
     O4 Pro (@9V):  1200mW 1.16 A | 700mW 1.05 | 400mW 0.98 | 200mW 0.92

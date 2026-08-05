@@ -118,11 +118,12 @@ exists yet; it will be updated by the open point listed.
 | Divergence criterion | V_div ≥ 1.5 × V_NE | docs/00 |
 
 > ⚠️ **Stall margin is the tightest in the design:** ≈ 44.6 km/h at CL_max 0.60 vs the
-> 45 km/h requirement — a 0.4 km/h margin (I-07 §4.2). The OP-01 boom (OP-24) adds 40 g:
-> AUW 1660 g → V_stall ≈ **45.6 km/h** at the current budget (balance_cg.py `[D]`).
-> **Declared lever:** shell at the low end of its band (550 g instead of 600) + boom ≤ 40 g
-> → AUW ≈ 1600 g → ≈ 44.7 km/h — compliance recovered by mass discipline, re-derived in
-> F2 (OP-24). The launch is a mandatory hand throw; launch-speed feasibility is under
+> 45 km/h requirement — a 0.4 km/h margin (I-07 §4.2). The OP-01 boom (40 g) and the FPV
+> unit (37 g, I-19) add mass: AUW 1697 g → V_stall ≈ **46.1 km/h** at the current budget
+> (balance_cg.py `[D]`). **Declared levers:** shell at the low end of its band (550 g
+> instead of 600) + boom ≤ 40 g + servos at the real 12–15 g class (48 g instead of 60)
+> → AUW ≈ 1625 g → ≈ 45.1 km/h — borderline; F2 must arbitrate the mass budget against
+> C16 (OP-24). The launch is a mandatory hand throw; launch-speed feasibility is under
 > investigation (I-14). Do not relax the CL_max chain without re-deriving this
 > requirement (C16 history).
 
@@ -344,7 +345,10 @@ all other geometry is defined independently of the exact profile except the twis
 | Travel | ±20° (provisional; authority to be verified, C6) | PROVISIONAL |
 | Mass balance | **Mandatory**: elevon assembly CG **on the hinge line**; ~30 g balance mass per elevon in a forward pocket | ADR-0025 |
 | Actuation | **Dual actuation** (2 points per elevon), no-freeplay linkage, digital servos. Retained for flutter margin even though 390 mm is below the 400 mm rule-of-thumb (ADR-0026, file pending — see OP-22); authority to be confirmed | ADR-0026 |
-| Servos | 4× digital 13–15 g, at y ≈ 195 (panel root) and y ≈ 390 (per half), in the panel center cell | PROVISIONAL |
+| Servos | 4× digital **12–15 g metal-gear class** (I-18): Emax ES09MD, Corona DS-939MG, TowerPro MG90S, Savox SH-0255MG+ meet the 60 g budget; the 17–21 g class (TBS Mojito servo, KST DS115MG, MKS DS92A+, JX PDI-1181MG) exceeds it unless the balance allowance is re-allocated | PROVISIONAL; catalog I-18 `[M]` |
+| Servo torque | **NOT the binding constraint** (I-18 §2, `servo_torque.py` `[D]`): hinge moment 19–96 mN·m per elevon (Ch 0.01–0.05 `[E]`) → 10–48 mN·m per servo with dual actuation; the most modest catalog servo has ≥ 3.7× margin (≥ 7× dual). Selection is dominated by **stiffness, mass, deadband and price** (ADR-0025) | verified (OP-06 partial) |
+| Servo bay cavity | **≈ 34 × 16 × 39 mm** per servo at y ≈ 195 and y ≈ 390 (per half, panel center cell): accepts every servo in the I-18 catalog (largest: KST DS115MG 30×10×35 + ~4 mm/axis); standard mini-servo width ~11–12 mm → one pocket width fits all | I-18 §3.3 `[M]` |
+| Servo current | 4 servos: **avg 1.2–2.8 A, peaks 5–9 A** on simultaneous reversal `[M]` (I-18 §5). Covered by the FC Vx BEC (≥ 4.5 A avg); **add capacitance near the servos** (peak alignment can brown-out a tired pack); **dual-actuation balance must be current-measured** (two servos fighting draw ~150 mA extra each, silent) | I-18 §5 `[M]` |
 | Hinges | TPU-printed (glued or live-hinge), ADR-0035 | PROVISIONAL |
 | Hinge alternative | Polyester (mylar) tape hinges, 25×30 mm, glued in slots — flight-proven on 900–1340 mm printed FPV (Pico Talon, Stallion, I-09) | acceptable if TPU results disappoint; stiffness to be characterized (OP-10) |
 
@@ -359,12 +363,14 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Spanwise extent | y = 0 → **±195** (30 % half-span) | The wing surface continues across the CORE (same planform and t/c schedule, §5) |
 | Centerline section | Root airfoil (c = 289.2 mm, t/c 13.5 %) at y = 0, mid-plane z = 0 | Same airfoil family as the panels (pending OP-02) |
 | Trailing edge | **Fixed** from y = 0 to ±195 (no hinge line on the CORE, C23) | The torsion box may run closed to the TE inboard of the panel root (PROVISIONAL) |
-| **Nose boom (battery)** | Printed boom from the nose pod tip (x ≈ −132) to **x ≈ −521** (≈ 390 mm); width ≈ 70 mm; carries the battery bay (below) and a **skid at the tip** (first contact on landing flare); wiring conduit from the bay to the CORE; GPS/mag pedestal kept on the nose pod top (x ≈ −120, out of the battery current path) | Required so the 6S1P pack CG reaches x ≈ −421 (OP-01 resolution, `balance_cg.py` `[D]`, bay re-derived with the real pack envelope of I-16); structure ≤ 40 g target (OP-24); PROVISIONAL until F2 |
-| Battery bay | Internal **200 × 70 × 32 mm** (x × y × z); forward end at x ≈ −521; centered on y = 0 at z = 0; slide rails along x; single 21 mm layer, never stacked | Sized for the 6S1P pack (153 × 64.5 × 22.2 mm, I-16 `[D]`) CG band **−439.5…−403 mm** (R-CG ±5 mm). **Only 6S1P fits and reaches the band**: 4S1P needs x ≈ −577 (outside the bay); 4S2P/6S2P do **not fit** the single-layer bay at all (I-16) — R-CG requirement re-derived in F2 (OP-23); §9; PROVISIONAL |
+| **Nose boom (battery)** | Printed boom from the nose pod tip (x ≈ −132) to **x ≈ −516** (≈ 385 mm); width ≈ 70 mm; carries the battery bay (below) and the FPV camera mount (front, ≈ x = −450); **skid at the tip** (first contact on landing flare); wiring conduit from the bay to the CORE; GPS/mag pedestal kept on the nose pod top (x ≈ −120, out of the battery current path) | Required so the 6S1P pack CG reaches x ≈ −415 (OP-01 resolution, `balance_cg.py` `[D]`, bay re-derived with the real pack envelope of I-16); structure ≤ 40 g target (OP-24); PROVISIONAL until F2 |
+| Battery bay | Internal **200 × 70 × 32 mm** (x × y × z); forward end at x ≈ −516; centered on y = 0 at z = 0; slide rails along x; single 21 mm layer, never stacked | Sized for the 6S1P pack (153 × 64.5 × 22.2 mm, I-16 `[D]`) CG band **−434…−397 mm** (R-CG ±5 mm). **Only 6S1P fits and reaches the band**: 4S1P needs x ≈ −568 (outside the bay); 4S2P/6S2P do **not fit** the single-layer bay at all (I-16) — R-CG requirement re-derived in F2 (OP-23); §9; PROVISIONAL |
 | **Rear pod (motor)** | Extends **48 mm aft of the root TE** (to x ≈ +265); **lower surface at the prop plane ≤ z = −111.6 mm** (≈ 92 mm below the wing lower surface) | Required so the 8×8 prop (Ø203, axis at z = 0) keeps ≥ 10 mm tip ground clearance (C26); PROVISIONAL |
 | Motor mount | Face at x ≈ +230; motor body from ≈ +195 to +230 (28-class, 35 mm long, CG ≈ +212); prop disk plane at **x ≈ +235** (≥ 10 mm aft of the root TE at +216.9) | C25; PROVISIONAL |
 | Joint sockets | At y = ±195: tube socket Ø12.2–12.4, pin socket Ø6.1–6.2, depth ≈ 70 mm; centerlines x = −9.6 / +55.4 | §7.3 |
-| Avionics stations | FC/RX/blackbox ≈ x = 0…+40 (aft of or beside the bay); ESC ≈ x = +60 (rear pod, beside the motor); GPS/mag on the nose pedestal ≈ x = −120 | Matches the §8.1 balance; PROVISIONAL |
+| Avionics stations | FC/RX/blackbox ≈ x = 0…+40 (aft of or beside the bay); ESC ≈ x = +60 (rear pod, beside the motor); GPS/mag on the nose pedestal ≈ x = −120. **Station cavity 64 × 45 × 21 mm with a 30.5 × 30.5 mm (Φ4 mm) boss/tray** — accepts the entire I-17 catalog (min 28×28×7, avg 45×34×12, max 56×37×13 mm) | Matches the §8.1 balance; PROVISIONAL; I-17 §4.1 `[M]` |
+| **FPV camera mount** | In the **nose boom front** (≈ x = −450): 2× M2, **16 mm spacing**, cavity for the DJI O4 camera module **25.55 × 20 × 23.30 mm** (O4/Pro) or **13.44 × 12.36 × 16.50 mm** (Lite); clear forward view (155° FOV); coaxial cable run (130 mm, no bending at the base) to the VTX | I-19 §2/§6 `[M]`; PROVISIONAL |
+| **FPV VTX** | DJI O4/Pro transmission module **33.5 × 33.5 × 13 mm** (Lite 30×30×6), tray with **20 × 20 / 25.5 × 25.5 mm M2** holes (Lite: 25.5 only), in the CORE **with airflow** (shell runs hot — do not enclose; thermal pad to the frame); antennas **≥ 5 cm from VTX/camera/carbon/current path**, outside the shell, the two Pro antennas at **90°** | I-19 §2/§3 `[M]`; PROVISIONAL |
 | Hand launch | Grip area on the CORE sides; designer's choice within the OML | — |
 | Balance tabs | Small printed tabs on the CORE underside to rest the aircraft on a balance edge for CG verification (Pico Talon practice, I-09) | PROVISIONAL |
 
@@ -372,7 +378,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 ## 8. Mass budget and CG
 
-### 8.1 Mass budget (Cruise, 6S1P) — sums to 1660 g AUW
+### 8.1 Mass budget (Cruise, 6S1P) — sums to 1697 g AUW
 
 | Component | Mass (g) | Status |
 |---|---:|---|
@@ -380,14 +386,15 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Carbon (tubes + pins) | 70 | `[E]` |
 | Motor (28-class) | 170 | `[E]` |
 | ESC (6S 30 A) | 35 | `[E]` |
-| Avionics (FC, pitot, GPS, RX, wiring) | 110 | `[E]` |
-| Servos (4 × 15 g) | 60 | `[E]` |
+| Avionics (FC, pitot, GPS, RX, wiring) | 110 | `[E]` (I-17: heaviest FC 26 g is 24 % of the allowance) |
+| Servos (4 × 15 g) | 60 | `[E]`; I-18: the 12–15 g digital metal-gear class fits (48–60 g); 17–21 g class exceeds |
 | Propeller + hub/spinner | 40 | `[E]` |
 | Elevon balance mass | 60 | `[E]` (ADR-0025) |
+| **FPV DJI O4/Pro (camera + VTX + 2 antennas)** | **37** | `[M]` (I-19: 33 g + 2×2.1 g; Lite 8.2 g) |
 | **Battery boom structure** | **40** | `[E]` PROVISIONAL (OP-24; target ≤ 40 g) |
 | Hardware (screws, TPU hinges, adhesive, misc) | 20 | `[E]` |
-| **Battery 6S1P (21700)** | **455** | `[E]` |
-| **Total** | **1660** | **59 g/dm²** |
+| **Battery 6S1P (21700)** | **455** | `[E]` (I-16: P42A 445 g / 50E 433 g) |
+| **Total** | **1697** | **60 g/dm²** |
 
 ### 8.2 CG target
 
@@ -401,12 +408,12 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 > ⚠️ **OP-01 (critical) — resolution adopted (2026-08-05):** the reachable-CG analysis
 > (`balance_cg.py` `[D]`) shows the −119 mm target requires the 6S1P pack CG at
-> **x ≈ −421 mm** — unreachable with the v0.2 nose pod (reachable band was −24…+9 mm).
-> **Adopted: nose boom** carrying the battery bay from x ≈ −521 (≈ 390 mm forward of the
-> nose pod tip), Mojito pattern (I-02). Pack stations: 4S1P −577 / **6S1P −421
-> (reference)** / 4S2P −346 / 6S2P −270. **Bay fit (I-16 `[D]`): the 6S1P pack
+> **x ≈ −415 mm** — unreachable with the v0.2 nose pod (reachable band was −24…+9 mm).
+> **Adopted: nose boom** carrying the battery bay from x ≈ −516 (≈ 385 mm forward of the
+> nose pod tip), Mojito pattern (I-02). Pack stations: 4S1P −568 / **6S1P −415
+> (reference)** / 4S2P −342 / 6S2P −267. **Bay fit (I-16 `[D]`): the 6S1P pack
 > (153 × 64.5 × 22.2 mm) is the only one that fits the single-layer bay and reaches the
-> band; 4S1P needs x ≈ −577 (outside); 4S2P/6S2P do not fit at all — the R-CG
+> band; 4S1P needs x ≈ −568 (outside); 4S2P/6S2P do not fit at all — the R-CG
 > four-config requirement is re-derived in F2 (OP-23).** The central-body effect moves
 > the NP forward — direction known, margin applied in F2. Full analysis: justification
 > §3.1–3.2; the boom is part of the CORE outer mold (§7.6).
@@ -419,9 +426,9 @@ following **binding constraints**; the final body shape is designer's choice wit
 |---|---|---|
 | Cells | Li-Ion **21700**, Ø21 × 70 mm, **single layer** (never stacked) | docs/00 |
 | Bay internal dims (x × y × z) | **200 × 70 × 32 mm** | PROVISIONAL |
-| Bay position | In the CORE nose boom (§7.6): forward end at x ≈ −521; sized for the 6S1P pack CG band −439.5…−403; see OP-01 | PROVISIONAL |
+| Bay position | In the CORE nose boom (§7.6): forward end at x ≈ −516; sized for the 6S1P pack CG band −434…−397; see OP-01 | PROVISIONAL |
 | Longitudinal adjustment | Pack slide rails along x; range sized to keep CG within ±5 mm (reference 6S1P) | docs/00 R-CG; re-derived in F2 (OP-23) |
-| Pack configs | 4S1P ~300 g / 6S1P ~455 g / 4S2P ~605 g / 6S2P ~910 g (out of cruise envelope). Pack stations for CG −119 mm: −577 / **−421** / −346 / −270 (`balance_cg.py` `[D]`). **Bay fit (I-16 `[D]`): only the 6S1P pack (153 × 64.5 × 22.2 mm) fits the 200×70×32 single-layer bay; 4S2P/6S2P fit no n_z = 1 arrangement; 4S1P fits but needs x ≈ −577 (outside the bay)** | docs/00 |
+| Pack configs | 4S1P ~300 g / 6S1P ~455 g / 4S2P ~605 g / 6S2P ~910 g (out of cruise envelope). Pack stations for CG −119 mm: −568 / **−415** / −342 / −267 (`balance_cg.py` `[D]`, incl. FPV). **Bay fit (I-16 `[D]`): only the 6S1P pack (153 × 64.5 × 22.2 mm) fits the 200×70×32 single-layer bay; 4S2P/6S2P fit no n_z = 1 arrangement; 4S1P fits but needs x ≈ −568 (outside the bay)** | docs/00 |
 | Bay height check | 21 mm cells + clearance ≈ 27 mm ≤ 32 mm; root thickness 39 mm at centerline | derived |
 | Bay hatch | Spring-loaded lock (Flightory pattern, I-09); threaded inserts + reinforcement collar for repeated opening | PROVISIONAL |
 
@@ -439,6 +446,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Motor | 28-class (Ø28 mm), **500–550 KV**, ~170 g, ≥ 400 W peak | PROVISIONAL, derived |
 | ESC | 6S, **30 A** (cruise ≈ 5 A, peak ≈ 20 A) | derived |
 | Alternatives | APC-E 9×6, 10×7 (matching table, D3/D4) | ADR-0007 |
+| Battery energy (reference) | 6S1P P42A **90.7 Wh** / 50E **108 Wh** (pack 445/433 g, I-16 §6.1 `[D]`) | I-16; supersedes the docs/00 97 Wh estimate |
 
 > With the prop disk behind the root TE (x ≈ +235), the slipstream does **not** wash the
 > wing: the open G5/ADR-0006 question is bounded to the CORE rear-pod wake and the
@@ -461,13 +469,16 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Item | Requirement | Source |
 |---|---|---|
-| Flight controller | INAV 9.1+ or ArduPlane; geometry-agnostic | docs/00 §3.5 |
-| **Pitot** | **Mandatory** — without it E2/E7 are invalid; probe at y ≈ 260 mm (40 % half-span) leading edge, out of prop wash. Note: the probe is in the PANEL — its pressure lines cross the CORE↔PANEL joint at y = 195; provide a dedicated channel clear of the tube/pin sockets (PROVISIONAL) | docs/00 (PROVISIONAL position) |
+| Flight controller | INAV 9.1+ or ArduPilot; geometry-agnostic. **Reference class (I-17 `[M]`):** Matek F405-WING-V2 or SpeedyBee F405 WING (both meet the full requirement set; 30.5 × 30.5 mm mount). Exclusions: F411 class (no blackbox — mandatory), Foxeer F405 V2 (no current input — O1 needs it), **Matek H7A3-WING has no INAV target (ArduPilot only)** | docs/00 §3.5; I-17 §3 |
+| **Pitot** | **Mandatory** — without it E2/E7 are invalid; probe at y ≈ 260 mm (40 % half-span) leading edge, out of prop wash. Note: the probe is in the PANEL — its pressure lines cross the CORE↔PANEL joint at y = 195; provide a dedicated channel clear of the tube/pin sockets (PROVISIONAL). Digital MS4525 on I2C (every surveyed board has ≥ 1 I2C) | docs/00; I-17 §5 |
 | Blackbox | SD or flash, mandatory | docs/00 |
 | GPS / magnetometer | **Out of the root current path** (battery wires); nose pedestal position | docs/00 |
 | Launch | Autolaunch via acceleration detection | docs/00 |
-| Servos | 4× digital, no freeplay, dual actuation per elevon | ADR-0026 |
-| Wiring | Current path (ESC→battery) separated from GPS/mag and pitot runs | docs/00 |
+| Servos | 4× digital, no freeplay, dual actuation per elevon (§7.5; class and current in I-18) | ADR-0026 |
+| Wiring | Current path (ESC→battery) separated from GPS/mag, pitot and FPV runs | docs/00 |
+| Avionics power | **≈ 6.6 W** = ≈ 6 % of cruise (5 V rail 300–555 mA vs 2 A BEC; servo rail 1.2–2.8 A avg vs ≥ 4.5 A Vx BEC) → **≈ 7.3 % of the 6S1P P42A pack per flight-hour** (I-17 §6 `[D]`) | I-17 |
+| FPV (video) | DJI O4 Air Unit series reference (I-19): O4/Pro (33 g, 7.4–26.4 V) or Lite (8.2 g, 3.7–13.2 V); camera in the nose boom, VTX in the CORE (§7.6). **Power:** Pro 7.4–10.4 W (max 1200 mW) — feed from the **9 V/2 A rail (≥ 13.5 W DJI minimum); do NOT power the Pro from the 5 V rail** (10.4 W @ 5 V ≈ 2.1 A > 2 A); O4 Lite fits the 5 V rail (1.2 A, 60 %) | I-19 §4–5 `[M]`/`[D]` |
+| Total electronics | Avionics + FPV = **17.0 W with O4 Pro** (15.5 % of cruise; 18.8 % of pack per flight-hour) / 12.6 W with Lite. Fly the lowest usable power level (CE legal limit is 14 dBm, not the FCC number) | I-19 §5 `[D]` |
 
 ---
 
@@ -483,7 +494,9 @@ following **binding constraints**; the final body shape is designer's choice wit
 4. Install elevons with TPU hinges at x/c = 0.72; **mass-balance each elevon** (CG on
    hinge line) before installing servos (ADR-0025).
 5. Install 4 servos, zero-freeplay linkage, dual actuation points.
-6. Mount motor (0.8° upthrust), ESC, prop; battery on slide rails.
+6. Mount motor (0.8° upthrust), ESC, prop; battery on slide rails; FPV camera in the
+   nose boom and VTX on the CORE tray (9 V rail for O4/Pro, §11); antennas outside the
+   shell ≥ 5 cm, at 90° (I-19).
 7. Balance: target CG **−119 mm from root c/4** (47 mm forward of root LE); verify in the
    **reference 6S1P config** (and 4S2P) using the CORE underside balance tabs (§7.6);
    4S1P/6S2P fall outside the bay band — see OP-23.
@@ -513,6 +526,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
+| 0.5 | 2026-08-05 | **Component catalogs integrated (I-16/17/18/19):** FPV DJI O4 system in the mass budget (§8.1: +37 g → AUW 1697 g), balance re-run (`balance_cg.py` — pack 6S1P ≈ −415, bay −516…−315); servo class 12–15 g + cavity 34×16×39 + torque not binding + current data (§7.5, I-18); FC reference class F405-WING-V2 / SpeedyBee + station cavity 64×45×21 + avionics 6.6 W (§7.6, §11, I-17); FPV camera/VTX mounts in the CORE (§7.6) and FPV/video power in §11 (I-19); battery energy reference 90.7/108 Wh (§10.1, I-16); stall flag updated (46.1 km/h, OP-24). |
 | 0.4 | 2026-08-05 | **Bay re-derived with the real pack envelope (I-16 `[D]`):** 6S1P = 153 × 64.5 × 22.2 mm (2×3, orient. A) → bay **200 × 70 × 32 mm**, forward end **x ≈ −521**, boom ≈ 390 mm (`balance_cg.py`). Fit verdict: only 6S1P fits and reaches the R-CG band; 4S1P fits but needs x ≈ −577 (outside); 4S2P/6S2P fit no single-layer arrangement (I-16) — OP-23 sharpened. |
 | 0.3 | 2026-08-05 | **OP-01 resolution:** battery **nose boom** adopted (bay x ≈ −493…−304, 6S1P pack at ≈ −421 mm, `balance_cg.py` `[D]`); pack-station map per configuration; 4S1P/6S2P R-CG tension flagged (OP-23); boom structure ≤ 40 g target (OP-24). **R-TWIST raised 2.5° → 3.0°** (§5.3): stall criterion holds at 3.0° (load peak 56 % b/2, margin +0.017); residual trim ≤ 0.6° permanent elevon reflex. **Elevon authority verified** (`elevon_authority.py` `[D]`): yield 0.00348 °/° over 30–90 % span, 10° ≈ 4.8× the trim requirement. AUW 1660 g → V_stall ≈ 45.6 km/h flagged with the declared mass lever (§4, OP-24). |
 | 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14:** threads opened; C28 (root/tip candidates corrected, §6.2/§6.3); stall-margin flag (§4); R-AIRFOIL feasibility flag (§6.1); pusher-slipstream note (§10.1). **I-15:** airfoil evidence campaign opened (11 investigations); root section to be designed, not selected (§6.1 note); stall-character criterion added (§6.1) and confidence basis of the polar declared (§6.1). **B3 screening + C2 executed (I-15 §6):** E205 discarded on its polar (§6.2); NP cross-checked — two methods agree within 3 mm (§3); twist note with trim-closure numbers (§5.3); trim-closure blockquote (§6.1). |

@@ -27,6 +27,11 @@ COMPONENTS = [
     ("Avionica (FC, pitot, GPS, RX, cableria)", 0.110, -10e-3),
     ("Servos + masa de balance",       0.120, -5e-3),
     ("Hardware",                       0.020, +50e-3),
+    # FPV DJI O4/Pro (I-19 [M]): camara 16.4 g en el boom (x ~ -450 [E]),
+    # VTX 16.6 g en la estacion de avionica (x ~ +10), 2x antena 2.1 g (x ~ +20)
+    ("FPV DJI O4/Pro — camara (boom)", 0.0164, -450e-3),
+    ("FPV DJI O4/Pro — VTX (CORE)",    0.0166, +10e-3),
+    ("FPV DJI O4/Pro — antenas (CORE)", 0.0042, +20e-3),
 ]
 BOOM_MASS, BOOM_STATION = 0.040, -320e-3   # PROVISIONAL [E]
 PACKS = [("4S1P", 0.300), ("6S1P", 0.455), ("4S2P", 0.605), ("6S2P", 0.910)]

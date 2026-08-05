@@ -1,4 +1,4 @@
-# I-18 — DJI O4 FPV system: O4 / O4 Pro / O4 Lite — data sheets and electrical data
+# I-19 — DJI O4 FPV system: O4 / O4 Pro / O4 Lite — data sheets and electrical data
 
 **Status:** Open — reference catalog · **Feeds:** guide §11 (FPV/video), CORE nose-pod/camera integration, O1 (Wh/km), avionics power budget (I-17)
 
