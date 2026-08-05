@@ -212,19 +212,26 @@ Phase-1 status (2026-08-05):
 
 ---
 
-## Reproducible analysis — tools used
+## Tools and workflow
+
+The project runs on an explicit toolchain — every tool is named, versioned, and used for
+a defined job, from research to flight:
+
+| Stage | Tool | Role |
+|---|---|---|
+| **Research** | Web search via **Firecrawl MCP** | Primary-source search; every query and source logged in [`research/`](research/) |
+| **Analysis** | Python 3.11 + numpy | In-house panel VLM, Weissinger-L independent check, sizing, balance and screening harnesses |
+| **Aerodynamics** | **XFOIL** 6.99 (official MIT build, GPL) | Airfoil polar generation for the B3 screening and the E387 calibration |
+| **Input data** | UIUC Airfoil Data Site, aerodesign.de | Measured/published data (`[M]`); coordinates in `geometry/airfoils/` |
+| **Design** | **Fusion 360** (connected via an MCP server) | Community parametric CAD; STL/STEP export for printing and sharing |
+| **Manufacturing** | Bambu Studio · 256 mm printer (P1S class) · **PETG** | Printability is a hard requirement (O3/O4), not an afterthought |
+| **Avionics** | INAV 9.1+ / ArduPlane · pitot + blackbox | Flight control and the measuring instruments of the whole test program |
 
 Every quantitative claim in this repository comes from scripts that anyone can rerun.
 The full guide (versions, commands, batch quirks, validation discipline) is in
-[`calculations/README.md`](calculations/README.md). Summary:
+[`calculations/README.md`](calculations/README.md).
 
-| Tool | Version | Role |
-|---|---|---|
-| Python + numpy | 3.11 / 1.2x | In-house panel VLM, Weissinger-L NP check, screening harness |
-| **XFOIL** | **6.99** (official MIT build, GPL) | Airfoil polar generation for the B3 screening and the E387 calibration |
-| UIUC Airfoil Data Site, aerodesign.de | — | Measured/published input data (`[M]`), coordinates in `geometry/airfoils/` |
-
-Reproduction in five commands:
+The Phase-1 results reproduce in five commands:
 
 ```bash
 python3 calculations/vlm_ala_volante.py       # NP (I-07)
