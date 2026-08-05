@@ -29,7 +29,7 @@ version live in [`prompts/`](prompts/).
 | Date | 2026-08-05 |
 | Status | DRAFT — pending designer iteration and Phase 1 closure |
 | Reference configuration | **Cruise — Article #1** |
-| Inputs | ADR-0001…ADR-0037, I-01…I-09, docs/00, docs/02, docs/03, docs/04, docs/05 |
+| Inputs | ADR-0001…ADR-0037, I-01…I-14, docs/00, docs/02, docs/03, docs/04, docs/05 |
 | Intended reader | CAD designer (Fusion 360 or equivalent) |
 
 **How this guide evolves.** The design is expected to change as Phase 1 closes (airfoil
@@ -211,10 +211,10 @@ all other geometry is defined independently of the exact profile except the twis
 
 | Station | Provisional candidate | Note |
 |---|---|---|
-| Root | **MH 45** (t/c ≈ 13 %, MH family, aerodesign.de) | B3 candidate; closest MH to 13.5 %; to be confirmed/scaled |
-| Tip | MH-family profile thinned to 9 % t/c | 9 % reflexed candidates are scarce; selection resolved in B3 |
+| Root | Reflexed section scaled to t/c 13.5 % — **MH 60-12 %** (12.0 %, cm0 +0.0030 `[M]`) is the closest published family member; **MH 45 is 9.85 % thick, not 13 % (C28)** and is documented for 15–40 g/dm², below the project's 57 g/dm² | B3 candidate; no off-the-shelf reflexed section reaches 13.5 % — R-AIRFOIL feasibility at 13.5 % is an explicit B3 question (I-11) |
+| Tip | Reflexed section at t/c 9 % with **camber compensation** — pure thickness scaling of a reflexed section is warned against (MH 45-8 % precedent: clmax loss, harsh stall `[M]`, I-11) | 9 % reflexed candidates are scarce; selection resolved in B3 |
 | Tip (data point) | **E205** (t/c 10.6 %, camber 2.9 %, flight-proven at Re 1.5–3×10⁵ on the Pico Talon and Stallion, I-09) | **Not admitted on the manuals alone** — its Cm0 is unknown and likely negative (tailed planes trim it); include in the B3 XFOIL screening (Ncrit 10–12 band) and decide from the polar |
-| Reference | PW51 (in-service FSW precedent, Nemesis) | I-08 quasi-controlled comparison `[M]` |
+| Reference | PW51 (in-service FSW precedent, Nemesis) | I-08 quasi-controlled comparison `[M]`; **not in the UIUC database** (I-11) — coordinates/polars must be sourced elsewhere |
 
 ### 6.3 CAD instructions
 
@@ -224,9 +224,13 @@ all other geometry is defined independently of the exact profile except the twis
    the calibrated polar and final coordinates, only the profile and the twist setting
    change.
 3. **Provisional coordinates for the v0.2 CAD** (to be replaced by the B3 output, OP-02):
-   - Root: **MH 45** coordinates (aerodesign.de), scaled to t/c = 13.5 %.
-   - Tip: the **same MH 45 profile, thickness-scaled to t/c = 9 %** (affine y-coordinate
-     scaling; camber line unchanged). The final tip profile is selected in B3.
+   - Root: **MH 60-12 %** coordinates (aerodesign.de), scaled to t/c = 13.5 %.
+     (MH 45 is 9.85 % thick and documented for 15–40 g/dm² — not suitable as the root
+     starting point, C28/I-11.)
+   - Tip: **MH 60-12 % thickness-scaled to t/c = 9 % with camber compensation** — do not
+     apply pure affine y-scaling (the reflexed-airfoil database warns that thinning
+     reflexed sections costs clmax and hardens the stall, I-11). The final tip profile
+     is selected in B3.
    - Place the coordinate files under `geometry/` and reference them from the CAD model
      (swappable).
 4. The tip station (y = 650) is the thinnest section (13.0 mm max thickness); verifying
@@ -443,7 +447,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Set | Documents |
 |---|---|---|
 | Decisions | ADR-0001, 0002, 0004, 0007, 0010, 0015, 0021–0028, 0032–0037 ([`decisions/`](../decisions/)) |
-| Research | I-01…I-09 ([`research/`](../research/)) |
+| Research | I-01…I-14 ([`research/`](../research/)) |
 | Specification | [`docs/00-objectives-and-requirements.md`](../docs/00-objectives-and-requirements.md) |
 | Measured data | [`docs/02-measured-references.md`](../docs/02-measured-references.md) |
 | Plans | [`docs/03-phase-1-plan.md`](../docs/03-phase-1-plan.md), [`docs/05-master-plan.md`](../docs/05-master-plan.md) |
@@ -460,5 +464,5 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
-| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). |
+| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14 threads opened; C28:** provisional root/tip candidates corrected per the aerodesign.de database (§6.2, §6.3). |
 | 0.1 | 2026-08-05 | First release. Reference geometry per I-07/ADR-0027; provisional airfoil (B3 pending), dihedral, twist, carbon, motor, bay. OP-01 flagged. |

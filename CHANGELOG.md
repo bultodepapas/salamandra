@@ -4,6 +4,37 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.9] — 2026-08-05
+
+**Five new investigation threads (I-10…I-14) and correction C28.**
+
+### Added
+- **[I-10](research/I-10-control-authority-static-margin.md)** — tailless pitch control
+  authority and minimum static margin (feeds C6/S5 — never done before — OP-01, OP-06).
+- **[I-11](research/I-11-reflexed-airfoil-database.md)** — reflexed-airfoil database for
+  the B3 shortlist (aerodesign.de tailless database reviewed; E205/UIUC availability
+  checked). Partial: database values extracted, measured polars still to be compiled.
+- **[I-12](research/I-12-x29-divergence-sweep-factor.md)** — X-29 divergence flight
+  data and sweep-factor bounds (NASA-TM-86025 located on NTRS; feeds G6 — the declared
+  weakest link — and G4).
+- **[I-13](research/I-13-pusher-tractor-slipstream.md)** — pusher vs tractor slipstream
+  at Re 3–5×10⁵ (feeds the disputed ADR-0006 and G5).
+- **[I-14](research/I-14-hand-launch-stall-margin.md)** — hand-launch and stall-margin
+  practice (feeds the O1 stall requirement with its 0.4 km/h margin and the launch
+  method).
+
+### Changed
+- Design guide §6.2/§6.3 — provisional airfoil candidates corrected (C28); §1/§13
+  research set extended to I-01…I-14.
+
+### Corrections
+
+| # | Error | Correction |
+|---|---|---|
+| **C28** | The design guide listed the provisional root airfoil as "MH 45 (t/c ≈ 13 %)". The aerodesign.de tailless-airfoil database (reviewed in I-11) lists **MH 45 at 9.85 % thickness, cm0 +0.0070**, documented for 15–40 g/dm² — below the project's 57 g/dm², and below R-AIRFOIL's +0.008 | Provisional root candidate moved to **MH 60-12 %** (12.0 %, cm0 +0.0030) scaled to 13.5 %; the guide now declares that **no off-the-shelf reflexed section reaches 13.5 %**, making R-AIRFOIL feasibility at 13.5 % an explicit B3 question; the 9 % tip must use camber compensation, not pure thickness scaling (MH 45-8 % precedent warns of clmax loss and harsh stall) |
+
+---
+
 ## [1.8] — 2026-08-05
 
 **Salamandra Design Guide v0.2 — designer-review release.**

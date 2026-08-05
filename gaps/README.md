@@ -7,13 +7,13 @@ It is as important as the decision register: the project rule is that **no `[E]`
 | # | Gap | Impact | Status | Closes with |
 |---|---|---|---|---|
 | **G1** | Reference geometry: area, airfoil, twist | All calculations depend on S ≈ 0.282 m² `[E]` | 🔄 **Partial** — t/c measured `[M]`, planform missing | E1 |
-| **G2** | No measured polars of reflexed airfoils at Re 3–5×10⁵ | Blocks airfoil selection | 🔄 **Partial** — XFOIL bounded with E387; still to screen and measure reflexed airfoils | I-06, E2 |
+| **G2** | No measured polars of reflexed airfoils at Re 3–5×10⁵ | Blocks airfoil selection | 🔄 **Partial** — XFOIL bounded with E387; aerodesign.de database reviewed (I-11); still to screen and measure reflexed airfoils | I-06, I-11, E2 |
 | **G3** | C_D0 breakdown by component | Prevents prioritizing parasitic-drag reduction | ⬜ Open | E2 |
-| **G4** | Real torsional stiffness | ADR-0002 unverified | 🔄 `[E]` ±35 %, anchored to measured reference | E5, E7 |
-| **G5** | Propeller wash effect on a thin airfoil at Re 4×10⁵ | ADR-0006 under dispute | ⬜ Open | Comparative in-flight test |
-| **G6** | **Sweep factor for divergence** | **Weakest link of the structural calculation** | ⬜ Open | **E7** |
+| **G4** | Real torsional stiffness | ADR-0002 unverified | 🔄 `[E]` ±35 %, anchored to measured reference; printed-shell torsion bounds proposed (I-12) | E5, E7 |
+| **G5** | Propeller wash effect on a thin airfoil at Re 4×10⁵ | ADR-0006 under dispute | ⬜ Open; literature bounds proposed (I-13) | I-13, comparative in-flight test |
+| **G6** | **Sweep factor for divergence** | **Weakest link of the structural calculation** | ⬜ Open; X-29 data and theory bounds proposed (I-12) | **I-12 (bounds), E7** |
 | **G7** | Flutter | Unverified. Sudden onset, no warning | ⬜ Open | E5 |
-| **G8** | Neutral point and static margin | Blocks Phase 1 | 🔄 **Partial** — NP = 26.7 % MAC `[D]` by in-house VLM. Independent verification still missing | I-07, C2 of the plan |
+| **G8** | Neutral point and static margin | Blocks Phase 1 | 🔄 **Partial** — NP = 26.7 % MAC `[D]` by in-house VLM. Independent verification still missing; control-authority/static-margin thread opened (I-10) | I-07, I-10, C2 of the plan |
 | **G9** | Altitude-loop coupling with pitch (*porpoising*) | **Threatens the validity of E7** | ⬜ Open | PID adjustment before testing |
 
 ---

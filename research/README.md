@@ -15,6 +15,11 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-07](I-07-neutral-point-torsion-window.md) | **Neutral point, static margin and torsion window** | **Open — preliminary result** | ADR-0003, ADR-0032, G8, G2 |
 | [I-08](I-08-stuntdouble-family.md) | **StuntDouble family: compared geometry** | **Open — base comparison** | A4, R3, R4 |
 | [I-09](I-09-flightory-inspiration.md) | **Flightory Pico Talon & Stallion: geometry and construction** | **Open — base comparison** | B3/G2 (E205), CORE design (guide §7.6), docs/02 |
+| [I-10](I-10-control-authority-static-margin.md) | **Tailless pitch control authority and minimum static margin** | ⬜ **Proposed** | C6/S5, OP-01, OP-06, G8 |
+| [I-11](I-11-reflexed-airfoil-database.md) | **Reflexed-airfoil database for the B3 shortlist** | 🔄 **Partial — aerodesign.de reviewed** | B3/G2, OP-02, C28 |
+| [I-12](I-12-x29-divergence-sweep-factor.md) | **X-29 divergence data and sweep-factor bounds** | ⬜ **Proposed — sources located** | G6, G4, S4 |
+| [I-13](I-13-pusher-tractor-slipstream.md) | **Pusher vs tractor slipstream at low Re** | ⬜ **Proposed** | G5, ADR-0006, OP-14 |
+| [I-14](I-14-hand-launch-stall-margin.md) | **Hand-launch and stall-margin practice** | ⬜ **Proposed** | O1 (stall), C16, launch, D1/D2 |
 
 ## Source quality
 
