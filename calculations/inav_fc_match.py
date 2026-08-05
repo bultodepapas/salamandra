@@ -218,29 +218,29 @@ def main():
 
     lo5 = sum(c[1] for c in COMP if c[3] == "5V")
     hi5 = sum(c[2] for c in COMP if c[3] == "5V")
-    loV = sum(c[1] for c in COMP if c[3] == "Vx" and "stall" not in c[0])
-    hiV = sum(c[2] for c in COMP if c[3] == "Vx" and "stall" not in c[0])
-    loS = sum(c[1] for c in COMP if c[3] == "Vx")
-    hiS = sum(c[2] for c in COMP if c[3] == "Vx")
+    loV = sum(c[1] for c in COMP if c[3] == "Vx" and "active" in c[0])
+    hiV = sum(c[2] for c in COMP if c[3] == "Vx" and "active" in c[0])
+    loS = sum(c[1] for c in COMP if c[3] == "Vx" and "stall" in c[0])
+    hiS = sum(c[2] for c in COMP if c[3] == "Vx" and "stall" in c[0])
     print("-" * 78)
     print(f"  5V rail  total        : {lo5:6.0f} ... {hi5:6.0f} mA  "
           f"(Matek F405/F765 5V BEC = 2 A)")
     print(f"  Servo rail total (act.): {loV:6.0f} ... {hiV:6.0f} mA  "
           f"(Vx BEC 5 A / F765 8 A)")
     print(f"  Servo rail total (stall): {loS:6.0f} ... {hiS:6.0f} mA  "
-          f"(brief, below Vx BEC limits)")
+          f"(brief, within Vx BEC 5 A)")
 
     w5 = (lo5 + hi5) / 2 / 1000 * 5.0          # W on 5V rail (5 V)
     wV = (loV + hiV) / 2 / 1000 * 5.0          # W on servo rail (5 V)
     cruise_w = 22.0 * 5.0                      # W, guide §10.1: ~5 A @ ~22 V (6S)
     pct = (w5 + wV) / cruise_w * 100
+    pack_wh = 90.7                            # Wh, 6S1P P42A (I-16 §6.1)
     print(f"\n  Avionics power: ~{w5:.1f} W (5V rail) + ~{wV:.1f} W (servos) "
           f"= ~{w5+wV:.1f} W")
     print(f"  Cruise power (guide §10.1): ~{cruise_w:.0f} W "
           f"(5 A @ 22 V, 6S)  ->  avionics ~{pct:.1f} % of cruise")
-    print(f"  Energy impact on range: at ~{w5+wV:.1f} W over a 60-min flight "
-          f"= {(w5+wV)/60:.2f} Wh, "
-          f"~{(w5+wV)*1/1000:.2f}% of a 6S1P P42A pack (90.7 Wh)")
+    print(f"  Energy impact: 1 h of flight burns ~{w5+wV:.1f} Wh of avionics "
+          f"= ~{(w5+wV)/pack_wh*100:.1f} % of a 6S1P P42A pack ({pack_wh:.1f} Wh)")
 
 
 if __name__ == "__main__":

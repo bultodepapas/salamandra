@@ -167,8 +167,10 @@ the Salamandra avionics requirements (guide §11). Published result (I-17 §3):
 **YES** for F405-WING v1/V2, F765-WING, F722-WING, SpeedyBee F405 WING; **no** for
 F411-WING/F411-WSE (no blackbox) and Foxeer F405 V2 (no current input). Also
 prints the footprint summary (I-17 §4.1): min 28×28×7, avg 45×34×12, max
-56×37×13 mm, recommended station cavity **64 × 45 × 21 mm**. A change to the
-requirement set or board specs must reproduce these lines.
+56×37×13 mm, recommended station cavity **64 × 45 × 21 mm**; and the power budget
+(I-17 §6): 5 V rail 300–555 mA, avionics ≈ 6.6 W ≈ 6 % of cruise, ≈ 7.3 % of a
+6S1P P42A pack per flight-hour. A change to the requirement set or board specs
+must reproduce these lines.
 
 ---
 

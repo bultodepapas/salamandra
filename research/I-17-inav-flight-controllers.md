@@ -230,7 +230,47 @@ ceilings across the survey (they do not correspond to a single board); the
 - **Servo/motor PWM mapping:** S1–S2 are motors in the Matek WING targets; the
   elevons use the servo outputs. Respect the INAV mixer/mapping (guide §12).
 
-## 6. Observations (for the builder)
+## 6. Electrical power consumption
+
+### 6.1 Per-component consumption
+
+Values from web research; `[M]` = measured/published, `[E]` = declared estimate.
+Computed budget: `python3 calculations/inav_fc_match.py`.
+
+| Component | Min mA | Max mA | Rail | Basis |
+|---|---|---|---|---|
+| FC board — INAV F4 wing (OSD+SD) | 150 | 250 | 5 V | scaled from measured F4 ≈ 93 mA `[M]` (quadmeup) + OSD/SD overhead `[E]` |
+| RX — ELRS 2.4G (EP1 class) | 100 | 200 | 5 V | `[E]` (measured 8ch FM RX ≈ 100 mA `[M]`) |
+| GPS M10 + compass | 25 | 60 | 5 V | `[M]` (BN-220 35 / BN-880 45 / M10 25 mA) |
+| Pitot MS4525 (I2C) | 5 | 15 | 5 V | `[E]` |
+| Buzzer (transient) | 20 | 30 | 5 V | `[E]` |
+| 4× servo 13–15 g digital — idle | 40 | 80 | Vx | `[E]` |
+| 4× servo — active/mixed | 600 | 1200 | Vx | `[E]` |
+| 4× servo — stall (brief) | 2800 | 4000 | Vx | `[E]` |
+
+Measured anchors `[M]`: F4-class FC ≈ 93 mA, FC ≈ 100 mA, 8ch RX ≈ 100 mA,
+GPS modules 25–45 mA. Modern F4 wing boards with OSD + SD + baro draw about
+150–250 mA in practice; F7/H7 slightly more (200–350 mA) `[E]`.
+
+### 6.2 Total budget, BEC margin and energy impact `[D]`
+
+| Rail | Load | BEC available | Utilization |
+|---|---|---|---|
+| 5 V avionics (FC+RX+GPS+pitot+buzzer) | **300–555 mA** | 2 A (F405/F765 5V BEC) | 15–28 % |
+| Servo rail (4 servos active) | **600–1200 mA** | 5 A Vx (8 A F765) | 12–24 % |
+| Servo rail (4 servos stall, brief) | **2800–4000 mA** | 5 A Vx | ≤ 80 % |
+
+- **Total avionics power ≈ 6.6 W** (≈ 2.1 W 5 V rail + ≈ 4.5 W servos) `[D]`.
+- **vs cruise:** the guide §10.1 cruise is ≈ 110 W (5 A @ 22 V, 6S) → avionics is
+  **≈ 6 % of cruise power** `[D]`.
+- **Energy impact:** 1 h of flight burns **≈ 6.6 Wh** of avionics = **≈ 7.3 %** of a
+  6S1P P42A pack (90.7 Wh, I-16 §6.1) `[D]`. Not negligible for the O1 efficiency
+  claim, but small enough that the range equation is dominated by propulsion.
+- **BEC sizing conclusion:** the 2 A 5 V BEC and 5 A servo BEC of the F405/F765
+  class carry the full avionics + servo load with 3–4× margin `[D]`. The F411 class
+  (Vx 3 A) also suffices for the servo load but fails on blackbox (see §3).
+
+## 7. Observations (for the builder)
 
 1. **The Matek F405-WING-V2 is the least-risk choice**: current, every resource
    needed, the classic INAV target `MATEKF405SE`, Type-C, and the same footprint
@@ -244,7 +284,7 @@ ceilings across the survey (they do not correspond to a single board); the
    needed); it only binds on the F411 class (exactly 2), and there the blackbox
    absence is the harder constraint.
 
-## 7. Reproduction
+## 8. Reproduction
 
 ```bash
 python3 calculations/inav_fc_match.py
@@ -252,10 +292,13 @@ python3 calculations/inav_fc_match.py
 
 Self-validating: the printed matrix must show **YES** for the five
 F405/F722/F765/SpeedyBee entries and the stated MISS reasons for F411 (no
-blackbox) and Foxeer (no current input). A change to the requirement set or board
-specs must reproduce these lines.
+blackbox) and Foxeer (no current input); the footprint summary must print
+**min 28×28×7 / avg 45×34×12 / max 56×37×13 mm / recommended 64×45×21 mm**; and
+the power budget must print **5 V rail 300–555 mA, avionics ≈ 6.6 W ≈ 6 % of
+cruise, ≈ 7.3 % of a 6S1P P42A pack per flight-hour**. A change to the requirement
+set, board specs, or consumption values must reproduce these lines.
 
-## 8. Popularity basis
+## 9. Popularity basis
 
 Ranking from cross-reference of: the INAV supported-target list (which boards
 are actively maintained in 2026), manufacturer product availability, and the
@@ -264,15 +307,24 @@ Matek F405-WING thread, INAV Facebook community). Matek WING series dominates
 fixed-wing INAV by volume of guides and aftermarket parts; SpeedyBee is the
 fastest-growing current alternative.
 
-## 9. Sources
+## 10. Sources
 
 1. INAV — supported targets list, `src/main/target` (GitHub iNavFlight/inav @ master). `[M]`
 2. MATEKSYS — F405-WING product page (`?portfolio=f405-wing`), F405-WING-V2 (`?portfolio=f405-wing-v2`), F765-WING (`?portfolio=f765-wing`), WING-series comparison table (F722-WING, F411-WSE, F411-WING). `[M]`
 3. Foxeer — F405 V2 product page (SKU MR1836). `[M]`
 4. SpeedyBee — F405 WING APP product page. `[M]`
 5. Prices marked `[E]` are store-price estimates; `[M]` prices are the quoted list price on the manufacturer page.
+6. Power consumption anchors: quadmeup.com — *How much power a flight controller consumes* (measured: F1 44 mA, F3 55 mA, F4 93 mA). `[M]`
+7. dronehitech.com — *How many amps a flight controller and receiver draw* (measured: FC 100 mA, RX 100 mA). `[M]`
+8. uavmodel.com — FPV GPS module comparison BN-220/BN-880/M10 (current draw 35/45/25 mA). `[M]`
+9. oscarliang.com — F1/F3/F4 flight-controller comparison (F405/F411 distinction, flash/RAM notes). `[M]`
+10. inavfixedwinggroup.com — *Servos for INAV* (servo classes for fixed-wing INAV, digital vs analog). `[M]`
+11. ExpressLRS docs — ELRS receiver wiring/power (EP1 HM2400). `[M]`
 
 **Confidence:** MCU/IMU/baro/UART/PWM/BEC/dimensions are `[M]` (manufacturer
-specs). The compatibility matrix is `[D]`. Prices and the popularity rank are
-`[E]`/`[I]`. The single most valuable verification is measuring a real board
-(mass, footprint) with the batch the builder actually buys.
+specs). The compatibility matrix, footprint summary and power budget are `[D]`.
+Consumption values are `[M]` where measured (FC/RX/GPS) and `[E]` otherwise;
+prices and the popularity rank are `[E]`/`[I]`. The single most valuable
+verification is measuring a real board (mass, footprint, current) with the batch
+the builder actually buys.
+

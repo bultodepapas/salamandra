@@ -48,6 +48,27 @@ dividing the load per servo (ADR-0026). Geometry from the guide §5.3/§7.5; `Ch
 > constraint** — mass, holding stiffness, reliability, deadband and price dominate
 > the choice. This is exactly why ADR-0025 emphasises stiffness over torque.
 
+### 2.1 Model validation against published methods `[D]`
+
+The hinge-moment model used here (`Mh = 0.5·ρ·V²·S·c·Ch`) is the same non
+-dimensional form published by independent sources:
+
+- **Basic Air Data** (basicairdata.eu, XFOIL-based elevator-hinge-moment sizing for
+  RC models) defines exactly `C_He ≡ H_e / (0.5·ρ·V²·S_e·c̄_e)` — the model of
+  `servo_torque.py` — and notes that control-surface sizing is *"not a critical
+  issue"* for typical RC servos. `[M]`
+- **FliteTest forum** (Ben Harber *Control Surface Torque Maths*) gives an
+  equivalent force-and-moment spreadsheet; a stability-and-control engineer
+  cross-checked it against **AVL** and confirmed the approach (flagging only a
+  sin-projection detail in the surface-area transform). `[I]`
+- **NASA NTRS 19780023100** and **Aerade ARC R&M 3485** document the same
+  hinge-moment-derivative method for full-scale ailerons/elevators; the published
+  derivative values fall in the `Ch` 0.01–0.05 band used here. `[M]`
+
+No published source disputes the conclusion of §2: the aerodynamic hinge moment of
+a ~0.28 c elevon on this class of wing is a few hundred g·cm at most, far below
+any digital micro servo.
+
 ## 3. Servo catalog (verified data sheets)
 
 Dimensions L×W×H mm. Torque quoted at the stated supply voltage. Prices are
@@ -68,7 +89,7 @@ street/store prices at the survey date (2026-08); `[M]` = list/manufacturer pric
 | 8 | **MKS DS92A+** | Digital | 2.95 @6 | 0.058–0.070 | 17.4 | 23×12×27.25 | Ti (coreless) | 4.8–6 | — | `[M]` |
 | 9 | **JX PDI-1181MG** | Digital | 3.0 @4.8 / 3.6 @6 | — | 17.5–18 | — | metal (coreless) | 4.8–6 | — | `[M]` |
 
-### 3.2 Notes per model (from sources in §7)
+### 3.2 Notes per model (from sources in §8)
 
 - **TBS Mojito servo** — the servo shipped for the market-reference aircraft
   (guide §4). 3.2 kg·cm at 6 V, ≤0.26 s/60°, 19 g, 4.8–6 V, stall current
@@ -132,13 +153,53 @@ wide (standard mini-servo width), so one pocket width fits all listed servos.
 
 ## 5. Current draw vs the FC servo BEC
 
-Digital metal-gear micro servos run **~120–250 mA** at idle-to-normal and spike to
-**~400–800 mA** stalled `[E]`. Four servos → **~0.5–1 A typical, < 3.2 A worst
-case** `[D]`. Every INAV board in the companion catalog I-17 carries a **servo BEC
-of ≥ 4.5 A** (SpeedyBee F405 WING 4.5 A / 5.5 A pk; Matek F405/F722/F765 Vx 5–8 A),
-so the servo current is comfortably covered by any requirement-complete FC `[D]`.
+The static-torque analysis (§2) says the load is small; the *power* question is
+separate and answered by **measured** digital-servo current data, not estimates:
 
-## 6. Popularity basis
+| Measurement | Value | Source |
+|---|---|---|
+| Digital micro servo, holding vs high torque | **avg 0.3 A, peak 5 A** | Model Aviation, current-probe `[M]` |
+| Same, very aggressive torque | avg 0.5 A, peak 5 A | `[M]` |
+| Same, repeated reversals (worst case) | **avg 1.3 A, peak 9.3 A** | `[M]` |
+| Dual servos on one surface, no-buzz setup | **up to 180 mA/servo static no-load** vs ~30 mA nominal idle | Model Aviation, servo balancing `[M]` |
+| 4 micro servos, max simultaneous load | **2.78 A ≈ 700 mA/servo** | bench measurement (YouTube) `[M]` |
+| Full-size high-end digital (JR8717-class) | 3–5 A under heavy load | HeliFreak `[I]` |
+
+Reading: **typical flight load for 4 elevon servos ≈ 1.2–2.8 A** with
+**sub-millisecond current spikes of 5–9 A** when several servos reverse together
+`[M]`/`[D]`. Every INAV board in the companion catalog I-17 carries a **servo BEC
+of ≥ 4.5 A** (SpeedyBee F405 WING 4.5 A / 5.5 A pk; Matek F405/F722/F765 Vx 5–8 A),
+so the *average* is comfortably covered. Two power caveats for the designer
+(Model Aviation, `[M]`):
+
+1. **Peak alignment is the risk:** when all servos reverse in unison, their pulses
+   can align; a tired battery or high-resistance wiring can then brown-out the FC
+   mid-flight. Capacitance near the servos (or a capacitor at the receiver)
+   shaves the peaks.
+2. **Dual-actuation balancing (ADR-0026) must be current-measured:** two servos
+   fighting each other can draw ~150 mA *extra* per servo with no buzz if the
+   builder uses the "silence" rule — telemetry/current probe recommended, not just
+   listening.
+
+## 6. Supplementary research — 10 additional investigations
+
+Ten further Firecrawl searches/scrapes (2026-08-05) on servo topics adjacent to the
+catalog, with the facts each produced. Sources numbered per §7.
+
+| # | Investigation | Key findings | Source(s) |
+|---|---|---|---|
+| S1 | **How servo torque is measured / stiffness test method** | Torque is measured as force × distance (kg·cm / oz·in). Stiffness is measured statically: apply known load to the horn, measure deflection. An open-source **backlash test stand** (PMC, 2025) applies repeatable loads to a servo lever and measures displacement — a directly applicable method to characterize the freeplay that ADR-0026 forbids | RCGroups, hlt-cnc, PMC `[M]` |
+| S2 | **Deadband specifications** | Digital servos have low deadband; the cheap class rarely publishes it. Test method: set trim step to 1 µs and find the first step that moves the output. Published micro-digital deadbands in the low-µs class (Corona DS-939MG ≤ 3 µs); Spektrum lists "low deadband" as a digital-servo differentiator | RCGroups, Spektrum `[M]` |
+| S3 | **ES09MD vs DS939 vs MG90S — comparative** | Independent test (YouTube *Servo Comparison*): **EMAX servos recommended overall**; **MG90S was fastest but jittery at 6 V**; **Corona DS939HV "a total let down"**. RCGroups alert: **the Emax ES09MD, sold as metal-gear, contains one plastic gear in the train** — verify on the batch received. Eclipson-recommended MG90S: users report losing servos during setup | YouTube, RCGroups, FB `[I]` |
+| S4 | **Hinge-moment / servo sizing methods** | Same model as §2.1 (basicairdata XFOIL, FliteTest spreadsheet cross-checked vs AVL, NASA NTRS, Aerade flight data). Consensus: for RC surfaces the servo sizing is not critical; mechanical/hinge design dominates | §7.15–18 `[M]` |
+| S5 | **Digital-servo current & BEC** | See §5: measured avg 0.3–1.3 A, peak 5–9.3 A per servo class; capacitance near servos cuts peaks; 2 A BECs manage most small models | Model Aviation, FliteTest, HeliFreak `[M]`/`[I]` |
+| S6 | **HV servos at 8.4 V (2S/6S compatibility)** | HV servos tolerate a direct 8.4 V supply; run at lower voltage they lose speed/torque. On a 6S airframe the servo rail is a BEC output, so HV capability is a headroom/availability factor, not a wiring requirement. HV claims (reduced glitching/spikes) are common but not independently measured here | RCGroups, rchelicopterfun, Reddit `[I]` |
+| S7 | **Flying-wing elevon servo practice** | Ecosystem practice confirms the 9–19 g class: Dan Wing EPP uses **Hitec HS-85MG**; DW Hobby Rainbow V2 flies elevons on **Emax ES9051 (4.1 g digital mini)**; Eclipson airframes use **MG90S**. Elevon wiring is 2 channels + radio mixing | RCGroups, supermotoxl, FliteTest, FB `[I]` |
+| S8 | **Motor/gear technology trade-offs** | Coreless (brushed, no iron core): faster/lower inertia than cored, **lower torque, wears out** (brushes). Brushless: longest life, most expensive. Metal gears survive loads; plastic/mixed trains are the common failure point (ES09MD S3; MG90S S9). For this application (4 small servos, budget) coreless/metal is a luxury, cored/metal is the norm | Hitec UK, Reddit, eurorc `[I]` |
+| S9 | **MG90S reliability** | "**MG90S is not a reference servo anymore**": batch quality/consistency issues; **cannot assume genuine/all-metal until disassembled**; jitter reports at 6 V (S3); stripped gears and wire strain-relief breaks are the typical failure modes | FB, kpower, OpenRCForums, YouTube `[I]` |
+| S10 | **Mounting in 3D-printed wings / horns** | Printable servo-mount + control-horn kits exist for the exact Corona DS-939MG (yeggi/Thingiverse ecosystem). Community practice: glue servo blocks to the inside of the top skin, horns on the control surface with clearance slots; flightory (FPV-printed-wing community) discusses horn attachment methods for printed surfaces | yeggi, Aloft, Flightory, Du-Bro `[I]` |
+
+## 7. Popularity basis
 
 Ranking/review reflects cross-referencing of: (a) the **TBS Mojito** ecosystem
 (the market-reference 1300 mm wing, guide §4) — its bundled servo is 19 g/3.2 kg·cm
@@ -149,7 +210,7 @@ builds); (c) forum/budget-servo consensus (Savox/Pro-Modeler recommended on RCG,
 with Savox as the value pick). The 9–15 g **digital metal-gear micro** is the
 de-facto class for elevons on 1.1–1.6 m printed FPV wings.
 
-## 7. Sources
+## 8. Sources
 
 1. TBS — Mojito servo product page (rotorama.com, diyfpv.com): 19 g, 0.24–0.26 s/60°, 3.2 kg·cm, 30×13.25×28 mm, €20.6 / $23.7. `[M]`
 2. TBS — Mojito kit product page (team-blacksheep.com): optional airbrake servos; electronics bundle. `[M]`
@@ -165,10 +226,24 @@ de-facto class for elevons on 1.1–1.6 m printed FPV wings.
 12. SYNAPSE wing build (YouTube) — elevon servos: "EXI digital metal gear 9 g, or any servo in this size range with robust torque." `[I]`
 13. RCGroups — budget-servo recommendation thread: Savox and Pro-Modeler as value/quality picks. `[I]`
 14. Hinge-moment model and margins — `calculations/servo_torque.py`. `[D]`/`[E]`
+15. Basic Air Data — *Elevator Hinge Moment* (basicairdata.eu): `C_He ≡ H_e/(0.5·ρ·V²·S_e·c̄_e)`, XFOIL-based RC servo sizing. `[M]`
+16. FliteTest forum — *Calculating Hinge & Servo Torque* (Mid7night/Ben Harber): control-surface torque spreadsheet cross-checked vs AVL. `[I]`
+17. NASA NTRS 19780023100 — *Control-Surface Hinge-Moment Calculations for a High-Aspect-Ratio Wing* (Perry III, 1978). `[M]`
+18. Aerade ARC R&M 3485 — *Flight Measurements of the Elevator and Aileron Hinge-Moment Derivatives* (Rose, 1965). `[M]`
+19. Model Aviation — *Digital Servos* (Buxton, 2017): current-probe measurements avg 0.3–1.3 A, peaks 5–9.3 A; capacitance mitigates peaks. `[M]`
+20. Model Aviation — *Flight Control Servo Balancing* (Richardson, 2025): dual-servo no-buzz setup ≤180 mA/servo static vs ~30 mA idle. `[M]`
+21. RCGroups — *Servo torque (How is it measured)*; *Servo Resolution/DeadBand Test* (1 µs trim-step method). `[M]`/`[I]`
+22. YouTube — *Servo Comparison* (EMAX vs MG90S vs Corona DS939HV): EMAX recommended; MG90S fastest but jittery at 6 V; Corona disappointing. `[I]`
+23. RCGroups — *Alert: Emax ES09MD — not all gears are metal* (one plastic gear in the train). `[I]`
+24. Hitec UK — *Explainer: motor types* (coreless vs cored brushed vs brushless trade-offs). `[M]`
+25. Community practice — Dan Wing EPP build (Hitec HS-85MG), DW Hobby Rainbow V2 (Emax ES9051), Eclipson (MG90S), MG90S quality thread, printable DS-939MG servo mount + horn kits (yeggi), Flightory horn-attachment thread. `[I]`
 
 **Confidence:** servo specs and prices are `[M]` (manufacturer/datasheet/store).
-The hinge-moment requirement is `[D]` (geometry) over an `[E]` range of `Ch`. The
-mass budget (60 g / 4 servos) is `[E]` class-typical from the guide justification.
-The single most valuable verification is **measuring a real servo** (mass, deadband,
-holding stiffness, actual stall torque at the FC's BEC voltage) with the batch the
+The hinge-moment requirement is `[D]` (geometry) over an `[E]` range of `Ch`, with
+the model form independently corroborated `[M]` (§2.1). The current-draw figures
+in §5 are `[M]` (published oscilloscope/current-probe measurements). Mass budget
+(60 g / 4 servos) is `[E]` class-typical. Community/practice findings (S3, S7, S9,
+S10) are `[I]` — forum consensus, not primary data. The single most valuable
+verification is **measuring a real servo** (mass, deadband, holding stiffness,
+actual stall torque and current draw at the FC's BEC voltage) with the batch the
 builder actually buys.
