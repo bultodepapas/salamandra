@@ -5,3 +5,4 @@ is a 3d printed plane
 read the readme
 you are the scientific boss
 use mcp firecrawl for search
+all docs in precise english technical profesional

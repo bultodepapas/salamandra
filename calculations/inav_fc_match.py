@@ -192,6 +192,56 @@ def main():
     print(f"  Mass budget absorbed: worst board {m_max:.0f} g << 110 g "
           f"avionics allowance (balance_cg.py)")
 
+    # --- electrical power budget (I-17 §5.x) -------------------------------
+    print("\n" + "=" * 78)
+    print("ELECTRICAL POWER BUDGET (5V avionics rail + servo rail)")
+    print("=" * 78)
+    print("  Sources: FC draw measured [M] (quadmeup: F4 ~93 mA; dronehitech:")
+    print("  FC 100 mA, RX 100 mA); GPS [M] (BN-220 35 / BN-880 45 / M10 25 mA);")
+    print("  the rest are declared estimates [E] (see I-17 §5).")
+    print()
+    # (name, I_mA_low, I_mA_high, rail, tag)
+    COMP = [
+        ("FC board (INAV F4 wing, OSD+SD)", 150, 250, "5V", "[E]"),
+        ("RX ELRS 2.4G (EP1 class)",        100, 200, "5V", "[E]"),
+        ("GPS M10 + compass",                25,  60, "5V", "[M]"),
+        ("Pitot MS4525 (I2C)",                5,  15, "5V", "[E]"),
+        ("Buzzer (transient)",               20,  30, "5V", "[E]"),
+        ("4x servo 13-15 g digital (idle)",  40,  80, "Vx", "[E]"),
+        ("4x servo (active/mixed)",         600, 1200, "Vx", "[E]"),
+        ("4x servo (stall, brief)",        2800, 4000, "Vx", "[E]"),
+    ]
+    print(f"{'component':>38} {'min mA':>8} {'max mA':>8} {'rail':>4}  tag")
+    print("-" * 78)
+    for name, lo, hi, rail, tag in COMP:
+        print(f"{name:>38} {lo:>7.0f} {hi:>8.0f} {rail:>4}  {tag}")
+
+    lo5 = sum(c[1] for c in COMP if c[3] == "5V")
+    hi5 = sum(c[2] for c in COMP if c[3] == "5V")
+    loV = sum(c[1] for c in COMP if c[3] == "Vx" and "stall" not in c[0])
+    hiV = sum(c[2] for c in COMP if c[3] == "Vx" and "stall" not in c[0])
+    loS = sum(c[1] for c in COMP if c[3] == "Vx")
+    hiS = sum(c[2] for c in COMP if c[3] == "Vx")
+    print("-" * 78)
+    print(f"  5V rail  total        : {lo5:6.0f} ... {hi5:6.0f} mA  "
+          f"(Matek F405/F765 5V BEC = 2 A)")
+    print(f"  Servo rail total (act.): {loV:6.0f} ... {hiV:6.0f} mA  "
+          f"(Vx BEC 5 A / F765 8 A)")
+    print(f"  Servo rail total (stall): {loS:6.0f} ... {hiS:6.0f} mA  "
+          f"(brief, below Vx BEC limits)")
+
+    w5 = (lo5 + hi5) / 2 / 1000 * 5.0          # W on 5V rail (5 V)
+    wV = (loV + hiV) / 2 / 1000 * 5.0          # W on servo rail (5 V)
+    cruise_w = 22.0 * 5.0                      # W, guide §10.1: ~5 A @ ~22 V (6S)
+    pct = (w5 + wV) / cruise_w * 100
+    print(f"\n  Avionics power: ~{w5:.1f} W (5V rail) + ~{wV:.1f} W (servos) "
+          f"= ~{w5+wV:.1f} W")
+    print(f"  Cruise power (guide §10.1): ~{cruise_w:.0f} W "
+          f"(5 A @ 22 V, 6S)  ->  avionics ~{pct:.1f} % of cruise")
+    print(f"  Energy impact on range: at ~{w5+wV:.1f} W over a 60-min flight "
+          f"= {(w5+wV)/60:.2f} Wh, "
+          f"~{(w5+wV)*1/1000:.2f}% of a 6S1P P42A pack (90.7 Wh)")
+
 
 if __name__ == "__main__":
     main()

@@ -196,6 +196,28 @@ facts for the designer, not rulings.
   (5 A, up to 8 A on the F765). With 4 digital servos at ~13–15 g class, current is
   low single-digit amps — any listed board suffices `[D]`.
 
+### 4.1 Size summary — minimum / average / recommended (for the designer)
+
+Computed by `calculations/inav_fc_match.py` from the 8 surveyed boards `[D]`
+(board specs `[M]`). The **minimum** and **maximum** are per-dimension floors and
+ceilings across the survey (they do not correspond to a single board); the
+**average** is the arithmetic mean of all 8.
+
+| Size | Length × Width × Height | Board mass | Interpretation |
+|---|---|---|---|
+| **Minimum** (per-dimension floor) | **28 × 28 × 7 mm** | 8.4 g | Smallest class (F411-WSE / 20-mm-ish slim boards) |
+| **Average** (8 surveyed) | **45 × 34 × 12 mm** | 17.4 g | Typical INAV fixed-wing board |
+| **Maximum** (per-dimension ceiling) | **56 × 37 × 13 mm** | 26 g | Largest class (F405-WING v1 / F765-WING) |
+| **Recommended station cavity** | **64 × 45 × 21 mm** | — | Largest board + 8 mm clearance per axis + cable/bend room; accepts every board in this survey |
+
+> **Design guidance:** model the CORE avionics station to the **recommended
+> cavity 64 × 45 × 21 mm** with a **30.5 × 30.5 mm, Φ4 mm** boss/tray — that one
+> pattern accepts the entire catalog, past and present. A station sized only for
+> the **average** (45 × 34 × 12 mm) accepts most boards but not the largest
+> (F405-WING v1); a station at the **minimum** (28 × 28) commits the builder to a
+> specific tiny board. The reference guide §11 avionics mass (110 g) absorbs any
+> board: the heaviest (26 g) is 24 % of the allowance `[D]`.
+
 ## 5. Wiring notes for this aircraft
 
 - **Pitot (mandatory):** digital MS4525 on **I2C** — every board here has ≥1 I2C.

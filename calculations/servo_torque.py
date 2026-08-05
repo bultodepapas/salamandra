@@ -46,7 +46,7 @@ def main():
     span_e = B / 2 * (ETA_OUT - ETA_IN)      # 390 mm
     s_control = span_e * c_av                 # superficie de un elevon, m^2
     print(f"  Elevon: cuerda media {c_av*1000:.0f} mm, vano {span_e*1000:.0f} mm, "
-          f"S_control = {s_control*1e4:.1f} dm^2")
+          f"S_control = {s_control*1e4:.0f} cm^2 = {s_control*1e2:.1f} dm^2")
     print(f"  V diseno = {V_NE*3.6:.0f} km/h, rho = {RHO} kg/m^3")
 
     print("\n  Par de bisagra por elevon  (Mh = 0.5 rho V^2 S c Ch):")

@@ -165,8 +165,10 @@ python3 inav_fc_match.py
 Cross-checks each candidate board (specs `[M]` from manufacturer pages) against
 the Salamandra avionics requirements (guide §11). Published result (I-17 §3):
 **YES** for F405-WING v1/V2, F765-WING, F722-WING, SpeedyBee F405 WING; **no** for
-F411-WING/F411-WSE (no blackbox) and Foxeer F405 V2 (no current input). A change
-to the requirement set or board specs must reproduce these lines.
+F411-WING/F411-WSE (no blackbox) and Foxeer F405 V2 (no current input). Also
+prints the footprint summary (I-17 §4.1): min 28×28×7, avg 45×34×12, max
+56×37×13 mm, recommended station cavity **64 × 45 × 21 mm**. A change to the
+requirement set or board specs must reproduce these lines.
 
 ---
 
