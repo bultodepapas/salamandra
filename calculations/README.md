@@ -43,6 +43,7 @@ Data sources consumed (all `[M]`):
 | `balance_cg.py` | **OP-01: mass/CG balance** — pack-station solver for the CG target; planform-centroid self-check; bay sizing for the nose boom; envelope checks (AUW, V_stall) | OP-01, justification §3.1–3.2 | numpy |
 | `elevon_authority.py` | **Elevon control power** — ΔCm per degree of elevon deflection (step incidence over 30–90 % half-span) via the VLM; trim closure and control margin at SM 8 % | Guide §5.3/§6.1, C6 (partial) | numpy |
 | `battery_pack_layout.py` | **I-16: pack envelope** — enumerates every rectangular (n_x,n_y,n_z) layout of the 4S/6S 21700 pack, computes finished envelope (wrapper, nickel, leads) and fit-checks against the 190 × 70 × 32 bay | I-16, guide §9, OP-23 | stdlib only |
+| `inav_fc_match.py` | **I-17: FC compatibility** — cross-checks the popular INAV boards (Matek WING, SpeedyBee, Foxeer) against the Salamandra avionics requirements (≥5 PWM, ≥2 UART, ≥1 I2C, blackbox, current, baro, 6S voltage) | I-17, guide §11, CORE avionics | stdlib only |
 
 ## Reproducing the published results
 
@@ -154,6 +155,18 @@ their average. Published results (I-16 §4–§5, §6.1):
 provisional bay (all others are buildable with a resized bay). Pack masses:
 6S1P P42A 445 g / 50E 433 g / avg 439 g; 4S1P 305 / 297 / 301 g. A change to the
 fit test, assembly allowances, or cell specs must reproduce these values.
+
+### 8. INAV flight-controller compatibility (I-17)
+
+```bash
+python3 inav_fc_match.py
+```
+
+Cross-checks each candidate board (specs `[M]` from manufacturer pages) against
+the Salamandra avionics requirements (guide §11). Published result (I-17 §3):
+**YES** for F405-WING v1/V2, F765-WING, F722-WING, SpeedyBee F405 WING; **no** for
+F411-WING/F411-WSE (no blackbox) and Foxeer F405 V2 (no current input). A change
+to the requirement set or board specs must reproduce these lines.
 
 ---
 
