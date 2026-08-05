@@ -1,43 +1,43 @@
-# ADR-0022 — Velo de carbono ±45° sobre la piel
+# ADR-0022 — Carbon veil ±45° over the skin
 
-**Estado:** ❌ **ANULADA** · **Fecha de anulación:** 2026-07-28
+**Status:** ❌ **CANCELLED** · **Cancellation date:** 2026-07-28
 
-## Qué proponía
+## What it proposed
 
-Laminar tejido de carbono de 80 g/m² a ±45° sobre el 60 % interior de la semienvergadura, continuo sobre las juntas entre segmentos.
+Lay up 80 g/m² carbon fabric at ±45° over the inner 60 % of the half-span, continuous over the joints between segments.
 
-## Por qué se propuso
+## Why it was proposed
 
-Resolvía **dos problemas a la vez**:
+It solved **two problems at once**:
 
-1. **Rigidez torsional.** Una capa de 0,12 mm curados a ±45° aporta G·t ≈ 2,0 kN/mm frente a 0,50 de 0,9 mm de PETG. Multiplicaba GJ por ~4 con 60–90 g.
-2. **Juntas.** Laminado continuo sobre los empalmes convierte la unión encolada en un **empalme laminado**: el adhesivo posiciona, la fibra pasa el par.
+1. **Torsional stiffness.** A 0.12 mm layer cured at ±45° provides G·t ≈ 2.0 kN/mm versus 0.50 for 0.9 mm of PETG. It multiplied GJ by ~4 with 60–90 g.
+2. **Joints.** A continuous layup over the splices turns the glued joint into a **laminated splice**: the adhesive positions, the fiber carries the torque.
 
-## Por qué se anula
+## Why it is cancelled
 
-**Decisión de proyecto**, alineada con el objetivo O5 (facilidad de fabricación): el laminado húmedo introduce una habilidad manual, tiempo de curado y un consumible que el resto del proyecto no necesita.
+**Project decision**, aligned with objective O5 (ease of manufacturing): wet layup introduces a manual skill, curing time and a consumable that the rest of the project does not need.
 
-Motivos técnicos concurrentes:
+Concurrent technical reasons:
 
-- **El velo es una pantalla de RF.** La antena GPS no puede quedar bajo el laminado; obligaba a ventana en la fibra o a externalizar el módulo.
-- Impide la reparación por reimpresión de segmento (O7).
+- **The veil is an RF screen.** The GPS antenna cannot sit under the layup; it forced a window in the fabric or externalizing the module.
+- It prevents repair by segment reprinting (O7).
 
-## Qué ocupa su lugar
+## What takes its place
 
-| Vía | Efecto en V_div | Masa |
+| Path | Effect on V_div | Mass |
 |---|---|---|
-| t/c 11 % → 13,5 % | ×1,18 | +30 g |
-| Relleno giroide ([ADR-0028](ADR-0028-relleno-giroide.md)) | Evita el pandeo de piel | +40 g |
-| Segunda alma de cortante (tres células) | ×1,12 | +40 g |
+| t/c 11 % → 13.5 % | ×1.18 | +30 g |
+| Gyroid infill ([ADR-0028](ADR-0028-gyroid-infill.md)) | Prevents skin buckling | +40 g |
+| Second shear web (three cells) | ×1.12 | +40 g |
 
-Coste neto frente al velo: ~+35 g. Se acepta.
+Net cost versus the veil: ~+35 g. Accepted.
 
-## Consecuencias de la anulación
+## Consequences of the cancellation
 
-- **ADR-0025 (equilibrado de masa de elevones) pasa a innegociable.** Sin velo, ω_α baja y se acerca a los modos de servo.
-- **G6 sube de prioridad**: con menos margen absoluto, estrechar el factor de flecha importa más.
-- Desaparece el conflicto GPS–carbono. Ala 100 % plástica = transparente a RF en todas partes.
+- **ADR-0025 (elevon mass balancing) becomes non-negotiable.** Without the veil, ω_α drops and approaches the servo modes.
+- **G6 rises in priority**: with less absolute margin, narrowing the sweep factor matters more.
+- The GPS–carbon conflict disappears. 100 % plastic wing = RF-transparent everywhere.
 
-## Condiciones de reconsideración
+## Reconsideration conditions
 
-Si E7 midiera una divergencia por debajo de criterio y el remedio plástico saliera demasiado pesado, el velo vuelve a la mesa como solución de mínima masa.
+If E7 measured a divergence below criterion and the plastic remedy came out too heavy, the veil returns to the table as the minimum-mass solution.

@@ -1,64 +1,64 @@
-# ADR-0032 — Arquitectura modular CORE + PANEL
+# ADR-0032 — Modular CORE + PANEL architecture
 
-**Estado:** ✅ Vigente · **Fecha:** 2026-07-28 · **Confianza:** Alta · **Reversible:** No
+**Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High · **Reversible:** No
 
-## Contexto
+## Context
 
-El proyecto debe soportar distintos usos (alcance, crucero, sport) y distintas baterías (4S–6S) sin rediseñar el avión. La vía natural es modularizar. **En un avión sin cola esa vía tiene una trampa.**
+The project must support different uses (range, cruise, sport) and different batteries (4S–6S) without redesigning the aircraft. The natural path is to modularize. **On a tailless aircraft that path has a trap.**
 
-## La trampa
+## The trap
 
-En un avión convencional cambias alas y la cola sigue mandando la estabilidad. **Aquí el ala *es* la estabilidad.** Un panel más largo cambia alargamiento, CMA y **posición del punto neutro**. Un perfil distinto cambia el C_m0 y con él el trim.
+On a conventional aircraft you change wings and the tail still governs stability. **Here the wing *is* the stability.** A longer panel changes the aspect ratio, the MAC and the **neutral point position**. A different airfoil changes the C_m0 and with it the trim.
 
-**Consecuencia: no se pueden ofrecer paneles arbitrarios.** Un juego que desplace el punto neutro 15 mm convierte un margen estático del 8 % en 15 % — o en negativo.
+**Consequence: arbitrary panels cannot be offered.** A set that moves the neutral point 15 mm turns an 8 % static margin into 15 % — or negative.
 
-## Decisión
+## Decision
 
-**Módulo central estándar (CORE) + paneles intercambiables (PANEL)**, con dos requisitos derivados obligatorios.
+**Standard center module (CORE) + interchangeable panels (PANEL)**, with two mandatory derived requirements.
 
 ```
-CORE-1          Muñones de ala hasta el ~30 % de semienvergadura,
-                bahía de batería con ajuste longitudinal, aviónica, bancada.
-                Dimensionado para el panel más exigente.
+CORE-1          Wing joiners up to ~30 % of half-span,
+                battery bay with longitudinal adjustment, avionics, motor mount.
+                Sized for the most demanding panel.
 
-PANEL-xxxx-y    xxxx = envergadura total resultante · y = familia de perfil
+PANEL-xxxx-y    xxxx = resulting total wingspan · y = airfoil family
 ```
 
-## R-NP — punto neutro común de familia
+## R-NP — common family neutral point
 
-**Cada juego de paneles se diseña contra un punto neutro objetivo común.** Los paneles largos compensan con flecha o torsión distinta para devolver el NP a la banda.
+**Each panel set is designed against a common target neutral point.** Long panels compensate with different sweep or twist to bring the NP back into the band.
 
-No hay libertad de panel: hay un **catálogo validado que comparte centrado**.
+There is no panel freedom: there is a **validated catalog that shares the balance**.
 
-## R-JUNTA — rigidez de la interfaz
+## R-JOINT — interface stiffness
 
-La junta es un **muelle torsional en serie** con el ala:
+The joint is a **torsional spring in series** with the wing:
 
-    1/k_ef = 1/k_ala + 1/k_junta
+    1/k_eff = 1/k_wing + 1/k_joint
 
-| Rigidez de junta | GJ efectivo | Penalización en V_div |
+| Joint stiffness | Effective GJ | Penalty in V_div |
 |---|---|---|
-| Igual que la sección | 50 % | −29 % ❌ |
+| Same as the section | 50 % | −29 % ❌ |
 | 3× | 75 % | −13 % ⚠️ |
 | **5×** | **83 %** | **−9 %** ✅ |
 
-**Requisito: rigidez torsional de junta ≥ 5× la de la sección adyacente.**
+**Requirement: joint torsional stiffness ≥ 5× that of the adjacent section.**
 
-Dos consecuencias de diseño:
+Two design consequences:
 
-1. **La junta no va en la raíz** — es donde el par es máximo. El CORE lleva muñones hasta el ~30 % de semienvergadura, donde el par ha caído a la mitad. Es lo que hacen los veleros modulares, y por esta razón.
-2. **Dos pasadores, no uno.** Un tubo único transmite flexión pero deja la torsión al ajuste del manguito. Dos pasadores separados transmiten el par **como par de fuerzas**, con el brazo entrando lineal: tubo principal + pasador antirrotación 60–80 mm por detrás.
+1. **The joint is not at the root** — that is where the torque is maximum. The CORE carries joiners up to ~30 % of half-span, where the torque has fallen to half. That is what modular gliders do, and for this reason.
+2. **Two pins, not one.** A single tube transmits bending but leaves torsion to the sleeve fit. Two separate pins transmit the torque **as a couple**, with the arm entering linearly: main tube + anti-rotation pin 60–80 mm behind.
 
-## Consecuencias
+## Consequences
 
-- El CORE va **sobredimensionado** para el panel corto. Es el precio, y es aceptable: es la parte que no se reimprime.
-- La modularidad es también la **estrategia de iteración del proyecto**: si un panel sale blando o mal centrado, se reimprime el panel y el CORE sobrevive.
-- Obliga a publicar **configuraciones validadas**, no piezas sueltas.
+- The CORE is **oversized** for the short panel. That is the price, and it is acceptable: it is the part that is not reprinted.
+- Modularity is also the project's **iteration strategy**: if a panel comes out soft or badly balanced, the panel is reprinted and the CORE survives.
+- Forces publishing **validated configurations**, not loose parts.
 
-## Configuraciones publicadas
+## Published configurations
 
-| Config | Paneles | Batería sugerida | Uso |
+| Config | Panels | Suggested battery | Use |
 |---|---|---|---|
-| Range | 1600 | 4S2P Li-Ion 21700 | Alcance máximo |
-| **Cruise** | 1300 | 6S1P Li-Ion 21700 | **Artículo #1** |
-| Sport | 1100 | 6S LiPo | Vuelo rápido |
+| Range | 1600 | 4S2P Li-Ion 21700 | Maximum range |
+| **Cruise** | 1300 | 6S1P Li-Ion 21700 | **Article #1** |
+| Sport | 1100 | 6S LiPo | Fast flight |

@@ -1,33 +1,33 @@
-# ADR-XXXX — Título
+# ADR-XXXX — Title
 
-**Estado:** ✅ Vigente / 🔄 Provisional / ⬜ Superada / ❌ Anulada / ⚠️ En disputa
-**Fecha:** AAAA-MM-DD
-**Confianza:** Alta / Media / Baja · `[M]` `[D]` `[E]` `[I]`
-**Reversible:** Sí / Parcial / No
-**Brechas relacionadas:** GX
-**Investigación de apoyo:** [I-XX](../investigacion/...)
+**Status:** ✅ Active / 🔄 Provisional / ⬜ Superseded / ❌ Cancelled / ⚠️ Under dispute
+**Date:** YYYY-MM-DD
+**Confidence:** High / Medium / Low · `[M]` `[D]` `[E]` `[I]`
+**Reversible:** Yes / Partial / No
+**Related gaps:** GX
+**Supporting research:** [I-XX](../research/...)
 
-## Contexto
+## Context
 
-Qué problema obliga a decidir. Qué se sabía y qué no.
+What problem forces the decision. What was known and what was not.
 
-## Alternativas consideradas
+## Alternatives considered
 
-| Opción | A favor | En contra | Por qué se descarta |
+| Option | For | Against | Why it is discarded |
 |---|---|---|---|
 
-## Decisión
+## Decision
 
-Qué se decide, en una frase inequívoca.
+What is decided, in one unambiguous sentence.
 
-## Fundamento
+## Rationale
 
-Datos, cálculo y fuentes. Cada cifra con etiqueta de confianza.
+Data, calculation and sources. Every figure with a confidence tag.
 
-## Consecuencias
+## Consequences
 
-Qué obliga esta decisión aguas abajo. Qué cierra y qué abre.
+What this decision requires downstream. What it closes and what it opens.
 
-## Condiciones de revisión
+## Review conditions
 
-Qué dato haría reconsiderar esto.
+What datum would make you reconsider this.

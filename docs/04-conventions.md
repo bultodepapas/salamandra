@@ -1,64 +1,64 @@
-# Convenciones y nomenclatura
+# Conventions and nomenclature
 
-## Etiquetas de confianza
+## Confidence tags
 
-| Etiqueta | Significado |
+| Tag | Meaning |
 |---|---|
-| `[M]` | Medido y publicado por una fuente primaria |
-| `[D]` | Derivado por cálculo a partir de datos `[M]` |
-| `[E]` | Estimado sobre supuestos declarados |
-| `[I]` | Inferencia razonada, no verificada |
+| `[M]` | Measured and published by a primary source |
+| `[D]` | Derived by calculation from `[M]` data |
+| `[E]` | Estimated on declared assumptions |
+| `[I]` | Reasoned inference, not verified |
 
-**Regla dura:** ningún dato `[E]` o `[I]` sostiene una decisión irreversible sin verificación previa.
+**Hard rule:** no `[E]` or `[I]` datum supports an irreversible decision without prior verification.
 
-## Identificadores
+## Identifiers
 
-| Prefijo | Significado | Vive en |
+| Prefix | Meaning | Lives in |
 |---|---|---|
-| `ADR-XXXX` | Decisión de diseño | `decisiones/` |
-| `I-XX` | Línea de investigación | `investigacion/` |
-| `GX` | Brecha de datos | `brechas/` |
-| `EX` | Ensayo | `ensayos/` |
-| `OX` | Objetivo | `docs/00-...` |
-| `R-XXX` | Requisito derivado | `docs/00-...` |
-| `CX` | Corrección registrada | `CHANGELOG.md` |
-| `FX` | Fase del proyecto | `docs/` |
+| `ADR-XXXX` | Design decision | `decisions/` |
+| `I-XX` | Research thread | `research/` |
+| `GX` | Data gap | `gaps/` |
+| `EX` | Test | `tests/` |
+| `OX` | Objective | `docs/00-...` |
+| `R-XXX` | Derived requirement | `docs/00-...` |
+| `CX` | Recorded correction | `CHANGELOG.md` |
+| `FX` | Project phase | `docs/` |
 
-## Símbolos
+## Symbols
 
-| Símbolo | Magnitud | Unidad |
+| Symbol | Quantity | Unit |
 |---|---|---|
-| b | Envergadura | m |
-| S | Superficie alar | m² |
-| AR | Alargamiento, b²/S | — |
-| c | Cuerda | m |
-| c̄ | Cuerda media aerodinámica | m |
-| t/c, h/c | Espesor relativo | % |
-| ε | Torsión geométrica (wash-in positivo) | ° |
-| Λ | Flecha del c/4 (negativa = invertida) | ° |
-| q | Presión dinámica | Pa |
-| GJ | Rigidez torsional | N·m² |
-| EI | Rigidez a flexión | N·m² |
-| J | Constante de torsión / relación de avance de hélice | m⁴ / — |
-| e_i | Eficiencia de envergadura no viscosa | — |
-| e_v | Factor de Oswald (**no usar solo** — ver I-01) | — |
-| η | Rendimiento propulsivo | — |
-| V_div | Velocidad de divergencia | km/h |
-| ω_h, ω_α, ω_β | Frecuencias de flexión, torsión, elevón | Hz |
+| b | Wingspan | m |
+| S | Wing area | m² |
+| AR | Aspect ratio, b²/S | — |
+| c | Chord | m |
+| c̄ | Mean aerodynamic chord | m |
+| t/c, h/c | Relative thickness | % |
+| ε | Geometric twist (positive wash-in) | ° |
+| Λ | c/4 sweep (negative = forward) | ° |
+| q | Dynamic pressure | Pa |
+| GJ | Torsional stiffness | N·m² |
+| EI | Bending stiffness | N·m² |
+| J | Torsion constant / propeller advance ratio | m⁴ / — |
+| e_i | Non-viscous span efficiency | — |
+| e_v | Oswald factor (**not to use alone** — see I-01) | — |
+| η | Propulsive efficiency | — |
+| V_div | Divergence speed | km/h |
+| ω_h, ω_α, ω_β | Bending, torsion, elevon frequencies | Hz |
 
-## Convenciones de signo
+## Sign conventions
 
-- **Flecha:** negativa hacia delante. Este proyecto usa Λ ≈ −20°.
-- **Torsión:** wash-in positivo (punta a mayor incidencia). Este proyecto usa wash-in.
-- **Factor de carga:** positivo hacia arriba.
+- **Sweep:** negative forward. This project uses Λ ≈ −20°.
+- **Twist:** positive wash-in (tip at higher incidence). This project uses wash-in.
+- **Load factor:** positive upward.
 
-## Unidades
+## Units
 
-SI en cálculo. En tablas de presentación se admiten km/h para velocidad y g/dm² para carga alar, por ser las de uso corriente en el ámbito.
+SI in calculations. In presentation tables, km/h for speed and g/dm² for wing loading are allowed, as they are the common units in the field.
 
-## Convenciones de escritura
+## Writing conventions
 
-- Toda cifra cuantitativa lleva etiqueta de confianza la primera vez que aparece en un documento.
-- Los rangos se escriben `a–b`, no `a-b`.
-- Las advertencias importantes van con ⚠️ y explican **la consecuencia**, no solo el hecho.
-- Las correcciones **no se silencian editando**: se corrige el texto y se anota en el CHANGELOG.
+- Every quantitative figure carries a confidence tag the first time it appears in a document.
+- Ranges are written `a–b`, not `a-b`.
+- Important warnings go with ⚠️ and explain **the consequence**, not just the fact.
+- Corrections **are not silenced by editing**: fix the text and record it in the CHANGELOG.

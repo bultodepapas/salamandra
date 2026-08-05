@@ -1,59 +1,59 @@
-# Registro de decisiones (ADR)
+# Decision record (ADR)
 
-Una decisión, un archivo. Cada ADR declara **contexto, alternativas consideradas, decisión, consecuencias y confianza**.
+One decision, one file. Each ADR declares **context, alternatives considered, decision, consequences and confidence**.
 
-## Estados
+## States
 
-| Estado | Significado |
+| State | Meaning |
 |---|---|
-| ✅ **Vigente** | En efecto |
-| 🔄 **Provisional** | En efecto pero apoyada en `[E]`/`[I]`; se revisa al cerrar la brecha asociada |
-| ⬜ **Superada** | Sustituida por otra ADR |
-| ❌ **Anulada** | Retirada sin sustituto |
-| ⚠️ **En disputa** | Sin datos para resolver |
+| ✅ **Active** | In force |
+| 🔄 **Provisional** | In force but supported by `[E]`/`[I]`; reviewed when the associated gap closes |
+| ⬜ **Superseded** | Replaced by another ADR |
+| ❌ **Cancelled** | Withdrawn without replacement |
+| ⚠️ **Under dispute** | No data to resolve |
 
 ---
 
-## Índice
+## Index
 
-| # | Decisión | Estado | Confianza | Reversible |
+| # | Decision | State | Confidence | Reversible |
 |---|---|---|---|---|
-| [0001](ADR-0001-flecha-invertida.md) | Ala volante de flecha invertida | ✅ | Alta | No |
-| [0002](ADR-0002-cascara-cerrada.md) | Estructura de cáscara cerrada de tres células | ✅ | Media `[I]` | No |
-| 0003 | Torsión de tipo wash-in | 🔄 | Alta | Parcial |
-| [0004](ADR-0004-alargamiento.md) | Alargamiento 6,0 | 🔄 | Media `[E]` | No |
-| 0005 | Perfil reflexado y delgado | ⬜ | — | — |
-| 0006 | Monomotor propulsor preferido | ⚠️ | Baja `[I]` | Sí |
-| [0007](ADR-0007-helice.md) | Hélice P/D 0,8–1,0 emparejada por J | ✅ | Alta | Sí |
-| 0008 | Rechazar hélice 7×12 | ✅ | Alta | Sí |
-| 0009 | Descomposición separada de resistencia; nunca Oswald único | ✅ | Alta | No |
-| [0010](ADR-0010-rama-de-mision.md) | Rama A — crucero rápido | ✅ | Decidida | No |
-| 0012 | Color claro obligatorio | ✅ | Alta | Sí |
-| [0015](ADR-0015-carbono-no-torsional.md) | Carbono como flexión y pasador, no torsión | ✅ | Alta `[D]` | Sí |
-| 0016 | Rechazar PLA+ | ✅ | Alta `[M]` | — |
-| 0018 | Rechazar ABS por degradación UV | ✅ | Alta `[M]` | — |
-| [0021](ADR-0021-material-base.md) | PETG como material base | ✅ | Alta | Parcial |
-| [0022](ADR-0022-velo-carbono-anulada.md) | Velo de carbono ±45° | ❌ **Anulada** | — | — |
-| 0023 | Juntas: espiga + adhesivo PETG, área ≥ 3× | 🔄 | Media | Sí |
-| 0024 | 3 segmentos por semiala, 45° en cama | ✅ | Alta | Sí |
-| [0025](ADR-0025-equilibrado-elevones.md) | Equilibrado de masa de elevones | ✅ | Alta | No |
-| 0026 | Varillaje sin holgura, doble accionamiento | ✅ | Alta | Sí |
-| [0027](ADR-0027-espesor-relativo.md) | t/c 13,5 % raíz / 9 % punta | ✅ | Alta `[M]` | No |
-| [0028](ADR-0028-relleno-giroide.md) | Relleno giroide 5 % | ✅ | Media `[M]` | Sí |
-| 0030 | Vía plástica como base; tubo torsional opción B | 🔄 | Media | Sí |
-| 0031 | Pasador de carbono en juntas | ✅ | Alta | Sí |
-| [0032](ADR-0032-modularidad.md) | Arquitectura modular CORE + PANEL | ✅ | Alta | No |
-| [0033](ADR-0033-electronica-fuera.md) | Motor y batería fuera del diseño | ✅ | Decidida | — |
-| 0034 | Ángulo de bancada como parámetro de diseño | 🔄 | Media | Sí |
-| 0035 | Bisagras impresas en TPU | 🔄 | Media | Sí |
+| [0001](ADR-0001-inverted-sweep.md) | Forward-swept flying wing | ✅ | High | No |
+| [0002](ADR-0002-closed-shell.md) | Closed three-cell shell structure | ✅ | Medium `[I]` | No |
+| 0003 | Wash-in type twist | 🔄 | High | Partial |
+| [0004](ADR-0004-aspect-ratio.md) | Aspect ratio 6.0 | 🔄 | Medium `[E]` | No |
+| 0005 | Reflexed and thin airfoil | ⬜ | — | — |
+| 0006 | Single pusher motor preferred | ⚠️ | Low `[I]` | Yes |
+| [0007](ADR-0007-propeller.md) | Propeller P/D 0.8–1.0 matched by J | ✅ | High | Yes |
+| 0008 | Reject the 7×12 propeller | ✅ | High | Yes |
+| 0009 | Separate drag decomposition; never a single Oswald | ✅ | High | No |
+| [0010](ADR-0010-mission-branch.md) | Branch A — fast cruise | ✅ | Decided | No |
+| 0012 | Light color mandatory | ✅ | High | Yes |
+| [0015](ADR-0015-carbon-non-torsional.md) | Carbon as bending and pin, not torsion | ✅ | High `[D]` | Yes |
+| 0016 | Reject PLA+ | ✅ | High `[M]` | — |
+| 0018 | Reject ABS due to UV degradation | ✅ | High `[M]` | — |
+| [0021](ADR-0021-base-material.md) | PETG as the base material | ✅ | High | Partial |
+| [0022](ADR-0022-carbon-veil-cancelled.md) | Carbon veil ±45° | ❌ **Cancelled** | — | — |
+| 0023 | Joints: tenon + PETG adhesive, area ≥ 3× | 🔄 | Medium | Yes |
+| 0024 | 3 segments per wing half, 45° on bed | ✅ | High | Yes |
+| [0025](ADR-0025-elevon-balancing.md) | Elevon mass balancing | ✅ | High | No |
+| 0026 | No-freeplay linkage, dual actuation | ✅ | High | Yes |
+| [0027](ADR-0027-relative-thickness.md) | t/c 13.5 % root / 9 % tip | ✅ | High `[M]` | No |
+| [0028](ADR-0028-gyroid-infill.md) | Gyroid 5 % infill | ✅ | Medium `[M]` | Yes |
+| 0030 | Plastic path as base; torsion tube option B | 🔄 | Medium | Yes |
+| 0031 | Carbon pin in the joints | ✅ | High | Yes |
+| [0032](ADR-0032-modularity.md) | Modular CORE + PANEL architecture | ✅ | High | No |
+| [0033](ADR-0033-electronics-out.md) | Motor and battery out of the design | ✅ | Decided | — |
+| 0034 | Motor mount angle as a design parameter | 🔄 | Medium | Yes |
+| 0035 | TPU-printed hinges | 🔄 | Medium | Yes |
 
-### Superadas o anuladas
+### Superseded or cancelled
 
-| # | Motivo |
+| # | Reason |
 |---|---|
-| 0005 | Sustituida por [0027](ADR-0027-espesor-relativo.md). El perfil pasó de «delgado» a 13,5 % |
-| 0011, 0013, 0014, 0017, 0019, 0020 | Sustituidas por [0021](ADR-0021-material-base.md) tras evaluar cinco materiales |
-| 0022 | **Anulada** por decisión de proyecto — ver [ADR-0022](ADR-0022-velo-carbono-anulada.md) |
-| 0029 | Absorbida en [0002](ADR-0002-cascara-cerrada.md) |
+| 0005 | Replaced by [0027](ADR-0027-relative-thickness.md). The airfoil moved from "thin" to 13.5 % |
+| 0011, 0013, 0014, 0017, 0019, 0020 | Replaced by [0021](ADR-0021-base-material.md) after evaluating five materials |
+| 0022 | **Cancelled** by project decision — see [ADR-0022](ADR-0022-carbon-veil-cancelled.md) |
+| 0029 | Absorbed into [0002](ADR-0002-closed-shell.md) |
 
-> **0015 fue corregida, no anulada.** La versión original afirmaba que los tubos de carbono no aportan torsión. Ver corrección C11 en el [CHANGELOG](../CHANGELOG.md).
+> **0015 was corrected, not cancelled.** The original version claimed that carbon tubes add no torsion. See correction C11 in the [CHANGELOG](../CHANGELOG.md).

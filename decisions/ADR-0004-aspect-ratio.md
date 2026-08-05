@@ -1,45 +1,45 @@
-# ADR-0004 — Alargamiento 6,0
+# ADR-0004 — Aspect ratio 6.0
 
-**Estado:** 🔄 Provisional · **Fecha:** 2026-07-28 · **Confianza:** Media `[E]` · **Reversible:** No
-**Brechas:** G1, G6 · **Investigación:** [I-01](../investigacion/I-01-alargamiento-reynolds.md), [I-05](../investigacion/I-05-divergencia-flutter.md)
+**Status:** 🔄 Provisional · **Date:** 2026-07-28 · **Confidence:** Medium `[E]` · **Reversible:** No
+**Gaps:** G1, G6 · **Research:** [I-01](../research/I-01-aspect-ratio-reynolds.md), [I-05](../research/I-05-divergence-flutter.md)
 
-## Contexto
+## Context
 
-La intuición dice "más alargamiento, menos resistencia inducida". A números de Reynolds bajos eso deja de ser cierto a partir de cierto punto, y en flecha invertida hay un segundo motivo para no subirlo.
+Intuition says "more aspect ratio, less induced drag". At low Reynolds numbers that stops being true past a certain point, and in forward sweep there is a second reason not to raise it.
 
-## Historia de la decisión
+## Decision history
 
-- **Rev 1.0:** AR 6–8, por saturación del beneficio y acoplamiento cuerda→Reynolds.
-- **Rev 1.1:** apretado a **6,0** al aparecer el término de divergencia.
+- **Rev 1.0:** AR 6–8, by saturation of the benefit and the chord→Reynolds coupling.
+- **Rev 1.1:** tightened to **6.0** when the divergence term appeared.
 
-## Decisión
+## Decision
 
-**Alargamiento 6,0** → con b = 1300 mm, S = 0,282 m², cuerda media 217 mm.
+**Aspect ratio 6.0** → with b = 1300 mm, S = 0.282 m², mean chord 217 mm.
 
-## Fundamento
+## Rationale
 
-**Argumento 1 — Reynolds (I-01).** La cadena causal correcta:
-1. La inducida sigue cayendo como 1/(π·AR·e_i) — subir AR **sí funciona**.
-2. El término viscoso k·C_L² **no depende del alargamiento**.
-3. Por tanto el beneficio **se satura**.
-4. A superficie constante, subir AR acorta la cuerda → baja Re → sube k y sube C_D0.
+**Argument 1 — Reynolds (I-01).** The correct causal chain:
+1. The induced term still falls as 1/(π·AR·e_i) — raising AR **does work**.
+2. The viscous term k·C_L² **does not depend on aspect ratio**.
+3. Therefore the benefit **saturates**.
+4. At constant area, raising AR shortens the chord → lowers Re → raises k and C_D0.
 
-El punto 4 genera el óptimo; el 3 lo hace plano.
+Point 4 generates the optimum; point 3 makes it flat.
 
-**Argumento 2 — Divergencia (I-05).** La velocidad de divergencia escala como:
+**Argument 2 — Divergence (I-05).** The divergence speed scales as:
 
     V_div ∝ AR^(−3/4)
 
-Subir de 6 a 8 cuesta ~19 % de V_div, además del castigo de cuerda.
+Raising from 6 to 8 costs ~19 % of V_div, in addition to the chord penalty.
 
-**Contraste `[M]`:** el Peregrine 840 mm, que vuela, tiene AR ≈ 5,05.
+**Contrast `[M]`:** the Peregrine 840 mm, which flies, has AR ≈ 5.05.
 
-## Consecuencias
+## Consequences
 
-- Fija S = 0,282 m² para b = 1300 mm.
-- Carga alar 57 g/dm² con 6S1P → velocidad de pérdida ~43 km/h (ver corrección C16).
-- Los paneles alternativos (1100 / 1600) cambian el AR y por tanto el punto neutro. Ver [ADR-0032](ADR-0032-modularidad.md) y R-NP.
+- Sets S = 0.282 m² for b = 1300 mm.
+- Wing loading 57 g/dm² with 6S1P → stall speed ~43 km/h (see correction C16).
+- The alternative panels (1100 / 1600) change the AR and therefore the neutral point. See [ADR-0032](ADR-0032-modularity.md) and R-NP.
 
-## Condiciones de revisión
+## Review conditions
 
-Cerrar G1 con la planta real de referencia. Si el análisis de estabilidad (Fase 1) exige más superficie para bajar la velocidad de pérdida, AR bajará antes que subir la envergadura.
+Close G1 with the real reference planform. If the stability analysis (Phase 1) requires more area to lower the stall speed, AR will fall before the wingspan rises.

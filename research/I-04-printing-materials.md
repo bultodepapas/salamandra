@@ -1,106 +1,106 @@
-# I-04 — Materiales de impresión
+# I-04 — Printing materials
 
-**Estado:** Cerrada · **Alimenta:** ADR-0016, ADR-0018, ADR-0021
+**Status:** Closed · **Feeds:** ADR-0016, ADR-0018, ADR-0021
 
-## Pregunta
+## Question
 
-¿Qué filamento maximiza la rigidez torsional por gramo, y qué otros criterios compiten con ella?
+Which filament maximizes torsional stiffness per gram, and what other criteria compete with it?
 
-## Figura de mérito
+## Figure of merit
 
-En sección cerrada, `GJ ∝ G·t` y `masa ∝ ρ·t`. Por tanto la figura de mérito es **G/ρ**.
+In a closed section, `GJ ∝ G·t` and `mass ∝ ρ·t`. Therefore the figure of merit is **G/ρ**.
 
-| Material | E impreso | G_eff | ρ | **G/ρ** | Relativo |
+| Material | E printed | G_eff | ρ | **G/ρ** | Relative |
 |---|---|---|---|---|---|
-| **PLA normal** | 3,00 GPa `[M]` | 0,90 | 1,24 | **0,73** | **1,00** |
-| PLA+ | 2,20 GPa `[M]` | 0,66 | 1,24 | 0,53 | 0,73 |
-| ASA | 1,9–2,2 GPa `[E]` | 0,58 | 1,07 | 0,53 | 0,73 |
-| LW-PLA | ~1,0 GPa `[E]` | 0,35 | 0,68 | 0,51 | 0,70 |
-| **PETG** | **1,94 GPa** `[M]` | **0,55** | **1,27** | **0,43** | **0,59** |
+| **Normal PLA** | 3.00 GPa `[M]` | 0.90 | 1.24 | **0.73** | **1.00** |
+| PLA+ | 2.20 GPa `[M]` | 0.66 | 1.24 | 0.53 | 0.73 |
+| ASA | 1.9–2.2 GPa `[E]` | 0.58 | 1.07 | 0.53 | 0.73 |
+| LW-PLA | ~1.0 GPa `[E]` | 0.35 | 0.68 | 0.51 | 0.70 |
+| **PETG** | **1.94 GPa** `[M]` | **0.55** | **1.27** | **0.43** | **0.59** |
 
-**El PETG es el peor de los cinco en rigidez torsional específica.** Se adopta igualmente — ver [ADR-0021](../decisiones/ADR-0021-material-base.md).
+**PETG is the worst of the five in specific torsional stiffness.** It is adopted anyway — see [ADR-0021](../decisions/ADR-0021-base-material.md).
 
-## Datos primarios
+## Primary data
 
-### PLA vs PLA+ `[M]` — mismo fabricante, mismo banco
+### PLA vs PLA+ `[M]` — same manufacturer, same bench
 
-Polymaker PolyLite (PLA) contra PolyMax (PLA+), ensayo controlado:
+Polymaker PolyLite (PLA) versus PolyMax (PLA+), controlled test:
 
-| Ensayo | PLA | PLA+ | Δ |
+| Test | PLA | PLA+ | Δ |
 |---|---|---|---|
-| Tracción tumbado | 57 MPa | 43 MPa | −25 % |
-| Adhesión de capas | 43 MPa (75 % de la resistencia normal) | 75 % también | = |
-| **Módulo a flexión** | **3000 MPa** | **2200 MPa** | **−27 %** |
-| Impacto | 5 kJ/m², rompe limpio | ~4× más tenaz | +300 % |
-| **Fallo térmico bajo carga** | **65 °C** | **65 °C** | **0** |
+| Flat tensile | 57 MPa | 43 MPa | −25 % |
+| Layer adhesion | 43 MPa (75 % of normal strength) | 75 % too | = |
+| **Flexural modulus** | **3000 MPa** | **2200 MPa** | **−27 %** |
+| Impact | 5 kJ/m², clean break | ~4× tougher | +300 % |
+| **Thermal failure under load** | **65 °C** | **65 °C** | **0** |
 
-Tres conclusiones contraintuitivas:
+Three counterintuitive conclusions:
 
-1. **El PLA+ es más blando, no más rígido.** Queda a la altura del PETG y el ABS.
-2. **No gana nada en temperatura.** Elimina el único argumento que permitiría salir del PETG sin perder margen térmico.
-3. **La adhesión de capas del PLA normal es excepcional** — 75 % de retención, cuando la mayoría de materiales muestran al menos un 50 % de castigo.
+1. **PLA+ is softer, not stiffer.** It sits at the level of PETG and ABS.
+2. **It gains nothing in temperature.** It removes the only argument that would allow leaving PETG without losing thermal margin.
+3. **Normal PLA layer adhesion is exceptional** — 75 % retention, when most materials show at least a 50 % penalty.
 
-⚠️ Un par de marcas, no el universo PLA+. Tendencias sólidas; magnitudes exactas de otras marcas pueden diferir.
+⚠️ A couple of brands, not the whole PLA+ universe. Solid trends; exact magnitudes of other brands may differ.
 
-### PLA vs PETG `[M]` — dataset apareado
+### PLA vs PETG `[M]` — paired dataset
 
-Ultimaker, ASTM D3039, 100 % relleno, capa 0,15 mm:
+Ultimaker, ASTM D3039, 100 % infill, 0.15 mm layer:
 
-- Módulo XY: **PLA 3250 ± 119 MPa · PETG 1939 ± 28 MPa**
-- PETG en Charpy con entalla: 7,9 ± 0,6 kJ/m² contra 3,9 ± 0,4 del PLA
+- XY modulus: **PLA 3250 ± 119 MPa · PETG 1939 ± 28 MPa**
+- PETG notched Charpy: 7.9 ± 0.6 kJ/m² versus 3.9 ± 0.4 for PLA
 
-### Retención en dirección Z `[M]` — mismo banco, mismos ganchos
+### Z-direction retention `[M]` — same bench, same hooks
 
-| Material | Tumbado | De pie | **Retención Z** |
+| Material | Flat | Standing | **Z retention** |
 |---|---|---|---|
 | PLA | 72 kg | 40 kg | **55 %** |
 | PETG | 54 kg | 25 kg | **46 %** |
 | ASA | 59 kg | 17 kg | **29 %** |
 
-> **Corrección C8.** Se afirmó que el PETG tiene mejor adhesión de capas que el PLA. **Es al revés.** El PETG gana en tenacidad, no en adhesión.
+> **Correction C8.** It was claimed that PETG has better layer adhesion than PLA. **It is the opposite.** PETG wins on toughness, not adhesion.
 
-### ¿Importa la adhesión en Z? `[D]`
+### Does Z adhesion matter? `[D]`
 
-La torsión de Bredt carga las juntas de capa en **cortante interlaminar**. Cálculo del par en raíz a V_NE con tirón de 5 g:
+Bredt torsion loads the layer joints in **interlaminar shear**. Calculation of the root torque at V_NE with a 5 g pull:
 
-    τ = T / (2·A·t) ≈ 5 / (2 · 2,75×10⁻³ · 9×10⁻⁴) ≈ 1,0 MPa
+    τ = T / (2·A·t) ≈ 5 / (2 · 2.75×10⁻³ · 9×10⁻⁴) ≈ 1.0 MPa
 
-Frente a ~20 MPa de resistencia interlaminar del PETG: **margen ×20**.
+Versus ~20 MPa of PETG interlaminar strength: **×20 margin**.
 
-**La adhesión de capas no es vinculante. El problema es de rigidez, no de resistencia.** Esto salvó al ASA de ser descartado por su 29 %, y lo descartó por otro motivo.
+**Layer adhesion is not binding. The problem is stiffness, not strength.** This saved ASA from being discarded for its 29 %, and discarded it for another reason.
 
-## Por qué se rechaza cada alternativa
+## Why each alternative is rejected
 
-| Material | Motivo del rechazo |
+| Material | Reason for rejection |
 |---|---|
-| **PLA+** | −27 % de rigidez sin ganancia térmica. Punto intermedio que no resuelve ninguna restricción → ADR-0016 |
-| **ABS** | Amarillea y se fragiliza al sol en unos meses `[M]`. Un ala vive al aire libre → ADR-0018 |
-| **ASA** | Ventajas reales (Tg 105 °C, soldable con acetona, alisable). **Rechazado por alabeo**: la torsión geométrica es un parámetro de trim, y un material poco repetible corrompe la variable que gobierna el equilibrio |
-| **LW-PLA** | Ligero pero blando, caro y de manejo delicado. Reservado para piezas no estructurales |
-| **PLA normal** | Mejor rigidez de todos. Descartado por Tg 55–60 °C y fragilidad en aterrizaje de panza. **Es la alternativa técnica si la rigidez apretara** |
+| **PLA+** | −27 % stiffness with no thermal gain. An intermediate point that solves no constraint → ADR-0016 |
+| **ABS** | Yellows and embrittles in the sun in a few months `[M]`. A wing lives outdoors → ADR-0018 |
+| **ASA** | Real advantages (Tg 105 °C, acetone-weldable, sandable). **Rejected for warping**: geometric twist is a trim parameter, and a poorly repeatable material corrupts the variable that governs the balance |
+| **LW-PLA** | Light but soft, expensive and delicate to handle. Reserved for non-structural parts |
+| **Normal PLA** | Best stiffness of all. Discarded for Tg 55–60 °C and belly-landing brittleness. **It is the technical alternative if stiffness tightens** |
 
-## Adhesivos para PETG
+## Adhesives for PETG
 
-> **Corrección C9.** Se afirmó que el PETG no se puede pegar. Demasiado categórico.
+> **Correction C9.** It was claimed that PETG cannot be glued. Too categorical.
 
-| Opción | Veredicto |
+| Option | Verdict |
 |---|---|
-| **3D-Gloop PETG** | Soldadura química específica. Rindió mejor que el cianoacrilato **bajo torsión** con las piezas apretadas — que es el caso de carga del proyecto |
-| **Epoxi de 30 min** | Mejor resistencia bruta. Los de 5 min son notablemente peores |
-| DCM (diclorometano) | Soldadura por disolvente real, pero **carcinógeno cat. 2 y restringido por REACH en la UE**. No recomendado |
-| Cianoacrilato | Solo unión superficial. No estructural en PETG |
-| E6000 | **Falla.** Único que pudo separarse a mano tras curar |
+| **3D-Gloop PETG** | Specific chemical weld. Outperformed cyanoacrylate **under torsion** with the parts held tight — which is the project's load case |
+| **30-min epoxy** | Better raw strength. The 5-min ones are notably worse |
+| DCM (dichloromethane) | True solvent weld, but **cat. 2 carcinogen and restricted by REACH in the EU**. Not recommended |
+| Cyanoacrylate | Only a surface bond. Not structural on PETG |
+| E6000 | **Fails.** The only one that could be separated by hand after curing |
 
-## Advertencia de reproducción
+## Reproduction warning
 
-⚠️ Los perfiles de impresión de LW-PLA traen `flow_ratio ≈ 0,60` para compensar el espumado. **Al cambiar a PETG hay que subirlo a ~0,95**, o se deposita un 40 % menos de material.
+⚠️ LW-PLA print profiles carry `flow_ratio ≈ 0.60` to compensate for foaming. **When switching to PETG it must be raised to ~0.95**, or 40 % less material is deposited.
 
-Un ejemplar del Peregrine 840 mm impreso en PETG con el perfil de LW-PLA resulta **~1,6× más rígido en cortante** que el diseño previsto (G 0,55 frente a 0,35) y **~2,2× más pesado**.
+An example of the 840 mm Peregrine printed in PETG with the LW-PLA profile comes out **~1.6× stiffer in shear** than the intended design (G 0.55 versus 0.35) and **~2.2× heavier**.
 
-## Fuentes
+## Sources
 
 - CNC Kitchen — *The difference of PLA and PLA+ tested (feat. Polymaker)*
 - CNC Kitchen — *Comparing PLA, PETG & ASA (feat. Prusament)*
-- Ultimaker — dataset apareado PLA/PETG, ASTM D3039 / ISO 179-1
-- 3D-Fuel — ensayo comparativo de adhesivos
+- Ultimaker — paired PLA/PETG dataset, ASTM D3039 / ISO 179-1
+- 3D-Fuel — comparative adhesive test
 - 3DLabPrint — *Materials for 3D printing planes*

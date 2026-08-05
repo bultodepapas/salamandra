@@ -1,75 +1,75 @@
-# Programa experimental
+# Experimental program
 
-| # | Ensayo | Cierra | Esfuerzo | Estado |
+| # | Test | Closes | Effort | Status |
 |---|---|---|---|---|
-| **E1** | Extracción de geometría desde mallas de referencia | G1 | Bajo | 🔄 Parcial |
-| **E2** | Polar de planeo con pitot y blackbox | G3, G2 · valida **O1** | Medio | ⬜ |
-| **E3** | Barrido de emparejamiento de hélice | **Realiza O1** | Bajo | ⬜ |
-| **E5** | FFT de trazas de giro de blackbox | G4, G7 | Nulo | ⬜ |
-| **E7** | **Southwell en vuelo** | **G6** | Bajo | ⬜ |
+| **E1** | Geometry extraction from reference meshes | G1 | Low | 🔄 Partial |
+| **E2** | Glide polar with pitot and blackbox | G3, G2 · validates **O1** | Medium | ⬜ |
+| **E3** | Propeller-matching sweep | **Realizes O1** | Low | ⬜ |
+| **E5** | FFT of blackbox gyro traces | G4, G7 | Null | ⬜ |
+| **E7** | **Southwell in flight** | **G6** | Low | ⬜ |
 
-## Retirados
+## Withdrawn
 
-| # | Ensayo | Motivo |
+| # | Test | Reason |
 |---|---|---|
-| E4 | Torsión de mesa sobre cupón impreso | Sustituido por anclaje a referencia medida y por E7 |
-| E6 | Calibración inversa del modelo contra el Peregrine | **C13** — el Peregrine está a factor ~3 de la predicción; no falsa el modelo pero tampoco lo valida |
+| E4 | Bench twist on a printed coupon | Replaced by anchoring to measured reference and by E7 |
+| E6 | Inverse calibration of the model against the Peregrine | **C13** — the Peregrine is at a factor ~3 from the prediction; it does not falsify the model but does not validate it either |
 
 ---
 
-## E1 — extracción de geometría
+## E1 — geometry extraction
 
-Cortar secciones de las mallas de referencia a distintas estaciones. Obtener coordenadas de perfil, superficie, alargamiento, estrechamiento, flecha del c/4 y **distribución de torsión**.
+Slice sections of the reference meshes at different stations. Obtain airfoil coordinates, area, aspect ratio, taper, c/4 sweep and **twist distribution**.
 
-**Hecho:** t/c del Peregrine = 13,5 % `[M]`, perfil de impresión del diseñador.
-**Falta:** planta completa; requiere el archivo de los paneles exteriores.
-**Alternativa:** familia StuntDouble (Nemesis + Stinger/Stormbird) — da una
-**comparación cuasi-controlada de planta**: mismo autor, familia constructiva y AR
-comparable, pero cambian perfil, escala y propulsión. Sirve como prior geométrico; no
-permite atribuir causalidad a la flecha. Ver [I-08](../investigacion/I-08-familia-stuntdouble.md).
+**Done:** Peregrine t/c = 13.5 % `[M]`, designer's print profile.
+**Missing:** full planform; requires the outer panel files.
+**Alternative:** StuntDouble family (Nemesis + Stinger/Stormbird) — provides a
+**quasi-controlled planform comparison**: same author, constructive family and
+comparable AR, but airfoil, scale and propulsion change. It serves as a geometric prior; it
+does not allow attributing causality to the sweep. See [I-08](../research/I-08-stuntdouble-family.md).
 
-## E2 — polar de planeo
+## E2 — glide polar
 
-Vuelos con motor parado a velocidades estabilizadas, registrando velocidad de descenso con el barómetro y **velocidad verdadera con pitot**.
+Flights with the motor off at stabilized speeds, recording descent rate with the barometer and **true airspeed with pitot**.
 
-Produce la polar real del avión completo sin túnel de viento. **Es el único instrumento que separa pérdidas propulsivas de pérdidas aerodinámicas.**
+Produces the real polar of the complete aircraft without a wind tunnel. **It is the only instrument that separates propulsive losses from aerodynamic losses.**
 
-⚠️ Sin pitot no es válido: la velocidad de suelo está contaminada por el viento.
+⚠️ Without pitot it is not valid: ground speed is contaminated by the wind.
 
-## E3 — barrido de emparejamiento de hélice
+## E3 — propeller-matching sweep
 
-Vuelo estabilizado a velocidad fija registrando corriente, para 3–4 combinaciones diámetro/paso. Comparar contra el J predicho por la base UIUC.
+Stabilized flight at fixed speed logging current, for 3–4 diameter/pitch combinations. Compare against the J predicted by the UIUC database.
 
-**Es el ensayo que realiza el objetivo O1.** Puede ejecutarse sobre cualquier plataforma de pruebas, incluida una existente: **no depende del airframe del proyecto.**
+**It is the test that realizes objective O1.** It can run on any test platform, including an existing one: **it does not depend on the project's airframe.**
 
-## E5 — FFT de blackbox
+## E5 — blackbox FFT
 
-Con el loop de ala fija a 1000 µs, el giroscopio registra a 1 kHz → Nyquist 500 Hz. Suficiente para resolver ω_α (~106 Hz) y ω_β (~82 Hz).
+With the fixed-wing loop at 1000 µs, the gyroscope logs at 1 kHz → Nyquist 500 Hz. Enough to resolve ω_α (~106 Hz) and ω_β (~82 Hz).
 
-**No requiere ensayo dedicado:** sale del primer vuelo.
+**It requires no dedicated test:** it comes out of the first flight.
 
-## E7 — Southwell en vuelo
+## E7 — Southwell in flight
 
-Ver [I-05](../investigacion/I-05-divergencia-flutter.md) para el fundamento.
+See [I-05](../research/I-05-divergence-flutter.md) for the rationale.
 
-1. Vuelo estabilizado en Cruise a 90, 110, 130, 150 km/h
-2. Blackbox: deflexión de trim de elevón contra presión dinámica
-3. **1/Δtrim contra q → recta que corta el eje en q_D**
+1. Stabilized Cruise flight at 90, 110, 130, 150 km/h
+2. Blackbox: elevon trim deflection against dynamic pressure
+3. **1/Δtrim against q → a straight line that intercepts the axis at q_D**
 
-⚠️ **Prerrequisito: resolver G9** (porpoising en modos automáticos).
+⚠️ **Prerequisite: resolve G9** (porpoising in automatic modes).
 
 ---
 
-## Formato de datos
+## Data format
 
-Cada ensayo en su subcarpeta:
+Each test in its own subfolder:
 
 ```
-ensayos/EX-nombre/
-  README.md          Método, condiciones, configuración completa del avión
-  crudo/             Logs de blackbox sin procesar
-  reduccion.py       Script de reducción, versionado
-  resultados.md      Resultado con etiqueta de confianza y barras de error
+tests/EX-name/
+  README.md          Method, conditions, complete aircraft configuration
+  raw/               Unprocessed blackbox logs
+  reduction.py       Reduction script, versioned
+  results.md         Result with confidence tag and error bars
 ```
 
-**Los datos de contribuyentes deben declarar la configuración completa** (pack, motor, hélice, masa, material, perímetros, relleno) para ser comparables.
+**Contributors' data must declare the complete configuration** (pack, motor, propeller, mass, material, perimeters, infill) to be comparable.

@@ -1,32 +1,32 @@
-# ADR-0033 — Motor y batería fuera del diseño
+# ADR-0033 — Motor and battery out of the design
 
-**Estado:** ✅ Vigente · **Fecha:** 2026-07-28 · **Confianza:** Decidida
+**Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** Decided
 
-## Contexto
+## Context
 
-Un proyecto abierto puede prescribir una lista de materiales cerrada o dejar la electrónica abierta. La primera opción da resultados reproducibles; la segunda da adopción.
+An open project can prescribe a closed bill of materials or leave the electronics open. The first gives reproducible results; the second gives adoption.
 
-## Decisión
+## Decision
 
-**El proyecto diseña el airframe y publica recomendaciones. No prescribe motor ni batería.**
+**The project designs the airframe and publishes recommendations. It does not prescribe motor or battery.**
 
-## Fundamento
+## Rationale
 
-- **El KV óptimo depende del pack.** Con 4S y 6S el punto de operación del motor cambia. Prescribir un motor obligaría a prescribir una batería, y eso rompe el objetivo O2 (flexibilidad 4S–6S).
-- **La aportación del proyecto es el emparejamiento, no la pieza.** El valor de [I-03](../investigacion/I-03-cadena-propulsiva.md) es la **tabla de emparejamiento hélice–pack–velocidad**, no una recomendación única.
-- La adopción de un proyecto abierto sube cuando la gente puede usar lo que ya tiene.
+- **The optimal KV depends on the pack.** With 4S and 6S the motor operating point changes. Prescribing a motor would force prescribing a battery, and that breaks objective O2 (4S–6S flexibility).
+- **The project's contribution is the matching, not the part.** The value of [I-03](../research/I-03-propulsion-chain.md) is the **propeller–pack–speed matching table**, not a single recommendation.
+- Adoption of an open project rises when people can use what they already own.
 
-## Qué sí publica el proyecto
+## What the project does publish
 
-| Salida | Contenido |
+| Output | Content |
 |---|---|
-| Tabla de emparejamiento | Hélice (D×P) contra pack y velocidad de crucero, con J y η previstos |
-| Configuraciones sugeridas | Range / Cruise / Sport con motor y batería de referencia |
-| Restricciones duras | Volumen de bahía, rango de masa admisible, límites de corriente |
-| Requisitos de aviónica | Pitot obligatorio, blackbox, GPS y magnetómetro fuera del camino de corriente |
+| Matching table | Propeller (D×P) against pack and cruise speed, with expected J and η |
+| Suggested configurations | Range / Cruise / Sport with reference motor and battery |
+| Hard constraints | Bay volume, admissible mass range, current limits |
+| Avionics requirements | Pitot mandatory, blackbox, GPS and magnetometer out of the current path |
 
-## Consecuencias
+## Consequences
 
-- El balance de masas se publica como **rango**, no como valor único.
-- R-CG (bahía con ajuste longitudinal) pasa de deseable a **obligatorio**: sin él, la libertad de batería rompe el centrado.
-- Los datos de ensayo de contribuyentes deben declarar su configuración completa para ser comparables.
+- The mass balance is published as a **range**, not a single value.
+- R-CG (bay with longitudinal adjustment) moves from desirable to **mandatory**: without it, battery freedom breaks the balance.
+- Contributors' test data must declare their complete configuration to be comparable.

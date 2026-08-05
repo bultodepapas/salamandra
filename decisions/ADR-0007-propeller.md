@@ -1,47 +1,47 @@
-# ADR-0007 — Hélice de P/D 0,8–1,0 emparejada por relación de avance
+# ADR-0007 — Propeller P/D 0.8–1.0 matched by advance ratio
 
-**Estado:** ✅ Vigente · **Fecha:** 2026-07-27 · **Confianza:** Alta · **Reversible:** Sí
-**Investigación:** [I-03 — Cadena propulsiva](../investigacion/I-03-cadena-propulsiva.md)
+**Status:** ✅ Active · **Date:** 2026-07-27 · **Confidence:** High · **Reversible:** Yes
+**Research:** [I-03 — Propulsion chain](../research/I-03-propulsion-chain.md)
 
-## Contexto
+## Context
 
-La cadena propulsiva es el término de la ecuación de alcance con mayor margen de mejora inmediata, y el que sostiene el objetivo O1 (≤ 1,15 Wh/km).
+The propulsion chain is the term of the range equation with the largest margin for immediate improvement, and the one that sustains objective O1 (≤ 1.15 Wh/km).
 
-## Decisión
+## Decision
 
-**Hélice de paso/diámetro 0,8–1,0, emparejada por relación de avance J a la velocidad de crucero, operando a rpm alta.**
+**Propeller with pitch/diameter 0.8–1.0, matched by advance ratio J at cruise speed, operating at high rpm.**
 
-## Fundamento `[D]` — extracción propia de la base UIUC
+## Rationale `[D]` — own extraction from the UIUC database
 
-Pico de eficiencia a ~6000 rpm:
+Efficiency peak at ~6000 rpm:
 
-| Hélice | P/D | η máx | J óptimo | V @6000 rpm | V @16000 rpm |
+| Propeller | P/D | η max | Optimal J | V @6000 rpm | V @16000 rpm |
 |---|---|---|---|---|---|
-| APC-E 8×4 | 0,50 | 0,600 | 0,481 | 35 km/h | 94 km/h |
-| APC-E 8×6 | 0,75 | 0,678 | 0,689 | 50 km/h | 134 km/h |
-| **APC-E 8×8** | **1,00** | **0,731** | 0,784 | 57 km/h | 153 km/h |
-| APC-E 9×6 | 0,67 | 0,683 | 0,583 | 48 km/h | 128 km/h |
-| APC-E 10×7 | 0,70 | 0,705 | 0,576 | 53 km/h | 140 km/h |
+| APC-E 8×4 | 0.50 | 0.600 | 0.481 | 35 km/h | 94 km/h |
+| APC-E 8×6 | 0.75 | 0.678 | 0.689 | 50 km/h | 134 km/h |
+| **APC-E 8×8** | **1.00** | **0.731** | 0.784 | 57 km/h | 153 km/h |
+| APC-E 9×6 | 0.67 | 0.683 | 0.583 | 48 km/h | 128 km/h |
+| APC-E 10×7 | 0.70 | 0.705 | 0.576 | 53 km/h | 140 km/h |
 
-Tres lecturas:
+Three readings:
 
-1. **El paso domina.** De 8×4 a 8×8, mismo diámetro: **+22 % de eficiencia de pico**.
-2. **La velocidad óptima es un producto hélice × rpm**, no una propiedad de la hélice. La misma 8×8 pica a 57 km/h a 6000 rpm y a 153 km/h a 16000.
-3. **Subir rpm mejora la eficiencia** por efecto Reynolds en la pala `[M]` (Brandt & Selig).
+1. **Pitch dominates.** From 8×4 to 8×8, same diameter: **+22 % of peak efficiency**.
+2. **The optimal speed is a propeller × rpm product**, not a propeller property. The same 8×8 peaks at 57 km/h at 6000 rpm and at 153 km/h at 16000.
+3. **Raising rpm improves efficiency** via the blade Reynolds effect `[M]` (Brandt & Selig).
 
-## El hueco que justifica O1
+## The gap that justifies O1
 
-| Componente | Rango |
+| Component | Range |
 |---|---|
-| Hélice en su J óptimo | 0,65 – 0,73 |
-| Motor + ESC bien dimensionado | ≈ 0,85 |
-| **Producto teórico** | **0,55 – 0,62** |
-| **Valor real despejado del vuelo del Mojito** | **≈ 0,50** |
+| Propeller at its optimal J | 0.65 – 0.73 |
+| Well-sized motor + ESC | ≈ 0.85 |
+| **Theoretical product** | **0.55 – 0.62** |
+| **Real value solved from the Mojito flight** | **≈ 0.50** |
 
-**Pasar de 0,50 a 0,60 son +20 % de alcance sin tocar la aerodinámica.** Es la afirmación central del proyecto.
+**Moving from 0.50 to 0.60 is +20 % range without touching the aerodynamics.** It is the project's central claim.
 
-## Consecuencias
+## Consequences
 
-- El motor debe elegirse para que la hélice caiga en su J óptimo a la velocidad de crucero, no por empuje estático.
-- La tabla de emparejamiento por pack es una salida publicable ([ADR-0033](ADR-0033-electronica-fuera.md)).
-- Se realiza y verifica con el ensayo E3.
+- The motor must be chosen so the propeller falls at its optimal J at cruise speed, not by static thrust.
+- The matching table per pack is a publishable output ([ADR-0033](ADR-0033-electronics-out.md)).
+- Realized and verified with test E3.

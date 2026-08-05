@@ -1,159 +1,159 @@
-# Plan de Fase 1 — Geometría y estabilidad
+# Phase 1 plan — Geometry and stability
 
-**Revisión 1.2** · 28 julio 2026
-Cierra G1, G2 y G8. **Puerta de salida: OML congelada y margen estático verificado.**
-
----
-
-# 1. Por qué esto no es una secuencia
-
-La tentación es hacer perfil → planta → punto neutro → CG → torsión. **No funciona así.** Los cuatro son un único problema acoplado:
-
-- El **punto neutro** depende de planta *y* de perfil.
-- El **CG** depende de dónde quepa la batería, que depende del espesor, que depende del perfil.
-- La **torsión** debe cerrar el equilibrio al CL de diseño, que depende del margen estático.
-- El **reflex** y la **torsión** son **sustitutos**: los dos aportan el momento de cabeceo positivo.
-
-Fase 1 es una iteración. Lo que sigue la organiza para que converja en pocas vueltas.
+**Revision 1.2** · 28 July 2026
+Closes G1, G2 and G8. **Exit gate: frozen OML and verified static margin.**
 
 ---
 
-# 2. El trade central: la ventana de torsión
+# 1. Why this is not a sequence
 
-Desarrollo en [I-02](../investigacion/I-02-equilibrio-sin-cola.md).
+The temptation is to go airfoil → planform → neutral point → CG → twist. **It does not work that way.** The four are a single coupled problem:
 
-    trim mínimo  ≤  ε_wash-in  ≤  límite de pérdida en punta
+- The **neutral point** depends on planform *and* airfoil.
+- The **CG** depends on where the battery fits, which depends on thickness, which depends on the airfoil.
+- The **twist** must close the trim at the design CL, which depends on the static margin.
+- **Reflex** and **twist** are **substitutes**: both provide the positive pitching moment.
 
-| Límite | Origen | Efecto de violarlo |
+Phase 1 is an iteration. What follows organizes it so it converges in a few loops.
+
+---
+
+# 2. The central trade: the torsion window
+
+Development in [I-02](../research/I-02-tailless-trim.md).
+
+    minimum trim  ≤  ε_wash-in  ≤  tip stall limit
+
+| Limit | Origin | Effect of violating it |
 |---|---|---|
-| **Inferior** | Hace falta C_m suficiente al CL de crucero | No compensa sin deflexión permanente → resistencia de trim y pérdida de autoridad |
-| **Superior** | Wash-in sube la incidencia de punta | **Se anula la ventaja principal de la flecha invertida** |
+| **Lower** | Enough C_m is needed at cruise CL | No compensation without permanent deflection → trim drag and loss of authority |
+| **Upper** | Wash-in raises the tip incidence | **The main forward-sweep advantage is cancelled** |
 
-Y hay que **dejar hueco al wash-in elástico**, que crece con la presión dinámica.
+And room must be **left for elastic wash-in**, which grows with dynamic pressure.
 
-**Si la ventana está vacía, hay que meter reflex** — y el reflex cuesta C_Lmax, requisito duro por lanzamiento a mano. **Esta es la decisión de Fase 1.**
+**If the window is empty, reflex must be added** — and reflex costs C_Lmax, a hard requirement due to hand launch. **This is the Phase 1 decision.**
 
-**Dato de partida `[M]`:** el Peregrine necesita +3° de cabeceo nivelado en INAV — su torsión construida se queda corta. Sugiere que la ventana existe pero es estrecha.
+**Starting datum `[M]`:** the Peregrine needs +3° of level-flight pitch in INAV — its built twist falls short. Suggests the window exists but is narrow.
 
 ---
 
-# 3. Líneas de trabajo
+# 3. Work streams
 
-## A — Geometría de referencia *(bloqueante)*
+## A — Reference geometry *(blocker)*
 
-| # | Tarea | Cierra | Estado |
+| # | Task | Closes | Status |
 |---|---|---|---|
-| A1 | Planta del panel Peregrine: flecha c/4, estrechamiento, cuerdas | G1, R1 | Bloqueada — falta archivo de alas |
-| **A2** | **Distribución de torsión del Peregrine** | G1, valida ADR-0003 | Bloqueada |
-| A3 | Coordenadas de perfil a 3–5 estaciones | R2 | Parcial — t/c hecho |
-| A4 | Familia StuntDouble (Nemesis + Stinger/Stormbird) | R3, R4 | **Parcial** — fuentes adquiridas e [I-08](../investigacion/I-08-familia-stuntdouble.md) publicada; falta reconstruir planta y torsión |
+| A1 | Peregrine panel planform: c/4 sweep, taper, chords | G1, R1 | Blocked — wing files missing |
+| **A2** | **Peregrine twist distribution** | G1, validates ADR-0003 | Blocked |
+| A3 | Airfoil coordinates at 3–5 stations | R2 | Partial — t/c done |
+| A4 | StuntDouble family (Nemesis + Stinger/Stormbird) | R3, R4 | **Partial** — sources acquired and [I-08](../research/I-08-stuntdouble-family.md) published; planform and twist still to reconstruct |
 
-**A2 es la de mayor valor:** responde empíricamente la pregunta de §2 antes de calcular nada.
-**A4 da una comparación cuasi-controlada** entre flecha invertida y *plank*: mismo autor,
-familia constructiva y AR comparable, pero perfiles PW51/PW75 y propulsiones no idénticas.
-Sirve para acotar geometría; **no permite atribuir causalidad a la flecha**. Ver
-[I-08](../investigacion/I-08-familia-stuntdouble.md).
+**A2 is the highest-value task:** it empirically answers the §2 question before calculating anything.
+**A4 provides a quasi-controlled comparison** between forward sweep and *plank*: same author,
+constructive family and comparable AR, but PW51/PW75 airfoils and non-identical propulsion.
+It serves to bound geometry; **it does not allow attributing causality to the sweep**. See
+[I-08](../research/I-08-stuntdouble-family.md).
 
-## B — Perfil y polares *(bloqueante, G2)*
+## B — Airfoil and polars *(blocker, G2)*
 
-Se resuelve por **calibración**, no por búsqueda.
+Solved by **calibration**, not by search.
 
-| # | Tarea | Método |
+| # | Task | Method |
 |---|---|---|
-| **B1** | **Calibrar XFOIL contra dato medido** | **Parcial — [I-06](../investigacion/I-06-perfiles-reflexados.md).** E387 (C) muestra que no hay Ncrit único; validar la banda 10–12 contra un segundo modelo E387 |
-| B2 | Criterios de cribado | t/c 13,5 % · C_Lmax ≥ 0,65 · **C_m0 ≥ +0,008, preferible +0,010–0,015** (R-PERFIL) · L/D al CL de crucero |
-| B3 | Cribar candidatos con N_crit calibrado | Familias MH y EH (aerodesign.de), más candidatos poco reflexados si A2 confirma wash-in suficiente |
-| B4 | Publicar polares con su calibración | Salida `[D]`, declararlo |
+| **B1** | **Calibrate XFOIL against measured data** | **Partial — [I-06](../research/I-06-reflexed-airfoils.md).** E387 (C) shows there is no single Ncrit; validate the 10–12 band against a second E387 model |
+| B2 | Screening criteria | t/c 13.5 % · C_Lmax ≥ 0.65 · **C_m0 ≥ +0.008, preferably +0.010–0.015** (R-AIRFOIL) · L/D at cruise CL |
+| B3 | Screen candidates with calibrated N_crit | MH and EH families (aerodesign.de), plus lightly reflexed candidates if A2 confirms sufficient wash-in |
+| B4 | Publish polars with their calibration | `[D]` output, declare it |
 
-⚠️ Sin calibrar, XFOIL a Re bajo es optimista y sistemáticamente erróneo en la burbuja laminar. Salida siempre `[D]`; se convierte en `[M]` con E2.
+⚠️ Without calibration, XFOIL at low Re is optimistic and systematically wrong in the laminar bubble. Output is always `[D]`; it becomes `[M]` with E2.
 
-## C — Estabilidad *(la puerta, G8)*
+## C — Stability *(the gate, G8)*
 
-| # | Tarea | Método |
+| # | Task | Method |
 |---|---|---|
-| C1 | Punto neutro con método de paneles | XFLR5 VLM sobre la planta de A1 con el perfil de B3 |
-| C2 | Verificar con método analítico independiente | Corrección de flecha sobre AC de sección. **Dos métodos que no coinciden = error en uno** |
-| C3 | Fijar margen estático objetivo | 8–12 % de CMA. No bajar de 6 % ni con FC |
-| C4 | Posición de CG y **ventana de ajuste** | Debe cumplir **R-CG**: ±5 mm en las cuatro configuraciones |
-| C5 | Resolver la ventana de torsión (§2) | Iterar torsión y reflex hasta cerrar trim con margen de pérdida en punta |
-| **C6** | **Verificar autoridad de elevón** | Deflexión necesaria en toda la envolvente, incluida ráfaga y CG extremo |
-| C7 | Caracterizar rigidez de charnela TPU | Entra en ω_β y por tanto en el análisis de flutter |
+| C1 | Neutral point with a panel method | XFLR5 VLM on the A1 planform with the B3 airfoil |
+| C2 | Verify with an independent analytical method | Sweep correction on section AC. **Two methods that disagree = error in one** |
+| C3 | Set the target static margin | 8–12 % of MAC. Not below 6 % even with FC |
+| C4 | CG position and **adjustment window** | Must meet **R-CG**: ±5 mm in the four configurations |
+| C5 | Resolve the torsion window (§2) | Iterate twist and reflex until trim closes with tip-stall margin |
+| **C6** | **Verify elevon authority** | Deflection needed across the whole envelope, including gust and extreme CG |
+| C7 | Characterize TPU hinge stiffness | Enters ω_β and therefore the flutter analysis |
 
-> **C6 nunca se había hecho.** Se dimensionó la charnela al 72 % y se calculó su flutter y su equilibrado de masa **sin comprobar que da autoridad suficiente**. Orden invertido, corregido aquí.
+> **C6 had never been done.** The hinge at 72 % was sized and its flutter and mass balancing were calculated **without checking that it gives enough authority**. Inverted order, corrected here.
 
-**C4 puede obligar a rediseñar la bahía o el CORE.** Es donde la modularidad de batería se paga o se cobra.
+**C4 may force a bay or CORE redesign.** That is where battery modularity is paid for or collected.
 
-## D — Propulsión *(paralelo, desacoplado)*
+## D — Propulsion *(parallel, decoupled)*
 
-**No depende de nada de lo anterior.** Y contiene la afirmación central del proyecto.
+**It depends on nothing above.** And it contains the project's central claim.
 
-| # | Tarea | Nota |
+| # | Task | Note |
 |---|---|---|
-| D1 | Montar cadena de medida: pitot + blackbox + registro de corriente | Instrumento de E2, E3 y E7 |
-| **D2** | **Validar el método sobre una plataforma existente** | Vuelo estabilizado, barrido de velocidad, reducción de datos |
-| D3 | Barrido de emparejamiento de hélice | 3–4 combinaciones contra J predicho por UIUC |
-| D4 | Tabla de emparejamiento por pack (4S / 6S) | **Salida publicable del proyecto** |
+| D1 | Build the measurement chain: pitot + blackbox + current logging | Instrument of E2, E3 and E7 |
+| **D2** | **Validate the method on an existing platform** | Stabilized flight, speed sweep, data reduction |
+| D3 | Propeller-matching sweep | 3–4 combinations against the J predicted by UIUC |
+| D4 | Matching table per pack (4S / 6S) | **Publishable project output** |
 
-**D2 es el paso más infravalorado del plan.** Valida la cadena de medida completa en un avión que ya vuela, antes de que exista el nuevo. Si el método no funciona ahí, no funcionará después — y sería mucho peor descubrirlo con el artículo #1.
+**D2 is the most underrated step in the plan.** It validates the whole measurement chain on an aircraft that already flies, before the new one exists. If the method does not work there, it will not work later — and it would be far worse to discover that with article #1.
 
-⚠️ **Verificar antes de comprar:** el SpeedyBee F405 WING **MINI** puede no tener entrada de pitot. Sin ella, E2 y E7 no son posibles en esa plataforma.
+⚠️ **Verify before buying:** the SpeedyBee F405 WING **MINI** may lack a pitot input. Without it, E2 and E7 are not possible on that platform.
 
 ---
 
-# 4. Secuencia
+# 4. Sequence
 
 ```
-AHORA          A3 A4 (parcial)  ──┐
-               B1                ─┼──► pueden empezar hoy
+NOW            A3 A4 (partial)  ──┐
+               B1                ─┼──► can start today
                D1 D2             ─┘
 
-BLOQUEADO      A1 A2  (requiere archivo de alas o vía A4)
+BLOCKED        A1 A2  (requires wing files or route A4)
 
-DESPUÉS DE A+B C1 C2 C3
+AFTER A+B      C1 C2 C3
                ↓
-               C4 ──► ¿cumple R-CG?          NO ──► rediseño de bahía/CORE
-               ↓ SÍ
-               C5 ──► ¿ventana de torsión?   NO ──► volver a B3 con reflex
-               ↓ SÍ
-               C6 ──► ¿autoridad suficiente? NO ──► replantear charnela
-               ↓ SÍ
-        ═══ PUERTA DE FASE 1 ═══
+               C4 ──► does it meet R-CG?      NO ──► bay/CORE redesign
+               ↓ YES
+               C5 ──► torsion window?         NO ──► back to B3 with reflex
+               ↓ YES
+               C6 ──► enough authority?       NO ──► rethink hinge
+               ↓ YES
+        ═══ PHASE 1 GATE ═══
 
-PARALELO       D3 D4  (en cualquier momento tras D2)
+PARALLEL       D3 D4  (any time after D2)
 ```
 
-## Criterios de salida
+## Exit criteria
 
-- [ ] Planta definida: envergadura, cuerdas, flecha c/4, estrechamiento
-- [ ] Perfil seleccionado con polares `[D]` calibradas
-- [ ] Distribución de torsión definida
-- [ ] Punto neutro calculado por **dos métodos** que concuerdan
-- [ ] Margen estático 8–12 % con CG alcanzable
-- [ ] **R-CG verificado** en las cuatro configuraciones
-- [ ] **Autoridad de elevón verificada** en toda la envolvente
-- [ ] Ventana de torsión cerrada con margen de pérdida en punta
+- [ ] Planform defined: wingspan, chords, c/4 sweep, taper
+- [ ] Airfoil selected with calibrated `[D]` polars
+- [ ] Twist distribution defined
+- [ ] Neutral point computed by **two methods** that agree
+- [ ] Static margin 8–12 % with achievable CG
+- [ ] **R-CG verified** in all four configurations
+- [ ] **Elevon authority verified** across the whole envelope
+- [ ] Torsion window closed with tip-stall margin
 
-**Nada de esto requiere imprimir.**
+**None of this requires printing.**
 
 ---
 
-# 5. Riesgos del plan
+# 5. Plan risks
 
-| Riesgo | Prob. | Mitigación |
+| Risk | Prob. | Mitigation |
 |---|---|---|
-| **La ventana de torsión sale vacía** | Media | Aceptar reflex y perder C_Lmax → puede obligar a subir superficie |
-| **R-CG no se cumple con 6S2P** | **Alta** | Ya previsto: 6S2P declarado fuera de envolvente |
-| XFOIL calibrado sigue poco fiable en la burbuja | Media | Declarar `[D]`, cerrar con E2. No congelar decisiones irreversibles sobre B |
-| No conseguir el archivo de alas del Peregrine | **Alta** | A4 (StuntDouble) como fuente alternativa de planta |
-| El FC de pruebas no admite pitot | Media | Verificar antes de comprar; buscar FC alternativo para banco |
-| **G9 impide E7** | Media | Ajustar lazo de altitud antes de ensayar |
+| **The torsion window comes out empty** | Medium | Accept reflex and lose C_Lmax → may force increasing area |
+| **R-CG not met with 6S2P** | **High** | Already foreseen: 6S2P declared out of envelope |
+| Calibrated XFOIL still unreliable in the bubble | Medium | Declare `[D]`, close with E2. Do not freeze irreversible decisions on B |
+| Cannot get the Peregrine wing files | **High** | A4 (StuntDouble) as an alternative planform source |
+| The test FC does not support pitot | Medium | Verify before buying; look for an alternative FC for the bench |
+| **G9 prevents E7** | Medium | Adjust the altitude loop before testing |
 
 ---
 
-# 6. Qué se puede empezar hoy
+# 6. What can start today
 
-1. **B1** — completar el *holdout* de la banda Ncrit 10–12 contra E387 (E).
-   La primera calibración reproducible ya está en [I-06](../investigacion/I-06-perfiles-reflexados.md).
-2. **D1** — pedir el pitot. Material con plazo de entrega; bloquea E2, E3 y E7.
-3. **A4** — completar la reconstrucción de planta y torsión de la familia StuntDouble.
-   Las fuentes ya están adquiridas; la comparación es cuasi-controlada, no causal.
+1. **B1** — complete the *holdout* of the Ncrit 10–12 band against E387 (C).
+   The first reproducible calibration is already in [I-06](../research/I-06-reflexed-airfoils.md).
+2. **D1** — order the pitot. Material with lead time; blocks E2, E3 and E7.
+3. **A4** — complete the planform and twist reconstruction of the StuntDouble family.
+   The sources are already acquired; the comparison is quasi-controlled, not causal.

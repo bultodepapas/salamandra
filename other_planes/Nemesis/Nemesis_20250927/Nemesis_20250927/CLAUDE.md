@@ -1,201 +1,201 @@
 # CLAUDE.md
 
-Contexto y reglas de trabajo para asistentes de IA en este repositorio.
+Context and working rules for AI assistants in this repository.
 
 ---
 
-## Qué es este proyecto
+## What this project is
 
-Ala volante FPV de **flecha invertida**, impresa en PETG, modular. No es un repositorio de STL: **es un repositorio de razonamiento**. El STL vendrá después.
+Forward-swept FPV flying wing, **modular**, printed in PETG. This is not an STL repository: **it is a reasoning repository**. The STL will come later.
 
-La aportación es que **cada decisión lleva su fundamento, su fuente y su nivel de confianza**, y que **los errores quedan registrados en vez de borrados**.
+The contribution is that **every decision carries its rationale, its source, and its confidence level**, and that **mistakes are recorded instead of erased**.
 
-Si al terminar una sesión el repositorio tiene más geometría pero menos trazabilidad, la sesión ha sido negativa.
+If at the end of a session the repository has more geometry but less traceability, the session was negative.
 
 ---
 
-## La regla central — no negociable
+## The central rule — non-negotiable
 
-Toda afirmación cuantitativa lleva etiqueta:
+Every quantitative claim carries a tag:
 
-| Etiqueta | Significado |
+| Tag | Meaning |
 |---|---|
-| `[M]` | Medido y publicado por una fuente primaria |
-| `[D]` | Derivado por cálculo a partir de datos `[M]` |
-| `[E]` | Estimado sobre supuestos declarados |
-| `[I]` | Inferencia razonada, no verificada |
+| `[M]` | Measured and published by a primary source |
+| `[D]` | Derived by calculation from `[M]` data |
+| `[E]` | Estimated on declared assumptions |
+| `[I]` | Reasoned inference, not verified |
 
-> **Ningún dato `[E]` o `[I]` sostiene una decisión irreversible sin verificación previa.**
+> **No `[E]` or `[I]` datum supports an irreversible decision without prior verification.**
 
-**Corolario operativo:** si vas a escribir un número, primero decide su etiqueta. Si no sabes qué etiqueta ponerle, no lo escribas todavía.
+**Operational corollary:** if you are about to write a number, first decide its tag. If you do not know which tag to give it, do not write it yet.
 
-**No se aceptan cifras sin fuente, aunque sean correctas.** Una cifra huérfana correcta hoy es una cifra no verificable mañana.
-
----
-
-## Estado actual
-
-**Fase 0 cerrada. Fase 1 (geometría y estabilidad) en curso.**
-
-Antes de proponer nada, lee en este orden:
-
-1. [`README.md`](README.md) — estado y navegación
-2. [`docs/00-objetivos-y-requisitos.md`](docs/00-objetivos-y-requisitos.md) — el pliego
-3. [`brechas/README.md`](brechas/README.md) — **lo que no sabemos**
-4. [`docs/03-plan-fase1.md`](docs/03-plan-fase1.md) — qué toca ahora
-
-**El bloqueante actual está en `brechas/`.** No lo asumas: léelo, cambia.
+**Numbers without a source are not accepted, even if they are correct.** An orphan figure that is correct today is an unverifiable figure tomorrow.
 
 ---
 
-## Mapa del repositorio
+## Current status
 
-| Carpeta | Qué contiene | Cuándo escribir aquí |
+**Phase 0 closed. Phase 1 (geometry and stability) in progress.**
+
+Before proposing anything, read in this order:
+
+1. [`README.md`](README.md) — status and navigation
+2. [`docs/00-objectives-and-requirements.md`](docs/00-objectives-and-requirements.md) — the specification
+3. [`gaps/README.md`](gaps/README.md) — **what we do not know**
+4. [`docs/03-phase-1-plan.md`](docs/03-phase-1-plan.md) — what is due now
+
+**The current blocker is in `gaps/`.** Do not assume it: read it, it changes.
+
+---
+
+## Repository map
+
+| Folder | What it contains | When to write here |
 |---|---|---|
-| `docs/` | Pliego, plan de fase, convenciones, datos medidos | Cambia un requisito o un objetivo |
-| `decisiones/` | **ADR: una decisión por archivo** | Se toma, se supera o se anula una decisión |
-| `investigacion/` | Líneas de investigación: qué se buscó y se encontró | Se investiga algo, aunque no decida nada |
-| `brechas/` | Registro de incógnitas G1–G9 | Se abre, se acota o se cierra una brecha |
-| `ensayos/` | Programa experimental y datos | Se define o se ejecuta un ensayo |
-| `calculo/` | Scripts de análisis **con caso de validación** | Se escribe o modifica cálculo |
-| `geometria/` `stl/` `cad/` | Salidas de Fase 1 en adelante | Todavía no |
+| `docs/` | Specification, phase plan, conventions, measured data | A requirement or objective changes |
+| `decisions/` | **ADR: one decision per file** | A decision is made, superseded or cancelled |
+| `research/` | Research threads: what was searched and found | Something is researched, even if it decides nothing |
+| `gaps/` | Register of unknowns G1–G9 | A gap is opened, bounded or closed |
+| `tests/` | Experimental program and data | A test is defined or run |
+| `calculations/` | Analysis scripts **with validation case** | A calculation is written or modified |
+| `geometry/` `stl/` `cad/` | Phase 1 outputs and beyond | Not yet |
 
-**`decisiones/` e `investigacion/` están separados a propósito.** Una ADR dice *qué se decidió*; una línea de investigación dice *qué sabemos y cómo*. Una investigación alimenta varias decisiones y una decisión se apoya en varias investigaciones. Fusionarlos obliga a duplicar o a perder trazabilidad.
+**`decisions/` and `research/` are separated on purpose.** An ADR says *what was decided*; a research thread says *what we know and how*. One piece of research feeds several decisions and one decision rests on several pieces of research. Merging them forces duplication or loss of traceability.
 
 ---
 
-## Cómo trabajar aquí
+## How to work here
 
-### Al tomar una decisión
+### When making a decision
 
-Crea una ADR desde [`decisiones/PLANTILLA.md`](decisiones/PLANTILLA.md). Numeración correlativa. Debe responder:
+Create an ADR from [`decisions/TEMPLATE.md`](decisions/TEMPLATE.md). Sequential numbering. It must answer:
 
-- ¿Qué obligaba a decidir?
-- ¿Qué se descartó y por qué?
-- ¿Qué obliga esta decisión aguas abajo?
-- **¿Qué dato la haría reconsiderar?** ← esto es lo que hace el repo evolutivo
+- What forced the decision?
+- What was discarded and why?
+- What does this decision require downstream?
+- **What datum would make you reconsider it?** ← this is what makes the repo evolutionary
 
-Actualiza el índice de `decisiones/README.md` con el estado.
+Update the index of `decisions/README.md` with the status.
 
-### Al encontrar un error
+### When finding an error
 
-**No lo silencies editando el texto.** Corrígelo **y** añade entrada al [`CHANGELOG.md`](CHANGELOG.md) con número `C`. Alguien que leyó la versión anterior necesita saber que cambió y por qué.
+**Do not silence it by editing the text.** Fix it **and** add an entry to the [`CHANGELOG.md`](CHANGELOG.md) with a `C` number. Someone who read the previous version needs to know that it changed and why.
 
-Van 18 correcciones. Varias son errores del análisis original tumbados por datos posteriores. **Documentarlas es lo que permite confiar en lo que queda en pie.**
+There are 18 corrections so far. Several are errors of the original analysis overturned by later data. **Documenting them is what allows trust in what remains standing.**
 
-### Al anular una decisión
+### When cancelling a decision
 
-**Conserva el archivo**, márcalo ❌ y explica qué proponía, por qué se anula y **bajo qué condiciones volvería**. Borrarla hace que dentro de seis meses alguien la proponga otra vez sin saber que ya se estudió. Ejemplo: [`ADR-0022`](decisiones/ADR-0022-velo-carbono-anulada.md).
+**Keep the file**, mark it ❌ and explain what it proposed, why it is cancelled and **under what conditions it would return**. Deleting it means that in six months someone will propose it again without knowing it was already studied. Example: [`ADR-0022`](decisions/ADR-0022-carbon-veil-cancelled.md).
 
-### Al escribir cálculo
+### When writing calculations
 
-**Todo script lleva un caso de validación contra solución analítica conocida, y debe pasarlo antes de usarse.** No es ceremonia: el error C17 (falta de normalización por la CMA en el VLM) lo destapó exactamente eso.
+**Every script carries a validation case against a known analytical solution, and must pass it before use.** This is not ceremony: error C17 (missing MAC normalization in the VLM) was exactly what that caught.
 
 ```bash
-python3 calculo/vlm_ala_volante.py    # incluye el caso de contraste
+python3 calculations/vlm_ala_volante.py    # includes the contrast case
 ```
 
 ---
 
-## Modos de fallo conocidos
+## Known failure modes
 
-Documentados porque **ya ocurrieron en este proyecto**. Léelos antes de trabajar.
+Documented because **they already happened in this project**. Read them before working.
 
-### 1. Orden invertido — el más frecuente y el más caro
+### 1. Inverted order — the most frequent and the most expensive
 
-Se dimensionó estructura **sin definir cargas** (n_max no existía). Se dimensionaron elevones y se calculó su flutter y su equilibrado de masa **sin haber calculado nunca el punto neutro ni la autoridad de mando**.
+Structure was sized **without defining loads** (n_max did not exist). Elevons were sized and their flutter and mass balancing were computed **without ever having computed the neutral point or the control authority**.
 
-> **Antes de dimensionar algo, pregunta qué lo carga y qué lo restringe. Si no está definido, esa es la tarea.**
+> **Before sizing anything, ask what loads it and what constrains it. If it is not defined, that is the task.**
 
-### 2. Precisión falsa
+### 2. False precision
 
-Se calcularon frecuencias de flutter con tres cifras significativas sobre un ala cuya superficie era `[E]` ±13 %, cuyo perfil no existía y cuya flecha era un rango de 4°.
+Flutter frequencies were computed with three significant figures on a wing whose area was `[E]` ±13 %, whose airfoil did not exist and whose sweep was a 4° range.
 
-> **Las cifras significativas de la salida no pueden superar las de la entrada peor.**
+> **The significant figures of the output cannot exceed those of the worst input.**
 
-### 3. No re-derivar aguas abajo
+### 3. Failing to re-derive downstream
 
-- **C6** — se arrastró una cuerda de 231 mm de una tabla antigua tras cambiar el alargamiento.
-- **C16** — el requisito de velocidad de pérdida se derivó con 1350 g y **no se rehizo** al subir el AUW a 1620 g. El propio requisito dejó de cumplirse con nuestro propio C_Lmax.
+- **C6** — a 231 mm chord was carried over from an old table after the aspect ratio changed.
+- **C16** — the stall speed requirement was derived with 1350 g and **was not re-derived** when the AUW rose to 1620 g. The requirement itself stopped being met with our own C_Lmax.
 
-> **Cuando cambie un número aguas arriba, busca todo lo que dependía de él. Es la corrección más repetida del proyecto.**
+> **When a number changes upstream, look for everything that depended on it. It is the most repeated correction in the project.**
 
-### 4. Transferencia indebida
+### 4. Unwarranted transfer
 
-- **C7** — se dio por válida la evidencia del Eliminator a 360 km/h para el PETG. Validaba **su** material.
-- **C12** — se especificó relleno 0 %, heredado de la práctica de LW-PLA en modo vaso, sobre una cáscara de PETG.
+- **C7** — the Eliminator evidence at 360 km/h was taken as valid for PETG. It validated **its** material.
+- **C12** — infill 0 % was specified, inherited from LW-PLA vase-mode practice, on a PETG shell.
 
-> **Un aval vale para el material, la escala y el régimen en que se obtuvo. Declara el límite de transferencia.**
+> **An endorsement applies to the material, the scale and the regime in which it was obtained. Declare the transfer limit.**
 
-### 5. Generalizar de un solo caso calculado
+### 5. Generalizing from a single calculated case
 
-- **C11** — «los tubos de carbono no sirven para torsión», concluido de un tubo de 10 mm. En pared delgada `J ∝ D³`: a 18 mm el resultado se invierte.
+- **C11** — "carbon tubes do not work for torsion", concluded from a 10 mm tube. In thin wall `J ∝ D³`: at 18 mm the result reverses.
 
-> **Antes de convertir un cálculo en regla, mira de qué depende y en qué potencia.**
+> **Before turning a calculation into a rule, look at what it depends on and to what power.**
 
-### 6. Rotundidad sin datos
+### 6. Categorical claims without data
 
-- **C9** — «el PETG no se puede pegar». Existen tres soluciones.
-- **C14** — se comunicó un riesgo estructural con más certeza de la que soportaban datos `[E]` ±35 %.
+- **C9** — "PETG cannot be glued". Three solutions exist.
+- **C14** — a structural risk was communicated with more certainty than `[E]` ±35 % data supported.
 
-> **El tono debe llevar la etiqueta de confianza. Un `[E]` no se comunica como un `[M]`.**
+> **The tone must carry the confidence tag. An `[E]` is not communicated like an `[M]`.**
 
-### 7. Ignorar hardware que vuela
+### 7. Ignoring hardware that flies
 
-- **C15** — «un perímetro no cumple criterio». Falsado por un ejemplar en servicio.
+- **C15** — "a single perimeter fails the criterion". Falsified by an in-service example.
 
-> **Un artículo volando gana a un cálculo `[E]`. Si el modelo contradice hardware real, el sospechoso es el modelo.**
+> **A flying article beats an `[E]` calculation. If the model contradicts real hardware, the model is the suspect.**
 
-### 8. Ensayos que no discriminan
+### 8. Tests that do not discriminate
 
-- **C13** — se propuso calibrar el modelo contra un artículo que resultó estar a factor ~3 del límite. No falsaba ni validaba.
+- **C13** — calibrating the model against an article was proposed, but that article turned out to be at a factor ~3 from the limit. It neither falsified nor validated.
 
-> **Antes de proponer un ensayo, pregunta qué resultado lo haría fracasar. Si no hay ninguno, no mide nada.**
-
----
-
-## Antes de proponer algo, verifica
-
-- [ ] ¿En qué fase estamos, y esto pertenece a esta fase?
-- [ ] ¿Está bloqueado por alguna brecha abierta?
-- [ ] ¿Qué etiqueta de confianza tiene cada número que estoy escribiendo?
-- [ ] ¿Contradice alguna ADR vigente? ¿Alguna corrección ya registrada?
-- [ ] Si cambio un número, ¿qué depende de él aguas abajo?
-- [ ] ¿Hay hardware volando que diga otra cosa?
-- [ ] ¿Qué documento hay que actualizar además del que estoy tocando?
+> **Before proposing a test, ask what result would make it fail. If there is none, it measures nothing.**
 
 ---
 
-## Convenciones técnicas
+## Before proposing anything, verify
 
-Detalle completo en [`docs/04-convenciones.md`](docs/04-convenciones.md).
+- [ ] What phase are we in, and does this belong to this phase?
+- [ ] Is it blocked by any open gap?
+- [ ] What confidence tag does every number I am writing carry?
+- [ ] Does it contradict any active ADR? Any already-recorded correction?
+- [ ] If I change a number, what depends on it downstream?
+- [ ] Is there flying hardware that says otherwise?
+- [ ] What document needs updating besides the one I am touching?
 
-| Prefijo | Significado |
+---
+
+## Technical conventions
+
+Full detail in [`docs/04-conventions.md`](docs/04-conventions.md).
+
+| Prefix | Meaning |
 |---|---|
-| `ADR-XXXX` | Decisión · `I-XX` Investigación · `GX` Brecha |
-| `EX` | Ensayo · `OX` Objetivo · `R-XXX` Requisito · `CX` Corrección |
+| `ADR-XXXX` | Decision · `I-XX` Research · `GX` Gap |
+| `EX` | Test · `OX` Objective · `R-XXX` Requirement · `CX` Correction |
 
-**Signos:** flecha negativa hacia delante (el proyecto usa ≈ −20°) · torsión positiva = wash-in (punta a mayor incidencia) · en `calculo/`, `x` positivo hacia atrás con origen en el c/4 de raíz.
+**Signs:** sweep negative forward (the project uses ≈ −20°) · positive twist = wash-in (tip at higher incidence) · in `calculations/`, `x` positive backward with origin at the root c/4.
 
-**Unidades:** SI en cálculo. En tablas se admiten km/h y g/dm², por ser las de uso corriente.
+**Units:** SI in calculations. Tables may use km/h and g/dm², as they are the common units.
 
-**Nunca usar** un único factor de Oswald para la resistencia. Separar siempre el término viscoso del inducido — ver [`ADR-0009`](decisiones/README.md) e [`I-01`](investigacion/I-01-alargamiento-reynolds.md). Es un artefacto de definición que ya causó la corrección C1.
-
----
-
-## Calidad de fuentes
-
-Orden de preferencia: revisadas por pares → bases de datos experimentales (UIUC) → ensayo controlado con método declarado → documentación de fabricante → patentes → medición propia sobre artículos en servicio.
-
-**Fuente marcada como no utilizable:** Grokipedia, por contradecir a la totalidad de fuentes primarias consultadas sobre divergencia en flecha invertida.
+**Never use** a single Oswald factor for drag. Always separate the viscous term from the induced one — see [`ADR-0009`](decisions/README.md) and [`I-01`](research/I-01-aspect-ratio-reynolds.md). It is a definition artifact that already caused correction C1.
 
 ---
 
-## Qué no hacer
+## Source quality
 
-- **No inventar cifras** para rellenar un hueco. Una brecha declarada vale más que un número plausible.
-- **No borrar historial.** Ni ADR anuladas, ni correcciones, ni resultados que salieron mal.
-- **No saltar de fase.** Si la Fase 1 no tiene puerta cerrada, no se diseña geometría de detalle.
-- **No optimizar un parámetro** cuando hay otro sin definir. Es el modo de fallo nº 1.
-- **No dar por buena una polar de XFOIL** a Re bajo sin calibrar contra dato medido. Es `[D]`, nunca `[M]`.
-- **No prescribir motor ni batería.** El proyecto diseña el airframe y recomienda — [`ADR-0033`](decisiones/ADR-0033-electronica-fuera.md).
+Order of preference: peer-reviewed → experimental databases (UIUC) → controlled test with declared method → manufacturer documentation → patents → own measurement on in-service articles.
+
+**Source marked as unusable:** Grokipedia, for contradicting all primary sources consulted on forward-sweep divergence.
+
+---
+
+## What not to do
+
+- **Do not invent figures** to fill a gap. A declared gap is worth more than a plausible number.
+- **Do not erase history.** Not cancelled ADRs, not corrections, not results that came out wrong.
+- **Do not skip phases.** If Phase 1 has no closed gate, no detail geometry is designed.
+- **Do not optimize one parameter** while another is undefined. It is failure mode #1.
+- **Do not take an XFOIL polar as good** at low Re without calibrating against measured data. It is `[D]`, never `[M]`.
+- **Do not prescribe motor or battery.** The project designs the airframe and recommends — [`ADR-0033`](decisions/ADR-0033-electronics-out.md).

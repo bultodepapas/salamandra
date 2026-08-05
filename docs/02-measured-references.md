@@ -1,42 +1,42 @@
-# Referencias medidas — datos primarios
+# Measured references — primary data
 
-Datos `[M]` obtenidos por medición directa sobre artículos de referencia. **Es la aportación original del proyecto**: cifras que no estaban publicadas en ninguna parte.
+`[M]` data obtained by direct measurement on reference articles. **This is the project's original contribution**: figures that were not published anywhere.
 
 ---
 
 # 1. Peregrine 840 mm
 
-Ala volante de flecha invertida impresa en 3D, con soporte para DJI O4. **En servicio, volando.** Único artículo comparable verificado de esta configuración.
+3D-printed forward-swept flying wing, with support for DJI O4. **In service, flying.** The only verified comparable article of this configuration.
 
-Fuentes: archivo de proyecto Bambu Studio `Peregrine_body_LWPLA.3mf` y ficha del diseñador. Medido 28 julio 2026.
+Sources: Bambu Studio project file `Peregrine_body_LWPLA.3mf` and the designer's datasheet. Measured 28 July 2026.
 
-## 1.1 Ficha publicada `[M]`
+## 1.1 Published datasheet `[M]`
 
-| Parámetro | Valor |
+| Parameter | Value |
 |---|---|
-| Envergadura | 840 mm |
-| Longitud | 500 mm |
-| **Peso impreso** | **315 g** (en LW-PLA) |
-| **Peso al despegue** | **720 g** |
-| **Velocidad de pérdida** | **35 km/h** |
-| Tubo de carbono principal | Ø8 × 654 mm |
-| Tubo secundario | Ø4 × 194 mm |
-| Motor sugerido | 2208 kv2000 / 2207 kv1980 |
-| Hélice sugerida | 5146 tripala o APC 6×4 |
-| Batería | 4S LiPo o 18650 |
+| Wingspan | 840 mm |
+| Length | 500 mm |
+| **Printed weight** | **315 g** (in LW-PLA) |
+| **Takeoff weight** | **720 g** |
+| **Stall speed** | **35 km/h** |
+| Main carbon tube | Ø8 × 654 mm |
+| Secondary tube | Ø4 × 194 mm |
+| Suggested motor | 2208 kv2000 / 2207 kv1980 |
+| Suggested propeller | 5146 three-blade or APC 6×4 |
+| Battery | 4S LiPo or 18650 |
 | FC | SpeedyBee F405 WING MINI (INAV 8.1) |
-| Servos | 13 g digitales |
-| **Inclinación de bancada** | **0,8° arriba** |
-| Bisagras | Impresas en TPU, pegadas |
+| Servos | 13 g digital |
+| **Motor mount tilt** | **0.8° up** |
+| Hinges | TPU printed, glued |
 
-## 1.2 Perfil de impresión del diseñador `[M]`
+## 1.2 Designer's print profile `[M]`
 
 ```
-filament_type          PLA-AERO (Bambu PLA Aero) — LW-PLA espumado
+filament_type          PLA-AERO (Bambu PLA Aero) — foamed LW-PLA
 wall_loops             1
 sparse_infill_density  4 %
 sparse_infill_pattern  gyroid
-filament_flow_ratio    0.60          ← compensación de espumado
+filament_flow_ratio    0.60          ← foaming compensation
 layer_height           0.20 mm
 outer / inner wall     0.42 / 0.45 mm
 nozzle / bed           247 °C / 55 °C
@@ -44,79 +44,79 @@ fan                    30 %
 spiral_mode            off
 ```
 
-**Un solo perímetro de 0,42 mm y 4 % de giroide.** Eso es lo que vuela.
+**A single 0.42 mm perimeter and 4 % gyroid.** That is what flies.
 
-## 1.3 Geometría medida `[M]`
+## 1.3 Measured geometry `[M]`
 
-Secciones extraídas del panel interior:
+Sections extracted from the inner panel:
 
-| Estación relativa | Cuerda | Espesor máx. | **t/c** |
+| Relative station | Chord | Max thickness | **t/c** |
 |---|---|---|---|
-| 0,15 | 125,6 mm | 17,0 mm | **13,5 %** |
-| 0,55 | 140,6 mm | 19,3 mm | **13,8 %** |
-| 0,90 | 160,1 mm | 21,3 mm | **13,3 %** |
+| 0.15 | 125.6 mm | 17.0 mm | **13.5 %** |
+| 0.55 | 140.6 mm | 19.3 mm | **13.8 %** |
+| 0.90 | 160.1 mm | 21.3 mm | **13.3 %** |
 
-**t/c esencialmente constante en 13,5 %**, con estrechamiento en cuerda.
+**t/c essentially constant at 13.5 %**, with taper in chord.
 
-## 1.4 Planta reconstruida `[D]`
+## 1.4 Reconstructed planform `[D]`
 
-Los objetos del archivo encajan: por semiala, panel interior 222,5 mm + exterior 157,4 mm = 380 mm, más ~118 mm de cuerpo → **840 mm**. Coincide con la ficha.
+The file's objects fit: per wing half, inner panel 222.5 mm + outer 157.4 mm = 380 mm, plus ~118 mm of body → **840 mm**. Matches the datasheet.
 
-| | Valor |
+| | Value |
 |---|---|
-| Superficie estimada | **0,140 m²** |
-| Cuerda media | 166 mm |
-| **Alargamiento** | **5,05** |
-| **Carga alar (720 g)** | **51,6 g/dm²** |
-| Fracción estructural | 315/720 = **43,8 %** |
+| Estimated area | **0.140 m²** |
+| Mean chord | 166 mm |
+| **Aspect ratio** | **5.05** |
+| **Wing loading (720 g)** | **51.6 g/dm²** |
+| Structural fraction | 315/720 = **43.8 %** |
 
-⚠️ La velocidad de pérdida publicada (35 km/h) implicaría C_Lmax ≈ 0,87 con esta superficie — por encima del rango medido para placas y reflexados a Re bajo (0,55–0,70, Ananda et al.). **La cifra publicada es probablemente optimista;** un C_Lmax realista de 0,65 daría ~41 km/h.
+⚠️ The published stall speed (35 km/h) would imply C_Lmax ≈ 0.87 with this area — above the measured range for flat plates and reflexed airfoils at low Re (0.55–0.70, Ananda et al.). **The published figure is probably optimistic**; a realistic C_Lmax of 0.65 would give ~41 km/h.
 
-## 1.5 Consecuencias para el proyecto
+## 1.5 Consequences for the project
 
-1. **Convergencia independiente sobre t/c.** ADR-0027 fijó 13 % por argumento de divergencia y por alojamiento de celda 21700. El artículo que vuela está en 13,5 %. Dos caminos, mismo resultado.
+1. **Independent convergence on t/c.** ADR-0027 set 13 % by a divergence argument and by housing the 21700 cell. The flying article sits at 13.5 %. Two paths, same result.
 
-2. **Un perímetro vuela** — corrección C15.
+2. **One perimeter flies** — correction C15.
 
-3. **El relleno es parte de la estructura.** El diseñador especifica 4 % de giroide, no relleno cero — corrección C12.
+3. **Infill is part of the structure.** The designer specifies 4 % gyroid, not zero infill — correction C12.
 
-4. **Dato de trim `[M]`.** El ajuste recomendado en INAV de **«cabeceo nivelado: 0 → 3°»** indica que el avión necesita 3° de morro arriba para vuelo nivelado: su incidencia construida se queda 3° corta. Es el único dato disponible sobre el estado de trim real de un ala FSW impresa en servicio. Alimenta la **ventana de torsión** de [I-02](../investigacion/I-02-equilibrio-sin-cola.md).
+4. **Trim datum `[M]`.** The recommended INAV adjustment of **"level flight pitch: 0 → 3°"** indicates the aircraft needs 3° of nose-up attitude for level flight: its built incidence falls 3° short. It is the only available datum on the real trim state of an in-service printed FSW wing. It feeds the **torsion window** of [I-02](../research/I-02-tailless-trim.md).
 
-5. **Riesgo operativo `[M]`.** La ficha documenta *porpoising* en modos RTH / Cruise / Loiter, con ajustes correctivos. **Amenaza directa a la validez de E7** → brecha G9.
+5. **Operational risk `[M]`.** The datasheet documents *porpoising* in RTH / Cruise / Loiter modes, with corrective adjustments. **Direct threat to the validity of E7** → gap G9.
 
-6. **El tubo Ø8 es larguero de flexión.** Aportación torsional ~1 N·m², frente a ~70 de la piel. Confirma [ADR-0015](../decisiones/ADR-0015-carbono-no-torsional.md).
+6. **The Ø8 tube is a bending spar.** Torsional contribution ~1 N·m², versus ~70 from the skin. Confirms [ADR-0015](../decisions/ADR-0015-carbon-non-torsional.md).
 
-## 1.6 Ejemplar impreso en PETG — estimación `[E]`
+## 1.6 Example printed in PETG — estimate `[E]`
 
-Un ejemplar impreso en PETG con la geometría de un perfil calculado para LW-PLA:
+An example printed in PETG with the geometry of an airfoil calculated for LW-PLA:
 
-| | Diseño LW-PLA | Ejemplar en PETG |
+| | LW-PLA design | PETG example |
 |---|---|---|
-| Impreso | 315 g | **~690 g** |
+| Printed | 315 g | **~690 g** |
 | AUW | 720 g | **~1095 g** |
-| Carga alar | 51,6 g/dm² | **~78 g/dm²** |
-| V_pérdida | 35 km/h (declarada) | **~43 km/h** |
-| G en cortante | 0,35 GPa | **0,55 GPa** (×1,6) |
+| Wing loading | 51.6 g/dm² | **~78 g/dm²** |
+| V_stall | 35 km/h (declared) | **~43 km/h** |
+| G in shear | 0.35 GPa | **0.55 GPa** (×1.6) |
 
-**Es evidencia estructural más fuerte de lo que parece:** más masa a la misma geometría significa más velocidad de crucero y más presión dinámica — y aun así no diverge.
+**It is stronger structural evidence than it appears:** more mass at the same geometry means more cruise speed and more dynamic pressure — and it still does not diverge.
 
-## 1.7 Advertencia de reproducción
+## 1.7 Reproduction warning
 
-⚠️ El perfil trae `filament_flow_ratio = 0.60`, que compensa el espumado del LW-PLA. **Al cambiar a PETG hay que subirlo a ~0,95.** Si no, se deposita un 40 % menos de material: pared real de ~0,25 mm en vez de 0,42 mm.
+⚠️ The profile carries `filament_flow_ratio = 0.60`, which compensates for LW-PLA foaming. **When switching to PETG it must be raised to ~0.95.** Otherwise 40 % less material is deposited: an actual wall of ~0.25 mm instead of 0.42 mm.
 
-## 1.8 Límites de transferencia
+## 1.8 Transfer limits
 
-- El archivo disponible es el **cuerpo**, no los paneles exteriores. Planta completa (flecha del c/4, estrechamiento, **torsión**) sigue pendiente.
-- Sin datos de velocidad máxima real alcanzada.
-- Escala 840 mm frente a 1300 mm: **las tendencias transfieren, las magnitudes no** sin la ley de escalado de [I-05](../investigacion/I-05-divergencia-flutter.md).
+- The available file is the **body**, not the outer panels. Full planform (c/4 sweep, taper, **twist**) is still pending.
+- No data on the real maximum speed achieved.
+- 840 mm scale versus 1300 mm: **trends transfer, magnitudes do not** without the scaling law of [I-05](../research/I-05-divergence-flutter.md).
 
 ---
 
-# 2. Datos pendientes de medir
+# 2. Data pending measurement
 
-| # | Qué | Cómo |
+| # | What | How |
 |---|---|---|
-| R1 | Planta del panel Peregrine: flecha c/4, estrechamiento, **torsión** | Archivo de alas |
-| R2 | Coordenadas de perfil a varias estaciones | Corte de malla |
-| R3 | Geometría de la familia StuntDouble | **Parcial** — ficha comparada en [I-08](../investigacion/I-08-familia-stuntdouble.md); falta reconstruir planta y torsión de STL |
-| R4 | **Comparación cuasi-controlada de planta**: flecha invertida vs *plank* | **Parcial** — mismo autor y AR comparable, pero PW51/PW75 y propulsión confunden el efecto de flecha |
+| R1 | Peregrine panel planform: c/4 sweep, taper, **twist** | Wing files |
+| R2 | Airfoil coordinates at several stations | Mesh slicing |
+| R3 | StuntDouble family geometry | **Partial** — datasheet compared in [I-08](../research/I-08-stuntdouble-family.md); planform and twist of the STLs still to reconstruct |
+| R4 | **Quasi-controlled planform comparison**: forward sweep vs *plank* | **Partial** — same author and comparable AR, but PW51/PW75 and propulsion confound the sweep effect |

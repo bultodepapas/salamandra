@@ -1,78 +1,78 @@
-# I-02 — Equilibrio sin cola y flecha invertida
+# I-02 — Tailless trim and forward sweep
 
-**Estado:** Cerrada · **Alimenta:** ADR-0001, ADR-0003, ADR-0027
+**Status:** Closed · **Feeds:** ADR-0001, ADR-0003, ADR-0027
 
-## Pregunta
+## Question
 
-¿Cómo se equilibra un ala sin cola, y qué gana o pierde la flecha invertida frente a la flecha atrás?
+How is a tailless wing trimmed, and what does forward sweep gain or lose versus aft sweep?
 
-## Mecanismo de equilibrio
+## Trim mechanism
 
-Un ala sin cola requiere momento de cabeceo positivo. **Solo hay dos vías:** perfil con C_m0 positivo (reflex), o combinación de flecha y torsión.
+A tailless wing requires positive pitching moment. **There are only two paths:** an airfoil with positive C_m0 (reflex), or a combination of sweep and twist.
 
-Para la flecha, las dos soluciones son **simétricas**:
+For sweep, the two solutions are **symmetric**:
 
-| Planta | Torsión requerida | Carga en punta a sustentación nula |
+| Planform | Required twist | Tip loading at zero lift |
 |---|---|---|
-| Flecha atrás | **Wash-out** (punta abajo) | Hacia abajo — resta sustentación |
-| **Flecha invertida** | **Wash-in** (punta arriba) | Hacia arriba — suma sustentación |
+| Aft sweep | **Wash-out** (tip down) | Downward — subtracts lift |
+| **Forward sweep** | **Wash-in** (tip up) | Upward — adds lift |
 
-En flecha invertida las puntas van **por delante** del CG: wash-in genera más sustentación por delante → momento de encabritado. Es la fuente natural de trim de esta planta.
+In forward sweep the tips go **ahead of** the CG: wash-in generates more lift ahead → nose-up moment. It is the natural trim source of this planform.
 
-> **Corrección C2.** Se afirmó inicialmente que la flecha invertida depende exclusivamente del C_m0 del perfil por no poder usar torsión. **Falso: puede y debe usar wash-in.**
+> **Correction C2.** It was initially claimed that forward sweep depends exclusively on the airfoil C_m0 because twist could not be used. **False: it can and should use wash-in.**
 >
-> Consecuencia práctica de gran valor: **el perfil puede ser poco o nada reflexado**, con mejor C_Lmax y mejor L/D que los reflexados clásicos — si el wash-in basta para cerrar el trim.
+> Consequence of great practical value: **the airfoil can be lightly reflexed or not reflexed at all**, with better C_Lmax and better L/D than the classic reflexed airfoils — if the wash-in suffices to close the trim.
 
-## Ventaja 1 — resistencia de trim
+## Advantage 1 — trim drag
 
-En flecha invertida la fuerza de equilibrio actúa **hacia arriba y por delante del CG**: la sustentación total necesaria es esencialmente igual al peso. En flecha atrás el equilibrio exige carga negativa en las puntas y el ala debe generar **más** de lo que pesa el avión.
+In forward sweep the balance force acts **upward and ahead of the CG**: the total lift required is essentially equal to the weight. In aft sweep, balance requires negative tip loading and the wing must generate **more** than the aircraft weighs.
 
-Documentado en US 4.545.552 y US 4.674.709.
+Documented in US 4.545.552 and US 4.674.709.
 
-⚠️ Patentes, no literatura revisada por pares. El argumento físico es correcto y verificable; **la magnitud del beneficio no está cuantificada por fuente independiente.**
+⚠️ Patents, not peer-reviewed literature. The physical argument is correct and verifiable; **the magnitude of the benefit is not quantified by an independent source.**
 
-## Ventaja 2 — comportamiento en pérdida
+## Advantage 2 — stall behavior
 
-El flujo transversal va de punta a raíz. **La raíz entra en pérdida primero**, y los elevones exteriores conservan efectividad al permanecer en aire de alta energía. `[M]`, múltiples fuentes independientes.
+The spanwise flow runs from tip to root. **The root stalls first**, and the outer elevons keep effectiveness by remaining in high-energy air. `[M]`, multiple independent sources.
 
-Para un ala volante esto pesa doble: **los elevones son la totalidad del control.**
+For a flying wing this weighs double: **the elevons are the entirety of the control.**
 
-## Riesgo — divergencia aeroelástica
+## Risk — aeroelastic divergence
 
-Ver [I-05](I-05-divergencia-flutter.md) para el tratamiento completo.
+See [I-05](I-05-divergence-flutter.md) for the full treatment.
 
-### Acoplamiento peligroso `[I]`
+### Dangerous coupling `[I]`
 
-La flecha invertida sin cola **necesita wash-in para el trim**, y la divergencia aeroelástica **también produce wash-in**. Los dos efectos se suman, y el segundo crece con la presión dinámica.
+The tailless forward-swept wing **needs wash-in for trim**, and aeroelastic divergence **also produces wash-in**. The two effects add up, and the second grows with dynamic pressure.
 
-**Consecuencia: el estado de trim se desplaza con la velocidad.** Un ala de flecha atrás tiene el signo contrario y se auto-atenúa.
+**Consequence: the trim state shifts with speed.** An aft-swept wing has the opposite sign and self-damps.
 
-Esto explica tres características del TBS Mojito que antes no tenían explicación: CG extremadamente adelantado, recomendación de adelantarlo aún más, y deflexiones de elevón deliberadamente cortas.
+This explains three TBS Mojito characteristics that previously had no explanation: extremely forward CG, recommendation to move it even further forward, and deliberately short elevon deflections.
 
-Riesgo adicional documentado: con deflexión aeroelástica suficiente, **las puntas pueden entrar en pérdida primero, anulando la ventaja principal** — precisamente cuando más se necesita `[M]`.
+Additional documented risk: with sufficient aeroelastic deflection, **the tips can stall first, cancelling the main advantage** — precisely when it is most needed `[M]`.
 
-## La ventana de torsión — problema central de Fase 1
+## The torsion window — Phase 1 central problem
 
-    trim mínimo  ≤  ε_wash-in  ≤  límite de pérdida en punta
+    minimum trim  ≤  ε_wash-in  ≤  tip stall limit
 
-| Límite | Origen | Efecto de violarlo |
+| Limit | Origin | Effect of violating it |
 |---|---|---|
-| Inferior | Hace falta C_m suficiente al CL de crucero | No compensa sin deflexión permanente → resistencia de trim y pérdida de autoridad |
-| Superior | Wash-in sube la incidencia de punta | **Se anula la ventaja de pérdida por raíz** |
+| Lower | Enough C_m is needed at cruise CL | No compensation without permanent deflection → trim drag and loss of authority |
+| Upper | Wash-in raises the tip incidence | **The root-stall advantage is cancelled** |
 
-Y hay que **dejar hueco al wash-in elástico**, que crece con la velocidad.
+And room must be **left for elastic wash-in**, which grows with speed.
 
-**Si la ventana está vacía, hay que meter reflex** — y el reflex cuesta C_Lmax, que ya es requisito por lanzamiento a mano.
+**If the window is empty, reflex must be added** — and reflex costs C_Lmax, which is already a requirement due to hand launch.
 
-## Dato empírico relevante `[M]`
+## Relevant empirical datum `[M]`
 
-La documentación del Peregrine 840 mm indica ajustar en INAV **«cabeceo nivelado: 0 → 3°»**. Significa que el avión necesita 3° de actitud de morro arriba para vuelo nivelado: **su incidencia/torsión construida se queda 3° corta**.
+The Peregrine 840 mm documentation indicates adjusting in INAV **"level flight pitch: 0 → 3°"**. It means the aircraft needs 3° of nose-up attitude for level flight: **its built incidence/twist falls 3° short**.
 
-Es el único dato disponible sobre el estado de trim real de un ala de flecha invertida impresa en servicio.
+It is the only available datum on the real trim state of an in-service printed forward-swept wing.
 
-## Fuentes
+## Sources
 
-- US 4.545.552 y US 4.674.709 — configuración sin cola de flecha invertida *(patentes)*
-- Documentación del programa X-29
-- aerodesign.de — base de datos de perfiles para alas volantes y sin cola
-- Ficha técnica del Peregrine 840 mm
+- US 4.545.552 and US 4.674.709 — tailless forward-sweep configuration *(patents)*
+- X-29 program documentation
+- aerodesign.de — airfoil database for flying and tailless wings
+- Peregrine 840 mm technical datasheet

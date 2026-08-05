@@ -1,36 +1,36 @@
-# ADR-0002 — Cáscara cerrada de tres células
+# ADR-0002 — Closed three-cell shell
 
-**Estado:** ✅ Vigente · **Fecha:** 2026-07-28 · **Confianza:** Media `[I]` · **Reversible:** No
-**Investigación:** [I-05](../investigacion/I-05-divergencia-flutter.md)
+**Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** Medium `[I]` · **Reversible:** No
+**Research:** [I-05](../research/I-05-divergence-flutter.md)
 
-## Contexto
+## Context
 
-En flecha invertida la rigidez torsional gobierna el riesgo dominante. La construcción determina esa rigidez más que el material.
+In forward sweep, torsional stiffness governs the dominant risk. The construction determines that stiffness more than the material.
 
-## Alternativas
+## Alternatives
 
-| Construcción | Rigidez torsional | Veredicto |
+| Construction | Torsional stiffness | Verdict |
 |---|---|---|
-| Espuma moldeada con varillas embebidas | Sección abierta o casi. Órdenes de magnitud peor | **Rechazada** |
-| **Cáscara impresa cerrada** | Cajón de torsión por construcción | **Adoptada** |
+| Molded foam with embedded rods | Open or nearly open section. Orders of magnitude worse | **Rejected** |
+| **Closed printed shell** | Torsion box by construction | **Adopted** |
 
-## Decisión
+## Decision
 
-**Cáscara cerrada de tres células:** cajón D en borde de ataque + célula central + célula de charnela.
+**Closed three-cell shell:** D-box at the leading edge + center cell + hinge cell.
 
-## Fundamento
+## Rationale
 
-Una pieza impresa es una **cáscara cerrada — un cajón de torsión por construcción**. En sección cerrada, `J = 4A²t/s`; la rigidez de una sección cerrada supera en órdenes de magnitud a la de una abierta.
+A printed part is a **closed shell — a torsion box by construction**. In a closed section, `J = 4A²t/s`; the stiffness of a closed section exceeds that of an open one by orders of magnitude.
 
-**Detalle que no era evidente:** la célula cerrada **no llega al borde de fuga**. La línea de charnela del elevón abre la sección, y en un ala volante los elevones ocupan casi toda la envergadura. El cajón útil termina hacia el 72 % de cuerda.
+**Detail that was not obvious:** the closed cell **does not reach the trailing edge**. The elevon hinge line opens the section, and on a flying wing the elevons occupy almost the whole span. The useful box ends around 72 % of the chord.
 
-De ahí las tres células: añadir un alma delante (cajón D) recupera área encerrada donde el par es mayor.
+Hence the three cells: adding a forward web (D-box) recovers enclosed area where the torque is greatest.
 
-## Consecuencias
+## Consequences
 
-- Obliga a relleno giroide ([ADR-0028](ADR-0028-relleno-giroide.md)): sin él la piel pandea y la hipótesis de sección cerrada no se cumple.
-- Fija la charnela del elevón como frontera estructural, no solo aerodinámica.
+- Requires gyroid infill ([ADR-0028](ADR-0028-gyroid-infill.md)): without it the skin buckles and the closed-section hypothesis does not hold.
+- Sets the elevon hinge as a structural boundary, not just an aerodynamic one.
 
-## Correcciones asociadas
+## Associated corrections
 
-- **C7** — se afirmó que la evidencia del Eliminator a 360 km/h validaba la construcción impresa en general. Valida **su** material (casi con seguridad PLA); con G un 40 % menor, el PETG no hereda ese aval.
+- **C7** — it was claimed that the Eliminator evidence at 360 km/h validated printed construction in general. It validates **its** material (almost certainly PLA); with a 40 % lower G, the PETG does not inherit that endorsement.

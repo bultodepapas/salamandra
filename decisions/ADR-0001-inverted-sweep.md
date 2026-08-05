@@ -1,40 +1,40 @@
-# ADR-0001 — Ala volante de flecha invertida
+# ADR-0001 — Forward-swept flying wing
 
-**Estado:** ✅ Vigente · **Fecha:** 2026-07-27 · **Confianza:** Alta · **Reversible:** No
-**Investigación:** [I-02 — Equilibrio sin cola y flecha invertida](../investigacion/I-02-equilibrio-sin-cola.md)
+**Status:** ✅ Active · **Date:** 2026-07-27 · **Confidence:** High · **Reversible:** No
+**Research:** [I-02 — Tailless trim and forward sweep](../research/I-02-tailless-trim.md)
 
-## Contexto
+## Context
 
-La misión (FPV de crucero, lanzamiento a mano, transporte compacto) admite ala volante o configuración con cola. Dentro de ala volante, la flecha puede ser atrás o adelante.
+The mission (FPV cruise, hand launch, compact transport) admits a flying wing or a tailed configuration. Within a flying wing, the sweep can be aft or forward.
 
-## Alternativas consideradas
+## Alternatives considered
 
-| Opción | A favor | En contra |
+| Option | For | Against |
 |---|---|---|
-| Cola convencional | Estabilidad trivial, perfil libre | Más piezas, más resistencia, más frágil al aterrizar de panza |
-| Ala volante flecha atrás | Solución mayoritaria, sin divergencia | Requiere wash-out: la punta resta sustentación; pérdida por punta primero |
-| **Flecha invertida** | Trim más eficiente, pérdida por raíz | **Divergencia aeroelástica** |
+| Conventional tail | Trivial stability, free airfoil | More parts, more drag, more fragile on belly landing |
+| Aft-swept flying wing | Majority solution, no divergence | Requires wash-out: the tip subtracts lift; tip-first stall |
+| **Forward sweep** | More efficient trim, root-first stall | **Aeroelastic divergence** |
 
-## Decisión
+## Decision
 
-**Ala volante de flecha invertida, sin cola.**
+**Forward-swept flying wing, without a tail.**
 
-## Fundamento
+## Rationale
 
-1. **Ventaja de resistencia de trim.** En flecha invertida la fuerza de equilibrio actúa hacia arriba y por delante del CG: la sustentación total necesaria es esencialmente igual al peso. En flecha atrás el equilibrio exige carga negativa en punta y el ala debe generar **más** de lo que pesa el avión. Documentado en US 4.545.552 y US 4.674.709.
-   ⚠️ Son patentes, no literatura revisada por pares. El argumento físico es verificable; **la magnitud no está cuantificada por fuente independiente.**
+1. **Trim-drag advantage.** In forward sweep the balance force acts upward and ahead of the CG: the total lift required is essentially equal to the weight. In aft sweep, balance requires negative tip loading and the wing must generate **more** than the aircraft weighs. Documented in US 4.545.552 and US 4.674.709.
+   ⚠️ They are patents, not peer-reviewed literature. The physical argument is verifiable; **the magnitude is not quantified by an independent source.**
 
-2. **Comportamiento en pérdida.** El flujo transversal va de punta a raíz: **la raíz entra en pérdida primero** y los elevones exteriores conservan efectividad. `[M]`, múltiples fuentes independientes. En un ala volante esto pesa doble: los elevones son la totalidad del control.
+2. **Stall behavior.** The spanwise flow runs from tip to root: **the root stalls first** and the outer elevons keep effectiveness. `[M]`, multiple independent sources. On a flying wing this weighs double: the elevons are the entirety of the control.
 
-3. **Convergencia independiente.** Dos diseñadores llegaron a la misma planta sin relación entre sí: la familia StuntDouble (Interceptor / Eliminator / Nemesis) y el Peregrine 840 mm.
+3. **Independent convergence.** Two designers reached the same planform with no relation to each other: the StuntDouble family (Interceptor / Eliminator / Nemesis) and the Peregrine 840 mm.
 
-## Consecuencias
+## Consequences
 
-- **Abre el riesgo dominante del proyecto:** divergencia aeroelástica. Ver [I-05](../investigacion/I-05-divergencia-flutter.md).
-- Obliga a torsión de tipo **wash-in** (ADR-0003), no wash-out.
-- Obliga a priorizar **rigidez torsional** sobre masa en todo el dimensionado.
-- El CG y el punto neutro dejan de ser intuitivos: requieren cálculo (brecha G8).
+- **Opens the project's dominant risk:** aeroelastic divergence. See [I-05](../research/I-05-divergence-flutter.md).
+- Requires **wash-in** type twist (ADR-0003), not wash-out.
+- Requires prioritizing **torsional stiffness** over mass throughout the sizing.
+- The CG and neutral point stop being intuitive: they require calculation (gap G8).
 
-## Condiciones de revisión
+## Review conditions
 
-Solo se reconsideraría si el ensayo E7 midiera una velocidad de divergencia inaceptablemente baja y no hubiera solución estructural dentro del presupuesto de masa.
+Only reconsidered if test E7 measured an unacceptably low divergence speed and there were no structural solution within the mass budget.

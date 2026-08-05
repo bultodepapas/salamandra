@@ -1,177 +1,177 @@
-# I-07 — Punto neutro, margen estático y ventana de torsión
+# I-07 — Neutral point, static margin and torsion window
 
-**Estado:** Abierta — resultado preliminar `[D]` · **Cierra parcialmente:** G8
-**Alimenta:** ADR-0003 (torsión), ADR-0032 (R-NP), y el requisito de perfil de G2
-**Herramienta:** [`calculo/vlm_ala_volante.py`](../calculo/vlm_ala_volante.py), [`calculo/ventana_torsion.py`](../calculo/ventana_torsion.py)
+**Status:** Open — preliminary result `[D]` · **Partially closes:** G8
+**Feeds:** ADR-0003 (twist), ADR-0032 (R-NP), and the G2 airfoil requirement
+**Tool:** [`calculations/vlm_ala_volante.py`](../calculations/vlm_ala_volante.py), [`calculations/ventana_torsion.py`](../calculations/ventana_torsion.py)
 
 ---
 
-# 1. Método
+# 1. Method
 
-Vortex lattice (VLM) propio, 40 paneles en envergadura con distribución coseno × 6 en cuerda, herraduras con vórtice ligado a c/4 de panel y punto de control a 3c/4. Condición de contorno linealizada.
+In-house vortex lattice (VLM), 40 spanwise panels with cosine distribution × 6 in chord, horseshoes with the bound vortex at the panel c/4 and control point at 3c/4. Linearized boundary condition.
 
-## Validación
+## Validation
 
-Ala recta AR 6, sin flecha ni torsión:
+Straight AR 6 wing, no sweep or twist:
 
-| | Calculado | Teórico | Error |
+| | Calculated | Theoretical | Error |
 |---|---|---|---|
-| CL_α | 4,274 /rad | 4,527 /rad (Helmbold) | −5,6 % |
-| Punto neutro | 24,0 % CMA | 25 % CMA | −1,0 punto |
+| CL_α | 4.274 /rad | 4.527 /rad (Helmbold) | −5.6 % |
+| Neutral point | 24.0 % MAC | 25 % MAC | −1.0 point |
 
-Aceptable para dimensionado preliminar. **La malla es gruesa en cuerda**; refinarla acercaría CL_α al valor teórico.
+Acceptable for preliminary sizing. **The mesh is coarse in chord**; refining it would bring CL_α closer to the theoretical value.
 
-> **Corrección detectada durante la validación:** la primera versión devolvía el momento adimensionalizado sin dividir por la CMA, lo que introducía un factor de cuerda espurio en el punto neutro. El caso de validación lo destapó — un ala recta debe dar el NP en c/4, y daba ~0.
-
----
-
-# 2. Punto neutro — configuración Cruise
-
-Planta: b = 1300 mm · S = 0,282 m² · AR 6,0 · λ = 0,50 · Λ_c/4 = −20°
-→ c_raíz 289 mm · c_punta 145 mm · **CMA 225 mm**
-
-| Resultado | Valor |
-|---|---|
-| **Punto neutro** | **26,7 % CMA** |
-| Posición absoluta | 101 mm **por delante** del c/4 de raíz |
-| CL_α | 4,187 /rad |
-
-**El NP queda por delante del borde de ataque de la raíz.** Es el comportamiento esperado de una flecha invertida pronunciada, y es la razón por la que el centrado de esta configuración no es intuitivo.
-
-## CG objetivo
-
-| Margen estático | x_CG (% CMA) |
-|---|---|
-| 6 % | 20,7 % |
-| **8 %** | **18,7 %** |
-| 10 % | 16,7 % |
-| 12 % | 14,7 % |
+> **Correction detected during validation:** the first version returned the non-dimensionalized moment without dividing by the MAC, which introduced a spurious chord factor in the neutral point. The validation case exposed it — a straight wing must give the NP at c/4, and it gave ~0.
 
 ---
 
-# 3. La ventana de torsión
+# 2. Neutral point — Cruise configuration
 
-Condiciones: AUW 1620 g (6S1P) · 57 g/dm² · crucero 95 km/h · pérdida 45 km/h
+Planform: b = 1300 mm · S = 0.282 m² · AR 6.0 · λ = 0.50 · Λ_c/4 = −20°
+→ c_root 289 mm · c_tip 145 mm · **MAC 225 mm**
 
-| | Valor |
+| Result | Value |
 |---|---|
-| CL de crucero | 0,132 |
-| CL_max requerido | 0,589 |
-| cl_max de sección `[M]` | 0,65 (Ananda et al., 0,55–0,70) |
-| **Rendimiento del wash-in** | **Cm0 = +0,00338 por grado** |
+| **Neutral point** | **26.7 % MAC** |
+| Absolute position | 101 mm **ahead of** the root c/4 |
+| CL_α | 4.187 /rad |
 
-## 3.1 Límite inferior — trim
+**The NP ends up ahead of the root leading edge.** It is the expected behavior of a pronounced forward sweep, and the reason the balancing of this configuration is not intuitive.
 
-Condición de equilibrio sin cola: `Cm0 = CL · MargenEstático`
+## Target CG
 
-| Margen estático | Cm0 requerido | **Solo torsión** | **Con perfil Cm0 = +0,010** |
+| Static margin | x_CG (% MAC) |
+|---|---|
+| 6 % | 20.7 % |
+| **8 %** | **18.7 %** |
+| 10 % | 16.7 % |
+| 12 % | 14.7 % |
+
+---
+
+# 3. The torsion window
+
+Conditions: AUW 1620 g (6S1P) · 57 g/dm² · cruise 95 km/h · stall 45 km/h
+
+| | Value |
+|---|---|
+| Cruise CL | 0.132 |
+| Required CL_max | 0.589 |
+| Section cl_max `[M]` | 0.65 (Ananda et al., 0.55–0.70) |
+| **Wash-in yield** | **Cm0 = +0.00338 per degree** |
+
+## 3.1 Lower limit — trim
+
+Tailless equilibrium condition: `Cm0 = CL · StaticMargin`
+
+| Static margin | Required Cm0 | **Twist only** | **With airfoil Cm0 = +0.010** |
 |---|---|---|---|
-| 6 % | +0,0079 | 2,34° | 0° |
-| **8 %** | **+0,0106** | **3,13°** | **0,17°** |
-| 10 % | +0,0132 | 3,91° | 0,95° |
-| 12 % | +0,0159 | 4,69° | 1,73° |
+| 6 % | +0.0079 | 2.34° | 0° |
+| **8 %** | **+0.0106** | **3.13°** | **0.17°** |
+| 10 % | +0.0132 | 3.91° | 0.95° |
+| 12 % | +0.0159 | 4.69° | 1.73° |
 
-## 3.2 Límite superior — pérdida en punta
+## 3.2 Upper limit — tip stall
 
-Reparto de cl de sección en la condición de CL_max requerido:
+Section cl distribution at the required CL_max condition:
 
-| wash-in | Posición del cl máximo | cl raíz | cl punta | cl máx local | Margen a 0,65 |
+| wash-in | Position of max cl | cl root | cl tip | local max cl | Margin to 0.65 |
 |---|---|---|---|---|---|
-| 0° | **27 % b/2** | 0,616 | 0,105 | 0,633 | +0,017 |
-| 2° | 49 % b/2 | 0,586 | 0,115 | 0,628 | +0,022 |
-| 3° | 56 % b/2 | 0,571 | 0,120 | 0,633 | +0,017 |
-| 4° | **62 % b/2** | 0,556 | 0,125 | 0,641 | +0,009 |
-| 5° | 68 % b/2 | 0,542 | 0,130 | 0,651 | **−0,001** ❌ |
-| 6° | 68 % b/2 | 0,527 | 0,135 | 0,663 | −0,013 ❌ |
+| 0° | **27 % b/2** | 0.616 | 0.105 | 0.633 | +0.017 |
+| 2° | 49 % b/2 | 0.586 | 0.115 | 0.628 | +0.022 |
+| 3° | 56 % b/2 | 0.571 | 0.120 | 0.633 | +0.017 |
+| 4° | **62 % b/2** | 0.556 | 0.125 | 0.641 | +0.009 |
+| 5° | 68 % b/2 | 0.542 | 0.130 | 0.651 | **−0.001** ❌ |
+| 6° | 68 % b/2 | 0.527 | 0.135 | 0.663 | −0.013 ❌ |
 
 ---
 
-# 4. Conclusión — el resultado central de Fase 1
+# 4. Conclusion — the central Phase 1 result
 
-**La ventana existe, pero es más estrecha de lo que sugería la corrección C2.**
+**The window exists, but it is narrower than correction C2 suggested.**
 
-El hallazgo no es el límite duro de 5°, sino **cómo se desplaza el pico de carga**:
+The finding is not the hard 5° limit, but **how the load peak moves**:
 
-| wash-in | Pico de cl | Consecuencia |
+| wash-in | cl peak | Consequence |
 |---|---|---|
-| 0° | 27 % b/2 | La raíz entra en pérdida primero ✅ |
-| 4° | 62 % b/2 | Zona de elevones ⚠️ |
-| 5°+ | 68 % b/2 | Pérdida en punta ❌ |
+| 0° | 27 % b/2 | The root stalls first ✅ |
+| 4° | 62 % b/2 | Elevon zone ⚠️ |
+| 5°+ | 68 % b/2 | Tip stall ❌ |
 
-> **El wash-in canjea trim contra la ventaja que justificó elegir la flecha invertida.**
+> **Wash-in trades trim against the advantage that justified choosing forward sweep.**
 >
-> Con torsión pura, equilibrar a 10 % de margen estático exige 3,9°, y eso lleva el pico de carga al 62 % de la semienvergadura — justo donde están los elevones.
+> With pure twist, balancing at 10 % static margin requires 3.9°, and that moves the load peak to 62 % of half-span — right where the elevons are.
 
-## 4.1 Requisito derivado sobre el perfil
+## 4.1 Derived requirement on the airfoil
 
-**El perfil debe aportar la mayor parte del trim. La torsión hace el ajuste fino.**
+**The airfoil must provide most of the trim. Twist does the fine-tuning.**
 
-| # | Requisito |
+| # | Requirement |
 |---|---|
-| **R-PERFIL** | **Cm0 del perfil ≥ +0,008**, preferentemente +0,010–0,015 |
-| **R-TORSION** | **Wash-in ≤ 2,5°**, para mantener el pico de carga por dentro del 50 % de semienvergadura |
+| **R-AIRFOIL** | **Airfoil Cm0 ≥ +0.008**, preferably +0.010–0.015 |
+| **R-TWIST** | **Wash-in ≤ 2.5°**, to keep the load peak inside 50 % of half-span |
 
-Esto **acota G2 con un número**: la selección de perfil deja de ser abierta.
+This **bounds G2 with a number**: airfoil selection stops being open.
 
-## 4.2 La tensión que esto crea
+## 4.2 The tension this creates
 
-El reflex que da Cm0 positivo **cuesta cl_max**, y el margen ya es escaso:
+The reflex that gives positive Cm0 **costs cl_max**, and the margin is already thin:
 
-- Con cl_max de sección 0,65, el ala alcanza **CL_max ≈ 0,60** — un 92 %, por reparto no elíptico.
-- Eso da V_pérdida = 44,5 km/h, **justo dentro** del requisito de ≤ 45.
-- Si el reflex baja cl_max a 0,60, V_pérdida sube a **46,6 km/h** y el requisito se incumple.
+- With a section cl_max of 0.65, the wing reaches **CL_max ≈ 0.60** — a 92 %, by non-elliptic distribution.
+- That gives V_stall = 44.5 km/h, **just inside** the ≤ 45 requirement.
+- If reflex lowers cl_max to 0.60, V_stall rises to **46.6 km/h** and the requirement is violated.
 
-**R-PERFIL y el requisito de velocidad de pérdida compiten directamente.** Es el conflicto que la Fase 1 tiene que resolver, y ahora está cuantificado.
+**R-AIRFOIL and the stall-speed requirement compete directly.** It is the conflict Phase 1 must resolve, and it is now quantified.
 
 ---
 
-# 5. R-NP — deriva del punto neutro en la familia modular
+# 5. R-NP — neutral-point drift in the modular family
 
-Manteniendo cuerda de raíz, estrechamiento y flecha:
+Keeping root chord, taper and sweep:
 
-| Config | b | S | AR | **NP (% CMA)** |
+| Config | b | S | AR | **NP (% MAC)** |
 |---|---|---|---|---|
-| Sport | 1100 mm | 0,238 m² | 5,07 | **26,0 %** |
-| **Cruise** | 1300 mm | 0,282 m² | 6,00 | **26,7 %** |
-| Range | 1600 mm | 0,347 m² | 7,38 | **27,6 %** |
+| Sport | 1100 mm | 0.238 m² | 5.07 | **26.0 %** |
+| **Cruise** | 1300 mm | 0.282 m² | 6.00 | **26.7 %** |
+| Range | 1600 mm | 0.347 m² | 7.38 | **27.6 %** |
 
-**Dispersión total: 1,6 puntos de CMA.** Mucho menor de lo temido.
+**Total spread: 1.6 MAC points.** Much smaller than feared.
 
-## Compensación con flecha
+## Compensation with sweep
 
-| Config | Flecha | NP |
+| Config | Sweep | NP |
 |---|---|---|
-| 1100 mm | −24° | 26,8 % |
-| 1300 mm | −20° | 26,7 % |
-| 1600 mm | −18° | 27,1 % |
+| 1100 mm | −24° | 26.8 % |
+| 1300 mm | −20° | 26.7 % |
+| 1600 mm | −18° | 27.1 % |
 
-**Un ajuste de ±2–4° de flecha alinea los tres paneles dentro de 0,5 % de CMA.**
+**A ±2–4° sweep adjustment aligns the three panels within 0.5 % of MAC.**
 
-> **R-NP es fácil de cumplir.** No obliga a rediseñar cada panel: basta ajustar la flecha, que además es un parámetro libre en cada juego. Es la mejor noticia de este análisis para la arquitectura modular.
+> **R-NP is easy to meet.** It does not force redesigning each panel: adjusting the sweep is enough, and sweep is additionally a free parameter in each set. It is the best news of this analysis for the modular architecture.
 
 ---
 
-# 6. Limitaciones declaradas
+# 6. Declared limitations
 
-⚠️ Todo lo anterior es `[D]` sobre un modelo lineal no viscoso. Antes de congelar geometría:
+⚠️ Everything above is `[D]` on a linear non-viscous model. Before freezing geometry:
 
-| Limitación | Efecto probable |
+| Limitation | Probable effect |
 |---|---|
-| **Sin viscosidad** | El VLM no predice pérdida. El criterio de cl_max es un indicador, no una predicción |
-| **cl_max supuesto constante en envergadura** | **Optimista.** La punta tiene la mitad de cuerda → la mitad de Re → **menor cl_max real** (ver [I-01](I-01-alargamiento-reynolds.md)). **El margen de pérdida en punta es peor que el calculado** |
-| Sin cuerpo central | El fuselaje aporta sustentación y desplaza el NP hacia delante |
-| Malla gruesa en cuerda | CL_α un 5,6 % bajo |
-| Cm0 del perfil supuesto | Debe venir de G2 con polares calibradas |
-| Sin efectos de flecha en cl_max | La flecha invertida modifica el reparto real de pérdida |
+| **No viscosity** | The VLM does not predict stall. The cl_max criterion is an indicator, not a prediction |
+| **cl_max assumed constant across the span** | **Optimistic.** The tip has half the chord → half the Re → **lower real cl_max** (see [I-01](I-01-aspect-ratio-reynolds.md)). **The tip-stall margin is worse than calculated** |
+| No central body | The fuselage adds lift and moves the NP forward |
+| Coarse chord mesh | CL_α 5.6 % low |
+| Assumed airfoil Cm0 | Must come from G2 with calibrated polars |
+| No sweep effects on cl_max | Forward sweep modifies the real stall distribution |
 
-**La limitación de cl_max variable con Re es la más grave** y actúa en la dirección peligrosa: agrava el límite superior de la ventana y refuerza la conclusión de que hay que apoyarse en el perfil, no en la torsión.
+**The variable-cl_max-with-Re limitation is the most serious** and acts in the dangerous direction: it worsens the upper window limit and reinforces the conclusion that the airfoil must be leaned on, not the twist.
 
 ---
 
-# 7. Qué queda por hacer
+# 7. What remains
 
-1. **Verificar el NP con un segundo método independiente** (C2 del plan de Fase 1). Dos métodos que no coinciden = error en uno.
-2. **Cerrar G2** con polares calibradas, para tener Cm0 y cl_max reales del perfil candidato.
-3. **Repetir con cl_max variable en envergadura**, función del Re local.
-4. **Incorporar el cuerpo central** cuando exista geometría.
-5. **Verificar autoridad de elevón** (C6 del plan) — sigue sin hacerse.
+1. **Verify the NP with a second independent method** (C2 of the Phase 1 plan). Two methods that disagree = error in one.
+2. **Close G2** with calibrated polars, to have the real Cm0 and cl_max of the candidate airfoil.
+3. **Repeat with cl_max variable across the span**, as a function of local Re.
+4. **Incorporate the central body** when geometry exists.
+5. **Verify elevon authority** (C6 of the plan) — still undone.

@@ -1,176 +1,176 @@
-# Plan maestro — hoja de ruta hasta el primer prototipo
+# Master plan — roadmap to the first prototype
 
-**Revisión 1.0** · 28 julio 2026 · Fase 1 en curso
+**Revision 1.0** · 28 July 2026 · Phase 1 in progress
 
-Este documento **no sustituye** a [`03-plan-fase1.md`](03-plan-fase1.md), que sigue siendo el detalle operativo de Fase 1. Este documento es la capa de orquestación: **secuencia las fases 1→6 de la tabla de estado del [README](../README.md) hasta el primer artículo físico volando**, señala qué brecha (`brechas/README.md`) y qué ADR bloquea cada tramo, y fija dónde entra el modelado CAD (Fusion 360).
+This document **does not replace** [`03-phase-1-plan.md`](03-phase-1-plan.md), which remains the operational detail of Phase 1. This document is the orchestration layer: **it sequences phases 1→6 of the status table in the [README](../README.md) up to the first physical article flying**, points out which gap (`gaps/README.md`) and which ADR blocks each segment, and fixes where CAD modeling (Fusion 360) enters.
 
-No fija fechas de calendario. El repo no tiene datos `[M]` de cuánto tarda cada tarea; poner semanas sería una cifra `[I]` disfrazada de plan. Se ordena por **dependencia**, no por duración.
-
----
-
-## 0. Qué es "el primer prototipo"
-
-**Definición de trabajo, revisable:** el primer prototipo es **el artículo #1** ya descrito en el README — configuración **Cruise (1300 mm, 6S1P)** — impreso, montado, equilibrado según [ADR-0025](../decisiones/ADR-0025-equilibrado-elevones.md), con aviónica y **pitot instalado** (requisito de [O1](00-objetivos-y-requisitos.md)), capaz de volar de forma estabilizada para ejecutar **E2, E3 y E7**.
-
-No es "algo que imprime y vuela una vez". Es la plataforma instrumentada que **puede generar los datos `[M]` que el proyecto todavía no tiene** (G2, G4, G6, G7 en `brechas/`). Si no lleva pitot y blackbox operativos, no cuenta como prototipo del proyecto — cuenta como maqueta.
-
-Si esta definición no es la que tenías en mente, dímelo y ajusto el resto del plan.
+It sets no calendar dates. The repo has no `[M]` data on how long each task takes; putting weeks would be an `[I]` figure disguised as a plan. It is ordered by **dependency**, not by duration.
 
 ---
 
-## 1. Vista global — de Fase 1 a artículo volando
+## 0. What "the first prototype" is
 
-| Fase | Objetivo | Puerta de salida | Bloqueada por | Detalle |
+**Working definition, revisable:** the first prototype is **article #1** already described in the README — **Cruise (1300 mm, 6S1P)** configuration — printed, assembled, balanced according to [ADR-0025](../decisions/ADR-0025-elevon-balancing.md), with avionics and **pitot installed** (a requirement of [O1](00-objectives-and-requirements.md)), able to fly in a stabilized way to run **E2, E3 and E7**.
+
+It is not "something that prints and flies once". It is the instrumented platform that **can generate the `[M]` data the project still lacks** (G2, G4, G6, G7 in `gaps/`). If it does not carry an operational pitot and blackbox, it does not count as the project's prototype — it counts as a mock-up.
+
+If this definition is not the one you had in mind, tell me and I adjust the rest of the plan.
+
+---
+
+## 1. Global view — from Phase 1 to a flying article
+
+| Phase | Objective | Exit gate | Blocked by | Detail |
 |---|---|---|---|---|
-| **F1 — Geometría y estabilidad** | OML congelada, perfil elegido, NP verificado | Checklist de [`03-plan-fase1.md §4`](03-plan-fase1.md) | G1, G2, G8 | Documento dedicado |
-| **F2 — Pesos y centrado** | CG real dentro de R-CG en las 4 configuraciones de batería | R-CG verificado en CAD, no solo en tabla | Necesita OML de F1 | §3 de este doc |
-| **F3 — Prestaciones** | Polar completa del avión, curva de potencia, emparejamiento de hélice cerrado | D3/D4 ejecutados, objetivo O1 con vía de cierre | Parcialmente paralelo a F1 (línea D de `03-plan-fase1.md`) | §4 |
-| **F4 — Cargas y estructura** | n_max/n_min con base de ráfaga declarada, V-n, GJ/EI verificados, autoridad de elevón confirmada | C6 y C7 de `03-plan-fase1.md`, G4 y G6 acotadas | Necesita CG de F2 y polar de F3 | §5 |
-| **F5 — Sistemas y propulsión** | Bahía final, cadena de instrumentación (pitot+blackbox) operativa, firmware configurado | D1/D2 completados, G9 resuelto | Necesita estructura de F4 | §6 |
-| **F6 — Fabricación y publicación** | Artículo #1 impreso, montado, equilibrado, volando | Primer vuelo estabilizado con datos de blackbox válidos | Necesita F2–F5 cerradas | §7 |
+| **F1 — Geometry and stability** | Frozen OML, airfoil chosen, NP verified | Checklist of [`03-phase-1-plan.md §4`](03-phase-1-plan.md) | G1, G2, G8 | Dedicated document |
+| **F2 — Weights and balancing** | Real CG within R-CG in the 4 battery configurations | R-CG verified in CAD, not just on a table | Needs F1 OML | §3 of this doc |
+| **F3 — Performance** | Complete aircraft polar, power curve, closed propeller matching | D3/D4 run, objective O1 with a closing path | Partially parallel to F1 (line D of `03-phase-1-plan.md`) | §4 |
+| **F4 — Loads and structure** | n_max/n_min with a declared gust basis, V-n, verified GJ/EI, confirmed elevon authority | C6 and C7 of `03-phase-1-plan.md`, G4 and G6 bounded | Needs F2 CG and F3 polar | §5 |
+| **F5 — Systems and propulsion** | Final bay, operational instrumentation chain (pitot+blackbox), firmware configured | D1/D2 completed, G9 resolved | Needs F4 structure | §6 |
+| **F6 — Manufacturing and release** | Article #1 printed, assembled, balanced, flying | First stabilized flight with valid blackbox data | Needs F2–F5 closed | §7 |
 
-Fase 0 (pliego) está cerrada. Este plan cubre F1→F6; more allá de F6 empieza el programa de ensayos completo (E2, E3, E7 a fondo), que ya vive en `ensayos/README.md` y no se repite aquí.
+Phase 0 (specification) is closed. This plan covers F1→F6; beyond F6 the full test program (E2, E3, E7 in depth) begins, which already lives in `tests/README.md` and is not repeated here.
 
 ---
 
-## 2. Por qué el orden importa — el modo de fallo nº 1
+## 2. Why the order matters — failure mode #1
 
-`CLAUDE.md` documenta el error más caro del proyecto hasta ahora: dimensionar estructura y elevones **sin haber definido cargas ni verificado autoridad de mando**. Este plan existe para que no se repita:
+`CLAUDE.md` documents the most expensive error in the project so far: sizing structure and elevons **without having defined loads or verified control authority**. This plan exists so that it does not repeat:
 
 ```
-F1 (geometría, NP)
-  └─► F2 (CG real)          ← necesita geometría para calcular masas por componente
-        └─► F3 (polar, potencia)   ← paralelizable con F1/F2 vía línea D, no depende de ellas
-              └─► F4 (cargas, GJ/EI, autoridad de elevón)   ← necesita CG (F2) y CL de crucero (F3)
-                    └─► F5 (bahía final, instrumentación)    ← necesita estructura cerrada (F4)
-                          └─► F6 (fabricación, montaje, primer vuelo)
+F1 (geometry, NP)
+  └─► F2 (real CG)          ← needs geometry to compute per-component masses
+        └─► F3 (polar, power)   ← parallelizable with F1/F2 via line D, does not depend on them
+              └─► F4 (loads, GJ/EI, elevon authority)   ← needs CG (F2) and cruise CL (F3)
+                    └─► F5 (final bay, instrumentation)    ← needs closed structure (F4)
+                          └─► F6 (manufacturing, assembly, first flight)
 ```
 
-**F3 (línea D de propulsión) puede y debe empezar ya**, en paralelo — no depende de la geometría del ala nueva (`03-plan-fase1.md §3.D`). Todo lo demás es secuencial porque cada fase consume la salida verificada de la anterior, no su estimación.
+**F3 (propulsion line D) can and should start now**, in parallel — it does not depend on the new wing geometry (`03-phase-1-plan.md §3.D`). Everything else is sequential because each phase consumes the verified output of the previous one, not its estimate.
 
 ---
 
-## 3. F2 — Pesos y centrado
+## 3. F2 — Weights and balancing
 
-| # | Tarea | Cierra | Entrada necesaria |
+| # | Task | Closes | Needed input |
 |---|---|---|---|
-| P1 | Modelo de masas por componente (cáscara, carbono, servos, cableado, aviónica) | Base para CG real | OML congelada (F1) |
-| P2 | Modelo CAD paramétrico del CORE-1 y PANEL-1300 con densidades por material | Sustituye la tabla de masas estimada por geometría real | **Fusion 360** — ver §8 |
-| P3 | Verificar R-CG: CG dentro de ±5 mm en 4S1P, 4S2P, 6S1P, 6S2P | R-CG (docs/00, §3.3) | P1, P2 |
-| P4 | Si P3 falla: rediseñar bahía / mover CORE respecto al NP | C4 de `03-plan-fase1.md` | P3 |
+| P1 | Per-component mass model (shell, carbon, servos, wiring, avionics) | Basis for real CG | Frozen OML (F1) |
+| P2 | Parametric CAD model of CORE-1 and PANEL-1300 with per-material densities | Replaces the estimated mass table with real geometry | **Fusion 360** — see §8 |
+| P3 | Verify R-CG: CG within ±5 mm in 4S1P, 4S2P, 6S1P, 6S2P | R-CG (docs/00, §3.3) | P1, P2 |
+| P4 | If P3 fails: redesign bay / move CORE relative to the NP | C4 of `03-phase-1-plan.md` | P3 |
 
-**Riesgo conocido:** `03-plan-fase1.md` ya marca "R-CG no se cumple con 6S2P" como probabilidad **Alta** y lo da por asumido — 6S2P queda fuera de envolvente de crucero, documentado, no hay que redescubrirlo.
+**Known risk:** `03-phase-1-plan.md` already marks "R-CG not met with 6S2P" as **High** probability and takes it as assumed — 6S2P stays out of the cruise envelope, documented, no need to rediscover it.
 
 ---
 
-## 4. F3 — Prestaciones y cadena propulsiva
+## 4. F3 — Performance and propulsion chain
 
-Esto es la línea D de `03-plan-fase1.md` llevada a cierre. Se repite aquí solo la secuencia, el detalle vive allí:
+This is line D of `03-phase-1-plan.md` carried to closure. Only the sequence is repeated here; the detail lives there:
 
-| # | Tarea | Nota |
+| # | Task | Note |
 |---|---|---|
-| D1 | Montar pitot + blackbox + registro de corriente | Bloquea D2, D3, E2, E3, E7 |
-| D2 | Validar la cadena de medida en una plataforma **que ya vuela** | No esperar al artículo #1 para descubrir que el método falla |
-| D3 | Barrido de emparejamiento de hélice, 3–4 combinaciones | Contra J de UIUC |
-| D4 | Tabla de emparejamiento por pack | **Salida publicable** — es la demostración de O1 |
+| D1 | Build pitot + blackbox + current logging | Blocks D2, D3, E2, E3, E7 |
+| D2 | Validate the measurement chain on a platform **that already flies** | Do not wait for article #1 to discover the method fails |
+| D3 | Propeller-matching sweep, 3–4 combinations | Against UIUC J |
+| D4 | Matching table per pack | **Publishable output** — it is the demonstration of O1 |
 
-**Esto no bloquea F1/F2.** Puede y debe adelantarse.
+**This does not block F1/F2.** It can and should be brought forward.
 
 ---
 
-## 5. F4 — Cargas y estructura
+## 5. F4 — Loads and structure
 
-| # | Tarea | Cierra | Depende de |
+| # | Task | Closes | Depends on |
 |---|---|---|---|
-| S1 | Fijar n_max/n_min con base de ráfaga declarada (hoy `[E]`, dominado por ráfaga — docs/00 §3.1) | Precondición de todo lo demás | — |
-| S2 | V-n diagram con V_NE 160 km/h (artículo #1) | Envolvente de carga | S1 |
-| S3 | Verificar GJ/EI real de la sección (cajón D + célula central + charnela) contra ADR-0002/0015 | G4 | S1, geometría de F1, **Fusion 360** para geometría de sección (§8) |
-| S4 | Factor de flecha para divergencia sobre la relación EI/GJ real, no literatura genérica | **G6** — eslabón más débil declarado | S3 |
-| S5 | Verificar autoridad de elevón en toda la envolvente, incluida ráfaga y CG extremo | **C6 — nunca se había hecho**, ver `03-plan-fase1.md` | S2, CG de F2 |
-| S6 | Rigidez de charnela TPU (ω_β) | Entra en análisis de flutter (G7) | S3 |
-| S7 | Verificación de flutter con Southwell si hay datos de vuelo previos, si no, análisis preliminar | G7 | S3, S6 |
+| S1 | Fix n_max/n_min with a declared gust basis (today `[E]`, gust-dominated — docs/00 §3.1) | Precondition of everything else | — |
+| S2 | V-n diagram with V_NE 160 km/h (article #1) | Load envelope | S1 |
+| S3 | Verify the real GJ/EI of the section (D-box + center cell + hinge) against ADR-0002/0015 | G4 | S1, F1 geometry, **Fusion 360** for section geometry (§8) |
+| S4 | Sweep factor for divergence on the real EI/GJ ratio, not generic literature | **G6** — declared weakest link | S3 |
+| S5 | Verify elevon authority across the whole envelope, including gust and extreme CG | **C6 — never done before**, see `03-phase-1-plan.md` | S2, F2 CG |
+| S6 | TPU hinge stiffness (ω_β) | Enters the flutter analysis (G7) | S3 |
+| S7 | Flutter verification with Southwell if prior flight data exist, otherwise preliminary analysis | G7 | S3, S6 |
 
-⚠️ **S5 es la tarea que corrige el modo de fallo nº1.** No se dimensiona charnela final ni se calcula su equilibrado de masa sin haber pasado S5.
+⚠️ **S5 is the task that corrects failure mode #1.** No final hinge is sized and no mass balancing is computed without having passed S5.
 
 ---
 
-## 6. F5 — Sistemas y propulsión (integración final)
+## 6. F5 — Systems and propulsion (final integration)
 
-| # | Tarea | Depende de |
+| # | Task | Depends on |
 |---|---|---|
-| Y1 | Bahía de batería final con ajuste longitudinal (R-CG confirmado en CAD) | F2, F4 |
-| Y2 | Instalación de pitot, blackbox, GPS/magnetómetro fuera del camino de corriente de raíz (docs/00 §3.5) | D1 |
-| Y3 | Configuración INAV 9.1+ / ArduPlane | — |
-| Y4 | **Resolver G9** (porpoising) — ajuste de PID de altitud/cabeceo antes de volar en modos automáticos | Precedente del Peregrine (brechas/README) |
-| Y5 | Varillaje de elevón sin holgura, doble accionamiento (ADR-0026) | F4 (autoridad verificada) |
+| Y1 | Final battery bay with longitudinal adjustment (R-CG confirmed in CAD) | F2, F4 |
+| Y2 | Pitot, blackbox, GPS/magnetometer installation out of the root current path (docs/00 §3.5) | D1 |
+| Y3 | INAV 9.1+ / ArduPlane configuration | — |
+| Y4 | **Resolve G9** (porpoising) — altitude/pitch PID adjustment before flying in automatic modes | Peregrine precedent (gaps/README) |
+| Y5 | No-freeplay elevon linkage, dual actuation (ADR-0026) | F4 (verified authority) |
 
-**Y4 es prerrequisito explícito de E7** (ya declarado en `ensayos/README.md`). No es opcional para el programa de ensayos, aunque no impide el primer vuelo no instrumentado.
+**Y4 is an explicit prerequisite of E7** (already declared in `tests/README.md`). It is not optional for the test program, although it does not prevent the first uninstrumented flight.
 
 ---
 
-## 7. F6 — Fabricación y publicación (llegar al artículo #1)
+## 7. F6 — Manufacturing and release (reaching article #1)
 
-| # | Tarea | ADR / referencia |
+| # | Task | ADR / reference |
 |---|---|---|
-| M1 | Segmentación para bandeja de impresión: 3 segmentos por semiala, 45° | ADR-0024 |
-| M2 | Impresión: 2 perímetros (0,9 mm), relleno giroide 5 % | ADR-0028 |
-| M3 | Juntas: espiga + adhesivo PETG específico, área ≥ 3× sección de piel | ADR-0023 |
-| M4 | Pasador de carbono en juntas | ADR-0031 |
-| M5 | Montaje completo, verificación de masa real contra modelo de F2 | Cierra P2 con dato `[M]` |
-| M6 | **Equilibrado de masa de elevones** — obligatorio antes de volar | ADR-0025 |
-| M7 | Primer vuelo — estabilizado, sin condiciones automáticas hasta cerrar G9 | Y4 |
-| M8 | Publicación de la configuración fabricada (planos, ajustes reales vs. diseño) | Coherente con "fundamento publicado" (O6) |
+| M1 | Print-bed segmentation: 3 segments per wing half, 45° | ADR-0024 |
+| M2 | Printing: 2 perimeters (0.9 mm), gyroid 5 % infill | ADR-0028 |
+| M3 | Joints: tenon + specific PETG adhesive, area ≥ 3× skin section | ADR-0023 |
+| M4 | Carbon pin in the joints | ADR-0031 |
+| M5 | Full assembly, real-mass check against the F2 model | Closes P2 with an `[M]` datum |
+| M6 | **Elevon mass balancing** — mandatory before flying | ADR-0025 |
+| M7 | First flight — stabilized, no automatic conditions until G9 closes | Y4 |
+| M8 | Release of the manufactured configuration (drawings, real vs. design adjustments) | Consistent with "published rationale" (O6) |
 
-**M7 es el primer prototipo según la definición de §0.** A partir de aquí arranca el programa de ensayos (E2, E3, E5, E7) documentado en `ensayos/README.md`.
+**M7 is the first prototype per the §0 definition.** From here the test program (E2, E3, E5, E7) documented in `tests/README.md` starts.
 
 ---
 
-## 8. Fusion 360 — dónde entra y con qué reglas
+## 8. Fusion 360 — where it enters and under what rules
 
-### 8.1 Estado de la herramienta
+### 8.1 Tool state
 
-Instalado en esta sesión: add-in **`fusion360-mcp-server`** (faust-machines, versión Beta, 84 tools) copiado a la carpeta de Add-Ins de Fusion 360 y registrado como servidor MCP de este proyecto (`claude mcp add fusion360`). Arquitectura: cliente MCP ↔ servidor Python (stdio) ↔ TCP `localhost:9876` ↔ add-in dentro de Fusion (hilo principal).
+Installed in this session: add-in **`fusion360-mcp-server`** (faust-machines, Beta version, 84 tools) copied to the Fusion 360 Add-Ins folder and registered as this project's MCP server (`claude mcp add fusion360`). Architecture: MCP client ↔ Python server (stdio) ↔ TCP `localhost:9876` ↔ add-in inside Fusion (main thread).
 
-**Pendiente de tu lado:** activar el add-in dentro de Fusion (Shift+S → Add-Ins → Fusion360MCP → Run) cuando quieras que empiece a usarse. No hace falta tenerlo corriendo hasta que el plan llegue a una tarea que lo necesite (ver abajo) — no es necesario para F1, que sigue siendo cálculo puro (VLM, XFOIL calibrado).
+**Pending on your side:** activate the add-in inside Fusion (Shift+S → Add-Ins → Fusion360MCP → Run) when you want it to start being used. It does not need to be running until the plan reaches a task that needs it (see below) — it is not needed for F1, which remains pure calculation (VLM, calibrated XFOIL).
 
-### 8.2 Cuándo entra en el flujo — no antes de tiempo
+### 8.2 When it enters the flow — not before time
 
-El README ya lo dice: `geometria/`, `stl/`, `cad/` son **salidas de Fase 1 en adelante**. Fusion 360 no tiene tarea en F1: F1 es geometría paramétrica en papel/script (planta, perfil, torsión) validada por VLM propio, no un sólido 3D. Meter CAD antes de congelar la OML sería optimizar geometría de detalle sin puerta cerrada — exactamente lo que `CLAUDE.md` prohíbe ("No saltar de fase").
+The README already says it: `geometry/`, `stl/`, `cad/` are **Phase 1 outputs and beyond**. Fusion 360 has no task in F1: F1 is parametric geometry on paper/script (planform, airfoil, twist) validated by the in-house VLM, not a 3D solid. Introducing CAD before freezing the OML would be optimizing detail geometry without a closed gate — exactly what `CLAUDE.md` forbids ("Do not skip phases").
 
-| Fase | Uso concreto de Fusion 360 MCP | Por qué ahí y no antes |
+| Phase | Concrete Fusion 360 MCP use | Why there and not before |
 |---|---|---|
-| **Cierre de F1** | Construir el sólido paramétrico CORE-1 + PANEL-1300-cruise a partir de la planta ya congelada (perfil, cuerdas, flecha Λ_c/4, torsión) | Materializa una decisión ya tomada; no decide nada nuevo |
-| **F2 (P2)** | Mass properties del ensamblaje con densidades por material, para CG real y verificación de R-CG | Sustituye la estimación manual de masas por geometría real |
-| **F4 (S3)** | Geometría de sección real (cajón D, célula central, charnela) para comprobar encaje físico del tubo de carbono y espesores de pared antes de calcular GJ/EI | El cálculo de G4/G6 necesita la sección real, no un supuesto |
-| **F6 (M1)** | Segmentación para bandeja de impresión, orientación a 45°, export STL/STEP final por segmento | Es literalmente para lo que sirve el CAD al final del proceso |
+| **F1 close** | Build the parametric CORE-1 + PANEL-1300-cruise solid from the already frozen planform (airfoil, chords, sweep Λ_c/4, twist) | Materializes an already-taken decision; decides nothing new |
+| **F2 (P2)** | Mass properties of the assembly with per-material densities, for real CG and R-CG verification | Replaces the manual mass estimate with real geometry |
+| **F4 (S3)** | Real section geometry (D-box, center cell, hinge) to check the physical fit of the carbon tube and wall thicknesses before computing GJ/EI | The G4/G6 calculation needs the real section, not an assumption |
+| **F6 (M1)** | Print-bed segmentation, 45° orientation, final per-segment STL/STEP export | It is literally what CAD is for at the end of the process |
 
-### 8.3 Regla de confianza aplicada al CAD — no se salta la convención del repo
+### 8.3 Confidence rule applied to CAD — the repo convention is not skipped
 
-Este es el punto que más fácil se pasa por alto con una herramienta nueva: **una cifra que sale de Fusion no es automáticamente `[M]`.**
+This is the point most easily overlooked with a new tool: **a figure coming out of Fusion is not automatically `[M]`.**
 
-- Masa, CG, volumen o momento de inercia calculados sobre el modelo paramétrico son **`[D]`** — derivados de un modelo que a su vez asume densidades de material declaradas y una geometría todavía no impresa.
-- Solo se convierten en `[M]` cuando se **miden sobre la pieza física** (báscula, balancín de CG) — igual que ya se hizo con el t/c del Peregrine (G1).
-- El add-in es de terceros y está en fase **Beta** — no es fuente de verdad geométrica. Cualquier salida crítica para una decisión irreversible (p. ej. GJ estructural que alimenta S4) **se contrasta con el cálculo analítico propio** del repo, no se sustituye por él. Es la misma regla que ya aplica `03-plan-fase1.md` (C2: "dos métodos que no coinciden = error en uno") — aquí el segundo método es CAD vs. analítico, no VLM vs. VLM.
-- Si el add-in devuelve un número y no hay cómo etiquetarlo todavía, **no se escribe** (regla dura de `CLAUDE.md`) hasta decidir la etiqueta.
+- Mass, CG, volume or moment of inertia computed on the parametric model are **`[D]`** — derived from a model that in turn assumes declared material densities and a geometry not yet printed.
+- They only become `[M]` when **measured on the physical part** (scale, CG rocker) — just as was already done with the Peregrine t/c (G1).
+- The add-in is third-party and in **Beta** — it is not a source of geometric truth. Any output critical to an irreversible decision (e.g. the structural GJ feeding S4) **is cross-checked against the repo's own analytical calculation**, not replaced by it. It is the same rule `03-phase-1-plan.md` already applies (C2: "two methods that disagree = error in one") — here the second method is CAD vs. analytical, not VLM vs. VLM.
+- If the add-in returns a number and there is no way to tag it yet, **it is not written** (hard rule of `CLAUDE.md`) until the tag is decided.
 
-### 8.4 Riesgo declarado
+### 8.4 Declared risk
 
-El servidor es un proyecto Beta de terceros, no de Autodesk. Si se abandona o rompe con una versión nueva de Fusion, el modelo paramétrico debe seguir reconstruible manualmente desde los parámetros documentados en `docs/04-convenciones.md` — el CAD es una representación de las decisiones, no su registro. El registro sigue siendo `decisiones/` e `investigacion/`.
+The server is a third-party Beta project, not Autodesk. If it is abandoned or breaks with a new Fusion version, the parametric model must remain manually reconstructible from the parameters documented in `docs/04-conventions.md` — CAD is a representation of the decisions, not their record. The record remains `decisions/` and `research/`.
 
 ---
 
-## 9. Puertas de salida — checklist consolidado
+## 9. Exit gates — consolidated checklist
 
-- [ ] **F1** — checklist completo de `03-plan-fase1.md §4`
-- [ ] **F2** — R-CG verificado en CAD para 4S1P, 4S2P, 6S1P, 6S2P
-- [ ] **F3** — D3/D4 completados, tabla de emparejamiento publicada
-- [ ] **F4** — n_max/n_min fijados, GJ/EI verificado en sección real, autoridad de elevón confirmada (S5), factor de flecha de G6 calculado sobre la sección real
-- [ ] **F5** — cadena de instrumentación operativa y validada en plataforma existente (D2), G9 resuelto
-- [ ] **F6** — artículo #1 montado, equilibrado, primer vuelo estabilizado con datos de blackbox válidos
+- [ ] **F1** — complete checklist of `03-phase-1-plan.md §4`
+- [ ] **F2** — R-CG verified in CAD for 4S1P, 4S2P, 6S1P, 6S2P
+- [ ] **F3** — D3/D4 completed, matching table published
+- [ ] **F4** — n_max/n_min fixed, GJ/EI verified on the real section, elevon authority confirmed (S5), G6 sweep factor computed on the real section
+- [ ] **F5** — instrumentation chain operational and validated on an existing platform (D2), G9 resolved
+- [ ] **F6** — article #1 assembled, balanced, first stabilized flight with valid blackbox data
 
-## 10. Qué no cubre este plan
+## 10. What this plan does not cover
 
-- No fija fechas de calendario — el repo no tiene datos `[M]` para estimarlas.
-- No prescribe motor ni batería — ver [ADR-0033](../decisiones/ADR-0033-electronica-fuera.md).
-- No sustituye ninguna ADR ni línea de investigación existente — solo las secuencia.
-- No autoriza saltar F1: mientras G1/G2/G8 sigan abiertas, F2 en adelante no tiene entrada válida.
+- It sets no calendar dates — the repo has no `[M]` data to estimate them.
+- It does not prescribe motor or battery — see [ADR-0033](../decisions/ADR-0033-electronics-out.md).
+- It does not replace any existing ADR or research thread — it only sequences them.
+- It does not authorize skipping F1: while G1/G2/G8 remain open, F2 onward has no valid input.

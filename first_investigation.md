@@ -1,449 +1,449 @@
-# Ala volante FPV de flecha invertida — Documento base de diseño
+# Forward-swept FPV flying wing — Base design document
 
-**Estado:** Fase de investigación preliminar cerrada. Diseño no iniciado.
-**Revisión:** 1.0 — 27 julio 2026
-**Alcance:** Consolidación de datos, marco analítico, decisiones tomadas y brechas abiertas.
+**Status:** Initial research phase closed. Design not started.
+**Revision:** 1.0 — 27 July 2026
+**Scope:** Data consolidation, analytical framework, decisions made and open gaps.
 
 ---
 
-## Convención de confianza
+## Confidence convention
 
-Toda afirmación cuantitativa lleva una de estas etiquetas:
+Every quantitative claim carries one of these tags:
 
-| Etiqueta | Significado |
+| Tag | Meaning |
 |---|---|
-| **[M]** | Medido y publicado por una fuente primaria |
-| **[D]** | Derivado por cálculo a partir de datos [M] |
-| **[E]** | Estimado sobre supuestos declarados |
-| **[I]** | Inferencia razonada, no verificada |
+| **[M]** | Measured and published by a primary source |
+| **[D]** | Derived by calculation from [M] data |
+| **[E]** | Estimated on declared assumptions |
+| **[I]** | Reasoned inference, not verified |
 
-Ningún dato [E] o [I] debe usarse como base de una decisión irreversible sin verificación previa.
+No [E] or [I] datum should be used as the basis of an irreversible decision without prior verification.
 
 ---
 
-# 1. Objetivo y estado del problema
+# 1. Objective and problem state
 
-## 1.1 Decisión pendiente que bloquea todo lo demás
+## 1.1 Pending decision that blocks everything else
 
-**El objetivo de diseño no está fijado.** Existen dos funciones objetivo mutuamente excluyentes:
+**The design objective is not fixed.** There are two mutually exclusive objective functions:
 
-| Rama | Métrica | Consecuencias de planta |
+| Branch | Metric | Planform consequences |
 |---|---|---|
-| **A — Crucero rápido** | Wh/km a 90–120 km/h | AR bajo (5–7), carga alar alta (55–70 g/dm²), foco en resistencia parásita |
-| **B — Autonomía** | Minutos de vuelo | AR alto (8–12), carga alar baja (25–35 g/dm²), foco en resistencia inducida |
+| **A — Fast cruise** | Wh/km at 90–120 km/h | Low AR (5–7), high wing loading (55–70 g/dm²), focus on parasitic drag |
+| **B — Endurance** | Minutes of flight | High AR (8–12), low wing loading (25–35 g/dm²), focus on induced drag |
 
-No son un compromiso continuo: divergen desde el primer trazo. Todo lo que sigue está calibrado sobre la rama A, porque es la que representan las plataformas de referencia analizadas. **Si el objetivo es B, buena parte de las decisiones de la sección 6 deben reevaluarse.**
+They are not a continuous trade-off: they diverge from the first stroke. Everything that follows is calibrated on branch A, because that is what the analyzed reference platforms represent. **If the objective is B, a good part of the decisions in section 6 must be re-evaluated.**
 
 ---
 
-# 2. Plataformas de referencia
+# 2. Reference platforms
 
-## 2.1 TBS Mojito — datos publicados por el fabricante [M]
+## 2.1 TBS Mojito — data published by the manufacturer [M]
 
-| Parámetro | Valor |
+| Parameter | Value |
 |---|---|
-| Envergadura | 1300 mm |
+| Wingspan | 1300 mm |
 | AUW | ≥ 1800 g |
-| Autonomía declarada | 60 min / 100 km |
-| Velocidad de crucero | 90–120 km/h |
-| Velocidad máxima | > 200 km/h |
-| Batería | 6S–8S; máx. 70 × 50 × 230 mm; óptima Li-Ion 8S1P 5000 mAh |
+| Declared endurance | 60 min / 100 km |
+| Cruise speed | 90–120 km/h |
+| Maximum speed | > 200 km/h |
+| Battery | 6S–8S; max. 70 × 50 × 230 mm; optimal Li-Ion 8S1P 5000 mAh |
 | Motor | 3220, 1000 KV |
-| Hélice | 8×4.5 o 7×12 |
-| Servos | 23 mm; 2 unidades (4 con aerofrenos) |
-| Construcción | EPP de alta densidad, refuerzo de carbono, bordes de plástico inyectado |
-| Precio (kit) | USD 189,95 |
+| Propeller | 8×4.5 or 7×12 |
+| Servos | 23 mm; 2 units (4 with airbrakes) |
+| Construction | High-density EPP, carbon reinforcement, injection-molded plastic edges |
+| Price (kit) | USD 189.95 |
 
-**Del manual (rev. 2025-11-04) [M]:**
+**From the manual (rev. 2025-11-04) [M]:**
 
-- CG: línea en relieve en la panza, ≈ 10 mm por detrás del borde de ataque. Recomendación explícita de volar con CG adelantado.
-- Deflexión de elevones: cabeceo ±15 mm; alabeo 20 mm arriba / 15 mm abajo.
-- ESC: 3–12S, límite de corriente 204 A, avance 15°, PWM 24–48 kHz, 14 polos.
-- Aerofrenos: producen momento de picado al activarse; requiere compensación.
+- CG: raised line on the belly, ≈ 10 mm behind the leading edge. Explicit recommendation to fly with a forward CG.
+- Elevon deflection: pitch ±15 mm; roll 20 mm up / 15 mm down.
+- ESC: 3–12S, current limit 204 A, timing 15°, PWM 24–48 kHz, 14 poles.
+- Airbrakes: produce a nose-down moment when deployed; requires compensation.
 
-**No publicado:** superficie alar, alargamiento, ángulo de flecha, torsión, perfil, coordenadas. El fabricante solo declara que *el perfil deriva de planeadores de dynamic soaring*.
+**Not published:** wing area, aspect ratio, sweep angle, twist, airfoil, coordinates. The manufacturer only states that *the airfoil derives from dynamic soaring gliders*.
 
-## 2.2 TBS Mojito — datos de vuelo medidos [M]
+## 2.2 TBS Mojito — measured flight data [M]
 
-Fuente: Noah Waldner, 3,5 meses de ensayo, cientos de baterías.
+Source: Noah Waldner, 3.5 months of testing, hundreds of batteries.
 
-- Crucero cómodo a 70–80 km/h con ≈ 8 A en 8S.
-- ≈ 50 km de recorrido con dos LiPo 4S 2300 mAh en serie.
+- Comfortable cruise at 70–80 km/h with ≈ 8 A on 8S.
+- ≈ 50 km of travel with two 4S 2300 mAh LiPo in series.
 
 ## 2.3 Nemesis (StuntDouble) [M]
 
-| Parámetro | Valor |
+| Parameter | Value |
 |---|---|
-| Envergadura | 1200 mm |
-| Configuración | Ala volante, flecha invertida, bimotor tractor |
-| Perfil | PW51 |
-| Construcción | Impresión 3D, archivos STL abiertos |
-| Coste | Gratuito |
+| Wingspan | 1200 mm |
+| Configuration | Flying wing, forward sweep, twin tractor |
+| Airfoil | PW51 |
+| Construction | 3D printing, open STL files |
+| Cost | Free |
 
-Pertenece a una familia de diseños del mismo autor que permite una **comparación
-cuasi-controlada**: misma familia de fabricación y AR comparable, pero no la misma escala,
-perfil ni propulsión. Ver corrección C19 e
-[I-08](investigacion/I-08-familia-stuntdouble.md).
+It belongs to a family of designs by the same author that allows a **quasi-controlled
+comparison**: same manufacturing family and comparable AR, but not the same scale,
+airfoil or propulsion. See correction C19 and
+[I-08](research/I-08-stuntdouble-family.md).
 
-| Modelo | Planta | Nota |
+| Model | Planform | Note |
 |---|---|---|
-| Interceptor V1/V2 | Flecha invertida, bimotor | Origen de la línea |
-| **Eliminator** | Flecha invertida, bimotor | **Récord: 360 km/h, nov. 2025 (P. Heiniger)** |
-| Nemesis | Flecha invertida, bimotor | Versión crucero FPV |
-| Stinger V2 | Plank recto, bimotor, 1,3 m | Comparador sin flecha; perfil PW75 |
-| Stormbird | Plank recto, 1,1 m | Comparador sin flecha; perfil PW75 e impulsor único |
+| Interceptor V1/V2 | Forward sweep, twin engine | Origin of the line |
+| **Eliminator** | Forward sweep, twin engine | **Record: 360 km/h, Nov. 2025 (P. Heiniger)** |
+| Nemesis | Forward sweep, twin engine | FPV cruise version |
+| Stinger V2 | Straight plank, twin engine, 1.3 m | Comparator without sweep; PW75 airfoil |
+| Stormbird | Straight plank, 1.1 m | Comparator without sweep; PW75 airfoil and single pusher |
 
 ---
 
-# 3. Análisis energético
+# 3. Energy analysis
 
-## 3.1 Validación cruzada del Mojito [D]
+## 3.1 Cross-validation of the Mojito [D]
 
-Dos fuentes independientes de energía específica:
+Two independent specific-energy sources:
 
-| Fuente | Energía | Distancia | Wh/km |
+| Source | Energy | Distance | Wh/km |
 |---|---|---|---|
-| Waldner (medido) | 68,1 Wh (8S 2300 mAh LiPo) | 50 km | **1,36** |
-| TBS (declarado) | 144,0 Wh (8S1P 5000 mAh Li-Ion) | 100 km | **1,44** |
+| Waldner (measured) | 68.1 Wh (8S 2300 mAh LiPo) | 50 km | **1.36** |
+| TBS (declared) | 144.0 Wh (8S1P 5000 mAh Li-Ion) | 100 km | **1.44** |
 
-**Concordancia dentro del 5 %.** La cifra oficial de TBS queda verificada de forma independiente. Se adopta **1,40 Wh/km** como valor de referencia.
+**Agreement within 5 %.** The official TBS figure is independently verified. **1.40 Wh/km** is adopted as the reference value.
 
-*Nota de consistencia:* los dos datos de Waldner (8 A a 70–80 km/h, y 50 km con 68 Wh) solo son mutuamente compatibles si el vuelo de 50 km se realizó a velocidad considerablemente mayor que 80 km/h. Corresponden a puntos de operación distintos, no al mismo vuelo.
+*Consistency note:* Waldner's two data points (8 A at 70–80 km/h, and 50 km with 68 Wh) are only mutually compatible if the 50 km flight was done at a speed considerably higher than 80 km/h. They correspond to different operating points, not the same flight.
 
-## 3.2 Comparativa de energía específica [D]
+## 3.2 Specific-energy comparison [D]
 
-Normalizando por masa se elimina el efecto de tamaño:
+Normalizing by mass removes the size effect:
 
-| Plataforma | Wh/km | Masa | **Wh/(km·kg)** | Velocidad |
+| Platform | Wh/km | Mass | **Wh/(km·kg)** | Speed |
 |---|---|---|---|---|
-| Sonicmodell AR Wing 1000 | 0,78 [E] | 1,0 kg | **0,78** | ~55 km/h |
-| **TBS Mojito** | 1,40 [D] | 1,9 kg | **0,74** | 100–150 km/h |
-| Mini Talon | 1,20 [M] | 1,3 kg | **0,92** | 50 km/h |
-| Solar Impulse 2 | 160 [D] | 2300 kg | **0,070** | 70 km/h |
+| Sonicmodell AR Wing 1000 | 0.78 [E] | 1.0 kg | **0.78** | ~55 km/h |
+| **TBS Mojito** | 1.40 [D] | 1.9 kg | **0.74** | 100–150 km/h |
+| Mini Talon | 1.20 [M] | 1.3 kg | **0.92** | 50 km/h |
+| Solar Impulse 2 | 160 [D] | 2300 kg | **0.070** | 70 km/h |
 
-### Conclusión 3.2 — El Mojito no es más eficiente, es más rápido
+### Conclusion 3.2 — The Mojito is not more efficient, it is faster
 
-El Mojito consume **la misma energía por kilómetro y kilogramo** que un ala de foam de 40 USD. Su logro no es reducir el consumo específico: es **sostenerlo a dos o tres veces la velocidad**. Eso es exactamente lo que compra un perfil de linaje dynamic soaring — no mejor L/D máximo, sino conservar el L/D al extremo derecho de la polar.
+The Mojito consumes **the same energy per kilometer and kilogram** as a USD 40 foam wing. Its achievement is not reducing specific consumption: it is **sustaining it at two or three times the speed**. That is exactly what a dynamic-soaring-lineage airfoil buys — not a better maximum L/D, but preserving the L/D at the right end of the polar.
 
-**Implicación de diseño:** si la misión no requiere velocidad, la arquitectura Mojito no aporta ventaja energética alguna sobre alternativas mucho más baratas.
+**Design implication:** if the mission does not require speed, the Mojito architecture offers no energy advantage over far cheaper alternatives.
 
-## 3.3 Despeje inverso del L/D [D]
+## 3.3 Inverse L/D solution [D]
 
-De la energía específica se despeja la eficiencia aerodinámica real:
+From the specific energy, the real aerodynamic efficiency is solved:
 
-$$\frac{E/d}{W} = \frac{1}{\eta}\cdot\frac{D}{W} \quad\Longrightarrow\quad \left(\frac{L}{D}\right)_{aero} = \frac{1}{\eta}\left(\frac{L}{D}\right)_{efectivo}$$
+$$\frac{E/d}{W} = \frac{1}{\eta}\cdot\frac{D}{W} \quad\Longrightarrow\quad \left(\frac{L}{D}\right)_{aero} = \frac{1}{\eta}\left(\frac{L}{D}\right)_{effective}$$
 
-| Plataforma | L/D efectivo | η supuesto | **L/D aerodinámico** |
+| Platform | Effective L/D | Assumed η | **Aerodynamic L/D** |
 |---|---|---|---|
-| TBS Mojito | 3,7 | 0,50 [E] | **7,4** |
-| AR Wing | 3,5 | 0,50 [E] | **7,0** |
-| Mini Talon | 3,0 | 0,50 [E] | **5,9** |
-| Solar Impulse 2 | 39,2 | 0,80 [E] | **49** |
+| TBS Mojito | 3.7 | 0.50 [E] | **7.4** |
+| AR Wing | 3.5 | 0.50 [E] | **7.0** |
+| Mini Talon | 3.0 | 0.50 [E] | **5.9** |
+| Solar Impulse 2 | 39.2 | 0.80 [E] | **49** |
 
-**El L/D del Mojito en crucero rápido es ≈ 7,4**, muy por debajo de su L/D máximo (que ocurre a menor velocidad). El factor ~7 de diferencia contra el Solar Impulse cuantifica el castigo combinado de escala: Reynolds bajo, alargamiento bajo y cadena propulsiva mediocre.
+**The Mojito L/D in fast cruise is ≈ 7.4**, well below its maximum L/D (which occurs at a lower speed). The ~7× difference against the Solar Impulse quantifies the combined scaling penalty: low Reynolds, low aspect ratio and a mediocre propulsion chain.
 
-⚠️ El valor del Solar Impulse depende de entradas gruesas (15 CV medios sobre 24 h, 70 km/h medios) y debe tomarse como orden de magnitud, no como dato. Es probablemente un límite superior.
+⚠️ The Solar Impulse value depends on coarse inputs (15 mean CV over 24 h, 70 km/h mean) and must be taken as an order of magnitude, not as a datum. It is probably an upper bound.
 
 ---
 
-# 4. Marco analítico adoptado
+# 4. Adopted analytical framework
 
-## 4.1 Ecuación maestra
+## 4.1 Master equation
 
-Para propulsión eléctrica, el alcance se descompone en tres factores multiplicativos independientes:
+For electric propulsion, range decomposes into three independent multiplicative factors:
 
-$$R = \underbrace{\frac{E_{esp}}{g}\cdot\frac{m_{bat}}{m_{total}}}_{\text{energía}} \cdot \underbrace{\eta_{total}}_{\text{propulsión}} \cdot \underbrace{\frac{L}{D}}_{\text{aerodinámica}}$$
+$$R = \underbrace{\frac{E_{esp}}{g}\cdot\frac{m_{bat}}{m_{total}}}_{\text{energy}} \cdot \underbrace{\eta_{total}}_{\text{propulsion}} \cdot \underbrace{\frac{L}{D}}_{\text{aerodynamics}}$$
 
-Duplicar cualquiera de los tres duplica el alcance. Ninguno compensa la deficiencia de otro.
+Doubling any of the three doubles the range. None compensates the deficiency of another.
 
-## 4.2 Descomposición de resistencia — formulación obligatoria
+## 4.2 Drag decomposition — mandatory formulation
 
-**Esta es la decisión metodológica más importante del documento.** Spedding & McArthur (2010) demuestran que en la literatura conviven dos coeficientes distintos llamados igual:
+**This is the most important methodological decision in the document.** Spedding & McArthur (2010) show that two different coefficients coexist in the literature under the same name:
 
-| | Definición | Contenido |
+| | Definition | Content |
 |---|---|---|
-| **e_i** (no viscoso) | $1/(1+\delta)$ | Solo desviación de la carga elíptica |
-| **e_v** (Oswald) | $1/(1+\delta+k\pi AR)$ | Lo anterior **+ alargamiento + forma de la polar viscosa** |
+| **e_i** (non-viscous) | $1/(1+\delta)$ | Only the elliptic-load deviation |
+| **e_v** (Oswald) | $1/(1+\delta+k\pi AR)$ | The above **+ aspect ratio + viscous polar shape** |
 
-**e_v decrece con el alargamiento por construcción algebraica**, no por física. Usarlo lleva a concluir erróneamente que subir AR es contraproducente.
+**e_v decreases with aspect ratio by algebraic construction**, not by physics. Using it leads to wrongly concluding that raising AR is counterproductive.
 
-**Formulación adoptada** — separar los términos y no colapsarlos nunca en un solo número:
+**Adopted formulation** — separate the terms and never collapse them into a single number:
 
-$$C_D = \underbrace{C_d(C_l, Re)}_{\text{tabla de polar real}} + \underbrace{\frac{C_L^2}{\pi\,AR\,e_i}}_{\text{inducida}}$$
+$$C_D = \underbrace{C_d(C_l, Re)}_{\text{real polar table}} + \underbrace{\frac{C_L^2}{\pi\,AR\,e_i}}_{\text{induced}}$$
 
-Límite de validez documentado por los autores: la polar parabólica con un único Oswald **solo es válida por encima de Re ≈ 5×10⁶**. Nuestro régimen está tres órdenes de magnitud por debajo.
+Validity limit documented by the authors: the parabolic polar with a single Oswald **is only valid above Re ≈ 5×10⁶**. Our regime is three orders of magnitude below.
 
-## 4.3 Relación de mérito para L/D máximo
+## 4.3 Figure of merit for maximum L/D
 
-$$\left(\frac{L}{D}\right)_{max} = \frac{1}{2}\sqrt{\frac{\pi\,e\,AR}{C_{D0}}} \quad\propto\quad \sqrt{\frac{b^2}{C_f\,S_{mojada}}}$$
+$$\left(\frac{L}{D}\right)_{max} = \frac{1}{2}\sqrt{\frac{\pi\,e\,AR}{C_{D0}}} \quad\propto\quad \sqrt{\frac{b^2}{C_f\,S_{wet}}}$$
 
-El L/D máximo no depende del alargamiento ni de la superficie por separado, sino de la relación **envergadura² / superficie mojada**. Agrandar el ala sin agrandar el resto mejora dos veces.
+The maximum L/D does not depend on aspect ratio or area separately, but on the ratio **wingspan² / wetted area**. Enlarging the wing without enlarging the rest improves twice over.
 
-**Validación de la relación [D]:** aplicada al planeador Eta (AR 51,33; L/D 70), despeja **C_D0 = 0,0081**. Es un valor físicamente coherente para un planeador de competición de composite pulido, lo que confirma la fórmula. Un ala de foam típica está entre 0,025 y 0,035 — de tres a cuatro veces peor.
+**Validation of the relation [D]:** applied to the Eta glider (AR 51.33; L/D 70), it solves for **C_D0 = 0.0081**. It is a physically consistent value for a polished composite competition glider, which confirms the formula. A typical foam wing is between 0.025 and 0.035 — three to four times worse.
 
 ---
 
-# 5. Hallazgos por línea de investigación
+# 5. Findings by research thread
 
-## 5.1 Línea 1 — Frontera alargamiento / Reynolds
+## 5.1 Thread 1 — Aspect-ratio / Reynolds frontier
 
-### Datos primarios
+### Primary data
 
-**Spedding & McArthur (J. Aircraft 47(1), 2010)** — Eppler 387, AR 6, túnel de baja turbulencia:
+**Spedding & McArthur (J. Aircraft 47(1), 2010)** — Eppler 387, AR 6, low-turbulence tunnel:
 
-| Re | k (polar 2-D) | e_v resultante | e_i |
+| Re | k (2-D polar) | resulting e_v | e_i |
 |---|---|---|---|
-| 10–20 ×10³ | 0,24 | **0,22** | 0,53–0,76 |
+| 10–20 ×10³ | 0.24 | **0.22** | 0.53–0.76 |
 
-- A C_L = 0,4: **C_D = 0,019 a Re 60×10³ contra 0,075 a Re 10×10³** — factor ~4. [M]
-- Pendiente de sustentación degradada: **C_lα ∝ Re^0,19** (2-D) y **Re^0,18** (AR 6). [M]
-- Causa física identificada: **avance del punto de separación desde el borde de fuga**, incluso a ángulos de ataque pequeños. [M]
+- At C_L = 0.4: **C_D = 0.019 at Re 60×10³ versus 0.075 at Re 10×10³** — factor ~4. [M]
+- Degraded lift slope: **C_lα ∝ Re^0.19** (2-D) and **Re^0.18** (AR 6). [M]
+- Physical cause identified: **advance of the separation point from the trailing edge**, even at small angles of attack. [M]
 
-**Ananda, Sukumar & Selig (Aerosp. Sci. Tech. 42, 2015)** — 10 alas de placa plana, AR 2–5, Re 60–160×10³:
+**Ananda, Sukumar & Selig (Aerosp. Sci. Tech. 42, 2015)** — 10 flat-plate wings, AR 2–5, Re 60–160×10³:
 
-- e_v de **0,81 (AR 2) a 0,33 (AR 5)** [M] — magnitud de tipo e_v, ver §4.2.
-- C_Lmax entre 0,55 y 0,70 [M].
-- C_Dmin entre 0,01 y 0,02 [M].
-- **Sin beneficio detectable del estrechamiento** (λ 0,5 y 0,75) a Reynolds bajo [M].
-- Carmichael, citado: la burbuja de separación laminar domina en **70×10³ ≤ Re ≤ 200×10³** [M].
+- e_v from **0.81 (AR 2) to 0.33 (AR 5)** [M] — e_v-type magnitude, see §4.2.
+- C_Lmax between 0.55 and 0.70 [M].
+- C_Dmin between 0.01 and 0.02 [M].
+- **No detectable benefit of taper** (λ 0.5 and 0.75) at low Reynolds [M].
+- Carmichael, cited: the laminar separation bubble dominates in **70×10³ ≤ Re ≤ 200×10³** [M].
 
-**Hepperle** — los perfiles reflexados, obligatorios en ala volante, **sufren más a Reynolds bajo porque el reflex agrava el gradiente de presión adverso** [M]. Castigo doble para nuestra configuración.
+**Hepperle** — reflexed airfoils, mandatory on a flying wing, **suffer more at low Reynolds because the reflex aggravates the adverse pressure gradient** [M]. Double penalty for our configuration.
 
-### Conclusión 5.1
+### Conclusion 5.1
 
-Sí existe un alargamiento óptimo finito, pero **no por el mecanismo que se suele citar**. La cadena causal correcta es:
+A finite optimal aspect ratio does exist, but **not for the mechanism usually cited**. The correct causal chain is:
 
-1. La inducida sigue cayendo como 1/(π·AR·e_i) — subir AR **sí funciona**.
-2. El término viscoso k·C_L² **no depende del alargamiento** y no mejora.
-3. Por tanto el beneficio de subir AR **se satura**.
-4. A superficie constante, subir AR **acorta la cuerda → baja Re → sube k y sube C_D0** — y a partir de cierto punto empeora activamente.
+1. The induced term still falls as 1/(π·AR·e_i) — raising AR **does work**.
+2. The viscous term k·C_L² **does not depend on aspect ratio** and does not improve.
+3. Therefore the benefit of raising AR **saturates**.
+4. At constant area, raising AR **shortens the chord → lowers Re → raises k and C_D0** — and past a certain point actively worsens.
 
-El punto 4 es el que genera el óptimo. El punto 3 es el que lo hace plano.
+Point 4 is what generates the optimum. Point 3 is what makes it flat.
 
-⚠️ **Límite de transferencia:** los ensayos citados cubren Re 10–160×10³. Nuestro régimen de crucero es ≈ 4×10⁵. Las **magnitudes no se transfieren**; las tendencias y la metodología sí.
+⚠️ **Transfer limit:** the cited tests cover Re 10–160×10³. Our cruise regime is ≈ 4×10⁵. **Magnitudes do not transfer**; trends and methodology do.
 
-## 5.2 Línea 2 — Flecha invertida sin cola
+## 5.2 Thread 2 — Tailless forward sweep
 
-### Mecanismo de equilibrio
+### Trim mechanism
 
-Un ala sin cola requiere momento de cabeceo positivo. Solo hay dos vías: perfil con C_m0 positivo (reflex), o combinación de flecha y torsión. Para la flecha, las dos soluciones son **simétricas**:
+A tailless wing requires positive pitching moment. There are only two paths: an airfoil with positive C_m0 (reflex), or a combination of sweep and twist. For sweep, the two solutions are **symmetric**:
 
-| Planta | Torsión requerida | Carga en punta a sustentación nula |
+| Planform | Required twist | Tip loading at zero lift |
 |---|---|---|
-| Flecha atrás | **Wash-out** (punta abajo) | Hacia abajo — resta sustentación |
-| **Flecha invertida** | **Wash-in** (punta arriba) | Hacia arriba — suma sustentación |
+| Aft sweep | **Wash-out** (tip down) | Downward — subtracts lift |
+| **Forward sweep** | **Wash-in** (tip up) | Upward — adds lift |
 
-*(Corrige la afirmación previa de que la flecha invertida depende exclusivamente del reflex del perfil.)*
+*(Corrects the earlier claim that forward sweep depends exclusively on airfoil reflex.)*
 
-### Ventaja cuantificable: resistencia de trim
+### Quantifiable advantage: trim drag
 
-Documentado en las patentes de configuración US 4.545.552 y US 4.674.709: en flecha invertida la fuerza de equilibrio actúa **hacia arriba y por delante del CG**, de modo que la sustentación total necesaria es esencialmente igual al peso. En flecha atrás, el equilibrio exige carga negativa en las puntas y el ala debe generar **más** de lo que pesa el avión.
+Documented in configuration patents US 4.545.552 and US 4.674.709: in forward sweep the balance force acts **upward and ahead of the CG**, so the total lift required is essentially equal to the weight. In aft sweep, balance requires negative loading at the tips and the wing must generate **more** than the aircraft weighs.
 
-⚠️ Son documentos de patente, no literatura revisada por pares. El argumento físico es correcto y verificable; **la magnitud del beneficio no está cuantificada por fuente independiente**.
+⚠️ They are patent documents, not peer-reviewed literature. The physical argument is correct and verifiable; **the magnitude of the benefit is not quantified by an independent source**.
 
-### Ventaja secundaria: comportamiento en pérdida
+### Secondary advantage: stall behavior
 
-El flujo transversal va de punta a raíz. **La raíz entra en pérdida primero**, y los elevones exteriores conservan efectividad al permanecer en aire de alta energía. [M, múltiples fuentes independientes]
+The spanwise flow runs from tip to root. **The root stalls first**, and the outer elevons keep effectiveness by remaining in high-energy air. [M, multiple independent sources]
 
-Para un ala volante esto pesa el doble: los elevones son la totalidad del control.
+For a flying wing this weighs double: the elevons are the entirety of the control.
 
-### Riesgo dominante: divergencia aeroelástica
+### Dominant risk: aeroelastic divergence
 
-El centro aerodinámico queda **por delante** del centro de rigidez torsional. La carga produce torsión de encabritado → más ángulo de ataque → más sustentación → más torsión. Realimentación positiva hasta fallo estructural. [M]
+The aerodynamic center lies **ahead of** the torsional stiffness center. The load produces nose-up twist → more angle of attack → more lift → more twist. Positive feedback up to structural failure. [M]
 
-Remedios conocidos: aumentar rigidez (penalización de peso) o **adaptación aeroelástica del laminado** (solución del X-29). [M]
+Known remedies: increase stiffness (weight penalty) or **aeroelastic tailoring of the layup** (the X-29 solution). [M]
 
-**Acoplamiento peligroso identificado [I]:** la flecha invertida sin cola necesita wash-in para el trim, y la divergencia aeroelástica **también produce wash-in**. Los dos efectos se suman y el segundo crece con la presión dinámica. Consecuencia: **el estado de trim se desplaza con la velocidad**. Un ala de flecha atrás tiene el signo contrario y se auto-atenúa.
+**Dangerous coupling identified [I]:** a tailless forward-swept wing **needs wash-in for trim**, and aeroelastic divergence **also produces wash-in**. The two effects add up and the second grows with dynamic pressure. Consequence: **the trim state shifts with speed**. An aft-swept wing has the opposite sign and self-damps.
 
-Esto explica tres características del Mojito que antes no tenían explicación: CG extremadamente adelantado, recomendación de adelantarlo aún más, y deflexiones de elevón deliberadamente cortas.
+This explains three Mojito characteristics that previously had no explanation: extremely forward CG, recommendation to move it even further forward, and deliberately short elevon deflections.
 
-Riesgo adicional documentado: con deflexión aeroelástica suficiente, **las puntas pueden entrar en pérdida primero, anulando la ventaja principal de la flecha invertida** — precisamente cuando más se necesita. [M]
+Additional documented risk: with sufficient aeroelastic deflection, **the tips can stall first, cancelling the main forward-sweep advantage** — precisely when it is most needed. [M]
 
-### Evidencia empírica que acota el riesgo [D]
+### Empirical evidence that bounds the risk [D]
 
-El **Eliminator** (misma familia, flecha invertida, impreso en 3D) alcanzó 360 km/h. La presión dinámica es **13 veces** la del crucero del Mojito (6.100 Pa contra 470 Pa). Si la velocidad de divergencia estuviera cerca del envolvente operativo, se habría manifestado.
+The **Eliminator** (same family, forward sweep, 3D printed) reached 360 km/h. The dynamic pressure is **13 times** that of the Mojito cruise (6,100 Pa versus 470 Pa). If the divergence speed were near the operating envelope, it would have manifested.
 
-**Hipótesis explicativa [I]:** un ala impresa en 3D es una **cáscara cerrada — un cajón de torsión por construcción**. La rigidez torsional de una sección cerrada supera en órdenes de magnitud a la de espuma con varillas embebidas. Para flecha invertida, donde la rigidez torsional es el parámetro crítico, la impresión 3D es probablemente **superior** a la espuma moldeada.
+**Explanatory hypothesis [I]:** a 3D-printed wing is a **closed shell — a torsion box by construction**. The torsional stiffness of a closed section exceeds foam with embedded rods by orders of magnitude. For forward sweep, where torsional stiffness is the critical parameter, 3D printing is probably **superior** to molded foam.
 
-Esto invierte una suposición inicial y es la conclusión de mayor consecuencia práctica del documento.
+This reverses an initial assumption and is the finding with the greatest practical consequence in the document.
 
-### ⚠️ Advertencia de calidad de fuentes
+### ⚠️ Source-quality warning
 
-Existe una fuente secundaria (Grokipedia) que afirma que la flecha adelante *retrasa* la divergencia aeroelástica. **Contradice a la totalidad de fuentes primarias y revisadas por pares consultadas, incluida la documentación del programa X-29. No debe usarse.**
+A secondary source (Grokipedia) claims that forward sweep *delays* aeroelastic divergence. **It contradicts all the primary and peer-reviewed sources consulted, including the X-29 program documentation. It must not be used.**
 
-## 5.3 Línea 3 — Cadena propulsiva
+## 5.3 Thread 3 — Propulsion chain
 
-### Datos primarios
+### Primary data
 
-**Brandt & Selig (AIAA 2011-1255)** — 79 hélices, 9–11 in, Re 50–100×10³ en la estación al 75 %:
+**Brandt & Selig (AIAA 2011-1255)** — 79 propellers, 9–11 in, Re 50–100×10³ at the 75 % station:
 
-- Eficiencia de pico entre **0,65 (buena) y 0,28 (mala)** — factor 2,3. [M]
-- La eficiencia **mejora sistemáticamente al aumentar rpm**, por efecto Reynolds. [M]
-- Caso extremo: la Master Airscrew G/F 11×4 **casi duplica** su eficiencia de pico en el rango de rpm ensayado. [M]
-- Trabajos previos: hélices de modelismo dan **7,5 %–15 % menos** que hélices de 36 in con P/D similar. [M]
-- Las palas muy delgadas pueden entrar en **flutter** a J alto y perder rendimiento. [M]
+- Peak efficiency between **0.65 (good) and 0.28 (bad)** — factor 2.3. [M]
+- Efficiency **systematically improves with rpm**, via the Reynolds effect. [M]
+- Extreme case: the Master Airscrew G/F 11×4 **nearly doubles** its peak efficiency over the tested rpm range. [M]
+- Prior work: hobby propellers give **7.5 %–15 % less** than 36 in propellers with similar P/D. [M]
+- Very thin blades can enter **flutter** at high J and lose performance. [M]
 
-### Extracción propia de la base de datos UIUC [D]
+### Own extraction from the UIUC database [D]
 
-Pico de eficiencia a ≈ 6000 rpm y velocidad de vuelo correspondiente:
+Peak efficiency at ≈ 6000 rpm and the corresponding flight speed:
 
-| Hélice | P/D | η máx | J óptimo | V @6000 rpm | V @16000 rpm |
+| Propeller | P/D | η max | Optimal J | V @6000 rpm | V @16000 rpm |
 |---|---|---|---|---|---|
-| APC-E 8×4 | 0,50 | 0,600 | 0,481 | 35 km/h | 94 km/h |
-| APC-E 8×6 | 0,75 | 0,678 | 0,689 | 50 km/h | 134 km/h |
-| **APC-E 8×8** | 1,00 | **0,731** | 0,784 | 57 km/h | 153 km/h |
-| APC-E 9×6 | 0,67 | 0,683 | 0,583 | 48 km/h | 128 km/h |
-| APC-E 10×7 | 0,70 | 0,705 | 0,576 | 53 km/h | 140 km/h |
-| APC-Sport 8×10 | 1,25 | 0,513* | 0,596 | 44 km/h | 116 km/h |
+| APC-E 8×4 | 0.50 | 0.600 | 0.481 | 35 km/h | 94 km/h |
+| APC-E 8×6 | 0.75 | 0.678 | 0.689 | 50 km/h | 134 km/h |
+| **APC-E 8×8** | 1.00 | **0.731** | 0.784 | 57 km/h | 153 km/h |
+| APC-E 9×6 | 0.67 | 0.683 | 0.583 | 48 km/h | 128 km/h |
+| APC-E 10×7 | 0.70 | 0.705 | 0.576 | 53 km/h | 140 km/h |
+| APC-Sport 8×10 | 1.25 | 0.513* | 0.596 | 44 km/h | 116 km/h |
 
-\* Rango de medición truncado; la eficiencia seguía subiendo.
+\* Truncated measurement range; efficiency was still rising.
 
-**Lecturas:**
+**Readings:**
 
-1. **El paso domina.** De 8×4 a 8×8, mismo diámetro: +22 % de eficiencia de pico.
-2. **La velocidad óptima es un producto hélice×rpm, no una propiedad de la hélice.** La misma 8×8 pica a 57 km/h a 6000 rpm y a 153 km/h a 16000 rpm.
-3. **El 7×12 del Mojito carece de respaldo de datos.** Su P/D es 1,71; el máximo de la base UIUC vol. 1 ronda 1,25, y ese caso ni siquiera alcanzó su pico dentro del rango medido.
+1. **Pitch dominates.** From 8×4 to 8×8, same diameter: +22 % of peak efficiency.
+2. **The optimal speed is a propeller×rpm product, not a propeller property.** The same 8×8 peaks at 57 km/h at 6000 rpm and at 153 km/h at 16000 rpm.
+3. **The Mojito's 7×12 lacks data support.** Its P/D is 1.71; the maximum of UIUC vol. 1 is around 1.25, and that case did not even reach its peak within the measured range.
 
-### Cierre del balance [D]
+### Balance closure [D]
 
-| Componente | Rango |
+| Component | Range |
 |---|---|
-| Hélice en su J óptimo | 0,65 – 0,73 |
-| Motor + ESC bien dimensionado | ≈ 0,85 |
-| **Producto teórico** | **0,55 – 0,62** |
-| **Valor real despejado del vuelo (§3.3)** | **≈ 0,50** |
+| Propeller at its optimal J | 0.65 – 0.73 |
+| Well-sized motor + ESC | ≈ 0.85 |
+| **Theoretical product** | **0.55 – 0.62** |
+| **Real value solved from flight (§3.3)** | **≈ 0.50** |
 
-La brecha indica que **la hélice no opera en su relación de avance óptima**. Margen recuperable: pasar de 0,50 a 0,60 son **+20 % de alcance sin modificar la aerodinámica**.
+The gap indicates that **the propeller does not operate at its optimal advance ratio**. Recoverable margin: moving from 0.50 to 0.60 is **+20 % range without modifying the aerodynamics**.
 
 ---
 
-# 6. Decisiones de diseño
+# 6. Design decisions
 
-| # | Decisión | Fundamento | Confianza | Reversible |
+| # | Decision | Rationale | Confidence | Reversible |
 |---|---|---|---|---|
-| **D1** | Adoptar configuración **ala volante de flecha invertida** | Ventaja de trim (§5.2) + pérdida por raíz + convergencia independiente de dos diseñadores | Alta | No |
-| **D2** | Estructura de **cáscara cerrada** (impresión 3D o composite moldeado). **Rechazar espuma con varillas** | La rigidez torsional gobierna la divergencia; evidencia del Eliminator a 360 km/h | Media [I] | No |
-| **D3** | Torsión geométrica de tipo **wash-in**; magnitud por determinar | Requisito de equilibrio en flecha invertida (§5.2) | Alta | Parcial |
-| **D4** | Alargamiento objetivo **6–8** | Óptimo plano por saturación (§5.1); penaliza acortar cuerda por debajo de Re 3×10⁵ | Media [E] | No |
-| **D5** | Perfil **reflexado y delgado**; **selección diferida** hasta disponer de polares al Re de diseño | No existen polares publicadas de reflexados a Re 3–5×10⁵ | — | Sí |
-| **D6** | **Monomotor propulsor** preferido sobre bimotor tractor | Re de pala mayor con hélice única grande; ala en aire limpio preserva flujo laminar | Baja [I] | Sí |
-| **D7** | Hélice de **P/D ≈ 0,8–1,0**, emparejada por J a la velocidad de crucero, con rpm alta | Datos UIUC (§5.3); Re de pala sube con rpm | Alta | Sí |
-| **D8** | **Rechazar la hélice 7×12** salvo validación experimental propia | P/D 1,71 fuera de todo dato publicado | Alta | Sí |
-| **D9** | Usar **siempre** la descomposición de §4.2. Nunca un Oswald único | Spedding & McArthur; validez de la polar parabólica solo sobre Re 5×10⁶ | Alta | No |
-| **D10** | **Fijar la rama A o B antes de trazar geometría** | §1.1 | — | **Pendiente** |
+| **D1** | Adopt **forward-swept flying wing** configuration | Trim advantage (§5.2) + root-first stall + independent convergence of two designers | High | No |
+| **D2** | **Closed-shell** structure (3D printing or molded composite). **Reject foam with rods** | Torsional stiffness governs divergence; Eliminator evidence at 360 km/h | Medium [I] | No |
+| **D3** | Geometric twist of **wash-in** type; magnitude to be determined | Equilibrium requirement in forward sweep (§5.2) | High | Partial |
+| **D4** | Target aspect ratio **6–8** | Flat optimum by saturation (§5.1); penalizes shortening chord below Re 3×10⁵ | Medium [E] | No |
+| **D5** | **Reflexed and thin** airfoil; **selection deferred** until polars at the design Re are available | No published polars of reflexed airfoils at Re 3–5×10⁵ exist | — | Yes |
+| **D6** | **Single pusher motor** preferred over twin tractor | Higher blade Re with a single large propeller; wing in clean air preserves laminar flow | Low [I] | Yes |
+| **D7** | Propeller of **P/D ≈ 0.8–1.0**, matched by J to cruise speed, at high rpm | UIUC data (§5.3); blade Re rises with rpm | High | Yes |
+| **D8** | **Reject the 7×12 propeller** unless experimentally validated | P/D 1.71 outside all published data | High | Yes |
+| **D9** | **Always** use the §4.2 decomposition. Never a single Oswald | Spedding & McArthur; parabolic-polar validity only above Re 5×10⁶ | High | No |
+| **D10** | **Fix branch A or B before drawing geometry** | §1.1 | — | **Pending** |
 
-## 6.1 Notas sobre las decisiones de baja confianza
+## 6.1 Notes on the low-confidence decisions
 
-**D6 está en disputa.** El bimotor tractor tiene argumentos legítimos a favor: mayor área de disco total, control de guiñada por empuje diferencial, redundancia y equilibrado de masa contra flutter. Y la estela sobre el ala tiene signo ambiguo — puede **suprimir la burbuja de separación laminar**, que es el mecanismo que Hepperle identifica como el castigo principal de los perfiles reflexados. **No hay datos para resolverlo.** Es la pregunta abierta de mayor valor experimental.
+**D6 is under dispute.** The twin tractor has legitimate arguments in its favor: larger total disk area, yaw control via differential thrust, redundancy, and mass balancing against flutter. And the wash over the wing has an ambiguous sign — it may **suppress the laminar separation bubble**, which is the mechanism Hepperle identifies as the main penalty of reflexed airfoils. **There is no data to resolve it.** It is the open question of highest experimental value.
 
-**D2 se apoya en una inferencia**, no en una medición. Se valida con un ensayo de mesa de media hora: aplicar un par conocido en la punta y medir el ángulo de torsión, comparando ambas construcciones.
+**D2 rests on an inference**, not a measurement. It is validated with a half-hour bench test: apply a known torque at the tip and measure the twist angle, comparing both constructions.
 
 ---
 
-# 7. Brechas de datos
+# 7. Data gaps
 
-| # | Brecha | Impacto | Vía de cierre |
+| # | Gap | Impact | Closing path |
 |---|---|---|---|
-| **G1** | Ningún fabricante publica superficie alar, perfil ni torsión | Todos los cálculos de §3 dependen de S ≈ 0,30 m² [E] | **Medir sobre las mallas STL del Nemesis** |
-| **G2** | No existen polares medidas de perfiles reflexados a Re 3–5×10⁵ | Bloquea D5 | XFOIL/XFLR5 con transición calibrada, o ensayo propio |
-| **G3** | Reparto de C_D0 por componente desconocido | Impide priorizar reducción de parásita | Ensayo de planeo (§8) |
-| **G4** | Rigidez torsional de ambas construcciones sin medir | D2 sin verificar | Ensayo de torsión de mesa |
-| **G5** | Efecto de la estela de hélice sobre perfil delgado a Re 4×10⁵ | D6 sin resolver | Ensayo comparativo en vuelo |
+| **G1** | No manufacturer publishes wing area, airfoil or twist | All §3 calculations depend on S ≈ 0.30 m² [E] | **Measure on the Nemesis STL meshes** |
+| **G2** | No measured polars of reflexed airfoils at Re 3–5×10⁵ | Blocks D5 | XFOIL/XFLR5 with calibrated transition, or own test |
+| **G3** | C_D0 breakdown by component unknown | Prevents prioritizing parasitic-drag reduction | Glide test (§8) |
+| **G4** | Torsional stiffness of both constructions unmeasured | D2 unverified | Bench twist test |
+| **G5** | Effect of propeller wash on a thin airfoil at Re 4×10⁵ | D6 unresolved | Comparative in-flight test |
 
-## 7.1 Sensibilidad de G1
+## 7.1 Sensitivity of G1
 
-La incertidumbre en la superficie alar propaga a todo:
+Uncertainty in the wing area propagates to everything:
 
-| S [m²] | AR | Carga alar | Cuerda media | Re @100 km/h |
+| S [m²] | AR | Wing loading | Mean chord | Re @100 km/h |
 |---|---|---|---|---|
-| 0,26 | 6,50 | 73 g/dm² | 200 mm | 3,7×10⁵ |
-| **0,30** | **5,63** | **63 g/dm²** | **231 mm** | **4,3×10⁵** |
-| 0,34 | 4,97 | 56 g/dm² | 262 mm | 4,8×10⁵ |
+| 0.26 | 6.50 | 73 g/dm² | 200 mm | 3.7×10⁵ |
+| **0.30** | **5.63** | **63 g/dm²** | **231 mm** | **4.3×10⁵** |
+| 0.34 | 4.97 | 56 g/dm² | 262 mm | 4.8×10⁵ |
 
-Un ±13 % en S produce ±13 % en alargamiento y en carga alar. **Cerrar G1 es prioridad absoluta.**
-
----
-
-# 8. Programa experimental propuesto
-
-Ordenado por relación resultado/esfuerzo.
-
-### E1 — Extracción de geometría desde mallas STL
-**Esfuerzo:** bajo. **Cierra:** G1, y parcialmente G2 y la validación de D3.
-
-Cortar secciones de la malla del Nemesis a distintas estaciones de envergadura. Obtener coordenadas de perfil, superficie, alargamiento, estrechamiento, flecha del c/4 y **distribución de torsión** — verificando si efectivamente emplea wash-in y en qué magnitud.
-
-Repetir sobre el Stormbird o Stinger (*plank* recto, mismo autor y familia de fabricación)
-para obtener una **comparación cuasi-controlada de planta**. El perfil PW51/PW75 y la
-propulsión no permanecen constantes, por lo que no puede aislarse causalmente el efecto de
-la flecha. Ver corrección C19 e [I-08](investigacion/I-08-familia-stuntdouble.md).
-
-### E2 — Ensayo de planeo para polar completa
-**Esfuerzo:** medio. **Cierra:** G3; alimenta las tres líneas.
-
-Vuelos de planeo con motor parado a velocidades estabilizadas, registrando velocidad de descenso con el barómetro del controlador de vuelo. Produce la polar real del avión completo sin túnel de viento. Es el único instrumento que separa pérdidas propulsivas de pérdidas aerodinámicas.
-
-### E3 — Barrido de emparejamiento de hélice
-**Esfuerzo:** bajo. **Cierra:** brecha de D7; realiza el +20 % de §5.3.
-
-Vuelo estabilizado a velocidad fija, registrando corriente, para 3–4 combinaciones diámetro/paso. Comparar contra el J predicho por la base UIUC.
-
-### E4 — Ensayo de rigidez torsional
-**Esfuerzo:** bajo. **Cierra:** G4, valida D2.
-
-Par conocido aplicado en la punta, medición del ángulo de torsión, ambas construcciones. Permite estimar el margen de velocidad de divergencia.
+A ±13 % in S produces ±13 % in aspect ratio and wing loading. **Closing G1 is an absolute priority.**
 
 ---
 
-# 9. Registro de correcciones
+# 8. Proposed experimental program
 
-Errores cometidos durante la investigación y corregidos. Se documentan porque afectaron conclusiones intermedias.
+Ordered by result/effort ratio.
 
-| # | Error | Corrección | Origen |
+### E1 — Geometry extraction from STL meshes
+**Effort:** low. **Closes:** G1, and partially G2 and the validation of D3.
+
+Cut sections of the Nemesis mesh at different spanwise stations. Obtain airfoil coordinates, area, aspect ratio, taper, c/4 sweep and **twist distribution** — verifying whether it actually uses wash-in and in what magnitude.
+
+Repeat on the Stormbird or Stinger (*plank*, same author and manufacturing family)
+for a **quasi-controlled planform comparison**. The PW51/PW75 airfoil and the
+propulsion do not remain constant, so the sweep effect cannot be causally isolated.
+See correction C19 and [I-08](research/I-08-stuntdouble-family.md).
+
+### E2 — Glide test for a complete polar
+**Effort:** medium. **Closes:** G3; feeds all three threads.
+
+Glide flights with the motor off at stabilized speeds, recording descent rate with the flight controller's barometer. Produces the real polar of the complete aircraft without a wind tunnel. It is the only instrument that separates propulsive losses from aerodynamic losses.
+
+### E3 — Propeller-matching sweep
+**Effort:** low. **Closes:** the D7 gap; realizes the +20 % of §5.3.
+
+Stabilized flight at fixed speed, logging current, for 3–4 diameter/pitch combinations. Compare against the J predicted by the UIUC database.
+
+### E4 — Torsional stiffness test
+**Effort:** low. **Closes:** G4, validates D2.
+
+Known torque applied at the tip, twist-angle measurement, both constructions. Allows estimating the divergence-speed margin.
+
+---
+
+# 9. Correction register
+
+Errors made during the research and corrected. They are documented because they affected intermediate conclusions.
+
+| # | Error | Correction | Origin |
 |---|---|---|---|
-| C1 | Se afirmó que el factor de Oswald se derrumba con el alargamiento por razones físicas, y que ello invalida subir AR | Es en gran parte **artefacto de definición**: e_v decrece con AR por construcción algebraica. Subir AR sí funciona; el efecto real es la **saturación** y el acoplamiento cuerda→Re | Spedding & McArthur (2010) |
-| C2 | Se afirmó que la flecha invertida depende exclusivamente del C_m0 del perfil por no poder usar torsión | Puede y debe usar **wash-in**. Las dos plantas son soluciones simétricas | Literatura de equilibrio sin cola |
-| C3 | Se supuso que la impresión 3D sería la opción estructuralmente débil | Es una **cáscara cerrada** = cajón de torsión. Probablemente superior a espuma para flecha invertida | Inferencia + evidencia Eliminator |
-| C4 | **Error aritmético:** al despejar el L/D del Solar Impulse se multiplicó por η en vez de dividir. Se reportó L/D ≈ 31 | El valor correcto es **L/D ≈ 49**. La relación es L/D_aero = L/D_ef / η | Verificación numérica |
-| C5 | Se estimó el L/D máximo del Mojito en ≈ 11 | El valor despejado de datos de vuelo reales es **≈ 7,4 en crucero rápido** — punto de operación distinto del L/D máximo | Datos Waldner |
+| C1 | It was claimed that the Oswald factor collapses with aspect ratio for physical reasons, and that this invalidates raising AR | It is largely a **definition artifact**: e_v decreases with AR by algebraic construction. Raising AR does work; the real effect is **saturation** and the chord→Re coupling | Spedding & McArthur (2010) |
+| C2 | It was claimed that forward sweep depends exclusively on the airfoil C_m0 because twist cannot be used | It can and should use **wash-in**. The two planforms are symmetric solutions | Tailless-trim literature |
+| C3 | 3D printing was assumed to be the structurally weak option | It is a **closed shell** = torsion box. Probably superior to foam for forward sweep | Inference + Eliminator evidence |
+| C4 | **Arithmetic error:** solving for the Solar Impulse L/D, η was multiplied instead of divided. L/D ≈ 31 was reported | The correct value is **L/D ≈ 49**. The relation is L/D_aero = L/D_eff / η | Numerical verification |
+| C5 | The Mojito maximum L/D was estimated at ≈ 11 | The value solved from real flight data is **≈ 7.4 in fast cruise** — a different operating point than the maximum L/D | Waldner data |
 
 ---
 
-# 10. Fuentes
+# 10. Sources
 
-**Revisadas por pares**
+**Peer-reviewed**
 
 1. Spedding, G. R. & McArthur, J. — *Span Efficiencies of Wings at Low Reynolds Numbers*. Journal of Aircraft 47(1), 2010, pp. 120–128. DOI 10.2514/1.44247
 2. Ananda, G. K., Sukumar, P. P. & Selig, M. S. — *Measured aerodynamic characteristics of wings at low Reynolds numbers*. Aerospace Science and Technology 42, 2015, pp. 392–406.
 3. Brandt, J. B. & Selig, M. S. — *Propeller Performance Data at Low Reynolds Numbers*. 49th AIAA Aerospace Sciences Meeting, AIAA 2011-1255.
 
-**Bases de datos**
+**Databases**
 
 4. UIUC Propeller Database, vols. 1–4. Brandt, Deters, Ananda, Dantsker & Selig, University of Illinois.
-5. Hepperle, M. — *MH AeroTools*: burbujas de separación laminar y turbuladores.
-6. aerodesign.de — base de datos de perfiles para alas volantes y sin cola.
+5. Hepperle, M. — *MH AeroTools*: laminar separation bubbles and turbulators.
+6. aerodesign.de — airfoil database for flying and tailless wings.
 
-**Documentación de fabricante**
+**Manufacturer documentation**
 
-7. Team BlackSheep — TBS Mojito, ficha de producto y manual rev. 2025-11-04.
-8. StuntDouble — Nemesis y familia asociada, Thingiverse.
+7. Team BlackSheep — TBS Mojito, product datasheet and manual rev. 2025-11-04.
+8. StuntDouble — Nemesis and associated family, Thingiverse.
 
-**Patentes** *(no revisadas por pares — usar con la reserva de §5.2)*
+**Patents** *(not peer-reviewed — use with the reservation of §5.2)*
 
-9. US 4.545.552 y US 4.674.709 — configuración sin cola de flecha invertida.
+9. US 4.545.552 and US 4.674.709 — tailless forward-sweep configuration.
 
-**Ensayo de vuelo independiente**
+**Independent flight test**
 
-10. Waldner, N. — informe de ensayo del TBS Mojito, 3,5 meses.
+10. Waldner, N. — TBS Mojito test report, 3.5 months.
 
 ---
 
-# 11. Síntesis ejecutiva
+# 11. Executive summary
 
-1. La arquitectura **ala volante de flecha invertida está justificada** por trim y comportamiento en pérdida, no por empaquetado. Dos diseñadores independientes convergieron en ella.
-2. El riesgo dominante **no es aerodinámico sino estructural**: rigidez torsional frente a divergencia aeroelástica. Eso reordena las prioridades del proyecto.
-3. La plataforma de referencia **no es energéticamente eficiente** — es rápida al mismo coste energético específico que alternativas mucho más baratas. La arquitectura solo se justifica si la misión exige velocidad.
-4. La **cadena propulsiva** es la palanca de mayor retorno inmediato: +20 % de alcance disponible por emparejamiento de hélice, sin tocar la aerodinámica.
-5. El obstáculo transversal es la **ausencia de geometría publicada**. Los archivos abiertos del Nemesis lo resuelven: convierten el problema de simulación especulativa en medición directa.
+1. The **forward-swept flying wing architecture is justified** by trim and stall behavior, not by packaging. Two independent designers converged on it.
+2. The dominant risk **is not aerodynamic but structural**: torsional stiffness against aeroelastic divergence. That reorders the project's priorities.
+3. The reference platform **is not energy-efficient** — it is fast at the same specific energy cost as far cheaper alternatives. The architecture is only justified if the mission demands speed.
+4. The **propulsion chain** is the lever with the greatest immediate return: +20 % of available range through propeller matching, without touching the aerodynamics.
+5. The transversal obstacle is the **absence of published geometry**. The Nemesis open files solve it: they turn a speculative-simulation problem into direct measurement.
 
-**Acción siguiente recomendada:** ejecutar E1 (extracción de geometría) y resolver D10 (rama A o B). Ambas son prerrequisitos de cualquier trazo de diseño.
+**Recommended next action:** run E1 (geometry extraction) and resolve D10 (branch A or B). Both are prerequisites of any design stroke.

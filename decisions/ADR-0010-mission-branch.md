@@ -1,35 +1,35 @@
-# ADR-0010 — Rama de misión: crucero rápido
+# ADR-0010 — Mission branch: fast cruise
 
-**Estado:** ✅ Vigente · **Fecha:** 2026-07-28 · **Confianza:** Decidida · **Reversible:** No
-**Investigación:** [I-01](../investigacion/I-01-alargamiento-reynolds.md), [I-03](../investigacion/I-03-cadena-propulsiva.md)
+**Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** Decided · **Reversible:** No
+**Research:** [I-01](../research/I-01-aspect-ratio-reynolds.md), [I-03](../research/I-03-propulsion-chain.md)
 
-## Contexto
+## Context
 
-Existían dos funciones objetivo mutuamente excluyentes. **No son un compromiso continuo: divergen desde el primer trazo.**
+There were two mutually exclusive objective functions. **They are not a continuous trade-off: they diverge from the first stroke.**
 
-| Rama | Métrica | Planta |
+| Branch | Metric | Planform |
 |---|---|---|
-| **A — Crucero rápido** | Wh/km a 90–120 km/h | AR 5–7, carga alar 55–70 g/dm² |
-| **B — Autonomía** | Minutos de vuelo | AR 8–12, carga alar 25–35 g/dm² |
+| **A — Fast cruise** | Wh/km at 90–120 km/h | AR 5–7, wing loading 55–70 g/dm² |
+| **B — Endurance** | Minutes of flight | AR 8–12, wing loading 25–35 g/dm² |
 
-Esta decisión bloqueó todo el proyecto durante la fase de investigación.
+This decision blocked the whole project during the research phase.
 
-## Decisión
+## Decision
 
-**Rama A — crucero rápido.**
+**Branch A — fast cruise.**
 
-## Fundamento
+## Rationale
 
-La elección de PETG la fuerza. La rama B exige 25–35 g/dm²; a S = 0,282 m² eso son 700–990 g de AUW. Solo la cáscara de PETG pesa 550–650 g `[E]`; con batería y motor se sale del presupuesto antes de empezar.
+The choice of PETG forces it. Branch B requires 25–35 g/dm²; at S = 0.282 m² that is 700–990 g of AUW. Only the PETG shell weighs 550–650 g `[E]`; with battery and motor the budget is exceeded before starting.
 
-**No es una preferencia, es una restricción de material.** Y es coherente: la rama A *quiere* carga alar alta, así que la densidad del PETG deja de ser penalización.
+**It is not a preference, it is a material constraint.** And it is coherent: branch A *wants* high wing loading, so the PETG density stops being a penalty.
 
-## Consecuencias
+## Consequences
 
-- Objetivo de eficiencia expresado como **Wh/km**, no como minutos.
-- El alargamiento se fija bajo (ADR-0004), lo que además ayuda a la divergencia.
-- **No-objetivo declarado:** este proyecto no es un velero térmico.
+- Efficiency objective expressed as **Wh/km**, not minutes.
+- The aspect ratio is set low (ADR-0004), which also helps divergence.
+- **Declared non-goal:** this project is not a thermal glider.
 
-## Nota sobre "eficiente"
+## Note on "efficient"
 
-El análisis de partida demostró que el TBS Mojito **no es energéticamente eficiente** — 0,74 Wh/(km·kg), igual que un ala de espuma barata. La eficiencia de este proyecto se busca donde los datos dicen que está el hueco: **la cadena propulsiva** ([I-03](../investigacion/I-03-cadena-propulsiva.md)), no la aerodinámica.
+The initial analysis showed that the TBS Mojito **is not energy-efficient** — 0.74 Wh/(km·kg), the same as a cheap foam wing. This project's efficiency is sought where the data say the gap is: **the propulsion chain** ([I-03](../research/I-03-propulsion-chain.md)), not the aerodynamics.

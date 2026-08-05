@@ -1,130 +1,130 @@
-# Objetivos y requisitos — Pliego de Fase 0
+# Objectives and requirements — Phase 0 specification
 
-**Revisión 1.2** · 28 julio 2026 · **Fase 0 cerrada**
-Define **qué se construye y por qué**. Ningún trazo de geometría precede a este documento.
-
----
-
-# 1. La tensión central, resuelta
-
-El análisis de partida demostró que **el TBS Mojito no es energéticamente eficiente**: 0,74 Wh/(km·kg), igual que un ala de espuma de 40 USD. Su logro es sostener ese consumo a 2–3× la velocidad.
-
-Por tanto "eficiente" y "parecido al Mojito" solo son compatibles si la eficiencia se busca **donde el Mojito la está dejando sobre la mesa**:
-
-| Fuente de mejora | Potencial | Base |
-|---|---|---|
-| **Emparejamiento de hélice** (η 0,50 → 0,60) | **+20 %** | [I-03](../investigacion/I-03-cadena-propulsiva.md) `[D]` |
-| Acabado superficial y C_D0 | +5–8 % | `[E]` |
-| Alargamiento y torsión optimizados | +3–5 % | `[E]` |
-
-**Objetivo: ≤ 1,15 Wh/km.** Mejora del 18 % justificable **solo con la cadena propulsiva**. Es falsable: se mide con E2 y E3.
+**Revision 1.2** · 28 July 2026 · **Phase 0 closed**
+Defines **what is built and why**. No geometry line precedes this document.
 
 ---
 
-# 2. Objetivos
+# 1. The central tension, resolved
 
-## 2.1 Imprescindibles
+The initial analysis showed that **the TBS Mojito is not energy-efficient**: 0.74 Wh/(km·kg), the same as a USD 40 foam wing. Its achievement is sustaining that consumption at 2–3× the speed.
 
-| # | Objetivo | Criterio de aceptación |
+Therefore "efficient" and "Mojito-like" are only compatible if efficiency is sought **where the Mojito is leaving it on the table**:
+
+| Source of improvement | Potential | Basis |
 |---|---|---|
-| **O1** | Eficiencia demostrada | ≤ 1,15 Wh/km a 95 km/h, medido con blackbox |
-| **O2** | Batería flexible 4S–6S | 4S1P, 4S2P, 6S1P y 6S2P en 21700 sin cambiar el molde exterior |
-| **O3** | Imprimible en máquina de 256 mm | Clase Bambu P1S. Sin cámara activa. Sin filamento exótico |
-| **O4** | PETG como material único de estructura | Precio, disponibilidad, tolerancia térmica, facilidad |
-| **O5** | Fácil de fabricar | ≤ 20 h de impresión por semiala · ≤ 3 h de montaje · **sin laminado de fibra** |
-| **O6** | Fundamento publicado | Toda cifra con etiqueta de confianza y fuente |
-| **O11** | Modularidad | Central estándar + paneles intercambiables con NP común |
+| **Propeller matching** (η 0.50 → 0.60) | **+20 %** | [I-03](../research/I-03-propulsion-chain.md) `[D]` |
+| Surface finish and C_D0 | +5–8 % | `[E]` |
+| Optimized aspect ratio and twist | +3–5 % | `[E]` |
 
-## 2.2 Deseables
+**Target: ≤ 1.15 Wh/km.** An 18 % improvement justifiable **only with the propulsion chain**. It is falsifiable: measured with E2 and E3.
 
-| # | Objetivo |
+---
+
+# 2. Objectives
+
+## 2.1 Must-haves
+
+| # | Objective | Acceptance criterion |
+|---|---|---|
+| **O1** | Demonstrated efficiency | ≤ 1.15 Wh/km at 95 km/h, measured with blackbox |
+| **O2** | Flexible battery 4S–6S | 4S1P, 4S2P, 6S1P and 6S2P in 21700 without changing the outer mold |
+| **O3** | Printable on a 256 mm machine | Bambu P1S class. No active chamber. No exotic filament |
+| **O4** | PETG as the single structural material | Price, availability, thermal tolerance, ease |
+| **O5** | Easy to manufacture | ≤ 20 h of printing per wing half · ≤ 3 h of assembly · **no fiber lamination** |
+| **O6** | Published rationale | Every figure with a confidence tag and a source |
+| **O11** | Modularity | Standard center + interchangeable panels with a common NP |
+
+## 2.2 Desirable
+
+| # | Objective |
 |---|---|
-| O7 | Reparable por reimpresión de segmento |
-| O8 | Coste de estructura < 60 € contra 189,95 USD del kit de referencia |
-| O9 | Transportable — semialas desmontables, caja de 700 mm |
-| O10 | Compatible con INAV y ArduPlane sin geometría dependiente de firmware |
+| O7 | Repairable by reprinting a segment |
+| O8 | Structure cost < €60 against the USD 189.95 reference kit |
+| O9 | Transportable — detachable wing halves, 700 mm case |
+| O10 | Compatible with INAV and ArduPlane without firmware-dependent geometry |
 
-## 2.3 No-objetivos
+## 2.3 Non-goals
 
-- **No es un avión de récord de velocidad.** Lo cubre el Eliminator, mismo linaje, 360 km/h.
-- **No es un velero térmico.** La autonomía pura exige AR 8–12 y 25–35 g/dm², incompatible con PETG a esta escala.
-- **No es un primer avión.** Sin cola, flecha invertida, lanzamiento a mano.
-- **No busca masa mínima a cualquier precio.** La rigidez torsional manda.
-- **No prescribe motor ni batería.** Ver [ADR-0033](../decisiones/ADR-0033-electronica-fuera.md).
+- **It is not a speed-record aircraft.** The Eliminator covers that, same lineage, 360 km/h.
+- **It is not a thermal glider.** Pure endurance requires AR 8–12 and 25–35 g/dm², incompatible with PETG at this scale.
+- **It is not a first aircraft.** No tail, forward sweep, hand launch.
+- **It does not seek minimum mass at any cost.** Torsional stiffness rules.
+- **It does not prescribe motor or battery.** See [ADR-0033](../decisions/ADR-0033-electronics-out.md).
 
 ---
 
-# 3. Requisitos
+# 3. Requirements
 
-## 3.1 Misión
+## 3.1 Mission
 
-| Requisito | Valor | Confianza |
+| Requirement | Value | Confidence |
 |---|---|---|
-| Alcance de diseño | 80 km con 20 % de reserva | `[E]` |
-| Alcance objetivo extendido | 100 km, condicionado a E3 | `[E]` |
-| Autonomía | 60 min a velocidad de mínima potencia | `[E]` |
-| Velocidad de crucero | 90–105 km/h | Decidido |
-| V_NE de diseño | 180 km/h | Decidido |
-| **V_NE artículo #1** | **160 km/h** | Conservador hasta E7 |
-| n_max / n_min | +6 / −3, último +9 | `[E]`, dominado por ráfaga |
-| **Velocidad de pérdida** | **≤ 45 km/h** | Ver corrección C16 |
-| C_Lmax requerido | ≥ 0,65 | `[D]` |
+| Design range | 80 km with 20 % reserve | `[E]` |
+| Extended target range | 100 km, contingent on E3 | `[E]` |
+| Endurance | 60 min at minimum-power speed | `[E]` |
+| Cruise speed | 90–105 km/h | Decided |
+| Design V_NE | 180 km/h | Decided |
+| **V_NE article #1** | **160 km/h** | Conservative until E7 |
+| n_max / n_min | +6 / −3, later +9 | `[E]`, gust-dominated |
+| **Stall speed** | **≤ 45 km/h** | See correction C16 |
+| Required C_Lmax | ≥ 0.65 | `[D]` |
 
-> **Corrección C16.** El requisito original era ≤ 40 km/h, derivado con AUW 1350 g (4S1P, 48 g/dm²). Al subir el AUW a 1620 g (6S1P, 57 g/dm²) **no se rehízo el cálculo**. Con C_Lmax 0,65 la velocidad de pérdida real es **42,7 km/h**; llegar a 40 exigiría C_Lmax 0,74, fuera del rango realista (0,55–0,70, Ananda et al.).
+> **Correction C16.** The original requirement was ≤ 40 km/h, derived with AUW 1350 g (4S1P, 48 g/dm²). When the AUW rose to 1620 g (6S1P, 57 g/dm²) **the calculation was not re-done**. With C_Lmax 0.65 the real stall speed is **42.7 km/h**; reaching 40 would require C_Lmax 0.74, outside the realistic range (0.55–0.70, Ananda et al.).
 >
-> **Relajado a ≤ 45 km/h**, justificado por precedente: el Peregrine a 52 g/dm² y el Mojito a ~60 se lanzan a mano.
+> **Relaxed to ≤ 45 km/h**, justified by precedent: the Peregrine at 52 g/dm² and the Mojito at ~60 are hand-launched.
 
-## 3.2 Requisitos derivados de la modularidad
+## 3.2 Requirements derived from modularity
 
-Ver [ADR-0032](../decisiones/ADR-0032-modularidad.md) para el desarrollo completo.
+See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 
-- **R-NP** — punto neutro común de familia. **No se admiten paneles arbitrarios.**
-- **R-JUNTA** — rigidez torsional de junta ≥ 5× la de la sección adyacente. Junta al 30 % de semienvergadura, dos pasadores.
+- **R-NP** — common family neutral point. **Arbitrary panels are not admitted.**
+- **R-JOINT** — joint torsional stiffness ≥ 5× that of the adjacent section. Joint at 30 % of half-span, two pins.
 
-## 3.3 R-CG — centrado con batería variable
+## 3.3 R-CG — balancing with variable battery
 
-| Pack | Celdas | Energía | Masa | AUW | Carga alar |
+| Pack | Cells | Energy | Mass | AUW | Wing loading |
 |---|---|---|---|---|---|
 | 4S1P | 4 | 65 Wh | ~300 g | ~1480 g | 52 g/dm² |
 | **6S1P** | 6 | 97 Wh | ~455 g | **~1620 g** | **57 g/dm²** |
 | 4S2P | 8 | 130 Wh | ~605 g | ~1785 g | 63 g/dm² |
 | 6S2P | 12 | 195 Wh | ~910 g | ~2090 g | 74 g/dm² ⚠️ |
 
-Rango de masa **610 g, el 41 % del AUW base**.
+Mass range **610 g, 41 % of the base AUW**.
 
-> **R-CG: la bahía debe permitir ajuste longitudinal del pack suficiente para mantener el CG dentro de ±5 mm en las cuatro configuraciones.**
+> **R-CG: the bay must allow enough longitudinal pack adjustment to keep the CG within ±5 mm in all four configurations.**
 
-- Las 21700 **no se apilan**: capa única de 21 mm. A 13,5 % de t/c y c_raíz 260 mm hay ~35 mm — holgado. **Con 11 % no entraba.**
-- **6S2P queda fuera de la banda de crucero.** Soportado mecánicamente, documentado fuera de envolvente.
+- The 21700 cells **do not stack**: single 21 mm layer. At 13.5 % t/c and c_root 260 mm there is ~35 mm — roomy. **At 11 % it did not fit.**
+- **6S2P falls outside the cruise band.** Mechanically supported, documented as out of envelope.
 
-## 3.4 Estructura
+## 3.4 Structure
 
-| Requisito | Valor |
+| Requirement | Value |
 |---|---|
-| Material | PETG convencional, color claro |
-| Perímetros / relleno | 2 (0,9 mm) / **giroide 5 %** |
-| Sección | Tres células: cajón D + central + charnela |
-| Carbono | Tubo de flexión + pasador de junta. **No torsional principal** |
-| Criterio de divergencia | V_div ≥ 1,5 × V_NE |
-| Juntas | Espiga + adhesivo PETG específico, área ≥ 3× la sección de piel |
-| Elevones | **Equilibrado de masa obligatorio**, varillaje sin holgura |
+| Material | Conventional PETG, light color |
+| Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** |
+| Section | Three cells: D-box + center + hinge |
+| Carbon | Bending tube + joint pin. **Not primary torsional** |
+| Divergence criterion | V_div ≥ 1.5 × V_NE |
+| Joints | Tenon + specific PETG adhesive, area ≥ 3× the skin section |
+| Elevons | **Mass balancing mandatory**, no-freeplay linkage |
 
-## 3.5 Aviónica
+## 3.5 Avionics
 
-| Requisito | Valor |
+| Requirement | Value |
 |---|---|
-| Controlador | INAV 9.1+ o ArduPlane. Geometría agnóstica |
-| **Pitot** | **Obligatorio.** Sin él, E2 y E7 no son válidos |
-| Blackbox | SD o flash. Instrumento de todo el programa de ensayo |
-| GPS y magnetómetro | Fuera del camino de corriente de raíz |
-| Lanzamiento | Autolaunch por detección de aceleración |
+| Controller | INAV 9.1+ or ArduPlane. Geometry-agnostic |
+| **Pitot** | **Mandatory.** Without it, E2 and E7 are not valid |
+| Blackbox | SD or flash. Instrument of the whole test program |
+| GPS and magnetometer | Out of the root current path |
+| Launch | Autolaunch via acceleration detection |
 
 ---
 
-# 4. Riesgo dominante
+# 4. Dominant risk
 
-**No es aerodinámico. Es estructural: rigidez torsional frente a divergencia aeroelástica.**
+**It is not aerodynamic. It is structural: torsional stiffness against aeroelastic divergence.**
 
-Desarrollo completo en [I-05](../investigacion/I-05-divergencia-flutter.md).
+Full development in [I-05](../research/I-05-divergence-flutter.md).
 
-**Riesgo abierto sin verificar: flutter** (G7). El modo crítico identificado es el de elevón, y **no se resuelve con rigidez** — es inercial. Ver [ADR-0025](../decisiones/ADR-0025-equilibrado-elevones.md).
+**Open risk unverified: flutter** (G7). The identified critical mode is the elevon's, and **it is not solved with stiffness** — it is inertial. See [ADR-0025](../decisions/ADR-0025-elevon-balancing.md).

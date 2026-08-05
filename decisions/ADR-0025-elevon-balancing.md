@@ -1,50 +1,50 @@
-# ADR-0025 — Equilibrado de masa de elevones
+# ADR-0025 — Elevon mass balancing
 
-**Estado:** ✅ Vigente · **Fecha:** 2026-07-28 · **Confianza:** Alta · **Reversible:** No
-**Brechas:** G7 · **Investigación:** [I-05](../investigacion/I-05-divergencia-flutter.md)
+**Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High · **Reversible:** No
+**Gaps:** G7 · **Research:** [I-05](../research/I-05-divergence-flutter.md)
 
-## Contexto
+## Context
 
-Análisis preliminar de flutter `[E]`:
+Preliminary flutter analysis `[E]`:
 
-| Modo | Frecuencia estimada |
+| Mode | Estimated frequency |
 |---|---|
-| Flexión ω_h | ~25 Hz |
-| Torsión ω_α | ~106 Hz |
-| **Elevón ω_β** | **~82 Hz** |
+| Bending ω_h | ~25 Hz |
+| Torsion ω_α | ~106 Hz |
+| **Elevon ω_β** | **~82 Hz** |
 
-**ω_h/ω_α = 0,23** — modos muy separados: el flutter clásico flexión-torsión **no es crítico**.
+**ω_h/ω_α = 0.23** — widely separated modes: classic bending-torsion flutter **is not critical**.
 
-**ω_β/ω_α = 0,77** — dentro de la banda de acoplamiento.
+**ω_β/ω_α = 0.77** — inside the coupling band.
 
-## El hallazgo que fuerza la decisión
+## The finding that forces the decision
 
-**La separación de frecuencias no es alcanzable por rigidez.** No existe valor de GJ que resuelva el problema: si baja, ω_α cruza por debajo de ω_β; si sube, cruza por arriba. **Es un problema inercial, no de rigidez.**
+**The frequency separation is not achievable by stiffness.** No value of GJ solves the problem: if it drops, ω_α crosses below ω_β; if it rises, it crosses above. **It is an inertial problem, not a stiffness one.**
 
-## Decisión
+## Decision
 
-**Equilibrado de masa de elevones, con el CG de la superficie sobre la línea de charnela. Innegociable.**
+**Elevon mass balancing, with the surface CG on the hinge line. Non-negotiable.**
 
-Presupuesto: ~60 g en total (~3,5 % del AUW).
+Budget: ~60 g in total (~3.5 % of the AUW).
 
-## Fundamento
+## Rationale
 
-Con el CG del elevón sobre la charnela, el acoplamiento inercial desaparece y el modo deja de alimentarse. Es la solución estándar y ataca el mecanismo dominante en lugar de rodearlo.
+With the elevon CG on the hinge, the inertial coupling disappears and the mode stops being fed. It is the standard solution and attacks the dominant mechanism instead of going around it.
 
-Elevón de 25 g con CG a ~24 mm por detrás de la charnela → momento 0,60 g·m. Con cuerno de compensación de 20 mm hacia delante: **m_b ≈ 30 g por elevón**.
+A 25 g elevon with its CG ~24 mm behind the hinge → moment 0.60 g·m. With a 20 mm forward compensation horn: **m_b ≈ 30 g per elevon**.
 
-## Medidas concurrentes obligatorias
+## Concurrent mandatory measures
 
-- **Cero holgura en el varillaje** (ADR-0026). La holgura es una no linealidad que dispara ciclo límite **por debajo** de la velocidad crítica lineal. Es la causa número uno de flutter en modelos.
-- **Doble punto de accionamiento** si el elevón supera ~400 mm: duplica K_charnela y sube ω_β un 41 %.
-- Servos digitales de alta rigidez de retención. El par estático importa menos que la rigidez.
+- **Zero freeplay in the linkage** (ADR-0026). Freeplay is a nonlinearity that triggers a limit cycle **below** the linear critical speed. It is the number-one cause of flutter in models.
+- **Dual actuation point** if the elevon exceeds ~400 mm: doubles K_hinge and raises ω_β by 41 %.
+- Digital servos with high holding stiffness. Static torque matters less than stiffness.
 
-## Elevada a innegociable
+## Raised to non-negotiable
 
-Tras anular el velo de carbono ([ADR-0022](ADR-0022-velo-carbono-anulada.md)), ω_α baja y el margen se estrecha. Lo que era prudencia pasó a requisito.
+After cancelling the carbon veil ([ADR-0022](ADR-0022-carbon-veil-cancelled.md)), ω_α drops and the margin narrows. What was prudence became a requirement.
 
-## Incertidumbre declarada
+## Declared uncertainty
 
-⚠️ **K_charnela es una estimación que puede fallar por factor 3**, y ω_β va con su raíz. Además, las bisagras de TPU impresas (ADR-0035) añaden rigidez mal caracterizada. **Caracterizarla es tarea de Fase 1.**
+⚠️ **K_hinge is an estimate that can be off by a factor 3**, and ω_β scales with its root. In addition, printed TPU hinges (ADR-0035) add poorly characterized stiffness. **Characterizing it is a Phase 1 task.**
 
-Se cierra con **E5** — FFT de trazas de giro de blackbox.
+It closes with **E5** — FFT of blackbox gyro traces.

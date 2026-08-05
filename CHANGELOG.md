@@ -1,159 +1,159 @@
-# Registro de cambios
+# Changelog
 
-Continúa el registro de correcciones del proyecto. **Los errores se documentan porque afectaron a conclusiones intermedias.** El historial de errores es parte del producto: es lo que permite confiar en lo que queda en pie.
+Continues the project's correction log. **Errors are documented because they affected intermediate conclusions.** The error history is part of the product: it is what allows trust in what remains standing.
 
 ---
 
 ## [1.5] — 2026-07-28
 
-**A4 iniciada con fuentes primarias de la familia StuntDouble.**
+**A4 started with primary sources from the StuntDouble family.**
 
-### Añadido
-- **[I-08](investigacion/I-08-familia-stuntdouble.md)** — comparación base de Nemesis,
-  Stinger V2 y Stormbird.
-- **[I-06](investigacion/I-06-perfiles-reflexados.md)** y
-  **`calculo/calibra_xfoil_e387.py`** — primera calibración reproducible de XFOIL contra
-  la polar medida E387 (C).
-- Archivos primarios de Stinger V2 y Stormbird para la reconstrucción posterior de planta,
-  perfil y torsión.
+### Added
+- **[I-08](research/I-08-stuntdouble-family.md)** — base comparison of Nemesis,
+  Stinger V2 and Stormbird.
+- **[I-06](research/I-06-reflexed-airfoils.md)** and
+  **`calculations/calibra_xfoil_e387.py`** — first reproducible XFOIL calibration against
+  the measured E387 (C) polar.
+- Primary Stinger V2 and Stormbird files for the later reconstruction of planform,
+  airfoil and twist.
 
-### Resultados
-- Los tres diseños publicados convergen en **AR = 6,05–6,55** `[D]`.
-- Nemesis y Stinger conservan doble tractor y carga alar comparable, pero cambian de
-  PW51 a PW75; Stormbird además cambia a impulsor único.
-- Nemesis publica 2 mm de reflex y Stormbird 1–2 mm `[M]`; falta la cuerda local para
-  convertir esos ajustes a ángulo.
-- Ncrit 10 minimiza el desacuerdo global de `Cd(Cl)` con un factor RMS 1,208 `[D]`
-  (Ncrit 11: 1,209), pero el óptimo deriva hasta Ncrit 12 en Re 3–5×10⁵. B3 debe
-  usar una banda 10–12.
+### Results
+- The three published designs converge on **AR = 6.05–6.55** `[D]`.
+- Nemesis and Stinger keep twin tractor and comparable wing loading, but switch from
+  PW51 to PW75; Stormbird additionally switches to a single pusher.
+- Nemesis publishes 2 mm of reflex and Stormbird 1–2 mm `[M]`; the local chord is
+  missing to convert those adjustments into angle.
+- Ncrit 10 minimizes the global `Cd(Cl)` disagreement with an RMS factor of 1.208 `[D]`
+  (Ncrit 11: 1.209), but the optimum drifts to Ncrit 12 at Re 3–5×10⁵. B3 should
+  use a 10–12 band.
 
-### Correcciones
+### Corrections
 
-| # | Error | Corrección |
+| # | Error | Correction |
 |---|---|---|
-| **C19** | A4 describía Nemesis vs. Stinger/Stormbird como una «comparación controlada» capaz de aislar el efecto de la flecha | Es una **comparación cuasi-controlada**: mismo autor, familia constructiva y AR comparable, pero perfil, tamaño y propulsión no permanecen todos constantes. Sirve como prior geométrico; no demuestra causalidad de la flecha |
-| **C20** | B1 suponía que ajustar un único Ncrit permitiría «reproducir la polar medida» del E387 en todo el rango | El óptimo cambia con Reynolds: Ncrit 10–12 en la rejilla probada. Se sustituye el número único por una **banda con sensibilidad publicada** y validación contra un segundo modelo físico antes de cribar perfiles |
-| **C21** | B2 todavía aceptaba `C_m0 ≥ 0 o cercano` después de que I-07 derivara R-PERFIL | Criterio re-derivado aguas abajo: **C_m0 ≥ +0,008**, preferible +0,010–0,015. El criterio antiguo podía admitir perfiles incapaces de cerrar el trim dentro de R-TORSION |
+| **C19** | A4 described Nemesis vs. Stinger/Stormbird as a "controlled comparison" able to isolate the effect of sweep | It is a **quasi-controlled comparison**: same author, constructive family and comparable AR, but airfoil, size and propulsion do not all remain constant. It serves as a geometric prior; it does not demonstrate sweep causality |
+| **C20** | B1 assumed that tuning a single Ncrit would "reproduce the measured polar" of the E387 across the whole range | The optimum changes with Reynolds: Ncrit 10–12 on the tested grid. The single number is replaced by a **band with published sensitivity** and validation against a second physical model before screening airfoils |
+| **C21** | B2 still accepted `C_m0 ≥ 0 or close` after I-07 derived R-AIRFOIL | Criterion re-derived downstream: **C_m0 ≥ +0.008**, preferably +0.010–0.015. The old criterion could admit airfoils unable to close the trim within R-TWIST |
 
 ---
 
 ## [1.4] — 2026-07-28
 
-**Primer cálculo propio de estabilidad.** G8 pasa de abierta a parcial.
+**First in-house stability calculation.** G8 moves from open to partial.
 
-### Añadido
-- **`calculo/vlm_ala_volante.py`** — vortex lattice propio con caso de validación.
-- **`calculo/ventana_torsion.py`** — análisis de la ventana de torsión.
-- **[I-07](investigacion/I-07-punto-neutro-ventana-torsion.md)** — punto neutro, margen estático y ventana de torsión.
-- **R-PERFIL** — Cm0 del perfil ≥ +0,008. Acota G2 con un número.
-- **R-TORSION** — wash-in ≤ 2,5°.
+### Added
+- **`calculations/vlm_ala_volante.py`** — in-house vortex lattice with validation case.
+- **`calculations/ventana_torsion.py`** — torsion window analysis.
+- **[I-07](research/I-07-neutral-point-torsion-window.md)** — neutral point, static margin and torsion window.
+- **R-AIRFOIL** — airfoil Cm0 ≥ +0.008. Bounds G2 with a number.
+- **R-TWIST** — wash-in ≤ 2.5°.
 
-### Resultados
-- **Punto neutro = 26,7 % CMA**, 101 mm por delante del c/4 de raíz. CG objetivo 18,7 % CMA para 8 % de margen estático.
-- **R-NP es fácil de cumplir:** la deriva del NP entre paneles de 1100 a 1600 mm es de solo **1,6 puntos de CMA**, y un ajuste de ±2–4° de flecha los alinea dentro de 0,5 %.
-- **La ventana de torsión existe pero es estrecha.** Con torsión pura, equilibrar a 10 % de margen estático exige 3,9° de wash-in, y eso lleva el pico de carga al 62 % de semienvergadura — la zona de elevones. **El perfil debe llevar la mayor parte del trim.**
+### Results
+- **Neutral point = 26.7 % MAC**, 101 mm ahead of the root quarter-chord. Target CG 18.7 % MAC for 8 % static margin.
+- **R-NP is easy to meet:** the NP drift between 1100 to 1600 mm panels is only **1.6 MAC points**, and a ±2–4° sweep adjustment aligns them within 0.5 %.
+- **The torsion window exists but is narrow.** With pure twist, balancing at 10 % static margin requires 3.9° of wash-in, and that moves the load peak to 62 % of half-span — the elevon zone. **The airfoil must carry most of the trim.**
 
-### Correcciones
+### Corrections
 
-| # | Error | Corrección |
+| # | Error | Correction |
 |---|---|---|
-| **C17** | La primera versión del VLM devolvía el momento adimensionalizado **sin dividir por la CMA**, introduciendo un factor de cuerda espurio en el punto neutro | Detectado por el caso de validación: un ala recta debe dar el NP en c/4 y daba ~0. **Confirma el valor de incluir siempre un caso de contraste analítico en cualquier script de cálculo** |
-| **C18** | La lectura optimista de C2 sugería que el wash-in podía liberar al proyecto de usar perfil reflexado | **Parcialmente falso.** El wash-in sirve, pero **canjea trim contra la ventaja que justificó elegir la flecha invertida**: a 4° el pico de carga se desplaza de 27 % a 62 % de semienvergadura. El reflex sigue siendo necesario; la torsión queda para ajuste fino |
+| **C17** | The first version of the VLM returned the non-dimensionalized moment **without dividing by the MAC**, introducing a spurious chord factor in the neutral point | Detected by the validation case: a straight wing must give the NP at c/4 and gave ~0. **Confirms the value of always including an analytic contrast case in any calculation script** |
+| **C18** | The optimistic reading of C2 suggested that wash-in could free the project from using a reflexed airfoil | **Partially false.** Wash-in works, but **trades trim against the advantage that justified choosing forward sweep**: at 4° the load peak moves from 27 % to 62 % of half-span. Reflex remains necessary; twist is left for fine-tuning |
 
 ---
 
 ## [1.3] — 2026-07-28
 
-Reestructuración del repositorio en formato evolutivo, pensado para contribuciones externas.
+Repository restructured into an evolutionary format, designed for external contributions.
 
-### Añadido
-- **`decisiones/`** — registro ADR: una decisión por archivo, con contexto, alternativas, consecuencias y condiciones de revisión. Índice con estados.
-- **`investigacion/`** — cinco líneas de investigación documentadas (I-01 a I-05), separando *el porqué* de *el qué*.
-- **`brechas/`** — registro formal de G1–G9 con impacto y vía de cierre.
-- **`CONTRIBUTING.md`** — flujo de contribución, orden de valor, calidad de fuentes.
-- **`docs/04-convenciones.md`** — etiquetas, identificadores, símbolos y convenciones de signo.
-- **D34** — ángulo de bancada como parámetro de diseño, no supuesto a cero.
-- **D35** — bisagras impresas en TPU como opción base.
-- **G9** — acoplamiento del lazo de altitud con cabeceo (*porpoising*). **Amenaza la validez de E7.**
+### Added
+- **`decisions/`** — ADR register: one decision per file, with context, alternatives, consequences and review conditions. Index with states.
+- **`research/`** — five documented research threads (I-01 to I-05), separating *the why* from *the what*.
+- **`gaps/`** — formal register of G1–G9 with impact and closing path.
+- **`CONTRIBUTING.md`** — contribution flow, value ordering, source quality.
+- **`docs/04-conventions.md`** — tags, identifiers, symbols and sign conventions.
+- **D34** — motor mount angle as a design parameter, not assumed zero.
+- **D35** — TPU-printed hinges as the baseline option.
+- **G9** — altitude-loop coupling with pitch (*porpoising*). **Threatens the validity of E7.**
 
-### Correcciones
+### Corrections
 
-| # | Error | Corrección |
+| # | Error | Correction |
 |---|---|---|
-| **C16** | El requisito `V_pérdida ≤ 40 km/h` se derivó con AUW 1350 g (48 g/dm²) y **no se rehízo** al subir el AUW a 1620 g | Con C_Lmax 0,65 a 57 g/dm² la velocidad real es **42,7 km/h**. Llegar a 40 exigiría C_Lmax 0,74, fuera del rango medido (0,55–0,70). **Requisito relajado a ≤ 45 km/h**, justificado por precedente de Peregrine y Mojito |
+| **C16** | The requirement `V_stall ≤ 40 km/h` was derived with AUW 1350 g (48 g/dm²) and **was not re-derived** when the AUW rose to 1620 g | With C_Lmax 0.65 at 57 g/dm² the real speed is **42.7 km/h**. Reaching 40 would require C_Lmax 0.74, outside the measured range (0.55–0.70). **Requirement relaxed to ≤ 45 km/h**, justified by Peregrine and Mojito precedent |
 
 ---
 
 ## [1.2] — 2026-07-28
 
-### Añadido
-- **Arquitectura modular** (ADR-0032): CORE + PANEL, junta al 30 % de semienvergadura.
-- **R-NP**, **R-JUNTA**, **R-CG**.
-- **ADR-0033** — motor y batería fuera del diseño.
-- **E7** — Southwell en vuelo.
-- **G8** — punto neutro y margen estático, sin calcular. Bloquea Fase 1.
-- **`docs/02-referencias-medidas.md`** — datos primarios del Peregrine 840 mm.
+### Added
+- **Modular architecture** (ADR-0032): CORE + PANEL, joint at 30 % of half-span.
+- **R-NP**, **R-JOINT**, **R-CG**.
+- **ADR-0033** — motor and battery out of the design.
+- **E7** — Southwell in flight.
+- **G8** — neutral point and static margin, uncomputed. Blocks Phase 1.
+- **`docs/02-measured-references.md`** — primary data of the Peregrine 840 mm.
 
-### Cambiado
-- **ADR-0027** — t/c a **13,5 % / 9 %**, confirmado por medición sobre artículo en servicio.
-- **ADR-0028** — relleno **giroide 5 %** en lugar de tercer perímetro.
-- V_NE del artículo #1 rebajada a **160 km/h**.
+### Changed
+- **ADR-0027** — t/c to **13.5 % / 9 %**, confirmed by measurement on an in-service article.
+- **ADR-0028** — **gyroid 5 %** infill instead of a third perimeter.
+- V_NE of article #1 lowered to **160 km/h**.
 
-### Anulado
-- **ADR-0022 — velo de carbono ±45°.** Retirado por decisión de proyecto (objetivo O5).
-- **E4** (torsión de mesa) — sustituido por anclaje a referencia medida y E7.
-- **E6** — ver C13.
+### Superseded
+- **ADR-0022 — carbon veil ±45°.** Withdrawn by project decision (objective O5).
+- **E4** (bench twist) — replaced by anchoring to measured reference and E7.
+- **E6** — see C13.
 
-### Correcciones
+### Corrections
 
-| # | Error | Corrección |
+| # | Error | Correction |
 |---|---|---|
-| **C11** | Se afirmó que tubos y varillas de carbono no aportan rigidez torsional | Cierto para el caso calculado (10/8 mm), **falso como regla**. En pared delgada `J = πD³t/4`: va con el **cubo del diámetro**. Un tubo trenzado ±45° de 18 mm bien pegado sí es elemento torsional |
-| **C12** | Se especificó relleno 0 %, heredado de la práctica de LW-PLA | **Erróneo para cáscara de PETG.** Bredt-Batho supone que la piel no pandea; una piel de 0,4–0,9 mm sin apoyo pandea localmente muy por debajo del límite del material. **Sin relleno, el GJ estaba sobreestimado** — el error iba en dirección contraria a la supuesta |
-| **C13** | Se propuso E6, calibración inversa del modelo contra el Peregrine | **Retirado.** El Peregrine está a factor ~3 de la predicción. Un ensayo que pasa con ese margen no falsa el modelo **pero tampoco lo valida** |
-| **C14** | Se sobreestimó el riesgo estructural y se comunicó con más rotundidad de la que soportaban datos `[E]` ±35 % | Con giroide y cajón D el margen es 1,5–2,0×. La alarma correspondía a una configuración sin relleno y sin cajón D que ya no era la del proyecto |
-| **C15** | Se afirmó que un solo perímetro no cumple el criterio de divergencia | **Falsado por hardware volando.** El Peregrine 840 mm vuela con 1 perímetro de 0,42 mm y 4 % de giroide |
+| **C11** | It was claimed that carbon tubes and rods add no torsional stiffness | True for the calculated case (10/8 mm), **false as a rule**. In thin wall `J = πD³t/4`: it scales with the **cube of the diameter**. A well-bonded braided ±45° 18 mm tube is indeed a torsional element |
+| **C12** | Infill 0 % was specified, inherited from LW-PLA vase-mode practice | **Wrong for a PETG shell.** Bredt-Batho assumes the skin does not buckle; an unsupported 0.4–0.9 mm skin buckles locally well below the material limit. **Without infill, GJ was overestimated** — the error ran in the opposite direction to what was assumed |
+| **C13** | E6 was proposed, inverse calibration of the model against the Peregrine | **Withdrawn.** The Peregrine is at a factor ~3 from the prediction. A test that passes with that margin does not falsify the model **but does not validate it either** |
+| **C14** | Structural risk was overestimated and communicated with more certainty than `[E]` ±35 % data supported | With gyroid and D-box the margin is 1.5–2.0×. The alarm corresponded to a configuration without infill and without D-box that was no longer the project's |
+| **C15** | It was claimed that a single perimeter fails the divergence criterion | **Falsified by flying hardware.** The 840 mm Peregrine flies with 1 perimeter of 0.42 mm and 4 % gyroid |
 
 ---
 
 ## [1.1] — 2026-07-28
 
-### Resuelto
-- **ADR-0010** — fijada la **rama A (crucero rápido)**, forzada por la densidad del PETG.
-- Objetivo de eficiencia cuantificado: **≤ 1,15 Wh/km**.
+### Resolved
+- **ADR-0010** — **branch A (fast cruise)** fixed, forced by PETG density.
+- Efficiency objective quantified: **≤ 1.15 Wh/km**.
 
-### Cambiado
-- **ADR-0004** — alargamiento apretado de 6–8 a **6,0**.
-- **ADR-0005** — invertida: el perfil pasa de «delgado» a espesor mayor *(luego sustituida por ADR-0027)*.
+### Changed
+- **ADR-0004** — aspect ratio tightened from 6–8 to **6.0**.
+- **ADR-0005** — superseded: the airfoil moves from "thin" to higher thickness *(later replaced by ADR-0027)*.
 
-### Añadido
-ADR-0012, 0015, 0016, 0018, 0021, 0022, 0023, 0024, 0025, 0026. Brechas **G6** (factor de flecha) y **G7 (flutter, sin analizar)**.
+### Added
+ADR-0012, 0015, 0016, 0018, 0021, 0022, 0023, 0024, 0025, 0026. Gaps **G6** (sweep factor) and **G7 (flutter, unanalyzed)**.
 
-### Superado
-ADR-0011, 0013, 0014, 0017, 0019, 0020 — tras evaluar PETG, PLA, PLA+, ASA y LW-PLA.
+### Superseded
+ADR-0011, 0013, 0014, 0017, 0019, 0020 — after evaluating PETG, PLA, PLA+, ASA and LW-PLA.
 
-### Correcciones
+### Corrections
 
-| # | Error | Corrección |
+| # | Error | Correction |
 |---|---|---|
-| C6 | GJ calculado con cuerda de 231 mm siendo la coherente con AR 6,0 de 217 mm | Efecto neto sobre V_div: **−3 %**. La cuerda aparece en numerador y denominador de q_D |
-| C7 | Se afirmó que el Eliminator a 360 km/h validaba la construcción impresa en general | Valida **su** material, casi con seguridad PLA. Con G un 40 % menor, el PETG no hereda ese aval |
-| C8 | Se afirmó que el PETG tiene mejor adhesión de capas que el PLA | **Falso.** Retención en Z: PLA 55 %, PETG 46 %, ASA 29 %. El PETG gana en tenacidad, no en adhesión |
-| C9 | Se afirmó que el PETG no se puede pegar | Demasiado categórico. Existen 3D-Gloop PETG, DCM (restringido en UE) y epoxi de 30 min |
-| C10 | Masa de cáscara estimada en 450–500 g | Recuento por área mojada: **550–650 g** |
+| C6 | GJ computed with a 231 mm chord while the one consistent with AR 6.0 is 217 mm | Net effect on V_div: **−3 %**. The chord appears in both the numerator and denominator of q_D |
+| C7 | It was claimed that the Eliminator at 360 km/h validated printed construction in general | It validates **its** material, almost certainly PLA. With a 40 % lower G, the PETG does not inherit that endorsement |
+| C8 | It was claimed that PETG has better layer adhesion than PLA | **False.** Z retention: PLA 55 %, PETG 46 %, ASA 29 %. PETG wins on toughness, not adhesion |
+| C9 | It was claimed that PETG cannot be glued | Too categorical. 3D-Gloop PETG, DCM (restricted in the EU) and 30-min epoxy exist |
+| C10 | Shell mass estimated at 450–500 g | Wetted-area count: **550–650 g** |
 
 ---
 
 ## [1.0] — 2026-07-27
 
-Investigación preliminar cerrada. Consolidación de datos, marco analítico, decisiones ADR-0001 a 0010 y brechas G1–G5.
+Initial research closed. Data consolidation, analytical framework, ADR-0001 to 0010 decisions and gaps G1–G5.
 
-### Correcciones
+### Corrections
 
-| # | Error | Corrección |
+| # | Error | Correction |
 |---|---|---|
-| C1 | Se afirmó que el factor de Oswald se derrumba con el alargamiento por razones físicas | Es en gran parte **artefacto de definición**: e_v decrece con AR por construcción algebraica. Subir AR sí funciona; el efecto real es la saturación y el acoplamiento cuerda→Re |
-| C2 | Se afirmó que la flecha invertida depende exclusivamente del C_m0 del perfil | **Puede y debe usar wash-in.** Las dos plantas son soluciones simétricas. Abre la puerta a perfiles poco reflexados |
-| C3 | Se supuso que la impresión 3D sería la opción estructuralmente débil | Es una cáscara cerrada = cajón de torsión |
-| C4 | Error aritmético al despejar el L/D del Solar Impulse | El valor correcto es L/D ≈ 49, no 31 |
-| C5 | Se estimó el L/D máximo del Mojito en ≈ 11 | El valor despejado de datos de vuelo reales es **≈ 7,4 en crucero rápido** |
+| C1 | It was claimed that the Oswald factor collapses with aspect ratio for physical reasons | It is largely a **definition artifact**: e_v decreases with AR by algebraic construction. Raising AR does work; the real effect is saturation and the chord→Re coupling |
+| C2 | It was claimed that forward sweep depends exclusively on the airfoil C_m0 | **It can and should use wash-in.** The two planforms are symmetric solutions. Opens the door to lightly reflexed airfoils |
+| C3 | 3D printing was assumed to be the structurally weak option | It is a closed shell = torsion box |
+| C4 | Arithmetic error solving for the Solar Impulse L/D | The correct value is L/D ≈ 49, not 31 |
+| C5 | The Mojito maximum L/D was estimated at ≈ 11 | The value solved from real flight data is **≈ 7.4 in fast cruise** |

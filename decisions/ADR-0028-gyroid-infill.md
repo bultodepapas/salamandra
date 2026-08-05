@@ -1,40 +1,40 @@
-# ADR-0028 — Relleno giroide al 5 %
+# ADR-0028 — Gyroid 5 % infill
 
-**Estado:** ✅ Vigente · **Fecha:** 2026-07-28 · **Confianza:** Media `[M]` · **Reversible:** Sí
-**Corrección asociada:** C12
-**Investigación:** [I-05](../investigacion/I-05-divergencia-flutter.md)
+**Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** Medium `[M]` · **Reversible:** Yes
+**Associated correction:** C12
+**Research:** [I-05](../research/I-05-divergence-flutter.md)
 
-## Contexto
+## Context
 
-La especificación original decía **relleno 0 %, solo perímetros**, heredada de la práctica de LW-PLA en modo vaso, donde el objetivo es masa mínima.
+The original specification said **infill 0 %, only perimeters**, inherited from LW-PLA vase-mode practice, where the goal is minimum mass.
 
-**Era un error**, y el mecanismo no es el que parece.
+**It was an error**, and the mechanism is not what it seems.
 
-## El error
+## The error
 
-La formulación de Bredt-Batho supone que **la piel no pandea**. Una piel de 0,4–0,9 mm sobre un tramo sin apoyo de 100 mm o más, bajo cortante, **pandea localmente muy por debajo del límite del material**. Al pandear, el GJ efectivo no se degrada progresivamente: **se cae**.
+The Bredt-Batho formulation assumes **the skin does not buckle**. A 0.4–0.9 mm skin over an unsupported span of 100 mm or more, under shear, **buckles locally well below the material limit**. Once it buckles, the effective GJ does not degrade progressively: **it collapses**.
 
-Es decir: **sin relleno, el cálculo de GJ estaba sobreestimado, no subestimado.** El error iba en dirección contraria a la supuesta.
+That is: **without infill, the GJ calculation was overestimated, not underestimated.** The error ran in the opposite direction to what was assumed.
 
-## Decisión
+## Decision
 
-**Relleno giroide al 5 %** en toda la cáscara, en lugar de un tercer perímetro.
+**Gyroid 5 % infill** throughout the shell, instead of a third perimeter.
 
-## Fundamento
+## Rationale
 
-- **La aportación del giroide no es torsional directa** — está cerca del centro de cortante y contribuye poco a `J`. Su función es **estabilizar la piel** para que la célula cerrada funcione de verdad.
-- **Más rigidez por gramo que un perímetro adicional**, porque ataca el modo que realmente falla.
-- **Precedente `[M]`:** el perfil de impresión del Peregrine 840 mm especifica **4 % de giroide** con **un solo perímetro**, y vuela.
+- **The gyroid's contribution is not directly torsional** — it sits near the shear center and contributes little to `J`. Its function is to **stabilize the skin** so the closed cell actually works.
+- **More stiffness per gram than an additional perimeter**, because it attacks the mode that actually fails.
+- **Precedent `[M]`:** the Peregrine 840 mm print profile specifies **4 % gyroid** with **a single perimeter**, and it flies.
 
-Se adopta 5 % y no 8 % (valor propuesto inicialmente sin base) porque el 4 % está probado en vuelo y el 8 % era una estimación propia sin respaldo.
+5 % is adopted and not 8 % (a value initially proposed with no basis) because 4 % is proven in flight and 8 % was an unsupported own estimate.
 
-## Consecuencias
+## Consequences
 
-- Sustituye al tercer perímetro: **2 perímetros (0,9 mm) + giroide 5 %**.
-- Ahorra ~135 g respecto a la vía de tres perímetros.
-- Complica el laminado: el giroide en piezas de pared fina puede salir discontinuo. Verificar en la primera pieza real.
+- Replaces the third perimeter: **2 perimeters (0.9 mm) + gyroid 5 %**.
+- Saves ~135 g versus the three-perimeter path.
+- Complicates the layup: gyroid in thin-walled parts can come out discontinuous. Verify on the first real part.
 
-## Correcciones asociadas
+## Associated corrections
 
-- **C12** — relleno 0 % era erróneo para cáscara de PETG.
-- **C15** — se afirmó que un perímetro no cumple criterio. **Falsado por hardware volando**: el Peregrine usa 1 perímetro de 0,42 mm.
+- **C12** — 0 % infill was wrong for a PETG shell.
+- **C15** — it was claimed that one perimeter fails the criterion. **Falsified by flying hardware**: the Peregrine uses 1 perimeter of 0.42 mm.

@@ -1,60 +1,60 @@
-# Cómo contribuir
+# How to contribute
 
-Este proyecto acepta contribuciones que **suban el nivel de confianza de un dato**.
+This project accepts contributions that **raise the confidence level of a datum**.
 
-## Orden de valor
+## Order of value
 
-| Prioridad | Tipo | Ejemplo |
+| Priority | Type | Example |
 |---|---|---|
-| **1** | **Medidas** | Convertir un `[E]` o `[I]` en `[M]` con método publicado |
-| **2** | **Correcciones** | Una fuente mejor tumba una conclusión existente |
-| **3** | **Réplicas** | Construcción independiente con datos de blackbox |
-| **4** | **Geometría** | Solo después de cerrada la Fase 1 |
+| **1** | **Measurements** | Convert an `[E]` or `[I]` into `[M]` with a published method |
+| **2** | **Corrections** | A better source overturns an existing conclusion |
+| **3** | **Replications** | Independent build with blackbox data |
+| **4** | **Geometry** | Only after Phase 1 is closed |
 
-## Lo que no se acepta
+## What is not accepted
 
-**Cifras sin fuente, aunque sean correctas.** No es rigidez burocrática: el valor de este repositorio es que cualquiera pueda rastrear de dónde sale cada número. Una cifra huérfana correcta hoy es una cifra no verificable mañana.
+**Numbers without a source, even if correct.** This is not bureaucratic rigidity: the value of this repository is that anyone can trace where each number comes from. An orphan figure that is correct today is an unverifiable figure tomorrow.
 
-Tampoco se aceptan decisiones irreversibles apoyadas en `[E]` o `[I]` sin declararlo explícitamente.
+Irreversible decisions supported by `[E]` or `[I]` without explicitly declaring it are also not accepted.
 
-## La convención de confianza
+## The confidence convention
 
-| Etiqueta | Significado | Ejemplo |
+| Tag | Meaning | Example |
 |---|---|---|
-| `[M]` | Medido y publicado por fuente primaria | «C_Lmax entre 0,55 y 0,70 (Ananda et al. 2015)» |
-| `[D]` | Derivado por cálculo desde `[M]` | «L/D aerodinámico ≈ 7,4, despejado de datos de vuelo» |
-| `[E]` | Estimado sobre supuestos declarados | «Masa de cáscara 550–650 g, por área mojada y espesor medio» |
-| `[I]` | Inferencia razonada, no verificada | «La rigidez torsional gobierna la divergencia en esta construcción» |
+| `[M]` | Measured and published by a primary source | "C_Lmax between 0.55 and 0.70 (Ananda et al. 2015)" |
+| `[D]` | Derived by calculation from `[M]` | "Aerodynamic L/D ≈ 7.4, solved from flight data" |
+| `[E]` | Estimated on declared assumptions | "Shell mass 550–650 g, by wetted area and mean thickness" |
+| `[I]` | Reasoned inference, not verified | "Torsional stiffness governs divergence in this construction" |
 
-## Flujo de una contribución
+## Contribution flow
 
-1. **Abre un issue** describiendo qué brecha (G) o decisión (ADR) toca.
-2. **Trabaja sobre los documentos**, no solo sobre el código o la geometría.
-3. **Rellena la plantilla de PR.** Pide declarar decisiones y brechas afectadas, y el nivel de confianza del dato nuevo.
-4. **Si invalidas una afirmación previa, añade entrada al [CHANGELOG](CHANGELOG.md)** con número de corrección C.
+1. **Open an issue** describing which gap (G) or decision (ADR) it touches.
+2. **Work on the documents**, not only on the code or geometry.
+3. **Fill in the PR template.** It asks you to declare affected decisions and gaps, and the confidence level of the new datum.
+4. **If you invalidate a previous claim, add an entry to the [CHANGELOG](CHANGELOG.md)** with a correction number C.
 
-## Sobre las correcciones
+## About corrections
 
-**El registro de correcciones es parte del producto, no una lista de vergüenzas.** Van 21, varias de ellas errores del análisis original corregidos por datos posteriores. Documentarlas es lo que permite confiar en lo que queda en pie.
+**The correction register is part of the product, not a list of embarrassments.** There are 21, several of them errors of the original analysis corrected by later data. Documenting them is what allows trust in what remains standing.
 
-Si encuentras un error, **no lo silencies editando el texto**: corrígelo y anótalo. Alguien que leyó la versión anterior necesita saber que cambió y por qué.
+If you find an error, **do not silence it by editing the text**: fix it and record it. Someone who read the previous version needs to know that it changed and why.
 
-## Escribir una ADR nueva
+## Writing a new ADR
 
-Copia [`decisiones/PLANTILLA.md`](decisiones/PLANTILLA.md). Numeración correlativa. Una decisión por archivo.
+Copy [`decisions/TEMPLATE.md`](decisions/TEMPLATE.md). Sequential numbering. One decision per file.
 
-Una buena ADR responde: **¿qué obligaba a decidir? ¿qué se descartó y por qué? ¿qué obliga esta decisión aguas abajo? ¿qué dato la haría reconsiderar?**
+A good ADR answers: **what forced the decision? what was discarded and why? what does this decision require downstream? what datum would make you reconsider it?**
 
-## Escribir una línea de investigación
+## Writing a research thread
 
-Copia el formato de `investigacion/I-0X`. Una línea documenta **qué se buscó, qué se encontró, con qué fuentes, y qué decisiones alimenta** — no qué se decidió.
+Copy the format of `research/I-0X`. A thread documents **what was searched, what was found, with what sources, and what decisions it feeds** — not what was decided.
 
-## Datos de ensayo
+## Test data
 
-Deben declarar la **configuración completa**: pack, motor, hélice, masa al despegue, material, perímetros, relleno, versión de firmware. Sin eso no son comparables entre constructores.
+They must declare the **complete configuration**: pack, motor, propeller, takeoff mass, material, perimeters, infill, firmware version. Without that they are not comparable across builders.
 
-## Calidad de fuentes
+## Source quality
 
-Orden de preferencia: revisadas por pares → bases de datos experimentales → ensayo controlado con método declarado → documentación de fabricante → patentes → medición propia.
+Order of preference: peer-reviewed → experimental databases → controlled test with declared method → manufacturer documentation → patents → own measurement.
 
-**Fuente marcada como no utilizable:** Grokipedia, por contradecir a la totalidad de fuentes primarias consultadas sobre divergencia en flecha invertida.
+**Source marked as unusable:** Grokipedia, for contradicting all primary sources consulted on forward-sweep divergence.

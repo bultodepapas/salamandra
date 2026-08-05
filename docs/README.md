@@ -1,14 +1,14 @@
-# Documentos
+# Documents
 
-| Archivo | Contenido |
+| File | Content |
 |---|---|
-| [`00-objetivos-y-requisitos.md`](00-objetivos-y-requisitos.md) | **Pliego (Fase 0).** Objetivos, requisitos, no-objetivos |
-| [`02-referencias-medidas.md`](02-referencias-medidas.md) | Datos primarios `[M]` medidos por el proyecto |
-| [`03-plan-fase1.md`](03-plan-fase1.md) | Plan de ejecución de Fase 1 |
-| [`04-convenciones.md`](04-convenciones.md) | Etiquetas, identificadores, símbolos, signos |
-| [`05-plan-maestro.md`](05-plan-maestro.md) | Hoja de ruta F1→F6 hasta el primer prototipo, integra el flujo de CAD |
-| `first_investigation.md` | Rev. 1.0, investigación preliminar *(añadir manualmente)* |
+| [`00-objectives-and-requirements.md`](00-objectives-and-requirements.md) | **Specification (Phase 0).** Objectives, requirements, non-goals |
+| [`02-measured-references.md`](02-measured-references.md) | Primary `[M]` data measured by the project |
+| [`03-phase-1-plan.md`](03-phase-1-plan.md) | Phase 1 execution plan |
+| [`04-conventions.md`](04-conventions.md) | Tags, identifiers, symbols, signs |
+| [`05-master-plan.md`](05-master-plan.md) | Roadmap F1→F6 to the first prototype, integrating the CAD flow |
+| `first_investigation.md` | Rev. 1.0, initial research *(add manually)* |
 
-Las **decisiones** viven en [`../decisiones/`](../decisiones/), el **porqué** en [`../investigacion/`](../investigacion/), lo que **no sabemos** en [`../brechas/`](../brechas/).
+**Decisions** live in [`../decisions/`](../decisions/), the **why** in [`../research/`](../research/), what we do **not know** in [`../gaps/`](../gaps/).
 
-El histórico vive en [`../CHANGELOG.md`](../CHANGELOG.md) y en el log de git.
+The history lives in [`../CHANGELOG.md`](../CHANGELOG.md) and in the git log.

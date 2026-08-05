@@ -1,48 +1,48 @@
-# ADR-0027 — Espesor relativo 13,5 % raíz / 9 % punta
+# ADR-0027 — Relative thickness 13.5 % root / 9 % tip
 
-**Estado:** ✅ Vigente · **Fecha:** 2026-07-28 · **Confianza:** Alta `[M]` · **Reversible:** No
-**Sustituye a:** ADR-0005 (perfil «delgado»)
-**Datos:** [02-referencias-medidas](../docs/02-referencias-medidas.md)
+**Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High `[M]` · **Reversible:** No
+**Replaces:** ADR-0005 ("thin" airfoil)
+**Data:** [02-measured-references](../docs/02-measured-references.md)
 
-## Contexto
+## Context
 
-La decisión original (ADR-0005) pedía perfil **delgado**, por argumento de resistencia parásita. Tres análisis posteriores la invirtieron.
+The original decision (ADR-0005) asked for a **thin** airfoil, on a parasitic-drag argument. Three later analyses reversed it.
 
-## Decisión
+## Decision
 
-**t/c = 13,5 % en raíz, 9 % en punta.**
+**t/c = 13.5 % at the root, 9 % at the tip.**
 
-## Fundamento — tres caminos independientes al mismo número
+## Rationale — three independent paths to the same number
 
-**1. Divergencia.** En sección cerrada, `J = 4A²t/s`. Como el área encerrada va con el espesor, el t/c entra **lineal en la velocidad de divergencia**:
+**1. Divergence.** In a closed section, `J = 4A²t/s`. Since the enclosed area scales with thickness, t/c enters **linearly in the divergence speed**:
 
-    V_div ∝ (h/c) · AR^(−3/4) · S^(−1/4) · √(G·t_pared)
+    V_div ∝ (h/c) · AR^(−3/4) · S^(−1/4) · √(G·t_wall)
 
-Subir de 11 % a 13 % da ×1,18 de V_div por ~30 g. Es la palanca más barata del proyecto.
+Raising from 11 % to 13 % gives ×1.18 of V_div for ~30 g. It is the cheapest lever in the project.
 
-**2. Alojamiento de celda.** Las 21700 miden 21 mm de diámetro y **no se apilan**. Con piel, holgura y estructura hacen falta ~28 mm útiles.
+**2. Cell housing.** The 21700 cells are 21 mm in diameter and **do not stack**. With skin, clearance and structure, ~28 mm useful are needed.
 
-| t/c | Espesor en raíz (c = 260 mm) | Margen sobre celda |
+| t/c | Root thickness (c = 260 mm) | Margin over cell |
 |---|---|---|
-| 11 % | 28,6 mm | 6 mm — muy justo |
-| **13,5 %** | **35,1 mm** | **Holgado** |
+| 11 % | 28.6 mm | 6 mm — very tight |
+| **13.5 %** | **35.1 mm** | **Room to spare** |
 
-**3. Convergencia con artículo que vuela `[M]`.** Medición sobre el Peregrine 840 mm:
+**3. Convergence with a flying article `[M]`.** Measurement on the Peregrine 840 mm:
 
-| Estación | Cuerda | Espesor | t/c |
+| Station | Chord | Thickness | t/c |
 |---|---|---|---|
-| 0,15 | 125,6 mm | 17,0 mm | 13,5 % |
-| 0,55 | 140,6 mm | 19,3 mm | 13,8 % |
-| 0,90 | 160,1 mm | 21,3 mm | 13,3 % |
+| 0.15 | 125.6 mm | 17.0 mm | 13.5 % |
+| 0.55 | 140.6 mm | 19.3 mm | 13.8 % |
+| 0.90 | 160.1 mm | 21.3 mm | 13.3 % |
 
-**Un ala de flecha invertida impresa que está en servicio usa 13,5 %.** Tres razonamientos distintos, mismo resultado.
+**An in-service printed forward-swept wing uses 13.5 %.** Three different arguments, same result.
 
-## Consecuencias
+## Consequences
 
-- Restringe la selección de perfil (brecha G2) a familias de 13–14 % de espesor.
-- Penaliza C_D0 respecto a un perfil delgado. Se acepta: la rigidez manda.
-- Facilita la bahía de batería y por tanto R-CG.
+- Restricts airfoil selection (gap G2) to 13–14 % thickness families.
+- Penalizes C_D0 relative to a thin airfoil. Accepted: stiffness rules.
+- Eases the battery bay and therefore R-CG.
 
-## Condiciones de revisión
+## Review conditions
 
-Ninguna prevista. Es de las decisiones mejor sostenidas del proyecto.
+None foreseen. It is one of the best-supported decisions in the project.

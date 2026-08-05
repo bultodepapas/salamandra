@@ -1,28 +1,28 @@
-# Mallas y CAD pesados — usar Git LFS si se versionan
+# Heavy meshes and CAD — use Git LFS if versioned
 *.stl
 *.step
 *.stp
 *.f3d
 *.FCStd*
 
-# Excepción: archivos de referencia medidos, como evidencia
-!geometria/referencia/*.3mf
+# Exception: measured reference files, kept as evidence
+!geometry/reference/*.3mf
 
-# Salidas de laminado
+# Slicing outputs
 *.gcode
 *.gcode.3mf
 
-# Análisis
+# Analysis
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
 *.xflr5
 
-# Datos crudos de vuelo (grandes) — usar LFS
-ensayos/**/crudo/*.bin
-ensayos/**/crudo/*.BIN
-ensayos/**/crudo/*.ulg
+# Raw flight data (large) — use LFS
+tests/**/raw/*.bin
+tests/**/raw/*.BIN
+tests/**/raw/*.ulg
 
-# Sistema
+# System
 .DS_Store
 Thumbs.db
