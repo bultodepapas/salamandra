@@ -65,7 +65,7 @@ value stands.
 | # | Item | v0.2 value | What changes it | Trigger |
 |---|---|---|---|---|
 | **OP-20** | Wing tips | Flat end caps at y = ±650, no winglet | Winglet option (drag/recovery); not required for the O1 cruise claim | First flights, F3 polar |
-| **OP-21** | CORE outer mold | Nose pod 60 mm, rear pod to x ≈ +265 with belly ≤ −111.6 mm at the prop plane, avionics stations (guide §7.6) — binding constraints given, body shape open | Real CORE geometry + mass (the pods add mass not in the §8.1 estimate) | F2 (P1–P3) |
+| **OP-21** | CORE outer mold | Nose boom to x ≈ −493 (bay 190×70×32), rear pod to x ≈ +265 with belly ≤ −111.6 mm at the prop plane, avionics stations (guide §7.6) — binding constraints given, body shape open | Real CORE geometry + mass (the pods add mass not in the §8.1 estimate) | F2 (P1–P3) |
 | **OP-22** | Missing ADR files | ADR-0003, 0006, 0008, 0009, 0012, 0016, 0018, 0023, 0024, 0026, 0030, 0031, 0034, 0035 are in the decisions index but have **no files**; the guide uses their values (binding for v0.2) | Files must be published (or references removed) | Before v1.0; blocker for traceability |
 
 ---

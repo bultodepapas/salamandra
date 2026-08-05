@@ -83,7 +83,7 @@ exists yet; it will be updated by the open point listed.
 | Mean aerodynamic chord (MAC) | **225 mm** | I-07 |
 | Sweep Λ_c/4 | **−20.0°** (LE −17.1°, TE −27.9°) | I-07 / derived |
 | Relative thickness t/c | **13.5 % root → 9 % tip** (linear) | ADR-0027 |
-| Geometric twist ε | **+0.5° wash-in** (linear root→tip) | PROVISIONAL (R-TWIST ≤ 2.5°) |
+| Geometric twist ε | **+0.5° wash-in** (linear root→tip) | PROVISIONAL (R-TWIST ≤ 3.0°, §5.3) |
 | Dihedral Γ | **2.0° total** (polyhedral at segment joints) | PROVISIONAL |
 | Airfoil | Reflexed; root/tip candidates pending B3 screening (G2) | **PENDING** — §6 |
 | Neutral point NP | **26.7 % MAC** (= −101 mm from root c/4) | `[D]` I-07 · **C2 cross-check −98.3 mm / 28.0 % MAC (Weissinger-L, I-15)** |
