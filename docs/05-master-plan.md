@@ -4,6 +4,12 @@
 
 This document **does not replace** [`03-phase-1-plan.md`](03-phase-1-plan.md), which remains the operational detail of Phase 1. This document is the orchestration layer: **it sequences phases 1→6 of the status table in the [README](../README.md) up to the first physical article flying**, points out which gap (`gaps/README.md`) and which ADR blocks each segment, and fixes where CAD modeling (Fusion 360) enters.
 
+This plan covers the **reference design** (the forward-swept flying wing). It is the first
+of a community-driven platform family: once the reference airframe is released, the same
+modular CORE/PANEL discipline extends to new wings, fuselages, control surfaces and
+configurations contributed by the community. The AI-assisted research produces the
+reasoning; the community produces the 3D parts.
+
 It sets no calendar dates. The repo has no `[M]` data on how long each task takes; putting weeks would be an `[I]` figure disguised as a plan. It is ordered by **dependency**, not by duration.
 
 ---
@@ -119,7 +125,7 @@ This is line D of `03-phase-1-plan.md` carried to closure. Only the sequence is 
 | M5 | Full assembly, real-mass check against the F2 model | Closes P2 with an `[M]` datum |
 | M6 | **Elevon mass balancing** — mandatory before flying | ADR-0025 |
 | M7 | First flight — stabilized, no automatic conditions until G9 closes | Y4 |
-| M8 | Release of the manufactured configuration (drawings, real vs. design adjustments) | Consistent with "published rationale" (O6) |
+| M8 | Release of the manufactured configuration (drawings, real vs. design adjustments) | Consistent with "published rationale" (O6) and the open platform (O12) |
 
 **M7 is the first prototype per the §0 definition.** From here the test program (E2, E3, E5, E7) documented in `tests/README.md` starts.
 

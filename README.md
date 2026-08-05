@@ -1,6 +1,13 @@
-# Forward-swept FPV flying wing — modular 3D-printed platform
+# 3D-printed FPV aircraft platform — open, modular, AI-assisted
 
-PETG forward-swept flying wing, **modular and configurable**: a standard center module and interchangeable wing panels. Efficient FPV cruise flight, with electronics chosen by the builder.
+A completely free, community-driven platform for 3D-printed fixed-wing FPV aircraft.
+The core design principles are developed largely through **AI-assisted research**, while the
+**final aircraft and its 3D models are created collaboratively by humans and AI**.
+
+This is an **evolving platform**, not a single aircraft. It currently targets a PETG
+forward-swept flying wing, but that is only the first design. The repository is meant to
+grow into a whole family of airframes, parts, adapters and experiments — contributed by
+the community.
 
 **Revision 1.5** · 28 July 2026 · **Phase 0 closed · Phase 1 in progress**
 
@@ -8,13 +15,81 @@ PETG forward-swept flying wing, **modular and configurable**: a standard center 
 
 ## What this project is
 
-There are dozens of open-source printed wings. Almost none of them publish **why** they have the geometry they have.
+There are dozens of open-source printed wings. Almost none of them publish **why** they
+have the geometry they have. And most of them are a single, finished design.
 
-This project's contribution is not the STL: it is that **every decision carries its rationale, its source, and its confidence level**, and that **the mistakes made along the way are recorded instead of erased**.
+This project is different in two ways:
 
-It is an **evolutionary** repository. Right now it defines the foundations; the geometry will come later. What never changes is the criterion: **no decision without a declared rationale.**
+1. **The reasoning is the product.** Every decision carries its rationale, its source and
+   its confidence level, and the mistakes made along the way are recorded instead of
+   erased. Anyone can trace where each number and each shape comes from.
+2. **It is a platform, not a part.** The goal is a continuously evolving, community-driven
+   library of aircraft, components, variants and experiments — with this repository as the
+   central archive.
 
-## Measurable objective
+**It is fully free and as open as possible.** Contributors are encouraged to open pull
+requests with modifications, improvements and new variants.
+
+---
+
+## The AI–human workflow
+
+AI and the community have complementary roles:
+
+| | What AI does best | What humans do best |
+|---|---|---|
+| **AI-assisted research** | Aerodynamic analysis, theoretical research, data cross-validation (XFOIL, VLM, propeller matching), design exploration and trade studies | Experimentation, practical judgment, manufacturing experience, engineering intuition, ground/bench/flight testing |
+| **Design** | Parametric reasoning, sizing trades, geometric constraints, documentation | Creating the actual 3D parts (Fusion 360 / CAD), CAD detail, and translating research into reliable native models |
+
+Today, AI is still not particularly effective at directly creating reliable, parametric
+Fusion 360 models or native CAD files. That is intentional and expected: **the community
+creates the actual 3D parts** based on our AI-assisted research, on their own engineering
+knowledge, or on a combination of both.
+
+The repository is built so the two can meet: the research and analysis tell *what* and
+*why*; the community provides the *how* — the parts that realize it.
+
+---
+
+## Why it is open
+
+- **Free.** No paywall, no locked files, no licensing fees. The project is meant to be
+  used, built and shared.
+- **Community-driven.** PRs with modifications, improvements and new variants are welcome
+  and expected. The platform grows through its contributors.
+- **Broad contributions.** Human expertise is especially valuable in experimentation,
+  practical judgment, manufacturing and engineering intuition — but contributions are not
+  limited to aerodynamics or structures. Decorative parts, visual improvements, equipment
+  mounts and other creative modifications are welcome too.
+- **Reciprocal.** Under the project's licences, derivatives stay open, so the whole
+  community benefits from every contribution. See [Licence](#licence).
+
+---
+
+## Modular platform and extensibility
+
+The aircraft is designed as a **modular platform**:
+
+- **Replaceable wings.** Larger or differently shaped wings can be swapped onto the common
+  center module.
+- **Body variants.** Contributors can create complete fuselage variations, larger
+  fuselages, different wingtips, alternative rudders and control surfaces.
+- **Different configurations.** The platform is not limited to the current forward-swept
+  flying wing. Future directions may include conventional fuselage designs, V-tail
+  configurations, tractor or pusher propulsion systems, and many other aircraft layouts.
+- **Hardware archive.** This repository is also the central archive for adapters and
+  mounting systems for different FPV equipment, electronics, propulsion systems and
+  related hardware.
+
+---
+
+## Initial design: the forward-swept flying wing
+
+This is the first, reference design on the platform. The baseline is a PETG forward-swept
+flying wing, **modular and configurable**: a standard center module and interchangeable
+wing panels. Efficient FPV cruise flight, with electronics chosen by the builder.
+
+### Measurable objective
 
 | | Value |
 |---|---|
@@ -22,9 +97,46 @@ It is an **evolutionary** repository. Right now it defines the foundations; the 
 | **Target** | **≤ 1.15 Wh/km** at 95 km/h |
 | Where it comes from | **Propeller matching**, +20 % demonstrated on UIUC data `[D]` |
 
-The initial analysis showed that the Mojito is **not energy-efficient** — it consumes 0.74 Wh/(km·kg), the same as a USD 40 foam wing; its achievement is sustaining that at 2–3× the speed. This project's efficiency does not come from optimistic aerodynamics: it comes from the propulsion chain, which is where the data say the gap is.
+The initial analysis showed that the Mojito **is not energy-efficient** — it consumes
+0.74 Wh/(km·kg), the same as a USD 40 foam wing; its achievement is sustaining that at
+2–3× the speed. This design's efficiency does not come from optimistic aerodynamics: it
+comes from the propulsion chain, which is where the data say the gap is.
 
 **It is falsifiable.** It is measured with [E2](tests/) and [E3](tests/).
+
+### Article #1 — Cruise configuration
+
+| Parameter | Value | Decision |
+|---|---|---|
+| Wingspan | 1300 mm | [ADR-0010](decisions/ADR-0010-mission-branch.md) |
+| Aspect ratio | 6.0 · S = 0.282 m² `[E]` | [ADR-0004](decisions/ADR-0004-aspect-ratio.md) |
+| **t/c** | **13.5 % root / 9 % tip** | [ADR-0027](decisions/ADR-0027-relative-thickness.md) |
+| Material | **Conventional PETG**, light color | [ADR-0021](decisions/ADR-0021-base-material.md) |
+| Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** | [ADR-0028](decisions/ADR-0028-gyroid-infill.md) |
+| Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
+| Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
+| AUW (6S1P) | ~1620 g · 57 g/dm² | — |
+| V_NE article #1 | **160 km/h** (design 180) | — |
+| Avionics | INAV 9.1+ or ArduPlane · **pitot mandatory** | — |
+
+### Modular architecture
+
+```
+CORE-1          Center module. Wing joiners up to ~30 % of half-span,
+                battery bay with longitudinal adjustment, avionics, motor mount.
+
+PANEL-xxxx-y    xxxx = resulting total wingspan · y = airfoil family
+```
+
+| Config | Panels | Suggested battery | Use | Status |
+|---|---|---|---|---|
+| **Range** | 1600 | 4S2P Li-Ion 21700 | Maximum range | Design |
+| **Cruise** | 1300 | 6S1P Li-Ion 21700 | **Article #1** | Design |
+| **Sport** | 1100 | 6S LiPo | Fast flight | Design |
+
+⚠️ See [ADR-0032](decisions/ADR-0032-modularity.md): the panels **are not arbitrary**. Each
+set is designed against a common neutral point. The same discipline applies to every new
+configuration contributed to the platform.
 
 ---
 
@@ -38,7 +150,7 @@ The initial analysis showed that the Mojito is **not energy-efficient** — it c
 | [`gaps/`](gaps/) | Register of what we do **not** know and how it gets closed |
 | [`tests/`](tests/) | Experimental program and data |
 | [`calculations/`](calculations/) | Analysis scripts, with validation cases |
-| `geometry/` `stl/` `cad/` | Phase 1 outputs and beyond |
+| `geometry/` `stl/` `cad/` | Community 3D parts and outputs |
 
 **Start with:** [`docs/00-objectives-and-requirements.md`](docs/00-objectives-and-requirements.md) → [`decisions/README.md`](decisions/README.md) → [`gaps/README.md`](gaps/README.md)
 
@@ -61,42 +173,6 @@ This is the project's central rule. Every quantitative claim carries a tag:
 
 ---
 
-## Article #1 — Cruise configuration
-
-| Parameter | Value | Decision |
-|---|---|---|
-| Wingspan | 1300 mm | [ADR-0010](decisions/ADR-0010-mission-branch.md) |
-| Aspect ratio | 6.0 · S = 0.282 m² `[E]` | [ADR-0004](decisions/ADR-0004-aspect-ratio.md) |
-| **t/c** | **13.5 % root / 9 % tip** | [ADR-0027](decisions/ADR-0027-relative-thickness.md) |
-| Material | **Conventional PETG**, light color | [ADR-0021](decisions/ADR-0021-base-material.md) |
-| Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** | [ADR-0028](decisions/ADR-0028-gyroid-infill.md) |
-| Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
-| Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
-| AUW (6S1P) | ~1620 g · 57 g/dm² | — |
-| V_NE article #1 | **160 km/h** (design 180) | — |
-| Avionics | INAV 9.1+ or ArduPlane · **pitot mandatory** | — |
-
----
-
-## Modular architecture
-
-```
-CORE-1          Center module. Wing joiners up to ~30 % of half-span,
-                battery bay with longitudinal adjustment, avionics, motor mount.
-
-PANEL-xxxx-y    xxxx = resulting total wingspan · y = airfoil family
-```
-
-| Config | Panels | Suggested battery | Use | Status |
-|---|---|---|---|---|
-| **Range** | 1600 | 4S2P Li-Ion 21700 | Maximum range | Design |
-| **Cruise** | 1300 | 6S1P Li-Ion 21700 | **Article #1** | Design |
-| **Sport** | 1100 | 6S LiPo | Fast flight | Design |
-
-⚠️ See [ADR-0032](decisions/ADR-0032-modularity.md): the panels **are not arbitrary**. Each set is designed against a common neutral point.
-
----
-
 ## Status
 
 | Phase | Status |
@@ -111,12 +187,33 @@ PANEL-xxxx-y    xxxx = resulting total wingspan · y = airfoil family
 
 **Current blocker: [G2](gaps/README.md) — airfoil selection.**
 
-G8 (neutral point) partially closed: **NP = 26.7 % MAC**, target CG 18.7 % MAC. See [I-07](research/I-07-neutral-point-torsion-window.md).
+G8 (neutral point) partially closed: **NP = 26.7 % MAC**, target CG 18.7 % MAC. See
+[I-07](research/I-07-neutral-point-torsion-window.md).
+
+---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). In short: contributions that **raise the confidence level of a datum** are accepted. Numbers without a source are not accepted, even if they are correct.
+This is a community project. Contributions of all kinds are welcome — see
+[CONTRIBUTING.md](CONTRIBUTING.md). In short:
 
-## License
+- Contributions that **raise the confidence level of a datum** (measurements, corrections,
+  replications) are the highest value.
+- **Any new part, variant or configuration** — wings, fuselages, wingtips, rudders,
+  control surfaces, mounts, adapters, decorative or creative pieces — is welcome.
+- Numbers without a source are not accepted in the technical record, even if they are
+  correct.
 
-Pending. Candidates: CERN-OHL-S (hardware, strong copyleft) or CC BY-SA 4.0 for documentation.
+## Licence
+
+This is free and open hardware.
+
+- **Hardware design and 3D models** (CAD/STL), geometry, and the analysis/design scripts
+  are licensed under the **CERN Open Hardware Licence Version 2 — Strongly Reciprocal**
+  (CERN-OHL-S-2.0). See [`LICENSE`](LICENSE).
+- **Documentation** (the `.md` files) is licensed under
+  **Creative Commons Attribution-ShareAlike 4.0** (CC BY-SA 4.0). See
+  [`LICENSE-docs.md`](LICENSE-docs.md).
+
+Both licences are reciprocal: derivatives of the community's work stay open, so the whole
+platform benefits from every contribution.

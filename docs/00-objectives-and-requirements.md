@@ -3,6 +3,12 @@
 **Revision 1.2** · 28 July 2026 · **Phase 0 closed**
 Defines **what is built and why**. No geometry line precedes this document.
 
+This is an **open, community-driven, modular 3D-printed FPV aircraft platform**. The core
+design principles are developed largely through **AI-assisted research**, while the final
+aircraft and its 3D models are created collaboratively by humans and AI. The forward-swept
+flying wing below is the **first, reference design**; the platform is intended to grow into
+a family of airframes, parts and configurations contributed by the community (see §2.4).
+
 ---
 
 # 1. The central tension, resolved
@@ -46,11 +52,27 @@ Therefore "efficient" and "Mojito-like" are only compatible if efficiency is sou
 
 ## 2.3 Non-goals
 
-- **It is not a speed-record aircraft.** The Eliminator covers that, same lineage, 360 km/h.
-- **It is not a thermal glider.** Pure endurance requires AR 8–12 and 25–35 g/dm², incompatible with PETG at this scale.
-- **It is not a first aircraft.** No tail, forward sweep, hand launch.
-- **It does not seek minimum mass at any cost.** Torsional stiffness rules.
-- **It does not prescribe motor or battery.** See [ADR-0033](../decisions/ADR-0033-electronics-out.md).
+- **Not a single fixed design.** This is a platform, not one aircraft. The reference
+  design is a forward-swept flying wing, but the platform is not limited to it; future
+  directions may include conventional fuselages, V-tails, and tractor or pusher layouts.
+- **Not a speed-record aircraft.** The Eliminator covers that, same lineage, 360 km/h.
+- **Not a thermal glider.** Pure endurance requires AR 8–12 and 25–35 g/dm², incompatible with PETG at this scale.
+- **Not a first aircraft.** No tail, forward sweep, hand launch.
+- **Not seeking minimum mass at any cost.** Torsional stiffness rules.
+- **Not prescribing motor or battery.** See [ADR-0033](../decisions/ADR-0033-electronics-out.md).
+
+## 2.4 Platform and community objectives
+
+These are the objectives that define the *platform*, as opposed to the reference design:
+
+| # | Objective | Criterion |
+|---|---|---|
+| **O12** | Open and free | Fully free to use, build and share; no paywall or locked files |
+| **O13** | Community-driven | Contributions (PRs) with modifications, improvements and new variants are encouraged |
+| **O14** | Modular and extensible | Replaceable wings; fuselage, wingtip, rudder and control-surface variants; entirely different configurations over time |
+| **O15** | AI-assisted research, human-built parts | AI does aerodynamic/theoretical research and design exploration; the community creates the actual 3D parts (CAD/STL), experiments and manufacturing know-how |
+| **O16** | Hardware archive | Central archive for adapters and mounts for FPV equipment, electronics, propulsion and related hardware |
+| **O17** | Reciprocal licensing | Hardware/design under CERN-OHL-S-2.0; documentation under CC BY-SA 4.0 |
 
 ---
 

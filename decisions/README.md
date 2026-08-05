@@ -46,6 +46,8 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | [0033](ADR-0033-electronics-out.md) | Motor and battery out of the design | ✅ | Decided | — |
 | 0034 | Motor mount angle as a design parameter | 🔄 | Medium | Yes |
 | 0035 | TPU-printed hinges | 🔄 | Medium | Yes |
+| [0036](ADR-0036-open-community-platform.md) | Open, community-driven aircraft platform (AI-assisted research) | ✅ | Decided | No |
+| [0037](ADR-0037-licence.md) | Licence: CERN-OHL-S-2.0 + CC BY-SA 4.0 | ✅ | Decided | Yes |
 
 ### Superseded or cancelled
 

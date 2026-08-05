@@ -6,11 +6,34 @@ Context and working rules for AI assistants in this repository.
 
 ## What this project is
 
-Forward-swept FPV flying wing, **modular**, printed in PETG. This is not an STL repository: **it is a reasoning repository**. The STL will come later.
+A **community-driven, open 3D-printed FPV aircraft platform**. The core design principles
+are developed largely through **AI-assisted research**, while the **final aircraft and its
+3D models are created collaboratively by humans and AI**. It is not an STL repository:
+**it is a reasoning repository**. The STL (and the parts, contributed by the community)
+will come.
 
-The contribution is that **every decision carries its rationale, its source, and its confidence level**, and that **mistakes are recorded instead of erased**.
+The contribution is that **every decision carries its rationale, its source, and its
+confidence level**, and that **mistakes are recorded instead of erased**.
 
-If at the end of a session the repository has more geometry but less traceability, the session was negative.
+The platform is not limited to the current forward-swept flying wing. It is meant to grow,
+through community contributions, into a family of airframes, parts, adapters and
+experiments.
+
+## The AI–human division of labour
+
+- **AI does** aerodynamic research, theoretical analysis, data cross-validation (XFOIL,
+  VLM, propeller matching), design exploration and trade studies — and documents the
+  reasoning.
+- **Humans do** the actual 3D parts (Fusion 360 / CAD), experimentation, practical
+  judgment, manufacturing experience and engineering intuition. Today AI is still not
+  reliably able to produce native parametric CAD; the community fills that role from the
+  research.
+
+As the AI agent, your job is the research and the reasoning — *what* and *why* — and
+keeping the traceability that lets the community build the *how*.
+
+If at the end of a session the repository has more geometry but less traceability, the
+session was negative.
 
 ---
 
@@ -58,13 +81,24 @@ Before proposing anything, read in this order:
 | `gaps/` | Register of unknowns G1–G9 | A gap is opened, bounded or closed |
 | `tests/` | Experimental program and data | A test is defined or run |
 | `calculations/` | Analysis scripts **with validation case** | A calculation is written or modified |
-| `geometry/` `stl/` `cad/` | Phase 1 outputs and beyond | Not yet |
+| `geometry/` `stl/` `cad/` | Community 3D parts and outputs | Parts are contributed (from Phase 1 onward) |
 
 **`decisions/` and `research/` are separated on purpose.** An ADR says *what was decided*; a research thread says *what we know and how*. One piece of research feeds several decisions and one decision rests on several pieces of research. Merging them forces duplication or loss of traceability.
 
 ---
 
 ## How to work here
+
+This is an **open, community-driven platform**. Everything is intended to be shared and
+extended: contributors are encouraged to submit pull requests with modifications,
+improvements and new variants. Contributions are **not** limited to aerodynamics or
+structures — decorative parts, mounts, adapters and other creative changes are welcome.
+All design files are licensed under CERN-OHL-S-2.0 and all documentation under CC BY-SA
+4.0 (see [`LICENSE`](LICENSE) and [`LICENSE-docs.md`](LICENSE-docs.md)), so derivatives
+stay open.
+
+As the AI agent, focus on the reasoning and traceability. Keep every quantitative claim
+tagged and sourced so that the community can safely build parts and variants on top of it.
 
 ### When making a decision
 

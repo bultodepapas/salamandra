@@ -1,5 +1,11 @@
 # Documents
 
+This is an **open, community-driven, modular 3D-printed FPV aircraft platform**. The core
+design principles are developed largely through **AI-assisted research**, while the final
+aircraft and its 3D models are created collaboratively by humans and AI. The files here
+define the reference design and the platform's conventions. See the
+[README](../README.md) for the full positioning and the licence.
+
 | File | Content |
 |---|---|
 | [`00-objectives-and-requirements.md`](00-objectives-and-requirements.md) | **Specification (Phase 0).** Objectives, requirements, non-goals |

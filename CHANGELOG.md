@@ -4,6 +4,28 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.6] — 2026-08-05
+
+**Project reframed as an open, community-driven aircraft platform.**
+
+### Added
+- **ADR-0036** — the repository is an open, community-driven, modular 3D-printed FPV
+  aircraft platform: AI performs the aerodynamic/theoretical research and design
+  exploration; the community creates the actual 3D parts, experiments and manufacturing
+  know-how.
+- **ADR-0037** — licence selected: **CERN-OHL-S-2.0** for hardware/design/scripts and
+  **CC BY-SA 4.0** for documentation.
+- `LICENSE` (CERN-OHL-S v2) and `LICENSE-docs.md` (CC BY-SA 4.0).
+
+### Changed
+- `README.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `docs/00-...` and `docs/05-...` updated to
+  communicate the platform purpose, the AI–human division of labour, the modular and
+  extensible nature (beyond the forward-swept flying wing), and the importance of community
+  participation.
+- PR template updated to welcome diverse contributions and declare the licence.
+
+---
+
 ## [1.5] — 2026-07-28
 
 **A4 started with primary sources from the StuntDouble family.**
