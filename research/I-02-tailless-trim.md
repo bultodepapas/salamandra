@@ -70,9 +70,23 @@ The Peregrine 840 mm documentation indicates adjusting in INAV **"level flight p
 
 It is the only available datum on the real trim state of an in-service printed forward-swept wing.
 
+## Supplementary evidence (2026-08-05, does not reopen the closure) `[M]`
+
+The **Prandtl-D line** (Prandtl's 1932 minimum-induced-drag solution and its Horten
+refinements; Bowers, NASA Dryden, "On the Minimum Induced Drag of Wings",
+DFRC-E-DAA-TN2041/TN3811/TN4103, 2010–2011, fulltext on NTRS) is the flight-tested
+descendant of the tailless trim school this thread draws from: a bell-shaped span load
+designed to reduce induced drag and the trim/control requirement of tailless aircraft
+simultaneously. It supports the direction of the FSW trim argument (wash-in as the
+primary trim source, reflex minimized) and the project's span-load thinking, with the
+declared transfer limit: full-scale glider Re (≈ 5–10×10⁶) and span loadings, far from
+the project's regime — methodological evidence, not magnitudes. Registered via the
+airfoil evidence campaign (I-15/A6).
+
 ## Sources
 
 - US 4.545.552 and US 4.674.709 — tailless forward-sweep configuration *(patents)*
 - X-29 program documentation
 - aerodesign.de — airfoil database for flying and tailless wings
 - Peregrine 840 mm technical datasheet
+- Bowers, A. H. — *On the Minimum Induced Drag of Wings*. NASA Dryden, DFRC-E-DAA-TN2041 / TN3811 / TN4103 (2010–2011), NTRS fulltext — located 2026-08-05 (I-15/A6)

@@ -19,7 +19,7 @@ value stands.
 | # | Item | v0.2 value | What changes it | Trigger |
 |---|---|---|---|---|
 | **OP-01** | **CG reachability** | Target CG −119 mm (18.7 % MAC); preliminary balance (v0.2 stations, motor corrected, bay at the nose pod) shows the reachable band ≈ −24…+9 mm (6S1P; ≈ −36…+9 across the four packs) | NP re-verification, body effect, static-margin target or planform | C2 (second independent NP method), F2 mass model (P1–P3); **highest priority** |
-| **OP-02** | Airfoil profile | Provisional: reflexed section scaled to 13.5 % root (MH 60-12 % as closest family member, **not MH 45 — C28/I-11**) / reflexed 9 % tip with camber compensation; criteria fixed (t/c 13.5/9, Cm0 ≥ +0.008, C_Lmax ≥ 0.65) | Final coordinates from the calibrated B3 screening; R-AIRFOIL feasibility at 13.5 % is an explicit B3 question — the root is expected to be a **designed section** (evidence campaign I-15) | G2 closure (I-06 + I-11 + I-15 + B3 + E2) |
+| **OP-02** | Airfoil profile | Provisional: reflexed section scaled to 13.5 % root (MH 60-12 % as closest family member, **not MH 45 — C28/I-11**) / reflexed 9 % tip with camber compensation; criteria fixed (t/c 13.5/9, Cm0 ≥ +0.008, C_Lmax ≥ 0.65, **gentle root-first stall — guide §6.1**) | Final coordinates from the calibrated B3 screening; R-AIRFOIL feasibility at 13.5 % is an explicit B3 question — the root is expected to be a **designed section** (evidence campaign I-15) | G2 closure (I-06 + I-11 + I-15 + B3 + E2) |
 
 ### Geometry and stability
 

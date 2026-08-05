@@ -25,10 +25,24 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ### Changed
 - Design guide §6.1 — R-AIRFOIL note: the root section is to be **designed, not
-  selected**; §1/§13 research set extended to I-01…I-15; §14 log updated.
+  selected**; **new binding criterion: gentle root-first stall character**; **declared
+  confidence basis of the polar** (no measured reflexed polar at Re 3–5×10⁵; XFOIL
+  `[D]` anchored on the E387 LSB measurements; printed-skin transition runs earlier;
+  E2 closes); §1/§13 research set extended to I-01…I-15; §14 log updated.
 - Justification §4 — provisional recipe row rewritten (MH 60-12 % family, designed
-  root); references extended.
-- Open Points OP-02 — trigger now includes I-15.
+  root); stall-character row added with its `[M]` evidence; references extended.
+- Open Points OP-02 — trigger now includes I-15; criteria now include the stall
+  character.
+- **Knowledge integration into the owning documents:**
+  - I-06 — measured LSB anchors for the Ncrit calibration (NASA-CR-186263 E387, Notre
+    Dame series at Re 40k–400k, Schmidt & Mueller, Carmichael survey); B1 closing list
+    now includes the E387 bubble-level comparison.
+  - I-01 — Carmichael fulltext source added; measured bridge to Re 4×10⁵ declared.
+  - I-02 — Prandtl-D/Horten line added as supplementary evidence (does not reopen the
+    closure), with its transfer limits.
+  - I-08 — PW51 availability gap recorded (not in UIUC, 404).
+  - ADR-0027 — evidence register added (thickness/separation sources) without reopening
+    the decision; review conditions unchanged.
 
 ### Declared (not a correction)
 - The airfoil criterion analysis concludes: no published reflexed section satisfies

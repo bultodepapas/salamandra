@@ -43,6 +43,21 @@ Raising from 11 % to 13 % gives ×1.18 of V_div for ~30 g. It is the cheapest le
 - Penalizes C_D0 relative to a thin airfoil. Accepted: stiffness rules.
 - Eases the battery bay and therefore R-CG.
 
+## Evidence register (2026-08-05 — does not reopen the decision)
+
+The airfoil evidence campaign (I-15) located the aerodynamic review material for the
+13.5 % root, to be used at B3 time when the section is **designed** (no published
+reflexed section reaches 13.5 %, I-11):
+
+- **NASA-CR-4096 / AIAA 87-1268** — Barnett & Carter: as thickness increases, the flow
+  evolves from local to massive separation — the stall-character risk of the root.
+- **NACA-SR-83** — Jacobs (1938): the classic thickness-vs-profile-drag evidence.
+- **NACA-RM-L8L08** — Loftin & Smith: 34 sections at Re 3–9×10⁶ (high-Re reference).
+
+These support the divergence/cell arguments above (they do not contradict them) and
+define the aerodynamic constraints the designed root section must meet (stall
+character, drag, C_Lmax ≥ 0.65). Full campaign: `research/I-15-airfoil-evidence-campaign.md`.
+
 ## Review conditions
 
 None foreseen. It is one of the best-supported decisions in the project.

@@ -90,6 +90,10 @@ built twist and elevon geometry before feeding R-TWIST.
 - The manual's qualitative performance does not replace polars or *blackbox*.
 - PW51 and PW75 prevent isolating the planform effect.
 - The published reflex is a flight adjustment; without elevon chord it is not a comparable angle.
+- **Data availability (2026-08-05):** PW51 is **not in the UIUC airfoil database**
+  (404 confirmed); its coordinates/polars must come from other sources (German
+  nurflügel material, Unverferth's "Faszination Nurflügel", airfoiltools when
+  reachable) before it can enter a measured-data path — see I-15/A3.
 
 # 7. Next extraction
 

@@ -25,6 +25,24 @@ against a tunnel polar before trusting its outputs.
 
 The tunnel data are `[M]`; every XFOIL output and every computed comparison are `[D]`.
 
+## 2.1 Measured anchors located by the airfoil evidence campaign (I-15, 2026-08-05) `[M]`
+
+The calibration band now has direct physical anchors for the bubble physics it relies on:
+
+| Source (NTRS) | Content | Relevance |
+|---|---|---|
+| **NASA-CR-186263** — Cole & Mueller (1990), *Experimental measurements of the laminar separation bubble on an Eppler 387 airfoil at low Reynolds numbers* | LDV boundary-layer + static pressure + flow visualization of the LSB on **the calibration airfoil itself** at Re 100 000 | Direct anchor for the Ncrit 10–12 band and for what XFOIL must reproduce |
+| **AIAA 80-1440** — Mueller & Batill (1980) | LSB on NACA 66(3)-018 at **Re 40 000–400 000**, smoke visualization + force measurements | Covers the project's Reynolds band (3–5×10⁵) |
+| **AIAA 86-1065** — O'Meara & Mueller (1986) | LSB structure at Re 50 000–200 000 | Bubble behavior vs. existing correlations at low Re |
+| **AIAA 83-1671** — Jansen & Mueller (1983) | Hot-wire boundary-layer data, Re 80 000–400 000 | Bubble physics in-band |
+| **AIAA 87-1271** — Stack, Mangalam & Berry (1987) | Heat-transfer sensor on NASA LRN(1)-1010, Re 50 000–300 000 | Nonintrusive separation detection |
+| **NASA-CR-165803-VOL-1** — Carmichael (1981), *Low Reynolds number airfoil survey* | The classic critical-Re survey | Regime reasoning (I-01) |
+| **AIAA J. 27(8)** — Schmidt & Mueller (1989), *Analysis of low Reynolds number separation bubbles using semiempirical methods* | Horton's method tested at Re 50 000–200 000 | Validation of the semiempirical bubble models behind XFOIL's transition logic |
+
+**Negative result (recorded in I-15):** NTRS full-text search for reflexed-section
+pitching-moment data returns **zero** results — no NASA/Gov measured polar exists for the
+candidate family; the tunnel data gap at Re 3–5×10⁵ is real and E2 remains the closer.
+
 # 3. Reproducible method
 
 Tool: [`calculations/calibra_xfoil_e387.py`](../calculations/calibra_xfoil_e387.py).
@@ -87,9 +105,14 @@ this calibration reduces G2 but does not replace E2.
 
 - Validate the Ncrit 10–12 band against a second independent physical E387 model
   (E387 E, UIUC Vol. 5), without re-tuning the metric.
+- **Extract NASA-CR-186263 (E387 LSB, `[M]`, fulltext on NTRS) and compare the measured
+  bubble position/length with the XFOIL Ncrit 10–12 prediction** — the calibration
+  airfoil has now been measured at the bubble level (I-15/A9).
 - Publish the sensitivity to paneling and α step.
 - Separate the `Cd(Cl)` error and the `Cl(α)` error.
 - Check that the same band does not systematically fail on another low-speed airfoil
   before using it as a general rule.
 
-Until then B1 stays **partial** and G2 remains open.
+Until then B1 stays **partial** and G2 remains open. The full evidence campaign
+(root/tip design, E205 and PW51 data availability) lives in
+[I-15](I-15-airfoil-evidence-campaign.md).

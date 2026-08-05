@@ -210,6 +210,7 @@ all other geometry is defined independently of the exact profile except the twis
 | C_Lmax (section) | **≥ 0.65** | docs/00, Ananda et al. `[M]` |
 | Reynolds range | **Re(MAC) ≈ 3–5×10⁵**; root up to ≈ 5.2×10⁵ at cruise, ≈ 2.5×10⁵ at stall | I-01 |
 | Family | Reflexed low-Re flying-wing airfoils | B3 (docs/03) |
+| **Stall character** | **Gentle, root-first; no tip stall before the root** — a criterion of the designed section, not a hope: the thickness-separation evidence shows thick sections can transition local → massive separation | I-02, I-15/A5 |
 | L/D at cruise CL | As high as possible at CL = 0.132 | B2 |
 
 > **R-AIRFOIL feasibility at 13.5 % t/c is an open B3 question (I-11, I-15):** no
@@ -217,7 +218,10 @@ all other geometry is defined independently of the exact profile except the twis
 > cm0 +0.0030). The aerodynamic evidence indicates the root section must be **designed,
 > not selected** (thickness-distribution and reflex evidence campaign, I-15); the
 > requirement may alternatively be re-derived against the twist window (I-07). Until
-> then the airfoil row is doubly provisional.
+> then the airfoil row is doubly provisional. **Confidence basis: no measured polar of a
+> reflexed section exists at Re 3–5×10⁵ (I-15); the XFOIL screening is `[D]` anchored on
+> measured LSB data (E387, NASA-CR-186263 — I-06), and the printed PETG skin transitions
+> earlier than the smooth-tunnel calibration — E2 (flight polar) is the closer.**
 
 ### 6.2 Provisional candidates for the v0.2 CAD
 
@@ -480,5 +484,5 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
-| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14:** threads opened; C28 (root/tip candidates corrected, §6.2/§6.3); stall-margin flag (§4); R-AIRFOIL feasibility flag (§6.1); pusher-slipstream note (§10.1). **I-15:** airfoil evidence campaign opened (11 investigations); root section to be designed, not selected (§6.1 note). |
+| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14:** threads opened; C28 (root/tip candidates corrected, §6.2/§6.3); stall-margin flag (§4); R-AIRFOIL feasibility flag (§6.1); pusher-slipstream note (§10.1). **I-15:** airfoil evidence campaign opened (11 investigations); root section to be designed, not selected (§6.1 note); **stall-character criterion added (§6.1) and confidence basis of the polar declared (§6.1)**. |
 | 0.1 | 2026-08-05 | First release. Reference geometry per I-07/ADR-0027; provisional airfoil (B3 pending), dihedral, twist, carbon, motor, bay. OP-01 flagged. |

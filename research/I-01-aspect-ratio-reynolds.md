@@ -70,6 +70,15 @@ Point 4 generates the optimum. Point 3 makes it flat.
 
 ⚠️ The cited tests cover Re 10–160×10³. The project's cruise regime is ≈ 4×10⁵. **Magnitudes do not transfer; trends and methodology do.**
 
+## 2026-08-05 — measured bridge toward Re 4×10⁵ (I-15/A9) `[M]`
+
+The Notre Dame low-Reynolds series extends the measured base into the project's band:
+Mueller & Batill (AIAA 80-1440) and Jansen & Mueller (AIAA 83-1671) document LSB
+behavior on NACA 66(3)-018 up to **Re 400 000**, and Carmichael's classic survey is
+available in fulltext (NASA-CR-165803-VOL-1). The gap is no longer "no data at all at
+Re 3–5×10⁵", but "no data on **reflexed** sections at Re 3–5×10⁵" — which is exactly
+the gap the campaign (I-15) and E2 (flight polar) are built to close.
+
 ## Associated correction
 
 **C1** — it was initially claimed that the Oswald factor collapses with aspect ratio for physical reasons, invalidating raising AR. It is largely a **definition artifact**.
@@ -79,3 +88,5 @@ Point 4 generates the optimum. Point 3 makes it flat.
 1. Spedding, G. R. & McArthur, J. — *Span Efficiencies of Wings at Low Reynolds Numbers*. J. Aircraft 47(1), 2010, pp. 120–128. DOI 10.2514/1.44247
 2. Ananda, G. K., Sukumar, P. P. & Selig, M. S. — *Measured aerodynamic characteristics of wings at low Reynolds numbers*. Aerosp. Sci. Tech. 42, 2015, pp. 392–406.
 3. Hepperle, M. — *MH AeroTools*: laminar separation bubbles and turbulators.
+4. Carmichael, B. H. — *Low Reynolds number airfoil survey, vol. 1*. NASA-CR-165803-VOL-1, 1981 (fulltext on NTRS) `[M]` — located 2026-08-05 (I-15).
+5. Mueller, T. J. & Batill, S. M. — *Experimental studies of the laminar separation bubble on a two-dimensional airfoil at low Reynolds numbers*. AIAA 80-1440, 1980 (Re 40 000–400 000) `[M]` — located 2026-08-05 (I-15).
