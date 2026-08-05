@@ -83,11 +83,14 @@ The aircraft is designed as a **modular platform**:
 
 ---
 
-## Initial design: the forward-swept flying wing
+## Initial design: Salamandra, the forward-swept flying wing
 
-This is the first, reference design on the platform. The baseline is a PETG forward-swept
-flying wing, **modular and configurable**: a standard center module and interchangeable
-wing panels. Efficient FPV cruise flight, with electronics chosen by the builder.
+This is the first, reference design on the platform, named **Salamandra**. Its current
+specification for the designer is the
+[**Salamandra Design Guide v0.1**](design/Salamandra-Design-Guide-v0.1.md), with the
+justification in [`design/`](design/). The baseline is a PETG forward-swept flying wing,
+**modular and configurable**: a standard center module and interchangeable wing panels.
+Efficient FPV cruise flight, with electronics chosen by the builder.
 
 ### Measurable objective
 
@@ -144,6 +147,7 @@ configuration contributed to the platform.
 
 | Folder | What it contains |
 |---|---|
+| [`design/`](design/) | **Salamandra Design Guide v0.1** — the CAD-ready specification handed to the designer, its justification, and the open points |
 | [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |

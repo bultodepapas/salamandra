@@ -1,0 +1,163 @@
+# Salamandra — Design Guide: Justification
+
+**Version 0.1** · 5 August 2026 · Companion to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md)
+
+This document records **why** every value in the Design Guide is what it is: the source,
+the confidence tag, and — where the repository has no datum — the assumption and its
+reasoning. It exists so the Design Guide stays clean and every number remains traceable,
+which is the project's central rule (`docs/04-conventions.md`).
+
+Confidence tags: `[M]` measured, `[D]` derived, `[E]` estimated, `[I]` inference.
+
+---
+
+## 1. Configuration
+
+| Decision | Value | Basis | Tag |
+|---|---|---|---|
+| Forward-swept tailless flying wing | — | Trim-drag advantage + root-first stall + independent designer convergence (ADR-0001, I-02) | `[M]`/`[I]` |
+| Single pusher | — | ADR-0006 prefers single pusher over twin tractor (blade Re, clean wing) — **under dispute**, low confidence | `[I]` |
+| Modular CORE + PANEL | Joint at 30 % half-span | R-NP (common neutral point), R-JOINT (ADR-0032) | — |
+
+## 2. Planform
+
+| Value | Basis | Tag |
+|---|---|---|
+| b = 1300 mm, S = 0.282 m², AR = 6.0 | Mission branch A (ADR-0010) + AR optimum: induced drag saturates, chord→Re coupling penalizes higher AR (ADR-0004, I-01); divergence ∝ AR^(−3/4) (I-05) | `[D]` |
+| λ = 0.50 | I-07 reference planform (b, S, AR fixed → c_root 289, c_tip 145, MAC 225); no low-Re taper benefit measured but none lost (I-01, Ananda et al.) | `[D]` |
+| Λ_c/4 = −20° | Project sign convention (docs/04); I-07 planform; R-NP family alignment achieved by ±2–4° sweep adjustment (I-07 §5) | `[D]` |
+| t/c 13.5 % / 9 % | ADR-0027: divergence ∝ (h/c) linear (I-05), 21700 cell housing (35.1 mm at root), convergence with in-service Peregrine at 13.5 % `[M]` | `[M]`/`[D]` |
+| Twist ε = +0.5° wash-in | Tailless trim: Cm0 = CL·SM. At SM 8 %: Cm0_req = 0.132×0.08 = 0.0106. With airfoil Cm0 = +0.010, twist needed = 0.17°; with Cm0 = +0.008, 0.76° (yield 0.00338/° per I-07). Mid-band value 0.5°, far below the 2.5° R-TWIST cap that protects tip-stall margin | `[D]` |
+| Dihedral Γ = 2.0° | **Assumption.** Forward sweep contributes a negative dihedral effect; mechanical dihedral is required for positive roll stability. 2° matches common FPV-wing practice. **No project datum — verify in Phase 1 (see open points)** | `[I]` |
+
+### 2.1 Planform derivations
+
+- c_root = 2S/(b(1+λ)) = 2×0.282/(1.3×1.5) = 0.2892 m = 289 mm
+- c_tip = λ·c_root = 144.6 mm
+- MAC = (2/3)·c_root·(1+λ+λ²)/(1+λ) = 224.9 mm
+- MAC station: ȳ = (b/6)(1+2λ)/(1+λ) = 289 mm
+- LE line: x_LE(y) = −c/4 + x_c/4(y); x_c/4(y) = −y·tan(20°) → Λ_LE = −17.1°, Λ_TE = −27.9°
+
+## 3. Neutral point, CG and static margin
+
+| Value | Basis | Tag |
+|---|---|---|
+| NP = 26.7 % MAC (−101 mm from root c/4) | In-house VLM, validated against a straight-wing analytic case (I-07 §1; 24.0 % vs 25 % theoretical). **Independent verification still pending (C2)** | `[D]` |
+| CG target = 18.7 % MAC (−119 mm from root c/4) | NP − 8 % static margin (I-07 §2; SM 8–12 % target, C3 of the phase-1 plan) | `[D]` |
+| CG vs root LE | −119 + 72.3 = **47 mm forward of the root LE** — a consequence of the pronounced forward sweep; the same "extremely forward CG" behavior documented for the Mojito (I-02) | `[D]` |
+| R-CG ±5 mm | Battery freedom across 4S1P…6S2P must not break the trim (docs/00 §3.3, ADR-0033) | — |
+
+### 3.1 ⚠️ CG reachability analysis (open point OP-01)
+
+A preliminary moment balance of the §8.1 mass budget (component positions taken at the
+physical stations of the v0.1 geometry) gives:
+
+| Component | m (g) | x (mm from root c/4) | m·x (g·mm) |
+|---|---:|---:|---:|
+| Shell (area centroid) | 600 | −49 | −29,400 |
+| Carbon (tube at c/4 line) | 70 | −142 | −9,940 |
+| Motor + prop | 210 | +190 | +39,900 |
+| ESC | 35 | +40 | +1,400 |
+| Avionics (FC, pitot, GPS, RX, wiring) | 110 | −10 | −1,100 |
+| Servos + balance mass | 120 | −5 | −600 |
+| Hardware | 20 | +50 | +1,000 |
+| Battery 6S1P | 455 | variable | variable |
+
+Without battery, CG ≈ +1 mm. Battery at its most forward physically plausible station
+(x ≈ −100 mm) gives CG ≈ **−27 mm**; at x = +100, CG ≈ +29 mm.
+
+**Target CG is −119 mm.** The battery alone (455 g) would have to sit at x ≈ **−428 mm** —
+about 356 mm forward of the root leading edge — to reach it. **The target is not
+reachable with the current planform, mass budget and bay position.**
+
+Implications (honest assessment, not a silent fix):
+
+1. The VLM neutral point is the least-verified number in the chain (one in-house code,
+   one validation case; the same code once had a normalization bug — C17). C2 (second
+   independent method) is the highest-priority verification.
+2. The central body is known to move the NP **forward** (I-07 §6), which would make the
+   target CG even more forward — reinforcing the tension.
+3. Resolution paths for Phase 1/F2: re-verified NP; reduced static-margin target (relaxed
+   stability, FC-augmented); or planform revision (less sweep, more rearward mass).
+
+For v0.1 the guide keeps the I-07 values, places the battery bay as far forward as the
+structure allows (CORE nose), and makes the reachable CG band the binding constraint of
+the F2 mass model (P1–P3 of `docs/05-master-plan.md`).
+
+## 4. Airfoil
+
+| Value | Basis | Tag |
+|---|---|---|
+| Reflex Cm0 ≥ +0.008 | R-AIRFOIL: trim closure within the torsion window without exceeding R-TWIST (I-07 §4.1) | `[D]` |
+| C_Lmax ≥ 0.65 | Stall ≤ 45 km/h requirement (docs/00, C16); measured band 0.55–0.70 for low-Re reflexed/flat sections (I-01, Ananda et al.) | `[M]` |
+| t/c 13.5 % / 9 % | See §2; ADR-0027 | `[M]`/`[D]` |
+| MH/EH families, PW51 reference | B3 screening candidates (docs/03 §3.B); PW51 is the in-service FSW airfoil of the Nemesis (I-08) | `[M]` |
+| No final coordinates in v0.1 | B3 requires the calibrated Ncrit 10–12 band (I-06) before screening; G2 is open by design | — |
+
+Why the airfoil is the *last* frozen item: the VLM neutral point, the planform and the
+thickness schedule are all defined independently of the exact profile; only the twist
+(ε = 0.5°) is re-derived once Cm0 is known (C5). The designer can therefore build
+everything else now and swap the profile later.
+
+## 5. Structure
+
+| Value | Basis | Tag |
+|---|---|---|
+| Three cells, D-box → 0.30 c, box to 0.72 c | ADR-0002: closed section = torsion box; hinge line opens the section at 0.72 c, so a front web (D-box) recovers enclosed area where torque is greatest. Web position 0.30 c assumed (max-thickness region) | `[I]` |
+| Skin 0.9 mm, gyroid 5 % | ADR-0028: skin buckling collapses GJ (C12); 5 % instead of 8 % because 4 % is flight-proven `[M]` (Peregrine) | `[M]` |
+| Carbon Ø12×1.0 pultruded | **Assumption.** Bending spar only (ADR-0015). Scaled from the Peregrine's Ø8 (840 mm span) to 1300 mm: bending moment ∝ span², GJ of the section ∝ c³·t — a ×1.5 span step warrants the next tube size; Ø12 keeps the tube below the 16 mm "torsion-not-worth-it" threshold and away from the braided-layup uncertainty. Tube at x/c = 0.25 (c/4 line) so the spar and the c/4 datum coincide | `[I]`/`[E]` |
+| Anti-rotation pin Ø6, 65 mm aft | R-JOINT couple: two pins transmit torque as a force couple (ADR-0032); 60–80 mm arm, mid-value 65 mm | `[D]` |
+| Joint at 30 % half-span | ADR-0032: torque halves at 30 % half-span; joint stiffness ≥ 5× section (V_div penalty −9 % vs −29 % at 1×) | `[D]` |
+| 3 segments per half, 45° on bed | ADR-0024; 256 mm bed (O3); segments of ≈ 118 mm span fit the chord at 45° | — |
+| Elevon 0.28 c, hinge at 0.72 c | ADR-0002 (box boundary); elevon chord = 1 − 0.72 = 0.28 c | `[D]` |
+| Elevon span 20–90 % half-span | **Assumption.** Covers most of the span (ADR-0002 "elevons occupy almost the whole span") while leaving the tip free of control-surface mass; to be verified for authority (C6) | `[I]` |
+| Elevon mass balance ~30 g/elevon | ADR-0025: 25 g elevon, 24 mm CG offset → 0.60 g·m; 20 mm horn → m_b ≈ 30 g. Mandatory (flutter is inertial, not stiff) | `[D]` |
+| Dual actuation, 4 servos | ADR-0026: elevons > 400 mm require dual actuation (455 mm elevons); doubles K_hinge, +41 % ω_β | `[D]` |
+| TPU hinges | ADR-0035 (provisional); stiffness to be characterized (C7/S6) | `[I]` |
+
+## 6. Mass budget
+
+| Value | Basis | Tag |
+|---|---|---|
+| Shell 600 g | docs: shell 550–650 g `[E]` (wetted-area count, C10); mid-value 600 | `[E]` |
+| Battery 455 g (6S1P) | docs/00 §3.3: 97 Wh, ~455 g | `[E]` |
+| Motor 170 g / ESC 35 g / servos 60 g / avionics 110 g | Class-typical values (28-class motor, 4 servos, pitot+blackbox+GPS+FC+RX); no project datum | `[E]` |
+| Total 1620 g → 57 g/dm² | Matches the AUW the stall-speed requirement was re-derived against (C16) | `[D]` |
+
+## 7. Propulsion
+
+| Value | Basis | Tag |
+|---|---|---|
+| APC-E 8×8 (P/D 1.0) | ADR-0007/UIUC extraction: η_max 0.731 at J_opt 0.784 — highest peak of the screened set; pitch dominates (+22 % vs 8×4) | `[M]` |
+| ~9,900 rpm at 95 km/h | n = V/(J·D) = 26.39/(0.784×0.2032) = 165.7 rev/s | `[D]` |
+| Motor 28-class, 500–550 KV | KV ≈ n/(0.88×V_bat) = 9,940/(0.88×22.2) ≈ 509 at 6S. 28-class for ~170 g and 400+ W peak with margin; alternatives (9×6 → ~600 KV, 10×7 → ~550 KV) stay in the same class | `[D]`/`[E]` |
+| ESC 30 A | Cruise ≈ 5 A (≈ 110 W at 22.2 V), peak ≈ 20 A (≈ 450 W) | `[D]` |
+| 0.8° upthrust | Peregrine datasheet `[M]` (0.8° up); ADR-0034 keeps mount angle a design parameter | `[M]` |
+| Not prescribed | ADR-0033: project recommends, does not prescribe; final matching via D3/D4 | — |
+
+## 8. Envelope values (derivations)
+
+- Cruise CL: CL = 2W/(ρV²S) = 2×15.90/(1.225×26.39²×0.282) = **0.132**
+- Stall speed: V = √(2W/(ρ·S·CL_max)) with CL_max = 0.60 (92 % of section cl_max 0.65 by
+  non-elliptic distribution, I-07) → **44.6 km/h** (requirement ≤ 45, margin 0.4 km/h —
+  the tightest margin in the design; R-AIRFOIL and the stall requirement compete, I-07
+  §4.2)
+- Required CL_max (wing): 0.589 (I-07) vs section cl_max 0.65 `[M]`
+- Cruise electrical power: 1.15 Wh/km × 95 km/h ≈ **110 W**
+
+## 9. Battery bay
+
+| Value | Basis | Tag |
+|---|---|---|
+| 180 × 70 × 32 mm | Fits all four pack layouts in a single 21 mm layer (docs/00 §3.3, 28 mm useful): 4S1P 42×42, 6S1P 63×42, 4S2P 84×42, 6S2P 84×63 (cells Ø21×70, flat) | `[D]` |
+| Longitudinal slide | R-CG ±5 mm across configs (docs/00) | — |
+| Forward as possible | OP-01 CG tension (§3.1) | `[I]` |
+
+## 10. References
+
+1. I-07 — neutral point, static margin, torsion window (`research/I-07-neutral-point-torsion-window.md`)
+2. I-01, I-02, I-03, I-04, I-05, I-06, I-08 (`research/`)
+3. ADR-0001, 0002, 0004, 0007, 0010, 0015, 0021, 0022, 0024, 0025, 0026, 0027, 0028, 0032, 0033, 0034, 0035, 0036, 0037 (`decisions/`)
+4. docs/00 (objectives and requirements), docs/02 (measured references), docs/03 (phase-1 plan), docs/05 (master plan)
+5. Ananda, Sukumar & Selig (2015); Brandt & Selig (AIAA 2011-1255); Spedding & McArthur (2010); UIUC databases

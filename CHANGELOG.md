@@ -4,6 +4,27 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.7] — 2026-08-05
+
+**Salamandra Design Guide v0.1 released.**
+
+### Added
+- **`design/Salamandra-Design-Guide-v0.1.md`** — first release of the CAD-ready
+  specification for the designer: reference planform (b 1300 mm, S 0.282 m², AR 6.0,
+  λ 0.50, Λ_c/4 −20°, t/c 13.5/9 %), provisional airfoil (B3 pending), structure,
+  mass budget, propulsion, bay and avionics.
+- **`design/Design-Guide-Justification-v0.1.md`** — per-value rationale with confidence
+  tags and derivations.
+- **`design/Design-Guide-Open-Points-v0.1.md`** — open points and evolution process.
+
+### Identified
+- **OP-01 (critical)** — preliminary moment balance shows the target CG (18.7 % MAC,
+  47 mm forward of the root LE) is not reachable with the current mass layout; the
+  neutral point must be re-verified with an independent method (C2) before the bay
+  position is finalized.
+
+---
+
 ## [1.6] — 2026-08-05
 
 **Project reframed as an open, community-driven aircraft platform.**
