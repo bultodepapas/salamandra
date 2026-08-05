@@ -36,6 +36,16 @@ GAP       = 0.0      # mm inter-cell clearance, 0.0 = tight, 0.5 = with slack
 # --- Salamandra reference bay (guide §9, PROVISIONAL) ----------------------
 BAY = (190.0, 70.0, 32.0)   # (x, y, z) mm
 
+# --- reference cells (datasheet [M], masses/pack via [D]) -------------------
+# name : (mass_g, cap_Ah, Vnom, I_cont_A, I_chg_A, energy_Wh)
+CELLS = {
+    "Molicel P42A": (70.0, 4.2, 3.6, 45.0, 8.4, 15.12),
+    "Samsung 50E":  (68.0, 5.0, 3.6, 9.8, 4.9, 18.00),
+}
+# arithmetic mean of the two reference cells (declared average point)
+AVG = tuple(sum(v) / 2 for v in zip(*CELLS.values()))  # (69.0, 4.6, 3.6, 27.4, 6.65, 16.56)
+HARDWARE = 25.0    # g, pack hardware (nickel, wires, XT60, wrap) [E]
+
 
 def factor_triples(N):
     """All (n_x, n_y, n_z) positive-integer triples with product == N.
@@ -151,6 +161,30 @@ def main():
             print(f"{name:>6} {f'{nx}x{ny}x{nz}':>8} {orient:>4} "
                   f"{pck[0]:6.1f} x{pck[1]:5.1f} x{pck[2]:5.1f} "
                   f"{vol:8.2f} {mass:8.0f} {wh:9.1f}")
+        print()
+
+    # --- mass / energy / discharge by reference cell ------------------------
+    print("-" * 74)
+    print("MASS / ENERGY / DISCHARGE BY REFERENCE CELL  (4S1P and 6S1P series)")
+    print("-" * 74)
+    rows_cell = list(CELLS.items()) + [("Average (P42A+50E)", AVG)]
+    print(f"{'cell':>20} {'mass':>6} {'cap':>6} {'Vnom':>5} {'I cont':>7} "
+          f"{'I chg':>6} {'Wh':>6} {'Wh/kg':>6}")
+    print("-" * 74)
+    for name, (m, q, v, ic, ich, wh) in rows_cell:
+        print(f"{name:>20} {m:>5.1f} {q:>5.2f} {v:>5.2f} {ic:>6.1f} "
+              f"{ich:>6.1f} {wh:>5.1f} {wh/m*1000:>6.0f}")
+    print()
+    for N, name in ((4, "4S1P"), (6, "6S1P")):
+        print(f"  {name}  (physical layout: {('2x2' if N==4 else '2x3')} single layer, orient. A):")
+        print(f"    {'cell':>20} {'mass g':>8} {'+hw':>8} {'Wh':>8} {'Ah':>6} "
+              f"{'Vnom':>6} {'Vmax':>6} {'Wh/kg':>7} {'I pack':>7}")
+        for cname, (m, q, v, ic, ich, wh) in rows_cell:
+            pm = N * m
+            pwh = N * wh
+            pakw = pm + HARDWARE
+            print(f"    {cname:>20} {pm:>7.0f} {pakw:>7.0f} {pwh:>7.1f} "
+                  f"{N*q:>6.2f} {N*v:>6.1f} {N*4.2:>6.1f} {pwh/pakw*1000:>7.0f} {ic:>7.1f}")
         print()
 
 

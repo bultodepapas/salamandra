@@ -31,6 +31,11 @@ COMPONENTS = [
 ]
 BOOM_MASS, BOOM_STATION = 0.040, -320e-3   # PROVISIONAL [E]
 PACKS = [("4S1P", 0.300), ("6S1P", 0.455), ("4S2P", 0.605), ("6S2P", 0.910)]
+# Envolventes reales de pack terminado (I-16, battery_pack_layout.py [D]):
+# 4S1P 2x2 y 6S1P 2x3, orientacion A (eje de celula paralelo a x):
+PACK_LEN = {"4S1P": 0.1532, "6S1P": 0.1532}
+# 4S2P (8 celdas) y 6S2P (12 celdas) NO CABEN en el bay de una capa
+# (I-16: ninguna disposicion n_z=1 entra en 200x70x32) -> fuera por geometria.
 # v0.2 bay (sin boom): extremo delantero -131.5, trasero +48.5 (guia §9)
 
 
@@ -78,26 +83,33 @@ def main():
               f"(banda {x_f*1000:+7.1f} ... {x_a*1000:+7.1f} mm)")
 
     print("\n" + "-" * 70)
-    print("BAY DE BATERIA (configuracion de referencia 6S1P)")
+    print("BAY DE BATERIA (configuracion de referencia 6S1P, pack 153.2 mm I-16)")
     print("-" * 70)
     x6 = pack_station(m0, mm0, 0.455, CG_TARGET)
-    bay_fwd = x6 - (PACK_LEN / 2 + 0.030)
-    bay_aft = x6 + (PACK_LEN / 2 + 0.030)
+    pl = PACK_LEN["6S1P"]
+    CLEAR = 0.005                       # holgura de extremo
+    bay_fwd = pack_station(m0, mm0, 0.455, CG_TARGET - R_CG) - pl / 2 - CLEAR
+    bay_aft = pack_station(m0, mm0, 0.455, CG_TARGET + R_CG) + pl / 2 + CLEAR
     boom_len = bay_fwd - NOSE_POD_TIP
-    print(f"  Pack 6S1P: centro en x = {x6*1000:+.1f} mm (banda "
-          f"{pack_station(m0, mm0, 0.455, CG_TARGET-R_CG)*1000:+.1f} ... "
+    print(f"  Pack 6S1P: {pl*1000:.1f} mm de largo, centro en x = {x6*1000:+.1f} mm "
+          f"(banda {pack_station(m0, mm0, 0.455, CG_TARGET-R_CG)*1000:+.1f} ... "
           f"{pack_station(m0, mm0, 0.455, CG_TARGET+R_CG)*1000:+.1f} mm)")
     print(f"  Bay: {bay_fwd*1000:+.1f} ... {bay_aft*1000:+.1f} mm "
           f"({(bay_aft-bay_fwd)*1000:.0f} mm de largo)")
     print(f"  Boom: desde la punta del nose pod ({NOSE_POD_TIP*1000:+.0f} mm) hasta "
           f"{bay_fwd*1000:+.0f} mm -> extension de boom = {boom_len*1000:.0f} mm")
 
-    print("\n  Cobertura del bay por configuracion (centro del pack dentro del bay):")
+    print("\n  Cobertura del bay por configuracion (pack real de I-16):")
     for name, mp in PACKS:
         x_t = pack_station(m0, mm0, mp, CG_TARGET)
-        ok = bay_fwd + PACK_LEN / 2 <= x_t <= bay_aft - PACK_LEN / 2
+        if name not in PACK_LEN:
+            print(f"    {name:5s} x = {x_t*1000:+7.1f} mm  ->  "
+                  f"NO CABE en el bay (I-16: ninguna disposicion n_z=1 en 200x70x32)")
+            continue
+        ok = bay_fwd + PACK_LEN[name] / 2 <= x_t <= bay_aft - PACK_LEN[name] / 2
         print(f"    {name:5s} x = {x_t*1000:+7.1f} mm  ->  "
-              f"{'DENTRO' if ok else 'FUERA'}  {'(requerimiento R-CG a revisar en F2)' if not ok else ''}")
+              f"{'DENTRO' if ok else 'FUERA'}  "
+              f"{'(requerimiento R-CG a revisar en F2)' if not ok else ''}")
 
     print("\n" + "-" * 70)
     print("COMPROBACIONES DE ENVOLVENTE")

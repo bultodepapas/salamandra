@@ -1,0 +1,13 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "firecrawl": {
+      "type": "remote",
+      "url": "https://mcp.firecrawl.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer fc-26c11e34b06c4e76b2687653415bcb73"
+      },
+      "enabled": true
+    }
+  }
+}

@@ -359,8 +359,8 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Spanwise extent | y = 0 → **±195** (30 % half-span) | The wing surface continues across the CORE (same planform and t/c schedule, §5) |
 | Centerline section | Root airfoil (c = 289.2 mm, t/c 13.5 %) at y = 0, mid-plane z = 0 | Same airfoil family as the panels (pending OP-02) |
 | Trailing edge | **Fixed** from y = 0 to ±195 (no hinge line on the CORE, C23) | The torsion box may run closed to the TE inboard of the panel root (PROVISIONAL) |
-| **Nose boom (battery)** | Printed boom from the nose pod tip (x ≈ −132) to **x ≈ −493** (≈ 360 mm); width ≈ 70 mm; carries the battery bay (below) and a **skid at the tip** (first contact on landing flare); wiring conduit from the bay to the CORE; GPS/mag pedestal kept on the nose pod top (x ≈ −120, out of the battery current path) | Required so the 6S1P pack CG reaches x ≈ −421 (OP-01 resolution, `balance_cg.py` `[D]`); structure ≤ 40 g target (OP-24); PROVISIONAL until F2 |
-| Battery bay | Internal **190 × 70 × 32 mm** (x × y × z); forward end at x ≈ −493; centered on y = 0 at z = 0; slide rails along x; single 21 mm layer, never stacked | Sized for the 6S1P pack CG band **−439.5…−403 mm** (R-CG ±5 mm); also covers 4S2P (≈ −346); 4S1P/6S2P fall outside the bay — R-CG requirement re-derived in F2 (OP-23); §9; PROVISIONAL |
+| **Nose boom (battery)** | Printed boom from the nose pod tip (x ≈ −132) to **x ≈ −521** (≈ 390 mm); width ≈ 70 mm; carries the battery bay (below) and a **skid at the tip** (first contact on landing flare); wiring conduit from the bay to the CORE; GPS/mag pedestal kept on the nose pod top (x ≈ −120, out of the battery current path) | Required so the 6S1P pack CG reaches x ≈ −421 (OP-01 resolution, `balance_cg.py` `[D]`, bay re-derived with the real pack envelope of I-16); structure ≤ 40 g target (OP-24); PROVISIONAL until F2 |
+| Battery bay | Internal **200 × 70 × 32 mm** (x × y × z); forward end at x ≈ −521; centered on y = 0 at z = 0; slide rails along x; single 21 mm layer, never stacked | Sized for the 6S1P pack (153 × 64.5 × 22.2 mm, I-16 `[D]`) CG band **−439.5…−403 mm** (R-CG ±5 mm). **Only 6S1P fits and reaches the band**: 4S1P needs x ≈ −577 (outside the bay); 4S2P/6S2P do **not fit** the single-layer bay at all (I-16) — R-CG requirement re-derived in F2 (OP-23); §9; PROVISIONAL |
 | **Rear pod (motor)** | Extends **48 mm aft of the root TE** (to x ≈ +265); **lower surface at the prop plane ≤ z = −111.6 mm** (≈ 92 mm below the wing lower surface) | Required so the 8×8 prop (Ø203, axis at z = 0) keeps ≥ 10 mm tip ground clearance (C26); PROVISIONAL |
 | Motor mount | Face at x ≈ +230; motor body from ≈ +195 to +230 (28-class, 35 mm long, CG ≈ +212); prop disk plane at **x ≈ +235** (≥ 10 mm aft of the root TE at +216.9) | C25; PROVISIONAL |
 | Joint sockets | At y = ±195: tube socket Ø12.2–12.4, pin socket Ø6.1–6.2, depth ≈ 70 mm; centerlines x = −9.6 / +55.4 | §7.3 |
@@ -402,12 +402,14 @@ following **binding constraints**; the final body shape is designer's choice wit
 > ⚠️ **OP-01 (critical) — resolution adopted (2026-08-05):** the reachable-CG analysis
 > (`balance_cg.py` `[D]`) shows the −119 mm target requires the 6S1P pack CG at
 > **x ≈ −421 mm** — unreachable with the v0.2 nose pod (reachable band was −24…+9 mm).
-> **Adopted: nose boom** carrying the battery bay from x ≈ −493 (≈ 360 mm forward of the
+> **Adopted: nose boom** carrying the battery bay from x ≈ −521 (≈ 390 mm forward of the
 > nose pod tip), Mojito pattern (I-02). Pack stations: 4S1P −577 / **6S1P −421
-> (reference)** / 4S2P −346 / 6S2P −270. The bay covers 6S1P and 4S2P; **4S1P and 6S2P
-> fall outside — the R-CG four-config requirement is re-derived in F2 (OP-23).** The
-> central-body effect moves the NP forward — direction known, margin applied in F2. Full
-> analysis: justification §3.1–3.2; the boom is part of the CORE outer mold (§7.6).
+> (reference)** / 4S2P −346 / 6S2P −270. **Bay fit (I-16 `[D]`): the 6S1P pack
+> (153 × 64.5 × 22.2 mm) is the only one that fits the single-layer bay and reaches the
+> band; 4S1P needs x ≈ −577 (outside); 4S2P/6S2P do not fit at all — the R-CG
+> four-config requirement is re-derived in F2 (OP-23).** The central-body effect moves
+> the NP forward — direction known, margin applied in F2. Full analysis: justification
+> §3.1–3.2; the boom is part of the CORE outer mold (§7.6).
 
 ---
 
@@ -416,10 +418,10 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Parameter | Value | Status |
 |---|---|---|
 | Cells | Li-Ion **21700**, Ø21 × 70 mm, **single layer** (never stacked) | docs/00 |
-| Bay internal dims (x × y × z) | **190 × 70 × 32 mm** | PROVISIONAL |
-| Bay position | In the CORE nose boom (§7.6): forward end at x ≈ −493; sized for the 6S1P pack CG band −439.5…−403; see OP-01 | PROVISIONAL |
-| Longitudinal adjustment | Pack slide rails along x; range sized to keep CG within ±5 mm (reference 6S1P; 4S2P also covered) | docs/00 R-CG; re-derived in F2 (OP-23) |
-| Pack configs | 4S1P ~300 g / 6S1P ~455 g / 4S2P ~605 g / 6S2P ~910 g (out of cruise envelope). Pack stations for CG −119 mm: −577 / **−421** / −346 / −270 (`balance_cg.py` `[D]`) | docs/00 |
+| Bay internal dims (x × y × z) | **200 × 70 × 32 mm** | PROVISIONAL |
+| Bay position | In the CORE nose boom (§7.6): forward end at x ≈ −521; sized for the 6S1P pack CG band −439.5…−403; see OP-01 | PROVISIONAL |
+| Longitudinal adjustment | Pack slide rails along x; range sized to keep CG within ±5 mm (reference 6S1P) | docs/00 R-CG; re-derived in F2 (OP-23) |
+| Pack configs | 4S1P ~300 g / 6S1P ~455 g / 4S2P ~605 g / 6S2P ~910 g (out of cruise envelope). Pack stations for CG −119 mm: −577 / **−421** / −346 / −270 (`balance_cg.py` `[D]`). **Bay fit (I-16 `[D]`): only the 6S1P pack (153 × 64.5 × 22.2 mm) fits the 200×70×32 single-layer bay; 4S2P/6S2P fit no n_z = 1 arrangement; 4S1P fits but needs x ≈ −577 (outside the bay)** | docs/00 |
 | Bay height check | 21 mm cells + clearance ≈ 27 mm ≤ 32 mm; root thickness 39 mm at centerline | derived |
 | Bay hatch | Spring-loaded lock (Flightory pattern, I-09); threaded inserts + reinforcement collar for repeated opening | PROVISIONAL |
 
@@ -511,6 +513,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
+| 0.4 | 2026-08-05 | **Bay re-derived with the real pack envelope (I-16 `[D]`):** 6S1P = 153 × 64.5 × 22.2 mm (2×3, orient. A) → bay **200 × 70 × 32 mm**, forward end **x ≈ −521**, boom ≈ 390 mm (`balance_cg.py`). Fit verdict: only 6S1P fits and reaches the R-CG band; 4S1P fits but needs x ≈ −577 (outside); 4S2P/6S2P fit no single-layer arrangement (I-16) — OP-23 sharpened. |
 | 0.3 | 2026-08-05 | **OP-01 resolution:** battery **nose boom** adopted (bay x ≈ −493…−304, 6S1P pack at ≈ −421 mm, `balance_cg.py` `[D]`); pack-station map per configuration; 4S1P/6S2P R-CG tension flagged (OP-23); boom structure ≤ 40 g target (OP-24). **R-TWIST raised 2.5° → 3.0°** (§5.3): stall criterion holds at 3.0° (load peak 56 % b/2, margin +0.017); residual trim ≤ 0.6° permanent elevon reflex. **Elevon authority verified** (`elevon_authority.py` `[D]`): yield 0.00348 °/° over 30–90 % span, 10° ≈ 4.8× the trim requirement. AUW 1660 g → V_stall ≈ 45.6 km/h flagged with the declared mass lever (§4, OP-24). |
 | 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14:** threads opened; C28 (root/tip candidates corrected, §6.2/§6.3); stall-margin flag (§4); R-AIRFOIL feasibility flag (§6.1); pusher-slipstream note (§10.1). **I-15:** airfoil evidence campaign opened (11 investigations); root section to be designed, not selected (§6.1 note); stall-character criterion added (§6.1) and confidence basis of the polar declared (§6.1). **B3 screening + C2 executed (I-15 §6):** E205 discarded on its polar (§6.2); NP cross-checked — two methods agree within 3 mm (§3); twist note with trim-closure numbers (§5.3); trim-closure blockquote (§6.1). |
 | 0.1 | 2026-08-05 | First release. Reference geometry per I-07/ADR-0027; provisional airfoil (B3 pending), dihedral, twist, carbon, motor, bay. OP-01 flagged. |

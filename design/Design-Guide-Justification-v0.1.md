@@ -107,30 +107,37 @@ self-consistency check) and solves the pack stations for the target CG.
 
 | Pack | m (g) | AUW (g) | Pack CG station required (mm) | R-CG band (mm) | In bay? |
 |---|---:|---:|---:|---:|---|
-| 4S1P | 300 | 1505 | **−577** | −602…−552 | no (OP-23) |
+| 4S1P | 300 | 1505 | **−577** | −602…−552 | fits, but outside the bay (OP-23) |
 | **6S1P** | **455** | **1660** | **−421** | −439…−403 | **yes (reference)** |
-| 4S2P | 605 | 1810 | −346 | −361…−331 | yes |
-| 6S2P | 910 | 2115 | −270 | −282…−258 | no (OP-23) |
+| 4S2P | 605 | 1810 | −346 | −361…−331 | **no — does not fit the bay (I-16)** |
+| 6S2P | 910 | 2115 | −270 | −282…−258 | **no — does not fit the bay (I-16)** |
 
 **Adopted geometry** (guide §7.6): nose boom carrying the battery bay, forward end
-x ≈ **−493 mm**, bay 190 × 70 × 32 mm (slide ≈ 36 mm covers the 6S1P R-CG band), boom
-≈ 360 mm forward of the nose pod tip (x = −132), skid at the boom tip, wiring conduit.
-Boom structure budget **≤ 40 g** (OP-24). This is the Mojito pattern (I-02): the forward
-sweep makes the neutral point lie ≈ 100 mm ahead of the root c/4, so the battery (28 %
-of AUW) is the only mass with enough lever to balance it; no other component move closes
-the 95 mm gap.
+x ≈ **−521 mm**, bay 200 × 70 × 32 mm, boom ≈ 390 mm forward of the nose pod tip
+(x = −132), skid at the boom tip, wiring conduit. Boom structure budget **≤ 40 g**
+(OP-24). This is the Mojito pattern (I-02): the forward sweep makes the neutral point
+lie ≈ 100 mm ahead of the root c/4, so the battery (28 % of AUW) is the only mass with
+enough lever to balance it; no other component move closes the 95 mm gap.
+
+**Bay fit with the real pack envelope (I-16 `[D]`):** the finished 6S1P pack is
+**153 × 64.5 × 22.2 mm** (2×3 cells, orientation A, leads included — `battery_pack_layout.py`),
+which with the ±5 mm R-CG slide (36.5 mm) and 5 mm end clearances sizes the bay at
+200 mm and places its forward end at ≈ −521 (`balance_cg.py`). **Only 6S1P fits the
+single-layer bay and reaches its band; 4S1P fits physically but needs x ≈ −577 (outside
+the bay); 4S2P/6S2P fit no n_z = 1 arrangement of 8/12 cells (I-16).**
 
 **Honest flags (not silent fixes):**
 
-1. **R-CG across the four configs is no longer satisfiable with one bay** — pack stations
-   span −577…−270 mm (307 mm). The requirement (docs/00 §3.3) is re-derived in F2 (OP-23);
-   the reference 6S1P and 4S2P are covered by the adopted bay.
+1. **R-CG across the four configs is not satisfiable with one bay** — and the pack
+   envelope analysis (I-16) sharpens it: 4S2P/6S2P cannot be carried in the single-layer
+   bay at all, and 4S1P cannot reach its station. The requirement (docs/00 §3.3) is
+   re-derived in F2 (OP-23); the reference 6S1P is the only fully compliant config.
 2. **Mass/stall tension:** AUW 1660 g → V_stall ≈ 45.6 km/h vs ≤ 45 required. Declared
    lever: shell at 550 g (low end of its band) + boom ≤ 40 g → ≈ 44.7 km/h. Tracked as
    OP-24; the stall-margin flag (§4 of the guide) is updated.
 3. **Central body effect** (I-07 §6) moves the NP forward — direction known, magnitude
    unquantified; F2 applies the margin. It reinforces the tension but does not reverse
-   the solution (the bay retains ≈ 36 mm of slide).
+   the solution (the bay retains ≈ 36.5 mm of slide).
 4. The trim closure at SM 8 % with ε = 3.0° leaves ≤ 0.6° of permanent elevon reflex in
    the worst B3 case; authority is verified (`elevon_authority.py`, §5.3 of the guide).
 
@@ -208,9 +215,9 @@ everything else now and swap the profile later.
 
 | Value | Basis | Tag |
 |---|---|---|
-| 190 × 70 × 32 mm | Fits all four pack layouts in a single 21 mm layer (docs/00 §3.3, 28 mm useful): 4S1P 42×42, 6S1P 63×42, 4S2P 84×42, 6S2P 84×63 (cells Ø21×70, flat) | `[D]` |
+| 200 × 70 × 32 mm | Fits the finished 6S1P pack 153 × 64.5 × 22.2 mm (2×3, orient. A, I-16 `[D]`) with the ±5 mm R-CG slide (36.5 mm) and end clearances; 4S1P (153 × 43 × 22) also fits. 4S2P/6S2P (8/12 cells) fit no single-layer arrangement — I-16 | `[D]` |
 | Longitudinal slide | R-CG ±5 mm; v0.3 slide ≈ 36 mm covers the 6S1P band −439…−403 (`balance_cg.py`); 4S1P/6S2P outside — see OP-23 | `[D]` |
-| Nose boom | OP-01 resolution (§3.2). v0.3: **nose boom from x ≈ −132 to x ≈ −493** carrying the bay; 6S1P pack CG at ≈ −421 mm; skid at the tip | `[D]` |
+| Nose boom | OP-01 resolution (§3.2). v0.3/v0.4: **nose boom from x ≈ −132 to x ≈ −521** carrying the bay (200 × 70 × 32, forward end ≈ −521); 6S1P pack CG at ≈ −421 mm; skid at the tip | `[D]` |
 
 ## 10. References
 

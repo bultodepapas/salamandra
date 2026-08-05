@@ -145,11 +145,15 @@ python3 battery_pack_layout.py
 ```
 
 Self-validating by construction: it prints the full enumeration of cell
-arrangements (12 envelopes for 4S, 18 for 6S) with a fit test against the
-`190 × 70 × 32 mm` reference bay (guide §9). Published results (I-16 §4–§5):
-**6S1P = 2×3 orient. A → 153.2 × 64.5 × 22.2 mm** (the only 6S layout that fits);
-**4S1P = 2×2 → 153.2 × 43.2 × 22.2 mm**. A change to the fit test or the assembly
-allowances must reproduce these two lines.
+arrangements (12 envelopes for 4S, 18 for 6S) with a fit check against the
+`190 × 70 × 32 mm` reference bay (guide §9), plus per-cell and per-pack mass /
+energy / discharge for the two reference cells (Molicel P42A, Samsung 50E) and
+their average. Published results (I-16 §4–§5, §6.1):
+**6S1P = 2×3 orient. A → 153.2 × 64.5 × 22.2 mm**,
+**4S1P = 2×2 → 153.2 × 43.2 × 22.2 mm** — the envelopes that fit the current
+provisional bay (all others are buildable with a resized bay). Pack masses:
+6S1P P42A 445 g / 50E 433 g / avg 439 g; 4S1P 305 / 297 / 301 g. A change to the
+fit test, assembly allowances, or cell specs must reproduce these values.
 
 ---
 
