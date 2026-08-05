@@ -17,7 +17,6 @@ CG_TARGET = -119e-3    # m, 18.7 % MAC, SM 8 %
 R_CG = 5e-3            # m, docs/00 §3.3
 AUW_REF, V_STALL_REF = 1.620, 45.0   # km/h de referencia a 1620 g
 NOSE_POD_TIP = -132e-3               # guia §7.6 (v0.2)
-PACK_LEN = 0.084       # m, 21700 6S1P ~84 mm (peor caso)
 
 # --- tablas de masas (Justification §3.1; boom PROVISIONAL [E], F2) ---
 COMPONENTS = [

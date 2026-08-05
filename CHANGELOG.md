@@ -4,6 +4,33 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.13] — 2026-08-05
+
+**Bay re-derived with the real pack envelope (I-16).**
+
+### Context
+The parallel battery-pack analysis (I-16, `battery_pack_layout.py`) established the
+finished pack envelopes with datasheet `[M]` + assembly allowances `[E]`: **6S1P =
+153.2 × 64.5 × 22.2 mm** (2×3 cells, orientation A, leads included) and 4S1P =
+153.2 × 43.2 × 22.2. The v0.3 bay sizing assumed an 84 mm pack — **corrected**.
+
+### Corrected (`balance_cg.py`, all `[D]`)
+- Bay: **200 × 70 × 32 mm**, forward end **x ≈ −521**, boom ≈ **390 mm** (was 190 mm /
+  −493 / 360 mm). The 6S1P pack (153.2 mm) + 36.5 mm R-CG slide + 5 mm clearances
+  require the 200 mm length.
+- Fit verdict: **only 6S1P fits the single-layer bay and reaches its band
+  (−439.5…−403)**; 4S1P fits physically but needs x ≈ −577 (outside the bay);
+  **4S2P/6S2P fit no n_z = 1 arrangement of 8/12 cells (I-16)** — the earlier
+  "also covers 4S2P" claim is withdrawn.
+- OP-23 sharpened accordingly; the v0.4 bay serves the reference 6S1P only.
+
+### Changed
+- Design guide v0.4: §7.6 boom/bay rows, §8.2 OP-01 blockquote, §9 bay/configs rows,
+  §14 log; justification §3.2 (table + adopted geometry + flag 1); open points v0.4
+  (OP-01, OP-16, OP-19, OP-21, OP-23).
+
+---
+
 ## [1.12] — 2026-08-05
 
 **OP-01 resolved by decision (nose boom), R-TWIST raised to 3.0°, elevon authority verified.**
