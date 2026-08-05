@@ -4,6 +4,45 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.8] — 2026-08-05
+
+**Salamandra Design Guide v0.2 — designer-review release.**
+
+The three `design/` documents were reviewed as a CAD specification (Fusion 360): every
+value was re-derived and cross-checked (planform, stations, NP/CG/SM, speeds, balance).
+All planform and stability numbers verified. Six inconsistencies were corrected; the
+guide is now fully self-consistent and complete enough to model the v0.2 geometry.
+
+### Changed
+- **Design Guide v0.2** — new §7.6 "CORE (center module)": nose pod (60 mm forward of the
+  root LE, battery reach x ≈ −100), rear pod (motor mount, prop disk at x ≈ +235), prop
+  ground-clearance constraint (belly ≤ −111.6 mm at the prop plane), joint sockets with
+  centerlines and clearances, avionics stations. Carbon tube/pin physical lengths.
+  Provisional airfoil coordinate recipe (§6.3). Wing tips declared (flat caps, no winglet).
+- **Justification v0.2** — moment balance re-derived with corrected motor station and the
+  v0.2 bay limits; band ≈ −24…+9 mm (6S1P; ≈ −36…+9 across the packs, was −27…+29).
+  Battery for target CG ≈ −439 mm (was −428).
+- **Open Points v0.2** — OP-01/04/06/19 updated; OP-20 (wingtips), OP-21 (CORE outer
+  mold), OP-22 (missing ADR files) added.
+
+### Corrections
+
+| # | Error | Correction |
+|---|---|---|
+| **C22** | The guide stated dihedral as both "polyhedral segment rotations" (0 / 1.07 / 0.46 / 0.47°) and a "linear schedule Γ(y) = 2.0°·y/650" — two different surfaces (tip rise 11.35 vs 12.18 mm), with ambiguous kink locations | Defined unambiguously: **piecewise-linear polyhedral, flat segments, kinks at every segment joint** (y = 195/347/498), cumulative values 0 / 1.07 / 1.53 / 2.0°, tip rise ≈ 12 mm; the linear schedule remains only as the generator of the joint values |
+| **C23** | Elevon inner end at 20 % half-span (y = 130) crossed the removable CORE↔PANEL joint at 30 % (y = 195), placing a control surface on the shared, non-reprinted CORE with no servo for it | Elevon is a **panel component**: y = 195 → 585 (30–90 %), length 390 mm; CORE trailing edge fixed (torsion box may run to the TE inboard of the joint). Dual actuation retained as flutter margin pending C6 |
+| **C24** | Print-fit statement inconsistent: "segments of ≈ 118 mm span" (actual: 152/151/152 mm), and span-at-45°-in-bed-plane does not fit the 256 mm bed (≈ 281 mm footprint for segment 1) | 45° defined as **roll of the airfoil plane about the span axis** (LE low): footprint 152 × 174 mm — fits; orientation constraints added to §7.4 |
+| **C25** | Motor+prop station at x = +190 in the OP-01 balance — inside the planform (root TE at +216.9), impossible for a pusher with the prop disk aft of the TE | Prop disk at x ≈ +235 (≥ 10 mm aft of root TE), mount face +230, motor+prop centroid ≈ +217. OP-01 band re-derived with the v0.2 bay limits: ≈ **−24…+9 mm** (6S1P; ≈ −36…+9 across the packs, was −27…+29); battery for the target ≈ −439 mm |
+| **C26** | "Prop with ≥ 10 mm ground clearance" at z = 0 with the 8×8 prop (radius 101.6 mm): the lowest blade tip falls ≈ 82 mm below the wing lower surface — the constraint was physically unsatisfiable with an airfoil-shaped CORE | CORE rear pod defined: **lower surface ≤ z = −111.6 mm at the prop plane** (≈ 92 mm below the wing lower surface). Thrust line stays at z = 0 (no pitch coupling) |
+| **C27** | Tube "~390 mm per panel" is the spanwise extent; the physical tube is longer along the swept c/4 line (≈ 415 mm) plus ≈ 70 mm socket insertion | Tube ≈ **485 mm** total; pin ≈ 140 mm (70 + 70, matching the socket depth); socket bores Ø12.2–12.4 / Ø6.1–6.2, depth ≈ 70 mm — added to §7.2/§7.3 |
+
+### Identified
+- **OP-22** — ADR files 0003, 0006, 0008, 0009, 0012, 0016, 0018, 0023, 0024, 0026,
+  0030, 0031, 0034, 0035 exist in the decisions **index** but were never published as
+  files; several are referenced by the guide. Must be published before v1.0.
+
+---
+
 ## [1.7] — 2026-08-05
 
 **Salamandra Design Guide v0.1 released.**
