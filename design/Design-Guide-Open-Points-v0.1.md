@@ -1,7 +1,7 @@
 # Salamandra — Design Guide: Open Points and Evolution
 
-**Version 0.2** · 5 August 2026 · Companion to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.2)
+**Version 0.3** · 5 August 2026 · Companion to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.3)
 
 This document lists everything in the Design Guide that is **not yet fixed**: assumptions
 that need verification, values that will change when the corresponding research closes,
@@ -18,8 +18,8 @@ value stands.
 
 | # | Item | v0.2 value | What changes it | Trigger |
 |---|---|---|---|---|
-| **OP-01** | **CG reachability** | Target CG −119 mm (18.7 % MAC); preliminary balance (v0.2 stations, motor corrected, bay at the nose pod) shows the reachable band ≈ −24…+9 mm (6S1P; ≈ −36…+9 across the four packs) | NP re-verification, body effect, static-margin target or planform | C2 (second independent NP method), F2 mass model (P1–P3); **highest priority** |
-| **OP-02** | Airfoil profile | Provisional: reflexed section scaled to 13.5 % root (MH 60-12 % as closest family member, **not MH 45 — C28/I-11**) / reflexed 9 % tip with camber compensation; criteria fixed (t/c 13.5/9, Cm0 ≥ +0.008, C_Lmax ≥ 0.65, **gentle root-first stall — guide §6.1**). **Screening executed (I-15 §6):** E205 discarded (cm0 ≈ −0.07); MH60→13.5 % cm0 = +0.0016 (Re 5e5, Ncrit 10); no off-the-shelf candidate closes trim inside R-TWIST at SM 8 % | Final coordinates from the calibrated B3 screening; R-AIRFOIL feasibility at 13.5 % is an explicit B3 question — the root is expected to be a **designed section** (evidence campaign I-15) | G2 closure (I-06 + I-11 + I-15 + B3 + E2) |
+| **OP-01** | **CG reachability** | **Resolution adopted (v0.3):** nose boom carrying the battery bay (forward end x ≈ −493, 190×70×32), 6S1P pack at ≈ −421 mm for CG −119 mm; pack stations −577/−421/−346/−270 (4S1P/6S1P/4S2P/6S2P, `balance_cg.py` `[D]`) | Real components (F2/P1–P3), central-body NP margin, boom mass | F2 mass model; OP-23/OP-24; boom structure validation at first print |
+| **OP-02** | Airfoil profile | Provisional: reflexed section scaled to 13.5 % root (MH 60-12 % as closest family member, **not MH 45 — C28/I-11**) / reflexed 9 % tip with camber compensation; criteria fixed (t/c 13.5/9, Cm0 ≥ +0.008, C_Lmax ≥ 0.65, **gentle root-first stall — guide §6.1**). **Screening executed (I-15 §6):** E205 discarded (cm0 ≈ −0.07); MH60→13.5 % cm0 = +0.0016 (Re 5e5, Ncrit 10); no off-the-shelf candidate closes trim inside R-TWIST at SM 8 % — residual ≤ 0.6° permanent elevon reflex (v0.3, `elevon_authority.py`) | Final coordinates from the calibrated B3 screening; R-AIRFOIL feasibility at 13.5 % is an explicit B3 question — the root is expected to be a **designed section** (evidence campaign I-15) | G2 closure (I-06 + I-11 + I-15 + B3 + E2) |
 
 ### Geometry and stability
 
@@ -53,10 +53,12 @@ value stands.
 
 | # | Item | v0.2 value | What changes it | Trigger |
 |---|---|---|---|---|
-| OP-16 | Battery bay 180×70×32 mm | Provisional; v0.2 fixes the forward end at x ≈ −131.5 (nose pod) | R-CG verification in CAD with real packs | F2/P3 |
+| OP-16 | Battery bay 190×70×32 mm | Provisional; v0.3 fixes the forward end at x ≈ −493 (nose boom) | R-CG verification in CAD with real packs | F2/P3 |
 | OP-17 | Pitot probe position | y ≈ 260 mm LE; lines cross the CORE↔PANEL joint (dedicated channel) | Install/test convenience | D1/D2 |
 | OP-18 | FC pitot input | SpeedyBee F405 WING (not MINI) must be verified | Bench check before buying | D1 |
-| OP-19 | Bay position (nose) | CORE nose pod, 60 mm forward of the root LE (guide §7.6) | OP-01 resolution | C2 + F2 |
+| OP-19 | Bay position (nose) | CORE nose boom, forward end at x ≈ −493 (guide §7.6) | OP-01 final validation | F2 |
+| **OP-23** | **R-CG four-config requirement** | docs/00 §3.3 requires CG ±5 mm in all four pack configs; with the boom, pack stations span −577…−270 mm — **one bay cannot cover all four**; the v0.3 bay covers 6S1P (reference) and 4S2P | Re-derivation of the requirement (per-configuration CG acceptance, or per-mission bay inserts, or a longer slide) | F2 (P1–P3) with real packs |
+| **OP-24** | **Boom mass / stall compliance** | Boom structure ≤ 40 g target; AUW 1660 g → V_stall ≈ 45.6 km/h vs ≤ 45 required; declared lever: shell at 550 g (low end) + boom ≤ 40 g → ≈ 44.7 km/h | Real boom CAD mass; final shell mass; F2 budget | F2/P3; first print of the CORE |
 
 ### Added in v0.2
 
@@ -100,5 +102,6 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.3 | 2026-08-05 | OP-01 resolved by decision: nose boom adopted (bay x ≈ −493…−304, 6S1P pack ≈ −421 mm; `balance_cg.py`); pack-station map per config; OP-19/OP-16 updated to the boom; OP-23 (R-CG four-config tension) and OP-24 (boom mass/stall compliance) added; OP-02 updated with the elevon-reflex closure (≤ 0.6°) and R-TWIST 3.0°. |
 | 0.2 | 2026-08-05 | OP-01 re-derived with corrected motor station (band ≈ −24…+9 mm, bay-limited); OP-04 defined piecewise (C22); OP-06 elevon span corrected to 30–90 % (C23); OP-19 fixed by the new CORE spec (§7.6 of the guide); OP-20 (wingtips), OP-21 (CORE outer mold), OP-22 (missing ADR files) added. I-09 additions: OP-10 hinge alternative (mylar). I-10…I-14 threads opened; OP-02 updated per C28 (MH 45 → MH 60-12 %); OP-06/OP-14 cross-referenced to I-10/I-13. |
 | 0.1 | 2026-08-05 | First release. OP-01 (CG reachability) identified from a preliminary moment balance; all other open points carried from Phase 1 plan. |

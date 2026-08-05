@@ -96,6 +96,44 @@ band the binding constraint of the F2 mass model (P1–P3 of `docs/05-master-pla
 ⚠️ The nose/rear pods of the CORE add mass not yet in the §8.1 estimate; F2 (P1) must
 re-derive the band with the real CORE geometry.
 
+### 3.2 Resolution adopted (2026-08-05) — battery nose boom (OP-01)
+
+The reachability analysis is now a reproducible tool, `calculations/balance_cg.py`
+(`[D]`). It validates the mass table against the planform geometry (numerical area
+centroid of the planform = **−48.9 mm** vs the −49 mm assumed for the shell — OK,
+self-consistency check) and solves the pack stations for the target CG.
+
+**Design point (SM 8 %, CG −119 mm, reference config 6S1P):**
+
+| Pack | m (g) | AUW (g) | Pack CG station required (mm) | R-CG band (mm) | In bay? |
+|---|---:|---:|---:|---:|---|
+| 4S1P | 300 | 1505 | **−577** | −602…−552 | no (OP-23) |
+| **6S1P** | **455** | **1660** | **−421** | −439…−403 | **yes (reference)** |
+| 4S2P | 605 | 1810 | −346 | −361…−331 | yes |
+| 6S2P | 910 | 2115 | −270 | −282…−258 | no (OP-23) |
+
+**Adopted geometry** (guide §7.6): nose boom carrying the battery bay, forward end
+x ≈ **−493 mm**, bay 190 × 70 × 32 mm (slide ≈ 36 mm covers the 6S1P R-CG band), boom
+≈ 360 mm forward of the nose pod tip (x = −132), skid at the boom tip, wiring conduit.
+Boom structure budget **≤ 40 g** (OP-24). This is the Mojito pattern (I-02): the forward
+sweep makes the neutral point lie ≈ 100 mm ahead of the root c/4, so the battery (28 %
+of AUW) is the only mass with enough lever to balance it; no other component move closes
+the 95 mm gap.
+
+**Honest flags (not silent fixes):**
+
+1. **R-CG across the four configs is no longer satisfiable with one bay** — pack stations
+   span −577…−270 mm (307 mm). The requirement (docs/00 §3.3) is re-derived in F2 (OP-23);
+   the reference 6S1P and 4S2P are covered by the adopted bay.
+2. **Mass/stall tension:** AUW 1660 g → V_stall ≈ 45.6 km/h vs ≤ 45 required. Declared
+   lever: shell at 550 g (low end of its band) + boom ≤ 40 g → ≈ 44.7 km/h. Tracked as
+   OP-24; the stall-margin flag (§4 of the guide) is updated.
+3. **Central body effect** (I-07 §6) moves the NP forward — direction known, magnitude
+   unquantified; F2 applies the margin. It reinforces the tension but does not reverse
+   the solution (the bay retains ≈ 36 mm of slide).
+4. The trim closure at SM 8 % with ε = 3.0° leaves ≤ 0.6° of permanent elevon reflex in
+   the worst B3 case; authority is verified (`elevon_authority.py`, §5.3 of the guide).
+
 ## 4. Airfoil
 
 | Value | Basis | Tag |

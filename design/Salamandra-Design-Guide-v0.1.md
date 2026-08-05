@@ -118,9 +118,13 @@ exists yet; it will be updated by the open point listed.
 | Divergence criterion | V_div ≥ 1.5 × V_NE | docs/00 |
 
 > ⚠️ **Stall margin is the tightest in the design:** ≈ 44.6 km/h at CL_max 0.60 vs the
-> 45 km/h requirement — a 0.4 km/h margin (I-07 §4.2). The launch is a mandatory hand
-> throw; launch-speed feasibility is under investigation (I-14). Do not relax the
-> CL_max chain without re-deriving this requirement (C16 history).
+> 45 km/h requirement — a 0.4 km/h margin (I-07 §4.2). The OP-01 boom (OP-24) adds 40 g:
+> AUW 1660 g → V_stall ≈ **45.6 km/h** at the current budget (balance_cg.py `[D]`).
+> **Declared lever:** shell at the low end of its band (550 g instead of 600) + boom ≤ 40 g
+> → AUW ≈ 1600 g → ≈ 44.7 km/h — compliance recovered by mass discipline, re-derived in
+> F2 (OP-24). The launch is a mandatory hand throw; launch-speed feasibility is under
+> investigation (I-14). Do not relax the CL_max chain without re-deriving this
+> requirement (C16 history).
 
 Salamandra is a modular platform: this guide specifies the **Cruise** configuration
 (1300 mm). The Range (1600 mm) and Sport (1100 mm) configurations share the CORE and
@@ -184,12 +188,15 @@ All x-values from the root c/4 origin; chord and thickness in mm.
 | Dihedral | Polyhedral, piecewise-linear; cumulative at the outboard end of each segment: CORE 0° (y 0–195) / seg 1 +1.07° (195–347) / seg 2 +1.53° (347–498) / seg 3 +2.0° (498–650) |
 
 > **Twist setting (C5 preview, I-15 §6.2):** the +0.5° value is the provisional placeholder.
-> The B3 screening shows that with the current off-the-shelf candidates at SM 8 % the
-> required wash-in is 2.6–3.7° (MH60→13.5 %) — outside R-TWIST ≤ 2.5°. The twist is
-> re-derived when the airfoil is fixed (C5); keep it **parametric** in CAD. Options that
-> bring it back inside the window: a designed section with cm0 ≥ +0.008 at Re 4–5×10⁵,
-> a reduced static-margin target (F1), or part of the trim taken by permanent elevon
-> reflex (in-service practice, I-08).
+> **R-TWIST raised to 3.0° (OP-01 resolution pass, 2026-08-05, `[D]`):** at 3.0° the stall
+> criterion still holds — load peak at 56 % b/2, margin +0.017, same as at 0° (at 4° it
+> drops to +0.009; `ventana_torsion.py`), and the B3 screening shows the required wash-in
+> at SM 8 % is 2.6–3.7° (MH60→13.5 %). With ε = 3.0°, the worst-case residual trim is
+> ≈ **0.6° of permanent elevon reflex** — elevon yield 0.00348 °/° over the 30–90 % span,
+> 10° ≈ 4.8× the trim requirement (`elevon_authority.py` `[D]`); in-service practice
+> (I-08). The twist is re-derived when the airfoil is fixed (C5); keep it **parametric**
+> in CAD. Options that remove the reflex entirely: a designed section with cm0 ≥ +0.008
+> at Re 4–5×10⁵, or a reduced static-margin target (F1).
 
 > **Dihedral — exact CAD recipe (PROVISIONAL, C22).** Each printed segment is modeled
 > **flat** (all its sections in one plane). In the assembly, each segment is rotated about
@@ -232,10 +239,12 @@ all other geometry is defined independently of the exact profile except the twis
 > earlier than the smooth-tunnel calibration — E2 (flight polar) is the closer.**
 >
 > **Trim-closure result (I-15 §6.2, `[D]`):** at SM 8 % (Cm0_req = 0.01056) **no
-> off-the-shelf candidate fits the torsion window**: required wash-in = 2.6–3.7°
-> (MH60→13.5 %), 4.2–6.3° (MH60→12 %), ≥ 6.5° (S5010), ≈ 22° (E205) vs R-TWIST ≤ 2.5°.
-> The designed section (cm0 ≥ +0.008 at Re 4–5×10⁵), a reduced SM target, or elevon
-> reflex are the declared closure paths.
+> off-the-shelf candidate fits the torsion window unaided**: required wash-in = 2.6–3.7°
+> (MH60→13.5 %), 4.2–6.3° (MH60→12 %), ≥ 6.5° (S5010), ≈ 22° (E205) vs R-TWIST ≤ 3.0°
+> (raised from 2.5° in the OP-01 pass, §5.3). With ε = 3.0° the residual is ≤ 0.6° of
+> **permanent elevon reflex** (authority verified, `elevon_authority.py` `[D]`). A
+> designed section (cm0 ≥ +0.008 at Re 4–5×10⁵) or a reduced SM target are the remaining
+> closure paths.
 
 ### 6.2 Provisional candidates for the v0.2 CAD
 
@@ -350,8 +359,8 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Spanwise extent | y = 0 → **±195** (30 % half-span) | The wing surface continues across the CORE (same planform and t/c schedule, §5) |
 | Centerline section | Root airfoil (c = 289.2 mm, t/c 13.5 %) at y = 0, mid-plane z = 0 | Same airfoil family as the panels (pending OP-02) |
 | Trailing edge | **Fixed** from y = 0 to ±195 (no hinge line on the CORE, C23) | The torsion box may run closed to the TE inboard of the panel root (PROVISIONAL) |
-| **Nose pod** | Extends **60 mm forward of the root LE** (to x ≈ −132); width ≈ 70 mm; rounded nose; GPS/magnetometer pedestal on top; retention via threaded inserts + printed reinforcement collar against pull-out (I-09 pattern) | Needed so the 6S1P pack CG can reach x ≈ −100 (OP-01 analysis); PROVISIONAL |
-| Battery bay | Internal **180 × 70 × 32 mm** (x × y × z); forward end at x ≈ −131.5; centered on y = 0 at z = 0; slide rails along x for pack lengths 42–84 mm; single 21 mm layer, never stacked | §9; PROVISIONAL |
+| **Nose boom (battery)** | Printed boom from the nose pod tip (x ≈ −132) to **x ≈ −493** (≈ 360 mm); width ≈ 70 mm; carries the battery bay (below) and a **skid at the tip** (first contact on landing flare); wiring conduit from the bay to the CORE; GPS/mag pedestal kept on the nose pod top (x ≈ −120, out of the battery current path) | Required so the 6S1P pack CG reaches x ≈ −421 (OP-01 resolution, `balance_cg.py` `[D]`); structure ≤ 40 g target (OP-24); PROVISIONAL until F2 |
+| Battery bay | Internal **190 × 70 × 32 mm** (x × y × z); forward end at x ≈ −493; centered on y = 0 at z = 0; slide rails along x; single 21 mm layer, never stacked | Sized for the 6S1P pack CG band **−439.5…−403 mm** (R-CG ±5 mm); also covers 4S2P (≈ −346); 4S1P/6S2P fall outside the bay — R-CG requirement re-derived in F2 (OP-23); §9; PROVISIONAL |
 | **Rear pod (motor)** | Extends **48 mm aft of the root TE** (to x ≈ +265); **lower surface at the prop plane ≤ z = −111.6 mm** (≈ 92 mm below the wing lower surface) | Required so the 8×8 prop (Ø203, axis at z = 0) keeps ≥ 10 mm tip ground clearance (C26); PROVISIONAL |
 | Motor mount | Face at x ≈ +230; motor body from ≈ +195 to +230 (28-class, 35 mm long, CG ≈ +212); prop disk plane at **x ≈ +235** (≥ 10 mm aft of the root TE at +216.9) | C25; PROVISIONAL |
 | Joint sockets | At y = ±195: tube socket Ø12.2–12.4, pin socket Ø6.1–6.2, depth ≈ 70 mm; centerlines x = −9.6 / +55.4 | §7.3 |
@@ -363,7 +372,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 ## 8. Mass budget and CG
 
-### 8.1 Mass budget (Cruise, 6S1P) — sums to 1620 g AUW
+### 8.1 Mass budget (Cruise, 6S1P) — sums to 1660 g AUW
 
 | Component | Mass (g) | Status |
 |---|---:|---|
@@ -375,27 +384,30 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Servos (4 × 15 g) | 60 | `[E]` |
 | Propeller + hub/spinner | 40 | `[E]` |
 | Elevon balance mass | 60 | `[E]` (ADR-0025) |
+| **Battery boom structure** | **40** | `[E]` PROVISIONAL (OP-24; target ≤ 40 g) |
 | Hardware (screws, TPU hinges, adhesive, misc) | 20 | `[E]` |
 | **Battery 6S1P (21700)** | **455** | `[E]` |
-| **Total** | **1620** | **57 g/dm²** |
+| **Total** | **1660** | **59 g/dm²** |
 
 ### 8.2 CG target
 
 | Quantity | Value |
 |---|---|
-| Neutral point | **26.7 % MAC** = −101 mm from root c/4 (VLM `[D]`, I-07) |
+| Neutral point | **26.7 % MAC** = −101 mm from root c/4 (VLM `[D]`, I-07); **independent Weissinger-L: 28.0 % MAC = −98.3 mm — 3 mm agreement (I-15 §6.3)**; central-body effect unquantified, moves the NP forward (margin applied in F2) |
 | **Target CG** | **18.7 % MAC** = **−119 mm from root c/4** (8 % static margin) |
 | CG vs root LE | 47 mm **forward** of the root leading edge |
-| R-CG | CG within **±5 mm** of target in all four battery configs (docs/00 §3.3) |
-| Adjustment | Battery bay longitudinal slide (see §9) |
+| R-CG | CG within **±5 mm** of target (reference config 6S1P; 4S2P also in bay; 4S1P/6S2P outside — see OP-23) |
+| Adjustment | Battery bay longitudinal slide (see §9); pack stations per config in `balance_cg.py` `[D]` |
 
-> ⚠️ **OP-01 (critical):** a preliminary moment balance of the §8.1 budget shows the
-> reachable CG band (**≈ −24…+9 mm** with the 6S1P pack sliding the full v0.2 bay; across
-> the four pack configs ≈ −36…+9 mm) does **not** reach the −119 mm target with the current
-> planform and masses. The neutral point must be re-verified with an independent method
-> (C2, I-07 §7.1) and the body effect (I-07 §6) assessed before the bay position is
-> finalized. For v0.2, the bay is placed at the CORE nose (§7.6, OP-19) and the mass
-> balance is the driving F2 task. Full analysis in the justification document, §3.1.
+> ⚠️ **OP-01 (critical) — resolution adopted (2026-08-05):** the reachable-CG analysis
+> (`balance_cg.py` `[D]`) shows the −119 mm target requires the 6S1P pack CG at
+> **x ≈ −421 mm** — unreachable with the v0.2 nose pod (reachable band was −24…+9 mm).
+> **Adopted: nose boom** carrying the battery bay from x ≈ −493 (≈ 360 mm forward of the
+> nose pod tip), Mojito pattern (I-02). Pack stations: 4S1P −577 / **6S1P −421
+> (reference)** / 4S2P −346 / 6S2P −270. The bay covers 6S1P and 4S2P; **4S1P and 6S2P
+> fall outside — the R-CG four-config requirement is re-derived in F2 (OP-23).** The
+> central-body effect moves the NP forward — direction known, margin applied in F2. Full
+> analysis: justification §3.1–3.2; the boom is part of the CORE outer mold (§7.6).
 
 ---
 
@@ -404,10 +416,10 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Parameter | Value | Status |
 |---|---|---|
 | Cells | Li-Ion **21700**, Ø21 × 70 mm, **single layer** (never stacked) | docs/00 |
-| Bay internal dims (x × y × z) | **180 × 70 × 32 mm** | PROVISIONAL |
-| Bay position | In the CORE nose pod (§7.6): forward end at x ≈ −131.5, centered on the centerline; see OP-01 | PROVISIONAL |
-| Longitudinal adjustment | Pack slide rails along x; range sized to keep CG within ±5 mm for 4S1P, 6S1P, 4S2P, 6S2P | docs/00 R-CG |
-| Pack configs | 4S1P ~300 g / 6S1P ~455 g / 4S2P ~605 g / 6S2P ~910 g (out of cruise envelope) | docs/00 |
+| Bay internal dims (x × y × z) | **190 × 70 × 32 mm** | PROVISIONAL |
+| Bay position | In the CORE nose boom (§7.6): forward end at x ≈ −493; sized for the 6S1P pack CG band −439.5…−403; see OP-01 | PROVISIONAL |
+| Longitudinal adjustment | Pack slide rails along x; range sized to keep CG within ±5 mm (reference 6S1P; 4S2P also covered) | docs/00 R-CG; re-derived in F2 (OP-23) |
+| Pack configs | 4S1P ~300 g / 6S1P ~455 g / 4S2P ~605 g / 6S2P ~910 g (out of cruise envelope). Pack stations for CG −119 mm: −577 / **−421** / −346 / −270 (`balance_cg.py` `[D]`) | docs/00 |
 | Bay height check | 21 mm cells + clearance ≈ 27 mm ≤ 32 mm; root thickness 39 mm at centerline | derived |
 | Bay hatch | Spring-loaded lock (Flightory pattern, I-09); threaded inserts + reinforcement collar for repeated opening | PROVISIONAL |
 
@@ -471,7 +483,8 @@ following **binding constraints**; the final body shape is designer's choice wit
 5. Install 4 servos, zero-freeplay linkage, dual actuation points.
 6. Mount motor (0.8° upthrust), ESC, prop; battery on slide rails.
 7. Balance: target CG **−119 mm from root c/4** (47 mm forward of root LE); verify in the
-   four battery configs (R-CG, ±5 mm) using the CORE underside balance tabs (§7.6).
+   **reference 6S1P config** (and 4S2P) using the CORE underside balance tabs (§7.6);
+   4S1P/6S2P fall outside the bay band — see OP-23.
 8. Avionics per §11; pitot, GPS/mag wiring clear of the current path.
 
 ---
@@ -498,5 +511,6 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
+| 0.3 | 2026-08-05 | **OP-01 resolution:** battery **nose boom** adopted (bay x ≈ −493…−304, 6S1P pack at ≈ −421 mm, `balance_cg.py` `[D]`); pack-station map per configuration; 4S1P/6S2P R-CG tension flagged (OP-23); boom structure ≤ 40 g target (OP-24). **R-TWIST raised 2.5° → 3.0°** (§5.3): stall criterion holds at 3.0° (load peak 56 % b/2, margin +0.017); residual trim ≤ 0.6° permanent elevon reflex. **Elevon authority verified** (`elevon_authority.py` `[D]`): yield 0.00348 °/° over 30–90 % span, 10° ≈ 4.8× the trim requirement. AUW 1660 g → V_stall ≈ 45.6 km/h flagged with the declared mass lever (§4, OP-24). |
 | 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14:** threads opened; C28 (root/tip candidates corrected, §6.2/§6.3); stall-margin flag (§4); R-AIRFOIL feasibility flag (§6.1); pusher-slipstream note (§10.1). **I-15:** airfoil evidence campaign opened (11 investigations); root section to be designed, not selected (§6.1 note); stall-character criterion added (§6.1) and confidence basis of the polar declared (§6.1). **B3 screening + C2 executed (I-15 §6):** E205 discarded on its polar (§6.2); NP cross-checked — two methods agree within 3 mm (§3); twist note with trim-closure numbers (§5.3); trim-closure blockquote (§6.1). |
 | 0.1 | 2026-08-05 | First release. Reference geometry per I-07/ADR-0027; provisional airfoil (B3 pending), dihedral, twist, carbon, motor, bay. OP-01 flagged. |

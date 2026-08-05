@@ -4,6 +4,45 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.12] — 2026-08-05
+
+**OP-01 resolved by decision (nose boom), R-TWIST raised to 3.0°, elevon authority verified.**
+
+### New tools (both validated, all `[D]`)
+- **`calculations/balance_cg.py`** — mass/CG balance with the pack-station solver.
+  Self-consistency validation: numerical planform area centroid −48.9 mm vs the
+  −49 mm assumed in the mass table (OK).
+- **`calculations/elevon_authority.py`** — elevon control power via the VLM
+  (step incidence over 30–90 % half-span): yield **0.00348 °/°**; 10° elevon
+  ≈ 4.8× the SM-8 % trim requirement.
+
+### Resolution (guide v0.3, justification §3.2)
+- **OP-01 (CG reachability):** target CG −119 mm needs the 6S1P pack CG at
+  **x ≈ −421 mm** — the v0.2 nose pod could only reach ≈ −100 (band −24…+9 mm).
+  **Adopted: nose boom** carrying the battery bay (forward end x ≈ −493, 190×70×32,
+  slide ≈ 36 mm covers R-CG ±5 mm), ≈ 360 mm forward of the nose pod tip, skid at the
+  tip — Mojito pattern (I-02). Pack stations: 4S1P −577 / **6S1P −421** / 4S2P −346 /
+  6S2P −270.
+- **OP-23 (new):** the R-CG four-config requirement is not satisfiable with one bay
+  (stations span 307 mm); the bay covers 6S1P (reference) + 4S2P; requirement
+  re-derived in F2.
+- **OP-24 (new):** boom structure ≤ 40 g target; AUW 1660 g → V_stall ≈ 45.6 km/h vs
+  ≤ 45 required; declared lever: shell at 550 g (low end) + boom ≤ 40 g → ≈ 44.7 km/h.
+- **R-TWIST 2.5° → 3.0°:** at 3.0° the stall criterion holds (load peak 56 % b/2,
+  margin +0.017 — same as 0°; at 4° it drops to +0.009). Trim closure at SM 8 %:
+  worst-case residual ≈ 0.6° permanent elevon reflex (authority verified).
+- Central-body effect (I-07 §6): direction known (NP forward), margin applied in F2;
+  does not reverse the solution.
+
+### Changed
+- Design guide v0.3: §4 stall flag (45.6 km/h + mass lever); §5.3 twist note
+  (R-TWIST 3.0° + reflex closure); §6.1 trim-closure blockquote; §7.6 CORE nose
+  boom + bay 190×70×32; §8.1 mass budget (boom 40 g, AUW 1660 g); §8.2 NP row
+  (Weissinger-L) + OP-01 resolution blockquote; §9 bay; §12 step 7; §14 log.
+- Justification §3.2 (resolution with pack-station table and honest flags); Open
+  Points v0.3 (OP-01 resolved by decision, OP-02 updated, OP-16/OP-19 updated,
+  OP-23/OP-24 added).
+
 ## [1.11] — 2026-08-05
 
 **B3 screening executed (XFOIL 6.99, 24 cases) and C2 NP cross-check executed.**

@@ -40,6 +40,8 @@ Data sources consumed (all `[M]`):
 | `ventana_torsion.py` | Twist required for trim vs tip-stall margin (torsion window) | I-07, G2 | numpy |
 | `calibra_xfoil_e387.py` | XFOIL Ncrit-grid calibration against the measured E387 (C) polar (UIUC, vol. 3) | I-06, G2 | XFOIL |
 | `b3_screening.py` | **B3: airfoil screening** — batch XFOIL polars (Re 3e5/5e5 × Ncrit 10/12) for the shortlist in `../geometry/airfoils/`; generates the scaled variants; parses cm0/clmax/α_stall/L/D/cd@cruise | B3, G2, OP-02 | numpy + XFOIL |
+| `balance_cg.py` | **OP-01: mass/CG balance** — pack-station solver for the CG target; planform-centroid self-check; bay sizing for the nose boom; envelope checks (AUW, V_stall) | OP-01, justification §3.1–3.2 | numpy |
+| `elevon_authority.py` | **Elevon control power** — ΔCm per degree of elevon deflection (step incidence over 30–90 % half-span) via the VLM; trim closure and control margin at SM 8 % | Guide §5.3/§6.1, C6 (partial) | numpy |
 
 ## Reproducing the published results
 
@@ -59,9 +61,7 @@ formula (the classical 1-D/2-D difference).
 
 ```bash
 python3 b3_screening.py --xfoil /path/to/xfoil.exe
-```
-
-What it does, step by step:
+```What it does, step by step:
 
 1. Reads the candidate coordinates from `../geometry/airfoils/` (E205, S5010, MH60 —
    provenance in `geometry/airfoils/README.md`).
@@ -92,15 +92,43 @@ Published result highlights (I-15 §6.2, `[D]`):
 - E205 **discarded**: cm0 ≈ −0.07 (fails R-AIRFOIL by ~0.08).
 - MH60→13.5 %: cm0 = +0.0016 (Re 5e5, Ncrit 10); published cm0 values are not
   achieved at project Re.
-- At SM 8 % no off-the-shelf candidate closes trim inside R-TWIST ≤ 2.5°.
+- At SM 8 % no off-the-shelf candidate closes trim inside R-TWIST ≤ 3.0° unaided;
+  the residual (≤ 0.6° of permanent elevon reflex) is closed by the elevons
+  (`elevon_authority.py`).
 
-### 3. Twist window (I-07)
+### 3. Balance and CG reachability (OP-01, guide §8.2)
+
+```bash
+python3 balance_cg.py
+```
+
+Self-validating: it computes the planform area centroid numerically (−48.9 mm) and
+compares it with the −49 mm shell station assumed in the mass table. Then it solves
+the pack station for each battery config at the target CG (−119 mm, SM 8 %) and sizes
+the nose-boom bay for the reference 6S1P config (pack at ≈ −421 mm, bay −493…−304 mm).
+
+Published results (justification §3.2, `[D]`): pack stations 4S1P −577 / 6S1P −421 /
+4S2P −346 / 6S2P −270 mm; 6S1P R-CG band −439…−403; AUW 1660 g → V_stall ≈ 45.6 km/h
+(the stall-compliance lever is documented in the guide §4 and OP-24).
+
+### 4. Elevon authority (guide §5.3/§6.1)
+
+```bash
+python3 elevon_authority.py
+```
+
+Models the elevon as step incidence over 30–90 % half-span in the same VLM (no section
+Cm0 — the section cm0 is added as the B3 screening datum). Results: elevon yield
+0.00348 °/° (vs 0.00338 °/° full-span wash-in); 10° elevon ≈ 4.8× the SM-8 % trim
+requirement; trim closure with R-TWIST 3.0° leaves ≤ 0.6° of reflex in the worst B3 case.
+
+### 5. Twist window (I-07)
 
 ```bash
 python3 ventana_torsion.py
 ```
 
-### 4. XFOIL calibration (I-06)
+### 6. XFOIL calibration (I-06)
 
 ```bash
 python3 calibra_xfoil_e387.py --xfoil /path/to/xfoil.exe

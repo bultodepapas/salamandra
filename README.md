@@ -9,7 +9,7 @@ forward-swept flying wing, but that is only the first design. The repository is 
 grow into a whole family of airframes, parts, adapters and experiments — contributed by
 the community.
 
-**Revision 1.11** · 5 August 2026 · **Phase 0 closed · Phase 1 in progress**
+**Revision 1.12** · 5 August 2026 · **Phase 0 closed · Phase 1 in progress**
 
 ---
 
@@ -202,6 +202,13 @@ Phase-1 status (2026-08-05):
   off-the-shelf reflexed section satisfies R-AIRFOIL at 13.5 % t/c nor closes the
   trim inside the torsion window at SM 8 %** — the root section must be **designed,
   not selected** ([I-15 §6](research/I-15-airfoil-evidence-campaign.md)).
+- **OP-01 (CG reachability) — resolved by decision.** The −119 mm target CG requires
+  the 6S1P pack at x ≈ −421 mm; a **nose boom** (≈ 360 mm, Mojito pattern) carries
+  the battery bay forward of the nose pod. Pack stations map and honest flags
+  (4S1P/6S2P R-CG tension, stall compliance) in the
+  [guide §8.2](design/Salamandra-Design-Guide-v0.1.md) and
+  [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
+  `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
 
 ---
 
@@ -217,12 +224,14 @@ The full guide (versions, commands, batch quirks, validation discipline) is in
 | **XFOIL** | **6.99** (official MIT build, GPL) | Airfoil polar generation for the B3 screening and the E387 calibration |
 | UIUC Airfoil Data Site, aerodesign.de | — | Measured/published input data (`[M]`), coordinates in `geometry/airfoils/` |
 
-Reproduction in three commands:
+Reproduction in five commands:
 
 ```bash
 python3 calculations/vlm_ala_volante.py       # NP (I-07)
 python3 calculations/weissinger_np.py         # C2 independent NP check (I-15 §6.3)
 python3 calculations/b3_screening.py --xfoil /path/to/xfoil.exe   # B3 screening (I-15 §6)
+python3 calculations/balance_cg.py            # OP-01 balance / nose-boom sizing (guide §8.2)
+python3 calculations/elevon_authority.py      # elevon control power (guide §5.3)
 ```
 
 Each script ships its validation case; a modification that breaks the validation is
