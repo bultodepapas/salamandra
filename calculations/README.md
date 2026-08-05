@@ -42,6 +42,7 @@ Data sources consumed (all `[M]`):
 | `b3_screening.py` | **B3: airfoil screening** — batch XFOIL polars (Re 3e5/5e5 × Ncrit 10/12) for the shortlist in `../geometry/airfoils/`; generates the scaled variants; parses cm0/clmax/α_stall/L/D/cd@cruise | B3, G2, OP-02 | numpy + XFOIL |
 | `balance_cg.py` | **OP-01: mass/CG balance** — pack-station solver for the CG target; planform-centroid self-check; bay sizing for the nose boom; envelope checks (AUW, V_stall) | OP-01, justification §3.1–3.2 | numpy |
 | `elevon_authority.py` | **Elevon control power** — ΔCm per degree of elevon deflection (step incidence over 30–90 % half-span) via the VLM; trim closure and control margin at SM 8 % | Guide §5.3/§6.1, C6 (partial) | numpy |
+| `battery_pack_layout.py` | **I-16: pack envelope** — enumerates every rectangular (n_x,n_y,n_z) layout of the 4S/6S 21700 pack, computes finished envelope (wrapper, nickel, leads) and fit-checks against the 190 × 70 × 32 bay | I-16, guide §9, OP-23 | stdlib only |
 
 ## Reproducing the published results
 
@@ -136,6 +137,19 @@ python3 calibra_xfoil_e387.py --xfoil /path/to/xfoil.exe
 
 Downloads the E387 coordinates and the measured polar from UIUC at runtime; validates
 its metric on an analytic case (Cd_calculated = 1.1 × Cd_measured → factor 1.1).
+
+### 7. Battery pack envelope (I-16)
+
+```bash
+python3 battery_pack_layout.py
+```
+
+Self-validating by construction: it prints the full enumeration of cell
+arrangements (12 envelopes for 4S, 18 for 6S) with a fit test against the
+`190 × 70 × 32 mm` reference bay (guide §9). Published results (I-16 §4–§5):
+**6S1P = 2×3 orient. A → 153.2 × 64.5 × 22.2 mm** (the only 6S layout that fits);
+**4S1P = 2×2 → 153.2 × 43.2 × 22.2 mm**. A change to the fit test or the assembly
+allowances must reproduce these two lines.
 
 ---
 

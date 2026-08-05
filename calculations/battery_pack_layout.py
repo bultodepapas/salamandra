@@ -108,13 +108,15 @@ def main():
     print(f"Assembly: outer wrap +{PVC_OUTER} mm/side, nickel +{NICKEL} mm,")
     print(f"  leads +{LEAD_ADD:.0f} mm on Length, inter-cell gap {GAP} mm")
     print(f"Reference bay (x,y,z) = {tuple(int(v) for v in BAY)} mm  (guide §9, PROVISIONAL)")
-    print(f"  note: bay height 32 mm -> only n_z = 1 layer fits (single layer rule).\n")
+    print(f"  note: bay height 32 mm accommodates a single 21 mm layer (n_z = 1).")
+    print(f"  A pack taller than the bay is possible only if the bay is resized "
+          f"by the designer; this is a reference, not a verdict.\n")
 
     for N in (4, 6):
         print("-" * 74)
         print(f"{N}S PACK  ({N} cells)")
         print(f"{'arrangement':>12} {'orientation':>12} {'cell block (LxWxH)':>22} "
-              f"{'pack (LxWxH)':>20} {'fits bay':>9}")
+              f"{'pack (LxWxH)':>20} {'bay ok':>7}")
         print("-" * 74)
         for nx, ny, nz in sorted(factor_triples(N), key=lambda t: (t[2], max(t), t)):
             for orient in ("A", "B"):
