@@ -37,7 +37,7 @@ value stands.
 |---|---|---|---|---|
 | OP-08 | Carbon tube Ø12×1.0 | Provisional (bending only) | Real GJ/EI verification on the section; final sizing | S3/F4 (G4 closure) |
 | OP-09 | D-box web at x/c 0.30 | Provisional | Section optimization (cell layout) | S3 |
-| OP-10 | TPU hinge stiffness | Characterized later | K_hinge enters ω_β (flutter); can be off by factor 3 | C7/S6 (G7) |
+| OP-10 | TPU hinge stiffness | TPU-printed (baseline) or mylar tape 25×30 (I-09); characterized later | K_hinge enters ω_β (flutter); can be off by factor 3 | C7/S6 (G7) |
 | OP-11 | Printing temperatures | 240–250 °C nozzle / 70–80 °C bed | First test prints | First real part |
 
 ### Propulsion
@@ -100,5 +100,5 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
-| 0.2 | 2026-08-05 | OP-01 re-derived with corrected motor station (band ≈ −24…+9 mm, bay-limited); OP-04 defined piecewise (C22); OP-06 elevon span corrected to 30–90 % (C23); OP-19 fixed by the new CORE spec (§7.6 of the guide); OP-20 (wingtips), OP-21 (CORE outer mold), OP-22 (missing ADR files) added. |
+| 0.2 | 2026-08-05 | OP-01 re-derived with corrected motor station (band ≈ −24…+9 mm, bay-limited); OP-04 defined piecewise (C22); OP-06 elevon span corrected to 30–90 % (C23); OP-19 fixed by the new CORE spec (§7.6 of the guide); OP-20 (wingtips), OP-21 (CORE outer mold), OP-22 (missing ADR files) added. I-09 additions: OP-10 hinge alternative (mylar). |
 | 0.1 | 2026-08-05 | First release. OP-01 (CG reachability) identified from a preliminary moment balance; all other open points carried from Phase 1 plan. |

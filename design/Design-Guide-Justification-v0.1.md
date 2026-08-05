@@ -101,6 +101,7 @@ re-derive the band with the real CORE geometry.
 | C_Lmax ≥ 0.65 | Stall ≤ 45 km/h requirement (docs/00, C16); measured band 0.55–0.70 for low-Re reflexed/flat sections (I-01, Ananda et al.) | `[M]` |
 | t/c 13.5 % / 9 % | See §2; ADR-0027 | `[M]`/`[D]` |
 | MH/EH families, PW51 reference | B3 screening candidates (docs/03 §3.B); PW51 is the in-service FSW airfoil of the Nemesis (I-08) | `[M]` |
+| E205 as tip data point | Flight-proven at Re 1.5–3×10⁵ on two in-service FPV aircraft (Pico Talon 900 mm, Stallion 1340 mm, I-09). t/c 10.6 % at 30 % c, camber 2.9 % at 34 % c `[D]` from UIUC coordinates. **Not admitted by these manuals alone**: both aircraft are tailed (V-tail trims them), so Cm0 is unknown and likely negative; it joins the B3 XFOIL screening (Ncrit 10–12 band) and stands or falls on the polar | `[M]`/`[D]` |
 | No final coordinates in v0.2 | B3 requires the calibrated Ncrit 10–12 band (I-06) before screening; G2 is open by design. Provisional recipe for the CAD: MH 45 scaled to 13.5 % (root) / 9 % (tip) — guide §6.3 | — |
 
 Why the airfoil is the *last* frozen item: the VLM neutral point, the planform and the
@@ -123,6 +124,8 @@ everything else now and swap the profile later.
 | Elevon mass balance ~30 g/elevon | ADR-0025: 25 g elevon, 24 mm CG offset → 0.60 g·m; 20 mm horn → m_b ≈ 30 g. Mandatory (flutter is inertial, not stiff) | `[D]` |
 | Dual actuation, 4 servos | ADR-0026: dual actuation mandatory above ~400 mm; doubles K_hinge, +41 % ω_β. The 390 mm elevon (C23) is below the threshold; dual actuation is **retained as flutter margin** (elevon flutter is G7) pending C6 | `[D]` |
 | TPU hinges | ADR-0035 (provisional); stiffness to be characterized (C7/S6) | `[I]` |
+| Mylar hinge alternative | Polyester tape hinges 25×30, glued in slots — flight-proven on 900–1340 mm printed FPV (I-09). Alternative if TPU results disappoint; K_hinge unknown for both, feeds OP-10 | `[M]` |
+| Balance tabs, hatch lock, nose retention | CORE integration details adopted from the Flightory practice (I-09): underside balance tabs for CG verification, spring-loaded bay hatch lock, threaded inserts + reinforcement collar for the nose pod. Proven patterns, PROVISIONAL in the guide (§7.6, §9) | `[M]` |
 
 ## 6. Mass budget
 
@@ -167,7 +170,7 @@ everything else now and swap the profile later.
 ## 10. References
 
 1. I-07 — neutral point, static margin, torsion window (`research/I-07-neutral-point-torsion-window.md`)
-2. I-01, I-02, I-03, I-04, I-05, I-06, I-08 (`research/`)
+2. I-01, I-02, I-03, I-04, I-05, I-06, I-07, I-08, I-09 (`research/`)
 3. ADR-0001, 0002, 0004, 0007, 0010, 0015, 0021, 0022, 0024, 0025, 0026, 0027, 0028, 0032, 0033, 0034, 0035, 0036, 0037 (`decisions/`) — **files pending for**: 0003, 0006, 0012, 0023, 0024, 0026, 0030, 0031, 0034, 0035 (see OP-22)
 4. docs/00 (objectives and requirements), docs/02 (measured references), docs/03 (phase-1 plan), docs/05 (master plan)
 5. Ananda, Sukumar & Selig (2015); Brandt & Selig (AIAA 2011-1255); Spedding & McArthur (2010); UIUC databases

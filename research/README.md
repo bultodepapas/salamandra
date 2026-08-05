@@ -14,6 +14,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-06](I-06-reflexed-airfoils.md) | Reflexed airfoils at Re 3–5×10⁵ | **Open — B1 partial** | Gap G2 |
 | [I-07](I-07-neutral-point-torsion-window.md) | **Neutral point, static margin and torsion window** | **Open — preliminary result** | ADR-0003, ADR-0032, G8, G2 |
 | [I-08](I-08-stuntdouble-family.md) | **StuntDouble family: compared geometry** | **Open — base comparison** | A4, R3, R4 |
+| [I-09](I-09-flightory-inspiration.md) | **Flightory Pico Talon & Stallion: geometry and construction** | **Open — base comparison** | B3/G2 (E205), CORE design (guide §7.6), docs/02 |
 
 ## Source quality
 

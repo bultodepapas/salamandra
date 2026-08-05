@@ -29,7 +29,7 @@ version live in [`prompts/`](prompts/).
 | Date | 2026-08-05 |
 | Status | DRAFT — pending designer iteration and Phase 1 closure |
 | Reference configuration | **Cruise — Article #1** |
-| Inputs | ADR-0001…ADR-0037, I-01…I-08, docs/00, docs/02, docs/03, docs/04, docs/05 |
+| Inputs | ADR-0001…ADR-0037, I-01…I-09, docs/00, docs/02, docs/03, docs/04, docs/05 |
 | Intended reader | CAD designer (Fusion 360 or equivalent) |
 
 **How this guide evolves.** The design is expected to change as Phase 1 closes (airfoil
@@ -213,6 +213,7 @@ all other geometry is defined independently of the exact profile except the twis
 |---|---|---|
 | Root | **MH 45** (t/c ≈ 13 %, MH family, aerodesign.de) | B3 candidate; closest MH to 13.5 %; to be confirmed/scaled |
 | Tip | MH-family profile thinned to 9 % t/c | 9 % reflexed candidates are scarce; selection resolved in B3 |
+| Tip (data point) | **E205** (t/c 10.6 %, camber 2.9 %, flight-proven at Re 1.5–3×10⁵ on the Pico Talon and Stallion, I-09) | **Not admitted on the manuals alone** — its Cm0 is unknown and likely negative (tailed planes trim it); include in the B3 XFOIL screening (Ncrit 10–12 band) and decide from the polar |
 | Reference | PW51 (in-service FSW precedent, Nemesis) | I-08 quasi-controlled comparison `[M]` |
 
 ### 6.3 CAD instructions
@@ -302,6 +303,7 @@ all other geometry is defined independently of the exact profile except the twis
 | Actuation | **Dual actuation** (2 points per elevon), no-freeplay linkage, digital servos. Retained for flutter margin even though 390 mm is below the 400 mm rule-of-thumb (ADR-0026, file pending — see OP-22); authority to be confirmed | ADR-0026 |
 | Servos | 4× digital 13–15 g, at y ≈ 195 (panel root) and y ≈ 390 (per half), in the panel center cell | PROVISIONAL |
 | Hinges | TPU-printed (glued or live-hinge), ADR-0035 | PROVISIONAL |
+| Hinge alternative | Polyester (mylar) tape hinges, 25×30 mm, glued in slots — flight-proven on 900–1340 mm printed FPV (Pico Talon, Stallion, I-09) | acceptable if TPU results disappoint; stiffness to be characterized (OP-10) |
 
 ### 7.6 CORE (center module) — outer mold constraints
 
@@ -314,13 +316,14 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Spanwise extent | y = 0 → **±195** (30 % half-span) | The wing surface continues across the CORE (same planform and t/c schedule, §5) |
 | Centerline section | Root airfoil (c = 289.2 mm, t/c 13.5 %) at y = 0, mid-plane z = 0 | Same airfoil family as the panels (pending OP-02) |
 | Trailing edge | **Fixed** from y = 0 to ±195 (no hinge line on the CORE, C23) | The torsion box may run closed to the TE inboard of the panel root (PROVISIONAL) |
-| **Nose pod** | Extends **60 mm forward of the root LE** (to x ≈ −132); width ≈ 70 mm; rounded nose; GPS/magnetometer pedestal on top | Needed so the 6S1P pack CG can reach x ≈ −100 (OP-01 analysis); PROVISIONAL |
+| **Nose pod** | Extends **60 mm forward of the root LE** (to x ≈ −132); width ≈ 70 mm; rounded nose; GPS/magnetometer pedestal on top; retention via threaded inserts + printed reinforcement collar against pull-out (I-09 pattern) | Needed so the 6S1P pack CG can reach x ≈ −100 (OP-01 analysis); PROVISIONAL |
 | Battery bay | Internal **180 × 70 × 32 mm** (x × y × z); forward end at x ≈ −131.5; centered on y = 0 at z = 0; slide rails along x for pack lengths 42–84 mm; single 21 mm layer, never stacked | §9; PROVISIONAL |
 | **Rear pod (motor)** | Extends **48 mm aft of the root TE** (to x ≈ +265); **lower surface at the prop plane ≤ z = −111.6 mm** (≈ 92 mm below the wing lower surface) | Required so the 8×8 prop (Ø203, axis at z = 0) keeps ≥ 10 mm tip ground clearance (C26); PROVISIONAL |
 | Motor mount | Face at x ≈ +230; motor body from ≈ +195 to +230 (28-class, 35 mm long, CG ≈ +212); prop disk plane at **x ≈ +235** (≥ 10 mm aft of the root TE at +216.9) | C25; PROVISIONAL |
 | Joint sockets | At y = ±195: tube socket Ø12.2–12.4, pin socket Ø6.1–6.2, depth ≈ 70 mm; centerlines x = −9.6 / +55.4 | §7.3 |
 | Avionics stations | FC/RX/blackbox ≈ x = 0…+40 (aft of or beside the bay); ESC ≈ x = +60 (rear pod, beside the motor); GPS/mag on the nose pedestal ≈ x = −120 | Matches the §8.1 balance; PROVISIONAL |
 | Hand launch | Grip area on the CORE sides; designer's choice within the OML | — |
+| Balance tabs | Small printed tabs on the CORE underside to rest the aircraft on a balance edge for CG verification (Pico Talon practice, I-09) | PROVISIONAL |
 
 ---
 
@@ -372,6 +375,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Longitudinal adjustment | Pack slide rails along x; range sized to keep CG within ±5 mm for 4S1P, 6S1P, 4S2P, 6S2P | docs/00 R-CG |
 | Pack configs | 4S1P ~300 g / 6S1P ~455 g / 4S2P ~605 g / 6S2P ~910 g (out of cruise envelope) | docs/00 |
 | Bay height check | 21 mm cells + clearance ≈ 27 mm ≤ 32 mm; root thickness 39 mm at centerline | derived |
+| Bay hatch | Spring-loaded lock (Flightory pattern, I-09); threaded inserts + reinforcement collar for repeated opening | PROVISIONAL |
 
 ---
 
@@ -429,7 +433,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 5. Install 4 servos, zero-freeplay linkage, dual actuation points.
 6. Mount motor (0.8° upthrust), ESC, prop; battery on slide rails.
 7. Balance: target CG **−119 mm from root c/4** (47 mm forward of root LE); verify in the
-   four battery configs (R-CG, ±5 mm).
+   four battery configs (R-CG, ±5 mm) using the CORE underside balance tabs (§7.6).
 8. Avionics per §11; pitot, GPS/mag wiring clear of the current path.
 
 ---
@@ -439,7 +443,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Set | Documents |
 |---|---|---|
 | Decisions | ADR-0001, 0002, 0004, 0007, 0010, 0015, 0021–0028, 0032–0037 ([`decisions/`](../decisions/)) |
-| Research | I-01…I-08 ([`research/`](../research/)) |
+| Research | I-01…I-09 ([`research/`](../research/)) |
 | Specification | [`docs/00-objectives-and-requirements.md`](../docs/00-objectives-and-requirements.md) |
 | Measured data | [`docs/02-measured-references.md`](../docs/02-measured-references.md) |
 | Plans | [`docs/03-phase-1-plan.md`](../docs/03-phase-1-plan.md), [`docs/05-master-plan.md`](../docs/05-master-plan.md) |
@@ -456,5 +460,5 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
-| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. |
+| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). |
 | 0.1 | 2026-08-05 | First release. Reference geometry per I-07/ADR-0027; provisional airfoil (B3 pending), dihedral, twist, carbon, motor, bay. OP-01 flagged. |
