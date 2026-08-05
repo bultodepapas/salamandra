@@ -86,7 +86,7 @@ exists yet; it will be updated by the open point listed.
 | Geometric twist ε | **+0.5° wash-in** (linear root→tip) | PROVISIONAL (R-TWIST ≤ 2.5°) |
 | Dihedral Γ | **2.0° total** (polyhedral at segment joints) | PROVISIONAL |
 | Airfoil | Reflexed; root/tip candidates pending B3 screening (G2) | **PENDING** — §6 |
-| Neutral point NP | **26.7 % MAC** (= −101 mm from root c/4) | `[D]` I-07 |
+| Neutral point NP | **26.7 % MAC** (= −101 mm from root c/4) | `[D]` I-07 · **C2 cross-check −98.3 mm / 28.0 % MAC (Weissinger-L, I-15)** |
 | Target CG | **18.7 % MAC** (= −119 mm from root c/4, SM 8 %) | `[D]` I-07; see OP-01 |
 | All-up weight (6S1P) | **1620 g** | ADR-0010 / R-CG |
 | Wing loading (6S1P) | **57 g/dm²** | derived |
@@ -183,6 +183,14 @@ All x-values from the root c/4 origin; chord and thickness in mm.
 | Twist schedule | Linear: ε = 0° at y = 0 → +0.5° at y = 650 (wash-in, trailing edge down); applied as a rotation of each section about the **spanwise axis through the local c/4 point** |
 | Dihedral | Polyhedral, piecewise-linear; cumulative at the outboard end of each segment: CORE 0° (y 0–195) / seg 1 +1.07° (195–347) / seg 2 +1.53° (347–498) / seg 3 +2.0° (498–650) |
 
+> **Twist setting (C5 preview, I-15 §6.2):** the +0.5° value is the provisional placeholder.
+> The B3 screening shows that with the current off-the-shelf candidates at SM 8 % the
+> required wash-in is 2.6–3.7° (MH60→13.5 %) — outside R-TWIST ≤ 2.5°. The twist is
+> re-derived when the airfoil is fixed (C5); keep it **parametric** in CAD. Options that
+> bring it back inside the window: a designed section with cm0 ≥ +0.008 at Re 4–5×10⁵,
+> a reduced static-margin target (F1), or part of the trim taken by permanent elevon
+> reflex (in-service practice, I-08).
+
 > **Dihedral — exact CAD recipe (PROVISIONAL, C22).** Each printed segment is modeled
 > **flat** (all its sections in one plane). In the assembly, each segment is rotated about
 > the chordwise (x) axis — through its inboard joint line, at the section mid-plane
@@ -222,14 +230,20 @@ all other geometry is defined independently of the exact profile except the twis
 > reflexed section exists at Re 3–5×10⁵ (I-15); the XFOIL screening is `[D]` anchored on
 > measured LSB data (E387, NASA-CR-186263 — I-06), and the printed PETG skin transitions
 > earlier than the smooth-tunnel calibration — E2 (flight polar) is the closer.**
+>
+> **Trim-closure result (I-15 §6.2, `[D]`):** at SM 8 % (Cm0_req = 0.01056) **no
+> off-the-shelf candidate fits the torsion window**: required wash-in = 2.6–3.7°
+> (MH60→13.5 %), 4.2–6.3° (MH60→12 %), ≥ 6.5° (S5010), ≈ 22° (E205) vs R-TWIST ≤ 2.5°.
+> The designed section (cm0 ≥ +0.008 at Re 4–5×10⁵), a reduced SM target, or elevon
+> reflex are the declared closure paths.
 
 ### 6.2 Provisional candidates for the v0.2 CAD
 
 | Station | Provisional candidate | Note |
 |---|---|---|
-| Root | Reflexed section scaled to t/c 13.5 % — **MH 60-12 %** (12.0 %, cm0 +0.0030 `[M]`) is the closest published family member; **MH 45 is 9.85 % thick, not 13 % (C28)** and is documented for 15–40 g/dm², below the project's 57 g/dm² | B3 candidate; no off-the-shelf reflexed section reaches 13.5 % — R-AIRFOIL feasibility at 13.5 % is an explicit B3 question (I-11) |
+| Root | Reflexed section scaled to t/c 13.5 % — **MH 60-12 %** (12.0 %, cm0 +0.0030 published `[M]`) is the closest family member; **MH 45 is 9.85 % thick, not 13 % (C28)** and is documented for 15–40 g/dm², below the project's 57 g/dm² | B3 candidate. Screening `[D]` (I-15): MH60→13.5 % gives cm0 = **+0.0016 at Re 5e5/Ncrit 10** (−0.0018 at Ncrit 12) — the published +0.0030 is not achieved at project Re; no off-the-shelf reflexed section reaches 13.5 % — R-AIRFOIL feasibility at 13.5 % is an explicit B3 question (I-11) |
 | Tip | Reflexed section at t/c 9 % with **camber compensation** — pure thickness scaling of a reflexed section is warned against (MH 45-8 % precedent: clmax loss, harsh stall `[M]`, I-11) | 9 % reflexed candidates are scarce; selection resolved in B3 |
-| Tip (data point) | **E205** (t/c 10.6 %, camber 2.9 %, flight-proven at Re 1.5–3×10⁵ on the Pico Talon and Stallion, I-09) | **Not admitted on the manuals alone** — its Cm0 is unknown and likely negative (tailed planes trim it); include in the B3 XFOIL screening (Ncrit 10–12 band) and decide from the polar |
+| Tip (data point) | **E205** (t/c 10.6 %, camber 2.9 %, flight-proven at Re 1.5–3×10⁵ on the Pico Talon and Stallion, I-09) | **DISCARDED on its polar (I-15 §6.2, `[D]`):** cm0 ≈ −0.07 at Re 3–5×10⁵ (fails R-AIRFOIL by ≈ 0.08; ≈ 22° of wash-in would be needed). Not a candidate for any station |
 | Reference | PW51 (in-service FSW precedent, Nemesis) | I-08 quasi-controlled comparison `[M]`; **not in the UIUC database** (I-11) — coordinates/polars must be sourced elsewhere |
 
 ### 6.3 CAD instructions
@@ -484,5 +498,5 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
-| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14:** threads opened; C28 (root/tip candidates corrected, §6.2/§6.3); stall-margin flag (§4); R-AIRFOIL feasibility flag (§6.1); pusher-slipstream note (§10.1). **I-15:** airfoil evidence campaign opened (11 investigations); root section to be designed, not selected (§6.1 note); **stall-character criterion added (§6.1) and confidence basis of the polar declared (§6.1)**. |
+| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14:** threads opened; C28 (root/tip candidates corrected, §6.2/§6.3); stall-margin flag (§4); R-AIRFOIL feasibility flag (§6.1); pusher-slipstream note (§10.1). **I-15:** airfoil evidence campaign opened (11 investigations); root section to be designed, not selected (§6.1 note); stall-character criterion added (§6.1) and confidence basis of the polar declared (§6.1). **B3 screening + C2 executed (I-15 §6):** E205 discarded on its polar (§6.2); NP cross-checked — two methods agree within 3 mm (§3); twist note with trim-closure numbers (§5.3); trim-closure blockquote (§6.1). |
 | 0.1 | 2026-08-05 | First release. Reference geometry per I-07/ADR-0027; provisional airfoil (B3 pending), dihedral, twist, carbon, motor, bay. OP-01 flagged. |

@@ -1,0 +1,18 @@
+LOAD C:\salmandra\geometry\airfoils\e205-9.dat
+PANE
+OPER
+ITER 300
+VISC 500000
+VPAR
+N
+12
+
+PACC
+C:\salmandra\calculations\xfoil_out\e205-9_r5e5_n12.pol
+
+ASeq 0.0 16.0 0.5
+PACC
+PWRT 1
+C:\salmandra\calculations\xfoil_out\e205-9_r5e5_n12.pol
+QUIT
+Y

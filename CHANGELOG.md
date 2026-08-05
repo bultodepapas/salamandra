@@ -4,6 +4,55 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.11] — 2026-08-05
+
+**B3 screening executed (XFOIL 6.99, 24 cases) and C2 NP cross-check executed.**
+
+### Executed
+- **`calculations/b3_screening.py`** — batch XFOIL screening of the shortlist
+  (E205, E205→9 %, S5010, MH60, MH60→12 %, MH60→13.5 %) at Re 3e5/5e5 × Ncrit 10/12
+  (the I-06 calibrated band). Coordinates in `geometry/airfoils/`; 24 polars in
+  `calculations/xfoil_out/`; all `[D]`.
+- **`calculations/weissinger_np.py`** — independent NP check (Weissinger-L swept
+  lifting line), validated on a straight AR 6 wing (NP 25.00 % MAC).
+
+### Results (I-15 §6, all `[D]`)
+- **E205 DISCARDED**: cm0 ≈ −0.07 at project Re (fails R-AIRFOIL by ≈ 0.08;
+  ≈ 22° wash-in needed). In-service evidence does not imply Cm0 — confirmed.
+- **Thinning quantified**: E205→9 % loses ≈ 0.1 clmax and 3–4° stall angle.
+- **Published cm0 not achieved at project Re** (S5010: +0.0080 → −0.011…−0.016);
+  **thickening a reflexed section improves cm0** (MH60: −0.0136 → +0.0016 at 13.5 %,
+  Re 5e5, Ncrit 10).
+- **Trim closure at SM 8 %: no off-the-shelf candidate fits R-TWIST ≤ 2.5°**
+  (MH60→13.5 % needs 2.6–3.7° wash-in). Closure paths: designed section
+  (cm0 ≥ +0.008), reduced SM target, or elevon reflex.
+- **C2: NP verified by two methods** — VLM −101.3 mm (26.7 % MAC) vs Weissinger-L
+  −98.3 mm (28.0 % MAC): **3 mm agreement**. The "least-verified number in the chain"
+  claim (justification §3.1) is superseded; the central-body effect remains
+  unquantified (moves NP forward).
+
+### Changed
+- Design guide: §3 NP row (C2 cross-check); §5.3 twist note (parametric; 2.6–3.7°
+  preview with current candidates); §6.1 trim-closure blockquote; §6.2 E205 →
+  discarded, MH60→13.5 % cm0 +0.0016; §14 log.
+- Justification §3.1 (NP note), §4 airfoil rows; Open Points OP-02 (screening
+  executed), OP-05 (cross-check done); gaps G8; calculations README.
+
+### Engineering notes
+- XFOIL 6.99 batch-mode quirks solved and baked into the script: Ncrit lives in the
+  VPAR submenu (command `N`), polar via PACC/PWRT, CRLF input file, Fortran stdin EOF
+  noise tolerated; the script is incremental (reuses valid polars).
+- Two implementation bugs were found and fixed by validation: a wrong validation
+  harness (b for S) and an odd `y·tanΛ` moment arm in Weissinger-L (the c/4 line
+  sweeps forward on **both** halves, `|y|·tanΛ`).
+- **Reproducibility packaging:** XFOIL path is now configurable (`--xfoil` / `XFOIL_EXE`);
+  full reproduction guide in `calculations/README.md` (tools, versions, commands,
+  batch quirks, validation discipline); coordinate provenance in
+  `geometry/airfoils/README.md`; root README documents the toolchain and the current
+  Phase-1 status (G8 largely closed, G2 screening executed).
+
+---
+
 ## [1.10] — 2026-08-05
 
 **Airfoil evidence campaign (I-15) opened — 11 investigations, 6 partially executed.**

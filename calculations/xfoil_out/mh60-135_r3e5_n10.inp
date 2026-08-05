@@ -1,0 +1,18 @@
+LOAD C:\salmandra\geometry\airfoils\mh60-135.dat
+PANE
+OPER
+ITER 300
+VISC 300000
+VPAR
+N
+10
+
+PACC
+C:\salmandra\calculations\xfoil_out\mh60-135_r3e5_n10.pol
+
+ASeq 0.0 16.0 0.5
+PACC
+PWRT 1
+C:\salmandra\calculations\xfoil_out\mh60-135_r3e5_n10.pol
+QUIT
+Y

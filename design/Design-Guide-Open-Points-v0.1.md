@@ -19,7 +19,7 @@ value stands.
 | # | Item | v0.2 value | What changes it | Trigger |
 |---|---|---|---|---|
 | **OP-01** | **CG reachability** | Target CG −119 mm (18.7 % MAC); preliminary balance (v0.2 stations, motor corrected, bay at the nose pod) shows the reachable band ≈ −24…+9 mm (6S1P; ≈ −36…+9 across the four packs) | NP re-verification, body effect, static-margin target or planform | C2 (second independent NP method), F2 mass model (P1–P3); **highest priority** |
-| **OP-02** | Airfoil profile | Provisional: reflexed section scaled to 13.5 % root (MH 60-12 % as closest family member, **not MH 45 — C28/I-11**) / reflexed 9 % tip with camber compensation; criteria fixed (t/c 13.5/9, Cm0 ≥ +0.008, C_Lmax ≥ 0.65, **gentle root-first stall — guide §6.1**) | Final coordinates from the calibrated B3 screening; R-AIRFOIL feasibility at 13.5 % is an explicit B3 question — the root is expected to be a **designed section** (evidence campaign I-15) | G2 closure (I-06 + I-11 + I-15 + B3 + E2) |
+| **OP-02** | Airfoil profile | Provisional: reflexed section scaled to 13.5 % root (MH 60-12 % as closest family member, **not MH 45 — C28/I-11**) / reflexed 9 % tip with camber compensation; criteria fixed (t/c 13.5/9, Cm0 ≥ +0.008, C_Lmax ≥ 0.65, **gentle root-first stall — guide §6.1**). **Screening executed (I-15 §6):** E205 discarded (cm0 ≈ −0.07); MH60→13.5 % cm0 = +0.0016 (Re 5e5, Ncrit 10); no off-the-shelf candidate closes trim inside R-TWIST at SM 8 % | Final coordinates from the calibrated B3 screening; R-AIRFOIL feasibility at 13.5 % is an explicit B3 question — the root is expected to be a **designed section** (evidence campaign I-15) | G2 closure (I-06 + I-11 + I-15 + B3 + E2) |
 
 ### Geometry and stability
 
@@ -27,7 +27,7 @@ value stands.
 |---|---|---|---|---|
 | OP-03 | Twist ε | +0.5° wash-in | Re-derived from the final airfoil Cm0 (0.17–0.76° band for SM 8 %) | C5 (torsion window closure) |
 | OP-04 | Dihedral Γ | 2.0° total, piecewise-polyhedral (kinks at y = 195/347/498; 0 / 1.07 / 1.53 / 2.0°) | Roll-stability verification; may be revised by the stability analysis | Phase 1 stability (C-series), first flights |
-| OP-05 | Neutral point | 26.7 % MAC `[D]` (VLM only) | Independent method + central body | C2; body model (I-07 §7.4) |
+| OP-05 | Neutral point | 26.7 % MAC `[D]` (VLM only) | Independent method + central body | **C2 partial (I-15 §6.3):** Weissinger-L cross-check agrees within 3 mm (−98.3 mm / 28.0 % MAC); central-body effect remains unquantified | C2 (body model, I-07 §7.4) |
 | OP-06 | Elevon span / travel | 195–585 mm (30–90 % half-span, panel component), ±20°, dual actuation retained | Authority verification across the envelope (gust, extreme CG); confirm dual-actuation need below 400 mm | C6 — never done before; thread I-10 |
 | OP-07 | Hinge line x/c | 0.72 | Fixed by structure (ADR-0002); keep unless section is redesigned | — |
 

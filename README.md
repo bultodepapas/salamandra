@@ -9,7 +9,7 @@ forward-swept flying wing, but that is only the first design. The repository is 
 grow into a whole family of airframes, parts, adapters and experiments — contributed by
 the community.
 
-**Revision 1.5** · 28 July 2026 · **Phase 0 closed · Phase 1 in progress**
+**Revision 1.11** · 5 August 2026 · **Phase 0 closed · Phase 1 in progress**
 
 ---
 
@@ -153,8 +153,8 @@ configuration contributed to the platform.
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |
 | [`gaps/`](gaps/) | Register of what we do **not** know and how it gets closed |
 | [`tests/`](tests/) | Experimental program and data |
-| [`calculations/`](calculations/) | Analysis scripts, with validation cases |
-| `geometry/` `stl/` `cad/` | Community 3D parts and outputs |
+| [`calculations/`](calculations/) | Analysis scripts, with validation cases — **full reproduction guide in its README** |
+| `geometry/` `stl/` `cad/` | Community 3D parts and outputs; `geometry/airfoils/` holds the screening coordinate files with provenance |
 
 **Start with:** [`docs/00-objectives-and-requirements.md`](docs/00-objectives-and-requirements.md) → [`decisions/README.md`](decisions/README.md) → [`gaps/README.md`](gaps/README.md)
 
@@ -191,8 +191,42 @@ This is the project's central rule. Every quantitative claim carries a tag:
 
 **Current blocker: [G2](gaps/README.md) — airfoil selection.**
 
-G8 (neutral point) partially closed: **NP = 26.7 % MAC**, target CG 18.7 % MAC. See
-[I-07](research/I-07-neutral-point-torsion-window.md).
+Phase-1 status (2026-08-05):
+
+- **G8 (neutral point) — largely closed.** NP = 26.7 % MAC by the in-house panel VLM,
+  **cross-checked by an independent Weissinger-L lifting line: 28.0 % MAC, 3 mm
+  agreement** ([I-15 §6.3](research/I-15-airfoil-evidence-campaign.md)). The
+  central-body effect remains unquantified and moves the NP forward.
+- **G2 (airfoil) — screening executed.** The B3 XFOIL screening (24 polars,
+  Re 3e5/5e5 × Ncrit 10/12) discarded E205 (cm0 ≈ −0.07) and showed that **no
+  off-the-shelf reflexed section satisfies R-AIRFOIL at 13.5 % t/c nor closes the
+  trim inside the torsion window at SM 8 %** — the root section must be **designed,
+  not selected** ([I-15 §6](research/I-15-airfoil-evidence-campaign.md)).
+
+---
+
+## Reproducible analysis — tools used
+
+Every quantitative claim in this repository comes from scripts that anyone can rerun.
+The full guide (versions, commands, batch quirks, validation discipline) is in
+[`calculations/README.md`](calculations/README.md). Summary:
+
+| Tool | Version | Role |
+|---|---|---|
+| Python + numpy | 3.11 / 1.2x | In-house panel VLM, Weissinger-L NP check, screening harness |
+| **XFOIL** | **6.99** (official MIT build, GPL) | Airfoil polar generation for the B3 screening and the E387 calibration |
+| UIUC Airfoil Data Site, aerodesign.de | — | Measured/published input data (`[M]`), coordinates in `geometry/airfoils/` |
+
+Reproduction in three commands:
+
+```bash
+python3 calculations/vlm_ala_volante.py       # NP (I-07)
+python3 calculations/weissinger_np.py         # C2 independent NP check (I-15 §6.3)
+python3 calculations/b3_screening.py --xfoil /path/to/xfoil.exe   # B3 screening (I-15 §6)
+```
+
+Each script ships its validation case; a modification that breaks the validation is
+not accepted.
 
 ---
 

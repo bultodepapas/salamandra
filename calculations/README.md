@@ -1,39 +1,130 @@
-# Calculations
+# Calculations — analysis tools and reproduction guide
 
-Analysis scripts. Each self-contained and runnable.
+This repository's quantitative claims come from scripts that are **self-contained,
+validated, and rerunnable by anyone**. This document explains the tools, their versions,
+the data they consume, and exactly how to reproduce the published results.
 
-| File | What it does | Feeds |
-|---|---|---|
-| `vlm_ala_volante.py` | Vortex lattice for a forward-swept wing with taper and twist. Neutral point, CL_α, load distribution | I-07, G8 |
-| `ventana_torsion.py` | Twist required for trim against tip-stall margin | I-07, G2 |
-| `calibra_xfoil_e387.py` | Cross-checks an XFOIL Ncrit grid against the E387 (C) polar measured by UIUC | I-06, G2 |
+**Confidence rule:** every script output is tagged. The scripts compute `[D]` values
+(derived by calculation from `[M]` data). They never invent inputs, and their validation
+cases must pass before a modification is trusted.
 
-## Usage
+---
+
+## Tools and versions used (2026-08-05 session)
+
+| Tool | Version | Used for | Where to get it |
+|---|---|---|---|
+| Python | 3.11 (Windows) | All harnesses below | python.org (any ≥ 3.8 works) |
+| numpy | 1.2x | VLM, Weissinger-L, screening harness | `pip install numpy` |
+| **XFOIL** | **6.99** (official MIT Windows console build) | Airfoil polar generation | <https://web.mit.edu/drela/Public/web/xfoil/> → `XFOIL6.99.zip` (GPL; the source ships in the zip too) |
+| PowerShell 7 / cmd | Windows | Batch driving (see the Fortran stdin note below) | Built into Windows |
+
+XFOIL is an **external GPL binary**, not bundled with this repository. Point the
+scripts at it with `--xfoil <path>` or the `XFOIL_EXE` environment variable.
+
+Data sources consumed (all `[M]`):
+- **UIUC Airfoil Data Site** (<https://m-selig.ae.illinois.edu/ads/coord_database.html>)
+  — E205, S5010, E387 coordinates and measured E387 polar.
+- **aerodesign.de tailless-airfoil database** (Siegmann; MH data from Hepperle) — MH60
+  coordinates and the published reflexed-section table (reviewed in `research/I-11`).
+- Provenance of every coordinate file: `../geometry/airfoils/README.md`.
+
+---
+
+## The scripts
+
+| File | What it does | Feeds | Depends on |
+|---|---|---|---|
+| `vlm_ala_volante.py` | Panel vortex lattice for the forward-swept wing (taper + twist). NP, CL_α, load distribution, Cm0-per-degree twist yield | I-07, G8, guide §5.3 | numpy |
+| `weissinger_np.py` | **C2: independent NP check** — Weissinger-L swept lifting line (bound vortex on the c/4 line, control points at 3/4 chord). Structurally different formulation from the panel VLM | I-07, C2, G8 | numpy |
+| `ventana_torsion.py` | Twist required for trim vs tip-stall margin (torsion window) | I-07, G2 | numpy |
+| `calibra_xfoil_e387.py` | XFOIL Ncrit-grid calibration against the measured E387 (C) polar (UIUC, vol. 3) | I-06, G2 | XFOIL |
+| `b3_screening.py` | **B3: airfoil screening** — batch XFOIL polars (Re 3e5/5e5 × Ncrit 10/12) for the shortlist in `../geometry/airfoils/`; generates the scaled variants; parses cm0/clmax/α_stall/L/D/cd@cruise | B3, G2, OP-02 | numpy + XFOIL |
+
+## Reproducing the published results
+
+### 1. Neutral point (I-07, and C2 cross-check — guide §3)
 
 ```bash
-python3 vlm_ala_volante.py     # includes validation case
-python3 ventana_torsion.py     # window analysis
-python3 calibra_xfoil_e387.py --xfoil /path/to/xfoil
+python3 vlm_ala_volante.py      # in-house method, includes the straight-AR-6 validation
+python3 weissinger_np.py        # independent method, includes the same validation
 ```
 
-The first two scripts require only `numpy`.
+Published result (I-15 §6.3, `[D]`): VLM **x_NP = −101.3 mm** (26.7 % MAC) vs
+Weissinger-L **−98.3 mm** (28.0 % MAC) — **3 mm agreement**. Both validations must
+reproduce: straight AR 6 wing → NP at 25.00 % MAC; CL_α within ~7 % of the Helmbold
+formula (the classical 1-D/2-D difference).
 
-`calibra_xfoil_e387.py` uses only the Python standard library, but needs the official
-XFOIL executable. It downloads the coordinates and the measured polar from UIUC at runtime;
-it does not replace them with a secondary copy.
+### 2. B3 airfoil screening (I-15 §6)
 
-## Validation
+```bash
+python3 b3_screening.py --xfoil /path/to/xfoil.exe
+```
 
-`vlm_ala_volante.py` includes a contrast case: a straight AR 6 wing without sweep or twist,
-whose neutral point must fall at c/4 and whose CL_α must approximate the Helmbold formula.
+What it does, step by step:
 
-**Any modification must pass that validation before use.** A MAC normalization error was detected exactly this way.
+1. Reads the candidate coordinates from `../geometry/airfoils/` (E205, S5010, MH60 —
+   provenance in `geometry/airfoils/README.md`).
+2. Generates the thickness variants `mh60-12.dat`, `mh60-135.dat`, `e205-9.dat`
+   (affine y-scaling — the declared provisional scaling rule of the design guide §6.3).
+3. Runs **24 XFOIL cases** (6 airfoils × Re 3e5/5e5 × Ncrit 10/12), alpha sweep
+   0–16° step 0.5°, ITER 300, in the calibrated band of I-06.
+4. Saves the raw polars in `xfoil_out/<case>.pol` and **verifies each header** carries
+   the requested `Re` and `Ncrit` (a polar whose Ncrit failed to apply is regenerated).
+5. Prints the summary table: cm0 (linear fit of CM(CL) evaluated at CL=0, about c/4),
+   clmax, α_stall, (L/D)max, cd at cruise CL 0.132.
 
-`calibra_xfoil_e387.py` validates its interpolation and its metric against an analytic case:
-a polar with `Cd_calculated = 1.1 × Cd_measured` must return exactly a factor 1.1.
+**Incremental:** polars whose header already matches are reused — rerunning after a
+crash only recomputes the missing cases.
 
-## Conventions
+**Batch-mode notes for XFOIL 6.99 on Windows** (all baked into the script, kept here
+for anyone maintaining it):
+- The Ncrit command lives in the **VPAR** submenu (`OPER` → `VPAR` → `N <value>`);
+  `NCRIT` does not exist in this version.
+- Polar accumulation is `PACC` (prompts: save-file name, then dump-file name — blank
+  to decline), then `ASEQ`; close with `PACC` (off) and `PWRT 1 <filename>`.
+- The input stream must be a **CRLF file redirected as stdin** (a PowerShell pipe
+  truncates it; the Fortran runtime reads until EOF and prints a harmless
+  "Fortran runtime error: End of file" after QUIT — ignored).
+- Full paths in the polar filenames are fine.
+
+Published result highlights (I-15 §6.2, `[D]`):
+- E205 **discarded**: cm0 ≈ −0.07 (fails R-AIRFOIL by ~0.08).
+- MH60→13.5 %: cm0 = +0.0016 (Re 5e5, Ncrit 10); published cm0 values are not
+  achieved at project Re.
+- At SM 8 % no off-the-shelf candidate closes trim inside R-TWIST ≤ 2.5°.
+
+### 3. Twist window (I-07)
+
+```bash
+python3 ventana_torsion.py
+```
+
+### 4. XFOIL calibration (I-06)
+
+```bash
+python3 calibra_xfoil_e387.py --xfoil /path/to/xfoil.exe
+```
+
+Downloads the E387 coordinates and the measured polar from UIUC at runtime; validates
+its metric on an analytic case (Cd_calculated = 1.1 × Cd_measured → factor 1.1).
+
+---
+
+## Validation discipline
+
+**Any modification to a script must pass its validation case before use.** This is not a
+formality: two real bugs were caught exactly this way during the 2026-08-05 session
+(recorded in CHANGELOG [1.11]):
+- a MAC-normalization error in the VLM (historic, C17);
+- an odd `y·tanΛ` moment arm in Weissinger-L — the c/4 line sweeps forward on **both**
+  halves, so the arm is `|y|·tanΛ`; the bug zeroed the sweep moment by symmetry and was
+  caught by the straight-wing validation (NP must be 25.00 % MAC).
+
+## Conventions (shared by all scripts)
 
 - `x` positive backward, origin at the root c/4
 - `Lambda_c4` negative = forward sweep
 - `epsilon` positive = wash-in (tip at higher incidence)
+- Outputs are `[D]` unless tagged otherwise; XFOIL polars are predictions, not
+  measured data — the E387 calibration (I-06) and E2 (flight polar) define their value.

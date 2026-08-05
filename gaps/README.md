@@ -13,7 +13,7 @@ It is as important as the decision register: the project rule is that **no `[E]`
 | **G5** | Propeller wash effect on a thin airfoil at Re 4×10⁵ | ADR-0006 under dispute | ⬜ Open; literature bounds proposed (I-13) | I-13, comparative in-flight test |
 | **G6** | **Sweep factor for divergence** | **Weakest link of the structural calculation** | ⬜ Open; X-29 data and theory bounds proposed (I-12) | **I-12 (bounds), E7** |
 | **G7** | Flutter | Unverified. Sudden onset, no warning | ⬜ Open | E5 |
-| **G8** | Neutral point and static margin | Blocks Phase 1 | 🔄 **Partial** — NP = 26.7 % MAC `[D]` by in-house VLM. Independent verification still missing; control-authority/static-margin thread opened (I-10) | I-07, I-10, C2 of the plan |
+| **G8** | Neutral point and static margin | Blocks Phase 1 | 🔄 **Partial** — NP = 26.7 % MAC `[D]` by in-house VLM, **cross-checked by an independent Weissinger-L (28.0 % MAC, 3 mm agreement — I-15 §6.3)**; central-body effect still unquantified | I-07, I-15, C2 (body model) |
 | **G9** | Altitude-loop coupling with pitch (*porpoising*) | **Threatens the validity of E7** | ⬜ Open | PID adjustment before testing |
 
 ---

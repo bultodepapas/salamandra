@@ -79,9 +79,12 @@ reachable with the current planform, mass budget and bay position.**
 
 Implications (honest assessment, not a silent fix):
 
-1. The VLM neutral point is the least-verified number in the chain (one in-house code,
-   one validation case; the same code once had a normalization bug — C17). C2 (second
-   independent method) is the highest-priority verification.
+1. **NP verified by two methods (2026-08-05):** the in-house VLM (−101.3 mm, 26.7 % MAC)
+   and an independent Weissinger-L lifting line (−98.3 mm, 28.0 % MAC) agree within
+   3 mm (I-15 §6.3). The VLM number is no longer the least-verified in the chain; the
+   **central-body effect** (I-07 §6) remains the main unquantified term, and it moves
+   the NP **forward** — reinforcing the tension. C2 is partial: cross-check done, body
+   model pending.
 2. The central body is known to move the NP **forward** (I-07 §6), which would make the
    target CG even more forward — reinforcing the tension.
 3. Resolution paths for Phase 1/F2: re-verified NP; reduced static-margin target (relaxed
@@ -100,8 +103,8 @@ re-derive the band with the real CORE geometry.
 | Reflex Cm0 ≥ +0.008 | R-AIRFOIL: trim closure within the torsion window without exceeding R-TWIST (I-07 §4.1) | `[D]` |
 | C_Lmax ≥ 0.65 | Stall ≤ 45 km/h requirement (docs/00, C16); measured band 0.55–0.70 for low-Re reflexed/flat sections (I-01, Ananda et al.) | `[M]` |
 | t/c 13.5 % / 9 % | See §2; ADR-0027 | `[M]`/`[D]` |
-| MH/EH families, PW51 reference | B3 screening candidates (docs/03 §3.B); PW51 is the in-service FSW airfoil of the Nemesis (I-08), **not in the UIUC database** (I-11). **C28:** the guide's "MH 45, t/c ≈ 13 %" was wrong — the aerodesign.de tailless database lists MH 45 at **9.85 % t/c, cm0 +0.0070**, documented for 15–40 g/dm² (below the project's 57 g/dm²). Provisional root candidate moved to **MH 60-12 %** (12.0 %, cm0 +0.0030). No off-the-shelf reflexed section reaches 13.5 % — R-AIRFOIL feasibility at 13.5 % is an explicit B3 question (I-11) | `[M]` |
-| E205 as tip data point | Flight-proven at Re 1.5–3×10⁵ on two in-service FPV aircraft (Pico Talon 900 mm, Stallion 1340 mm, I-09). t/c 10.6 % at 30 % c, camber 2.9 % at 34 % c `[D]` from UIUC coordinates. **Not admitted by these manuals alone**: both aircraft are tailed (V-tail trims them), so Cm0 is unknown and likely negative; it joins the B3 XFOIL screening (Ncrit 10–12 band) and stands or falls on the polar | `[M]`/`[D]` |
+| MH/EH families, PW51 reference | B3 screening candidates (docs/03 §3.B); PW51 is the in-service FSW airfoil of the Nemesis (I-08), **not in the UIUC database** (I-11). **C28:** the guide's "MH 45, t/c ≈ 13 %" was wrong — the aerodesign.de tailless database lists MH 45 at **9.85 % t/c, cm0 +0.0070**, documented for 15–40 g/dm² (below the project's 57 g/dm²). Provisional root candidate moved to **MH 60-12 %** (12.0 %, cm0 +0.0030). No off-the-shelf reflexed section reaches 13.5 % — R-AIRFOIL feasibility at 13.5 % is an explicit B3 question (I-11). **Screening executed (I-15 §6, `[D]`):** MH60→13.5 % cm0 = +0.0016 (Re 5e5, Ncrit 10); published cm0 values are not achieved at project Re; at SM 8 % no candidate closes trim inside R-TWIST (wash-in 2.6–3.7° vs ≤ 2.5°) — the designed section is confirmed mandatory | `[M]`/`[D]` |
+| E205 as tip data point | **Discarded on its polar (I-15 §6.2).** Flight-proven at Re 1.5–3×10⁵ on two in-service FPV aircraft (I-09), but the XFOIL screening (Ncrit 10–12, Re 3–5×10⁵) gives cm0 ≈ −0.07 — fails R-AIRFOIL by ≈ 0.08; ≈ 22° wash-in would be needed. In-service evidence does not imply Cm0 (tailed planes trim it) — confirmed numerically | `[M]`/`[D]` |
 | Stall character (root) | The designed root section must stall **gently and root-first** (I-02): the thickness-separation crossover evidence (Barnett & Carter, NASA-CR-4096 — I-15/A5) shows thick sections can transition local → massive separation, and reflexed sections thin badly (MH 45-8 % precedent). Criterion added to guide §6.1 | `[M]` |
 | No final coordinates in v0.2 | B3 requires the calibrated Ncrit 10–12 band (I-06) before screening; G2 is open by design. Provisional recipe for the CAD: reflexed section scaled to 13.5 % (root, MH 60-12 % family) / camber-compensated 9 % tip — guide §6.3. **The root is expected to be a designed section, not an off-the-shelf pick (I-15)** | — |
 
