@@ -43,7 +43,8 @@ Data sources consumed (all `[M]`):
 | `balance_cg.py` | **OP-01: mass/CG balance** — pack-station solver for the CG target; planform-centroid self-check; bay sizing for the nose boom; envelope checks (AUW, V_stall) | OP-01, justification §3.1–3.2 | numpy |
 | `elevon_authority.py` | **Elevon control power** — ΔCm per degree of elevon deflection (step incidence over 30–90 % half-span) via the VLM; trim closure and control margin at SM 8 % | Guide §5.3/§6.1, C6 (partial) | numpy |
 | `battery_pack_layout.py` | **I-16: pack envelope** — enumerates every rectangular (n_x,n_y,n_z) layout of the 4S/6S 21700 pack, computes finished envelope (wrapper, nickel, leads) and fit-checks against the 190 × 70 × 32 bay | I-16, guide §9, OP-23 | stdlib only |
-| `inav_fc_match.py` | **I-17: FC compatibility** — cross-checks the popular INAV boards (Matek WING, SpeedyBee, Foxeer) against the Salamandra avionics requirements (≥5 PWM, ≥2 UART, ≥1 I2C, blackbox, current, baro, 6S voltage) | I-17, guide §11, CORE avionics | stdlib only |
+| `inav_fc_match.py` | **I-17: FC compatibility** — cross-checks the popular INAV boards (Matek WING, SpeedyBee, Foxeer) against the Salamandra avionics requirements (≥5 PWM, ≥2 UART, ≥1 I2C, blackbox, current, baro, 6S voltage); footprint summary + power budget | I-17, guide §11, CORE avionics | stdlib only |
+| `fpv_power_budget.py` | **I-18: FPV power budget** — DJI O4 / Pro / Lite current-per-level (measured `[M]`), power at any input voltage, BEC margin vs the Matek 9V/2A and 5V/2A rails, energy impact on the 6S1P P42A pack | I-18, guide §11, O1 | stdlib only |
 
 ## Reproducing the published results
 
@@ -171,6 +172,19 @@ prints the footprint summary (I-17 §4.1): min 28×28×7, avg 45×34×12, max
 (I-17 §6): 5 V rail 300–555 mA, avionics ≈ 6.6 W ≈ 6 % of cruise, ≈ 7.3 % of a
 6S1P P42A pack per flight-hour. A change to the requirement set or board specs
 must reproduce these lines.
+
+### 9. FPV power budget (I-18)
+
+```bash
+python3 fpv_power_budget.py [input_V]
+```
+
+Per-level power of the DJI O4 / Pro / Lite from measured currents `[M]`.
+Published results (I-18 §5): O4 Pro 1200 mW = 10.4 W, O4 standard max 9.5 W
+(700 mW cap), O4 Lite 6.0 W; 9 V rail utilization ≤ 58 %; total electronics
+avionics+FPV = 17.0 W (15.5 % of cruise) and 18.8 % of the 6S1P P42A pack per
+flight-hour with the Pro. A change to the current table or BEC assumptions must
+reproduce these values.
 
 ---
 
