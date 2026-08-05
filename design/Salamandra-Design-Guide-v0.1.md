@@ -117,6 +117,11 @@ exists yet; it will be updated by the open point listed.
 | Battery configs | 4S1P, 6S1P, 4S2P, 6S2P (21700); 6S2P out of cruise envelope | docs/00 (R-CG) |
 | Divergence criterion | V_div ≥ 1.5 × V_NE | docs/00 |
 
+> ⚠️ **Stall margin is the tightest in the design:** ≈ 44.6 km/h at CL_max 0.60 vs the
+> 45 km/h requirement — a 0.4 km/h margin (I-07 §4.2). The launch is a mandatory hand
+> throw; launch-speed feasibility is under investigation (I-14). Do not relax the
+> CL_max chain without re-deriving this requirement (C16 history).
+
 Salamandra is a modular platform: this guide specifies the **Cruise** configuration
 (1300 mm). The Range (1600 mm) and Sport (1100 mm) configurations share the CORE and
 follow the same rules via R-NP ([ADR-0032](../decisions/ADR-0032-modularity.md)); they are
@@ -206,6 +211,11 @@ all other geometry is defined independently of the exact profile except the twis
 | Reynolds range | **Re(MAC) ≈ 3–5×10⁵**; root up to ≈ 5.2×10⁵ at cruise, ≈ 2.5×10⁵ at stall | I-01 |
 | Family | Reflexed low-Re flying-wing airfoils | B3 (docs/03) |
 | L/D at cruise CL | As high as possible at CL = 0.132 | B2 |
+
+> **R-AIRFOIL feasibility at 13.5 % t/c is an open B3 question (I-11):** no published
+> reflexed section reaches that thickness (closest: MH 60-12 % at 12.0 %, cm0 +0.0030).
+> The requirement may be re-derived against the twist window (I-07); until then the
+> airfoil row is doubly provisional.
 
 ### 6.2 Provisional candidates for the v0.2 CAD
 
@@ -396,6 +406,10 @@ following **binding constraints**; the final body shape is designer's choice wit
 | ESC | 6S, **30 A** (cruise ≈ 5 A, peak ≈ 20 A) | derived |
 | Alternatives | APC-E 9×6, 10×7 (matching table, D3/D4) | ADR-0007 |
 
+> With the prop disk behind the root TE (x ≈ +235), the slipstream does **not** wash the
+> wing: the open G5/ADR-0006 question is bounded to the CORE rear-pod wake and the
+> elevon inner end at large deflections (I-13).
+
 ### 10.2 Motor mount
 
 | Parameter | Value | Status |
@@ -464,5 +478,5 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
-| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14 threads opened; C28:** provisional root/tip candidates corrected per the aerodesign.de database (§6.2, §6.3). |
+| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14:** threads opened; C28 (root/tip candidates corrected, §6.2/§6.3); stall-margin flag (§4); R-AIRFOIL feasibility flag (§6.1); pusher-slipstream note (§10.1). |
 | 0.1 | 2026-08-05 | First release. Reference geometry per I-07/ADR-0027; provisional airfoil (B3 pending), dihedral, twist, carbon, motor, bay. OP-01 flagged. |

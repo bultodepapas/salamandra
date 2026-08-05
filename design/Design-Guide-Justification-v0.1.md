@@ -148,6 +148,7 @@ everything else now and swap the profile later.
 | Motor station, prop disk | **Corrected (C25).** v0.1 placed motor+prop at x = +190 — inside the planform (root TE at +216.9), impossible for a pusher. v0.2: prop disk plane at x ≈ +235 (≥ 10 mm aft of the root TE), mount face +230, motor body ≈ +195…+230, motor+prop centroid ≈ +217. Feeds the OP-01 balance (§3.1) | `[D]` |
 | Prop ground clearance | **Corrected (C26).** With the motor axis at z = 0, the 8×8 prop (radius 101.6 mm) sweeps to z = −101.6; the wing lower surface at the root is at z ≈ −19.5, so a pure airfoil CORE would strike the ground by ~82 mm. The CORE rear pod must bring the belly to **z ≤ −111.6 mm** at the prop plane (≈ 92 mm below the wing lower surface) for ≥ 10 mm tip clearance. Thrust line stays at z = 0 (through the CG plane, no pitch coupling) | `[D]` |
 | Not prescribed | ADR-0033: project recommends, does not prescribe; final matching via D3/D4 | — |
+| Pusher slipstream scope | The rear-pusher layout (prop disk behind the root TE, guide §10.1) leaves the wing **unwashed**; the open G5 question (ADR-0006 dispute) reduces to the CORE rear-pod wake and the elevon inner end at large deflections (I-13) | `[I]` |
 
 ## 8. Envelope values (derivations)
 
