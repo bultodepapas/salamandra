@@ -4,6 +4,39 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.10] — 2026-08-05
+
+**Airfoil evidence campaign (I-15) opened — 11 investigations, 6 partially executed.**
+
+### Added
+- **[I-15](research/I-15-airfoil-evidence-campaign.md)** — analysis of the airfoil
+  criterion (the guide's weakest, matrix score 60/100) and an evidence campaign with
+  11 investigations (A1–A11) on the root/tip problem.
+- Executed evidence (all NTRS, public fulltext where noted): E387 LSB measurements
+  (NASA-CR-186263 — the project's calibration airfoil), Carmichael low-Re survey
+  (NASA-CR-165803-VOL-1), thickness-induced separation crossover (NASA-CR-4096,
+  Barnett & Carter), NACA-SR-83 (thickness vs drag), Notre Dame LSB series covering
+  Re 40k–400k (AIAA 80-1440, 86-1065, 83-1671), flap-deflection LSB data (AIAA
+  79-0004), Prandtl-D/Horten minimum-induced-drag line (DFRC-E-DAA-TN2041/3811/4103).
+- Negative results recorded: PW51 not in UIUC (A3); airfoiltools unreachable from this
+  environment (E205 XFOIL polar deferred to the local calibrated run); NTRS has **zero**
+  reflexed-section records — the reflexed evidence base is the RC/glider world + LSB
+  physics, not NASA.
+
+### Changed
+- Design guide §6.1 — R-AIRFOIL note: the root section is to be **designed, not
+  selected**; §1/§13 research set extended to I-01…I-15; §14 log updated.
+- Justification §4 — provisional recipe row rewritten (MH 60-12 % family, designed
+  root); references extended.
+- Open Points OP-02 — trigger now includes I-15.
+
+### Declared (not a correction)
+- The airfoil criterion analysis concludes: no published reflexed section satisfies
+  R-AIRFOIL at 13.5 % t/c; B3's central deliverable is a **designed section**, with
+  R-AIRFOIL re-derivation against the twist window as the declared alternative.
+
+---
+
 ## [1.9] — 2026-08-05
 
 **Five new investigation threads (I-10…I-14) and correction C28.**

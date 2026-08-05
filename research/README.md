@@ -20,6 +20,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-12](I-12-x29-divergence-sweep-factor.md) | **X-29 divergence data and sweep-factor bounds** | ⬜ **Proposed — sources located** | G6, G4, S4 |
 | [I-13](I-13-pusher-tractor-slipstream.md) | **Pusher vs tractor slipstream at low Re** | ⬜ **Proposed** | G5, ADR-0006, OP-14 |
 | [I-14](I-14-hand-launch-stall-margin.md) | **Hand-launch and stall-margin practice** | ⬜ **Proposed** | O1 (stall), C16, launch, D1/D2 |
+| [I-15](I-15-airfoil-evidence-campaign.md) | **Airfoil evidence campaign (root + tip)** | 🔄 **Running — 11 investigations, 6 partial** | B3/G2, OP-02, R-AIRFOIL |
 
 ## Source quality
 

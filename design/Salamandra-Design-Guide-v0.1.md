@@ -29,7 +29,7 @@ version live in [`prompts/`](prompts/).
 | Date | 2026-08-05 |
 | Status | DRAFT — pending designer iteration and Phase 1 closure |
 | Reference configuration | **Cruise — Article #1** |
-| Inputs | ADR-0001…ADR-0037, I-01…I-14, docs/00, docs/02, docs/03, docs/04, docs/05 |
+| Inputs | ADR-0001…ADR-0037, I-01…I-15, docs/00, docs/02, docs/03, docs/04, docs/05 |
 | Intended reader | CAD designer (Fusion 360 or equivalent) |
 
 **How this guide evolves.** The design is expected to change as Phase 1 closes (airfoil
@@ -212,10 +212,12 @@ all other geometry is defined independently of the exact profile except the twis
 | Family | Reflexed low-Re flying-wing airfoils | B3 (docs/03) |
 | L/D at cruise CL | As high as possible at CL = 0.132 | B2 |
 
-> **R-AIRFOIL feasibility at 13.5 % t/c is an open B3 question (I-11):** no published
-> reflexed section reaches that thickness (closest: MH 60-12 % at 12.0 %, cm0 +0.0030).
-> The requirement may be re-derived against the twist window (I-07); until then the
-> airfoil row is doubly provisional.
+> **R-AIRFOIL feasibility at 13.5 % t/c is an open B3 question (I-11, I-15):** no
+> published reflexed section reaches that thickness (closest: MH 60-12 % at 12.0 %,
+> cm0 +0.0030). The aerodynamic evidence indicates the root section must be **designed,
+> not selected** (thickness-distribution and reflex evidence campaign, I-15); the
+> requirement may alternatively be re-derived against the twist window (I-07). Until
+> then the airfoil row is doubly provisional.
 
 ### 6.2 Provisional candidates for the v0.2 CAD
 
@@ -461,7 +463,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Set | Documents |
 |---|---|---|
 | Decisions | ADR-0001, 0002, 0004, 0007, 0010, 0015, 0021–0028, 0032–0037 ([`decisions/`](../decisions/)) |
-| Research | I-01…I-14 ([`research/`](../research/)) |
+| Research | I-01…I-15 ([`research/`](../research/)) |
 | Specification | [`docs/00-objectives-and-requirements.md`](../docs/00-objectives-and-requirements.md) |
 | Measured data | [`docs/02-measured-references.md`](../docs/02-measured-references.md) |
 | Plans | [`docs/03-phase-1-plan.md`](../docs/03-phase-1-plan.md), [`docs/05-master-plan.md`](../docs/05-master-plan.md) |
@@ -478,5 +480,5 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
-| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14:** threads opened; C28 (root/tip candidates corrected, §6.2/§6.3); stall-margin flag (§4); R-AIRFOIL feasibility flag (§6.1); pusher-slipstream note (§10.1). |
+| 0.2 | 2026-08-05 | Designer-review release. Dihedral defined piecewise (kinks at y = 195/347/498, C22); elevon span corrected to 30–90 % (panel component, C23); print orientation clarified as 45° airfoil roll (C24); motor station and prop-disk position fixed (C25); prop ground-clearance constraint defined (C26); carbon tube/pin physical lengths and socket specs added (C27); new §7.6 CORE outer-mold constraints (nose pod, rear pod, bay, sockets, avionics stations); OP-01 band re-derived (≈ −24…+9 mm, bay-limited); wing-tip treatment declared (OP-20); provisional airfoil coordinate recipe added. **I-09 additions:** E205 tip-airfoil data point (§6.2); mylar hinge alternative (§7.5); CORE balance tabs (§7.6, §12); nose-pod retention pattern and battery-hatch spring lock (§7.6, §9). **I-10…I-14:** threads opened; C28 (root/tip candidates corrected, §6.2/§6.3); stall-margin flag (§4); R-AIRFOIL feasibility flag (§6.1); pusher-slipstream note (§10.1). **I-15:** airfoil evidence campaign opened (11 investigations); root section to be designed, not selected (§6.1 note). |
 | 0.1 | 2026-08-05 | First release. Reference geometry per I-07/ADR-0027; provisional airfoil (B3 pending), dihedral, twist, carbon, motor, bay. OP-01 flagged. |
