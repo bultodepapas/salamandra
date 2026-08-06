@@ -4,6 +4,90 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.23] — 2026-08-06
+
+**Divergence model refined: real profile geometry + literature sensitivity (docs/07 rev. 2).**
+
+Designer's empirical report (printed PETG thin-wall/low-infill parts feel stiffer than
+simple calculations) investigated and quantified:
+
+- **Real geometry:** `divergence.py` now computes the torsion box from the actual
+  profile coordinates (`geometry/airfoils/mh60-135.dat`): A1 = 0.0310c², A2 = 0.0415c²,
+  real arc perimeters, shear centre x/c = 0.353 (e = 0.103c). The k_h = 0.8 rectangle
+  idealization validates within 0.4 % (validated as a check). 14 validations ALL PASS,
+  C2 cross-check 0.07 %.
+- **Results (real geometry):** nominal 275.6 km/h (1.15×), conservative end 151.5 km/h
+  (0.63× — FAIL, below V_NE 160), optimistic 521 km/h, AERO 107.1 km/h (not airworthy).
+- **Literature sensitivity (docs/07 §4):** in-plane G_XY ≈ 0.69–0.72 GPa from E–ν
+  (Özen 2021, CNC Kitchen E 1.9 GPa; Sadaghian 2022's ~0.24 GPa applies to across-layer
+  loading, not the wing's in-plane skin path) moves the conservative end to 210 km/h
+  (+39 %); gyroid 5 % and real wall 1.0–1.1 mm add ~5–10 % each. **Combined best case:
+  242 km/h — touches the criterion but does not guarantee it.** The dominant unresolved
+  term remains the sweep factor 0.50–0.70 `[E]` (I-12).
+- **S3 expectation declared:** printed torsion coupon should measure G_XY ≈ 0.65–0.72
+  GPa → V_div ≈ 200–240 km/h; V_limit 110 km/h for the first flights, raisable to
+  ≈ 160 km/h if the coupon confirms the in-plane G.
+- Documents: docs/07 rev. 2 (model table, results, §4 sensitivity, S3 expectation).
+  **Corrections:** none — the verdict is unchanged, its band is now quantified with
+  real geometry and literature.
+
+---
+
+## [1.22] — 2026-08-06
+
+**Launch verdict CORRECTED (I-14 rev. 2) — hand launch IS feasible.**
+
+Designer review challenged the rev-1 verdict ("cannot leave the hand"): the model was
+too strict in two respects, now corrected with data:
+
+- **(a) Release gate corrected:** rev. 1 demanded k_safe = 1.20 at the release instant
+  (15.3 m/s). The correct gate is **V_suelta ≥ V_stall (12.8 m/s)** — the margin is
+  built by motor acceleration at T/W ≈ 1.0 in 0.2–0.4 s.
+- **(b) Thrust/throw data corrected:** published throwing biomechanics (van den
+  Tillaar, JSSM 2004: 0.409 kg → 21.5 m/s, significant negative linear mass–velocity
+  relation → 1.6–1.7 kg band 8–13 m/s, ref 10.5) and the full throw gesture (0.4–0.6 s)
+  with the motor at wing-throw idle (0.5–0.67 × hover) add 2–4 m/s.
+- **Configuration-class anchor `[M]`:** the TBS Mojito — 1300 mm, ≈ 1800 g, higher
+  reported stall (~60 km/h) — is hand-launched in service (TBS manual + community:
+  idle 1300 + launch 1850, over-head technique). The Salamandra is the easier case.
+- **New verdict:** typical throw = **13.4 m/s (48.4 km/h, k = 1.05) at release, k = 1.20
+  in 0.39 s; firm throw = 17.3 m/s (62.4 km/h, k = 1.36)**; weak throw stays below
+  stall → technique rule (firm throw ≥ 10 m/s, 0–5° pitch) is part of the spec.
+  Torque-roll check: launch T/W ≈ 1.0 inside the community 1.5 threshold.
+- Documents: I-14 rev. 2 (correction record), guide **v0.11** (§4/§12), calculations
+  README §15. **Corrections:** rev-1 launch verdict (too strict gate + low thrust
+  estimate); the divergence findings (docs/07) are untouched.
+
+---
+
+## [1.21] — 2026-08-06
+
+**I-14 executed — hand-launch feasibility quantified (`launch_speed.py`, guide v0.10 §4/§12).**
+
+The open thread that had zero data now closes with the quantitative envelope:
+
+- **A typical throw releases the aircraft BELOW its own stall speed: 44.5 km/h vs 45.9 km/h (1687 g).** Best case (hard throw 12 m/s + high idle throttle) = 14.9 m/s — **0.4 m/s short of k_safe = 1.20** (55.1 km/h). Danger window ≈ 0.8 s (200 ms motor delay + acceleration at hover throttle).
+- **Official autolaunch data integrated `[D]`:** INAV guide (Hoffmann): `nav_fw_launch_thr` = hover throttle (T/W ≈ 1.0 → 16.5 N), idle 0.5–0.67 ×, motor delay 200 ms, spinup 200 ms (8-in prop), climb 18–25°; ArduPlane: `TKOFF_THR_MINACC` 15 m/s², delay ≥ 0.2 s, minspd 4 m/s, **release at 0–5° pitch** (higher → stall).
+- **Envelope declared:** release ≥ 1.20 × V_stall at 0–5° pitch, hard throw + high idle; launch lever: CL_max chain (R-AIRFOIL) is now double-critical (lowers V_stall AND raises the release margin).
+- Documents: research/I-14 executed, guide **v0.10** (§4 launch envelope, §12 autolaunch settings, §13 refs), calculations/README §15, I-14 §3.2 settings table for D1/D2. **Corrections:** none.
+
+---
+
+## [1.20] — 2026-08-06
+
+**Absolute divergence speed computed (G6 first pass) — `calculations/divergence.py` + `docs/07`. Criterion FALSIFIED at nominal and conservative ends.**
+
+The ADR-0030 claim "V_div ≥ 1.5 × V_NE met with the shell alone" had no calculation behind it (I-05 gave only the relative Peregrine anchor, 1.14×). New absolute estimate:
+
+- **Nominal: 267.7 km/h — margin 1.12× (barely PASS). Conservative end (G −35 %, a 11.2, k_sweep 0.50): 121.9 km/h — 0.51× — FAIL, below V_NE 160 km/h.** Optimistic end: 664 km/h.
+- **AERO LW-PLA wings: 86.2 km/h — below the 95 km/h design cruise: NOT airworthy under this model** (OP-28 confirmed with numbers).
+- R-JOINT penalty at 5× = **−12 %** on the real wing (lumped table −9 % slightly optimistic); tube Ø12 fully bonded = **+7 % max** ("bending only" quantified, holds).
+- **Method bug caught by C2:** a first shooting implementation (θ′ continuity) converged to the WRONG equation (drops GJ′·θ′; 3× error on the tapered wing). Flux-form shooting agrees with the FEM weak form to **0.06 %**. Recorded in the validation discipline.
+- **Action:** declared **V_limit 110 km/h** for the first test flights; S3 (real section GJ in Fusion 360) + I-12 (sweep factor) + E7 (Southwell) are the closers; 3 perimeters (+22 % V_div, +200 g) is the structural option.
+- Documents: `docs/07-divergence-margin.md` (new), open points **OP-29 added**, OP-28 updated with numbers, calculations/README §14, docs/README index. **Corrections:** none — a falsified claim replaced by a calculated band.
+
+---
+
 ## [1.19] — 2026-08-06
 
 **Material mass variants tool (F2-class) — `mass_budget.py` + `docs/06`.**

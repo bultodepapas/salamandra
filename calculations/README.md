@@ -50,6 +50,8 @@ Data sources consumed (all `[M]`):
 | `joint_pin_trade.py` | **ADR-0031: pin material trade** — carbon Ø6 vs printer filament (PETG/PLA Ø1.75) in the R-JOINT torque couple: strength (FS ≥ 3 all candidates) vs stiffness (E·I: filament ≈ 9000× softer → k_joint collapses → −29 % V_div per ADR-0032) | ADR-0031/0032, guide §7.3 | numpy |
 | `filament_dowel_pins.py` | **ADR-0039: dowel pins in the glued joints** — 2 × Ø1.75 filament per segment joint: shear demand at +6 g vs double-shear capacity (FS ≈ 11/24), position clearance (tube/hinge), collar bearing, mass 2.6 g | ADR-0039, guide §7.3/§7.4/§12, OP-27 | numpy |
 | `mass_budget.py` | **F2: material mass variants** — per-part material policies (ALL PETG baseline / AERO-PLA wings / PLA+ / arbitrary), battery 4S–6S × P42A/50E (I-16 model), FC catalog (I-17), FPV (I-19), motor/prop/servo options, V1 fin; AUW, g/dm², V_stall, printed cost | docs/06, guide §8.1, F2 (P1/P2), OP-28 | numpy |
+| `divergence.py` | **G6 first pass: absolute divergence speed** — multi-cell Bredt-Batho J per station (guide §7.1), G `[M]` with G4 band, FEM weak form (eigh) cross-checked by an independent flux-form shooting (0.06 %); sweep factor 0.50–0.70 `[E]`, R-JOINT spring at y=195, tube contribution quantified; verdict vs 240 km/h | docs/07, guide §4/§13, F4 (S3/S4), OP-08/OP-29 | numpy |
+| `launch_speed.py` | **I-14: hand-launch feasibility (rev. 2)** — release gate V_suelta ≥ V_stall (corrected: k_safe applies post-release, built by acceleration); V_hand band from published biomechanics (van den Tillaar 2004), idle-thrust assist (INAV hover rule T/W ≈ 1.0, idle 0.5–0.67×), Mojito configuration-class anchor `[M]`, torque-roll threshold; INAV/ArduPlane autolaunch settings | I-14 executed, guide §4/§12, D1/D2 | numpy |
 
 ## Reproducing the published results
 
@@ -265,6 +267,38 @@ the older `[E]` 455 g pack; a −10 g refinement, tension unchanged). Published 
 conditional on the divergence re-check, OP-28)**; AERO MAX 1457 g / 42.7; PLA+ 1670 g
 (ADR-0016 rejected material). Twelve validation cases — a change to materials, parts,
 packs or options must reproduce them.
+
+### 14. Absolute divergence speed (G6 first pass — docs/07)
+
+```bash
+python3 divergence.py
+```
+
+First absolute estimate of V_div (previously only the relative Peregrine anchor of I-05
+existed; ADR-0030's "criterion met" claim had no calculation behind it). FEM weak-form
+eigenvalue solver cross-checked by an independent flux-form shooting method (0.06 %
+agreement — C2). Results: **nominal 267.7 km/h (1.12× — barely PASS), conservative end
+121.9 km/h (0.51× — FAIL) vs the 240 km/h criterion; AERO 86.2 km/h (not airworthy at
+cruise)**; R-JOINT penalty at 5× = −12 % (lumped table −9 % slightly optimistic); tube
++7 % max ("bending only" holds). Thirteen model-validation cases must pass; the criterion
+verdict is a printed finding. Declared V_limit 110 km/h for the first flights until S3
+(real section GJ) and I-12/E7 close.
+
+### 15. Hand-launch feasibility (I-14 executed, rev. 2 — guide §4/§12)
+
+```bash
+python3 launch_speed.py
+```
+
+Gate check of the mandatory hand throw, rev. 2 (the first revision wrongly demanded
+k_safe = 1.20 at the release instant; the correct gate is V_suelta ≥ V_stall — the
+margin is built by motor acceleration in 0.2–0.4 s). **Result: FEASIBLE — typical
+throw 10.5 m/s + ref idle → 13.4 m/s (48.4 km/h) at release (k = 1.05), k = 1.20 in
+0.39 s; firm throw → 17.3 m/s (62.4 km/h, k = 1.36). Weak throw stays below stall:
+technique is part of the specification.** Anchored on the Mojito configuration class
+`[M]` (1800 g, higher reported stall, hand-launched in service) and published
+biomechanics (van den Tillaar 2004). Nine validation cases must pass. Autolaunch
+settings table in research/I-14 §3.2.
 
 ---
 

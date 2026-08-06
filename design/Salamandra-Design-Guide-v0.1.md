@@ -1,6 +1,6 @@
 # Salamandra — Design Guide
 
-**Version 0.9** · 6 August 2026 · Status: **DRAFT — for designer review**
+**Version 0.11** · 6 August 2026 · Status: **DRAFT — for designer review**
 
 This document is the working specification handed to the CAD designer. It defines the
 reference configuration (Cruise, Article #1) of the Salamandra modular 3D-printed FPV
@@ -29,7 +29,7 @@ version live in [`prompts/`](prompts/).
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.9 |
+| Version | 0.11 |
 | Date | 2026-08-06 |
 | Status | DRAFT — pending designer iteration and Phase 1 closure |
 | Reference configuration | **Cruise — Article #1** |
@@ -132,6 +132,16 @@ exists yet; it will be updated by the open point listed.
 > §5.4, OP-26.)** The launch is a mandatory hand throw; launch-speed feasibility is under
 > investigation (I-14). Do not relax the CL_max chain without re-deriving this
 > requirement (C16 history).
+>
+> 🚀 **Launch envelope (I-14 executed 2026-08-06, rev. 2 — `launch_speed.py` `[D]`):**
+> **hand launch FEASIBLE.** Release gate: V_suelta ≥ V_stall (45.9 km/h at 1687 g) with
+> elevon-up attitude — the k = 1.20 margin is built by motor acceleration in < 0.5 s
+> (T/W ≈ 1.0). Typical throw (10.5 m/s + ref idle): **48.4 km/h at release, k = 1.20 in
+> 0.39 s**; firm throw: 62.4 km/h (k = 1.36). Technique rule: firm throw (V_hand ≥
+> 10 m/s), 0–5° pitch (higher → stall), launch throttle at the hover setting. Anchored
+> on the configuration class `[M]`: the TBS Mojito (1300 mm, 1800 g, higher reported
+> stall) is hand-launched in service. **Launch lever: CL_max chain (R-AIRFOIL, OP-02)
+> stays double-critical for comfort — lowers V_stall and raises the release margin.**
 
 Salamandra is a modular platform: this guide specifies the **Cruise** configuration
 (1300 mm). The Range (1600 mm) and Sport (1100 mm) configurations share the CORE and
@@ -539,6 +549,16 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 ## 12. Assembly and control setup
 
+0. **Launch rules (I-14 rev. 2, `launch_speed.py`):** **firm throw (V_hand ≥ 10 m/s),
+   release at 0–5° pitch** — the gate is V_suelta ≥ V_stall (45.9 km/h at 1687 g); the
+   k = 1.20 margin is reached by motor acceleration in < 0.5 s (typical throw:
+   48.4 km/h at release, k = 1.20 in 0.39 s). INAV autolaunch: `nav_fw_launch_thr`
+   = hover throttle (bench: nose-up until "about to fly out of your hand"),
+   `nav_fw_launch_idle_thr` 1350–1450 (0.5–0.67 × launch, wing-throw band),
+   `nav_fw_launch_motor_delay` 200 ms (pusher: never 0), `nav_fw_launch_spinup_time`
+   200 ms (8-inch prop), `nav_fw_launch_climb_angle` 18–25°. ArduPlane equivalents:
+   `TKOFF_THR_MINACC` 15 m/s², `TKOFF_THR_DELAY` ≥ 0.2 s, `TKOFF_THR_MINSPD` 4 m/s.
+
 1. Print CORE + 6 segments (3 per half) per §7.4. Light-color PETG.
 2. Glue segment joints (tenon + adhesive, area ≥ 3× skin section): insert the
    **2 Ø1.75 filament dowels per joint** (adhesive dab on one side, sliding fit on the
@@ -568,7 +588,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Set | Documents |
 |---|---|
 | Decisions | ADR-0001, 0002, 0004, 0007, 0010, 0015, 0021–0028, 0031–0039 ([`decisions/`](../decisions/)) |
-| Research | I-01…I-20 ([`research/`](../research/)); **directional stability: I-20** (`yaw_stability.py`) |
+| Research | I-01…I-20 ([`research/`](../research/)); **directional stability: I-20** (`yaw_stability.py`); **launch: I-14 executed** (`launch_speed.py`); **divergence: docs/07** (`divergence.py`) |
 | Specification | [`docs/00-objectives-and-requirements.md`](../docs/00-objectives-and-requirements.md) |
 | Measured data | [`docs/02-measured-references.md`](../docs/02-measured-references.md) |
 | Plans | [`docs/03-phase-1-plan.md`](../docs/03-phase-1-plan.md), [`docs/05-master-plan.md`](../docs/05-master-plan.md) |
@@ -583,6 +603,8 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
+| 0.11 | 2026-08-06 | **Launch verdict corrected (I-14 rev. 2):** hand launch **FEASIBLE** — release gate is V_suelta ≥ V_stall (not k=1.20 at the release instant, which rev. 1 wrongly demanded); typical throw 48.4 km/h at release (k=1.05), k=1.20 in 0.39 s; anchored on the Mojito configuration class `[M]` (heavier, higher reported stall, hand-launched in service) and published throwing biomechanics (van den Tillaar 2004). §4/§12 envelope updated. |
+| 0.10 | 2026-08-06 | **Two weakest links closed with calculations: (1) absolute divergence (docs/07, `divergence.py`) — nominal 267.7 km/h (1.12×, barely PASS), conservative end 121.9 km/h (**FAIL** vs 240): ADR-0030's "criterion met" falsified, V_limit 110 km/h until S3/I-12/E7, OP-29; (2) hand launch (I-14 executed, `launch_speed.py`) — release ≥ 1.20 × V_stall at 0–5° pitch, typical throw releases BELOW stall (44.5 vs 45.9 km/h): launch envelope added to §4/§12 with INAV/ArduPlane autolaunch settings.** |
 | 0.9 | 2026-08-06 | **Material mass variants tool integrated (§8.1 note, OP-28):** `mass_budget.py` — per-part materials (PETG / AERO-PLA wings / PLA+), battery 4S–6S × P42A/50E (I-16 `[D]` pack model: baseline 1687 g, −10 g vs the `[E]` 455 g row), FC (I-17), FPV (I-19), motor/prop/servo options, V1 fin; results in docs/06. |
 | 0.8 | 2026-08-06 | **Filament dowel pins adopted (ADR-0039):** 2 × Ø1.75 mm filament per glued segment joint (alignment + shear redundancy, FS ≈ 11 `[D]`); holes Ø1.8–1.9 at x/c 0.40/0.60 with solid collars Ø8×4 (§7.3/§7.4/§12); fin root +1 dowel (§5.4); 2.6 g/aircraft, zero cost. Carbon Ø6 pin of the torque couple unchanged (pin-material trade, ADR-0031). |
 | 0.7 | 2026-08-06 | **Legacy DJI O3 Air Unit integrated (I-19 §2.4 `[M]`):** camera 21.2×20×19.5 mm fits the §7.6 cavity, module 32.5×30.5×14.5 fits the VTX tray, mass ≈ 39 g (§8.1 note); **all 14 missing ADR files published** (OP-22 closed) and referenced in §13; guide v0.7. |
