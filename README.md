@@ -121,6 +121,7 @@ comes from the propulsion chain, which is where the data say the gap is.
 | AUW (6S1P) | ~1620 g · 57 g/dm² | — |
 | V_NE article #1 | **160 km/h** (design 180) | — |
 | Avionics | INAV 9.1+ or ArduPlane · **pitot mandatory** | — |
+| **Directional** | **CLEAN (finless, O1 build) / V1 (fixed fin, first variant)** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md) |
 
 ### Modular architecture
 
@@ -213,6 +214,15 @@ Phase-1 status (2026-08-05):
   [guide §8.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
+- **G10 (directional stability) — bounded by calculation (I-20, ADR-0038).** The
+  finless baseline is estimated **directionally unstable** (Cnβ −0.0006…−0.0015/deg
+  `[E]`, FSW + nose boom); the platform now publishes two configurations:
+  **SALAMANDRA-CLEAN** (finless, O1 efficiency build) and **SALAMANDRA-V1** (fixed
+  centreline fin, no rudder — first platform variant, recommended for the test
+  programme): S_v 2.1–2.8 dm², 36–79 g, ΔCD0 +0.0014–0.0018 `[D]`/`[E]`
+  (`calculations/yaw_stability.py`). A movable rudder is **rejected with numbers**
+  (I-20 §5.4; Mojito `[M]` flies a fixed stabilizer with elevons only). Closure by
+  flight test **E8** (yaw perturbation).
 
 ---
 

@@ -78,6 +78,7 @@ Solved by **calibration**, not by search.
 | C5 | Resolve the torsion window (§2) | Iterate twist and reflex until trim closes with tip-stall margin |
 | **C6** | **Verify elevon authority** | Deflection needed across the whole envelope, including gust and extreme CG |
 | C7 | Characterize TPU hinge stiffness | Enters ω_β and therefore the flutter analysis |
+| **C8** | **Directional stability budget and flight closure (I-20)** | Cnβ budget `[D]`/`[E]` done (`yaw_stability.py`); the two published configurations (ADR-0038); **E8 (yaw perturbation, Dutch-roll decay) is the `[M]` closure of G10** |
 
 > **C6 had never been done.** The hinge at 72 % was sized and its flutter and mass balancing were calculated **without checking that it gives enough authority**. Inverted order, corrected here.
 
@@ -132,6 +133,7 @@ PARALLEL       D3 D4  (any time after D2)
 - [ ] **R-CG verified** in all four configurations
 - [ ] **Elevon authority verified** across the whole envelope
 - [ ] Torsion window closed with tip-stall margin
+- [ ] **Directional stability budget quantified and the yaw test defined (C8/I-20, ADR-0038)**
 
 **None of this requires printing.**
 

@@ -4,6 +4,48 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.15] — 2026-08-06
+
+**Directional (yaw) stability quantified — dual configuration adopted (I-20, ADR-0038).**
+
+### New analysis
+- **`calculations/yaw_stability.py`** — Cnβ budget, fin sizing, rudder authority, yaw
+  damping/subsidence, fin bending, drag/mass/stall cost. Six validation cases (Helmbold,
+  fin reference, Raymer body, tier consistency, damping) — **all PASS**.
+- **I-20 — directional stability thread** with primary-source evidence: the TBS Mojito
+  (same FSW + nose + pusher class) carries a **fixed** vertical stabilizer and **no
+  rudder servo** (product page, manual, official INAV CLI: `servo 1/2` elevons only,
+  `fw_ff_roll 93` bank-to-turn) — `[M]`, new.
+
+### Findings (honest, not silent)
+- **The finless baseline is directionally unstable:** Cnβ = −0.0006…−0.0015/deg `[E]`
+  (negative across the band — FSW wing sign + nose boom); yaw divergence τ ≈ 0.7 s.
+  The guide's "no tail, no vertical stabilizer, no rudder" was an **assumption, not a
+  calculation** — the same failure mode C6 corrected for pitch. Now quantified.
+- **A movable rudder is rejected with numbers:** |Cnδr| ≈ 0.00043/deg cannot hold a
+  20 km/h crosswind slip at stall (δr ≈ 24° > ±20°); differential elevons ≈ 1/5 of a
+  rudder's authority; no mission need (bank-to-turn); no in-service precedent.
+- **Cost of the fin:** V1a (2.1 dm²) 36–60 g, ΔCD0 +0.0014 → +9.6 % energy `[E]`
+  (Wh/km ≈ 1.26 — still < the Mojito's 1.40 `[M]`); V_stall +0.6 km/h (OP-24 lever).
+
+### Decisions and documents
+- **ADR-0038 — dual directional configuration:** `SALAMANDRA-CLEAN` (finless, O1
+  efficiency build) and `SALAMANDRA-V1` (fixed centreline fin — **first platform
+  variant**, recommended for the Article #1 test programme). Fin = CORE component:
+  no servo, no linkage, no FC change; panels untouched.
+- **Design guide v0.6:** §5.4 (full variant spec: S_v 2.1/2.8 dm², b_v 250–290 mm,
+  root t ≥ 2.5 mm, rear-pod extension ≈ 30 mm, fin AC ≈ +285), §7.6 fin-mount row,
+  §4/§8.1 stall flags, §12 assembly step, §13 references.
+- **Justification v0.6** (§11) and **Open Points v0.6** (OP-26 added).
+- **docs/00 §3.6**, **docs/02 §3 (Mojito `[M]` register + R5 pending)**, **docs/03 C8**
+  (directional budget + exit criterion), **docs/05 S8** (fin loads/flutter in F4),
+  **tests/README E8** (yaw perturbation — the `[M]` closure of G10), **gaps G10**,
+  **README** (status + article table + variants).
+- **Corrections:** none (new analysis, no overturned datum). Mojito fin dimensions
+  (R5) pending human measurement — the analysis model cannot process images.
+
+---
+
 ## [1.14] — 2026-08-05
 
 **Component catalogs integrated: batteries (I-16), FC (I-17), servos (I-18), FPV DJI O4 (I-19).**

@@ -41,6 +41,13 @@ practices 2026).
 > at 72 % of the chord. No tail, no vertical stabilizer. Small FPV camera in the nose.
 > Clean, functional, low-drag design.
 
+**Variant option (SALAMANDRA-V1, ADR-0038/I-20, guide §5.4):** the above block renders
+the finless baseline (`SALAMANDRA-CLEAN`). For the V1 variant, add to the subject:
+*a fixed, thin vertical stabilizer (trapezoidal, swept tip, ≈ 25 cm tall) on a short
+extension of the rear motor pylon, directly behind the propeller, with a visible panel
+seam at its base*. No rudder hinge, no servo — the fin is passive (the analysis I-20
+rejects a movable rudder).
+
 ---
 
 ## Best practices 2026 (research-backed)

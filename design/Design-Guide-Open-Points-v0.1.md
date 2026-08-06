@@ -1,7 +1,7 @@
 # Salamandra — Design Guide: Open Points and Evolution
 
-**Version 0.5** · 5 August 2026 · Companion to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.5)
+**Version 0.6** · 6 August 2026 · Companion to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.6)
 
 This document lists everything in the Design Guide that is **not yet fixed**: assumptions
 that need verification, values that will change when the corresponding research closes,
@@ -60,6 +60,7 @@ value stands.
 | **OP-23** | **R-CG four-config requirement** | docs/00 §3.3 requires CG ±5 mm in all four pack configs; with the boom, pack stations span −568…−267 mm, **and the pack envelope (I-16) sharpens the conflict: 4S2P/6S2P fit no single-layer arrangement of the 200×70×32 bay at all; 4S1P fits but needs x ≈ −568 (outside the bay)** — the v0.5 bay serves the reference 6S1P only | Re-derivation of the requirement (per-configuration CG acceptance, or per-mission bay inserts, or a taller/stacked bay violating the single-layer rule) | F2 (P1–P3) with real packs |
 | **OP-24** | **Boom mass / stall compliance** | Boom structure ≤ 40 g target; with the FPV unit (37 g, I-19) AUW 1697 g → V_stall ≈ 46.1 km/h vs ≤ 45 required; declared levers: shell 550 g + boom ≤ 40 g + servos 48 g (I-18 class) → AUW ≈ 1625 g → ≈ 45.1 km/h — **borderline; F2 must arbitrate the mass budget against C16** | Real boom CAD mass; final shell mass; F2 budget | F2/P3; first print of the CORE |
 | **OP-25** | **FPV system selection / integration** | DJI O4 series reference (I-19 `[M]`): camera in the nose boom (2× M2, 16 mm, O4 25.55×20×23.3 mm), VTX in the CORE with airflow (33.5×33.5×13, 20×20/25.5×25.5 M2), antennas ≥ 5 cm at 90°; power: Pro on the 9 V/2 A rail (≥ 13.5 W), Lite on 5 V; energy impact 18.8 %/h (Pro) vs 11.5 % (Lite) | Model choice (O4 vs Pro vs Lite), camera FOV/lens for the mission, CE legal power, real current measurement | D-series bench; O1 energy re-check |
+| **OP-26** | **Fin variant V1 verification (ADR-0038, I-20)** | Fixed centreline fin: S_v 2.1 dm² (V1a) / 2.8 dm² (V1b), b_v 250–290 mm, root t ≥ 2.5 mm, rear-pod extension ≈ 30 mm (fin AC ≈ +285). Open items: (a) real Mojito fin dimensions — photos downloaded, measurement pending human verification; (b) CORE/boom exact side area S_fs from the CAD (band midpoint); (c) fin strength/flutter at the ≈ 9 Hz mode and wake buffeting; (d) C16 stall compliance with the fin mass at the OP-24 lever; (e) **E8 flight test (yaw perturbation, Dutch-roll decay) — the only `[M]` closure of G10** | Fin flutter (F2/F4-S8), CAD S_fs (OP-21), E-flight yaw test (E8), first print | F2 mass arbitration; E-series |
 
 ### Added in v0.2
 
@@ -103,6 +104,7 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.6 | 2026-08-06 | **Dual directional configuration (ADR-0038, I-20):** OP-26 (fin variant verification) added — Mojito fin measurement, CORE S_fs from CAD, fin flutter/strength at ≈ 9 Hz (F4/S8), C16 with the fin mass at the OP-24 lever, E8 flight closure of G10; OP-24/OP-21 cross-referenced. Guide §5.4 defines the two published configurations (CLEAN / V1). |
 | 0.5 | 2026-08-05 | Component catalogs integrated: OP-01/OP-19 numbers re-derived with FPV in the balance (pack ≈ −415, bay −516); OP-06 partial closure (hinge moment not binding, I-18); OP-18 catalog check (I-17); OP-24 updated (AUW 1697 → 46.1 km/h, three levers); OP-25 (FPV selection/integration) added; OP-16/OP-21/OP-23 refreshed. |
 | 0.4 | 2026-08-05 | Bay re-derived with the I-16 pack envelope (6S1P 153.2 mm): 200×70×32, forward end ≈ −521, boom ≈ 390 mm; fit verdict: only 6S1P in the bay and in band; 4S1P outside (station); 4S2P/6S2P do not fit (I-16) — OP-23 sharpened; OP-01/OP-16/OP-19/OP-21 updated. |
 | 0.3 | 2026-08-05 | OP-01 resolved by decision: nose boom adopted (bay x ≈ −493…−304, 6S1P pack ≈ −421 mm; `balance_cg.py`); pack-station map per config; OP-19/OP-16 updated to the boom; OP-23 (R-CG four-config tension) and OP-24 (boom mass/stall compliance) added; OP-02 updated with the elevon-reflex closure (≤ 0.6°) and R-TWIST 3.0°. |

@@ -7,6 +7,7 @@
 | **E3** | Propeller-matching sweep | **Realizes O1** | Low | ⬜ |
 | **E5** | FFT of blackbox gyro traces | G4, G7 | Null | ⬜ |
 | **E7** | **Southwell in flight** | **G6** | Low | ⬜ |
+| **E8** | **Yaw perturbation / Dutch-roll decay (I-20)** | **G10** — closes the directional-stability gap | Low | ⬜ |
 
 ## Withdrawn
 
@@ -57,6 +58,21 @@ See [I-05](../research/I-05-divergence-flutter.md) for the rationale.
 3. **1/Δtrim against q → a straight line that intercepts the axis at q_D**
 
 ⚠️ **Prerequisite: resolve G9** (porpoising in automatic modes).
+
+## E8 — yaw perturbation / Dutch-roll decay
+
+Closes **G10** (directional stability) with `[M]` data. Defined in
+[I-20](../research/I-20-yaw-stability-centerline-fin.md) §8.
+
+1. Stabilized flight at cruise (95 km/h), both variants (CLEAN and V1, ADR-0038)
+2. Aileron-impulse perturbation (rudder-kick analog — no rudder surface), then hands-off
+3. Blackbox gyro traces → yaw-subsidence time constant / Dutch-roll decay per variant
+4. Compare against the I-20 prediction (CLEAN: divergence τ ≈ 0.7 s; V1: damped
+   subsidence τ ≈ 1.5 s `[E]`) — the calculation is bounded, the flight decides
+
+**This test also validates the claim that the fin is worth its drag** (ADR-0038): if the
+CLEAN build shows acceptable yaw behavior, the V1 fin can be demoted to a
+convenience-only variant.
 
 ---
 

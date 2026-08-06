@@ -16,7 +16,7 @@ It sets no calendar dates. The repo has no `[M]` data on how long each task take
 
 ## 0. What "the first prototype" is
 
-**Working definition, revisable:** the first prototype is **article #1** already described in the README — **Cruise (1300 mm, 6S1P)** configuration — printed, assembled, balanced according to [ADR-0025](../decisions/ADR-0025-elevon-balancing.md), with avionics and **pitot installed** (a requirement of [O1](00-objectives-and-requirements.md)), able to fly in a stabilized way to run **E2, E3 and E7**.
+**Working definition, revisable:** the first prototype is **article #1** already described in the README — **Cruise (1300 mm, 6S1P)** configuration — printed, assembled, balanced according to [ADR-0025](../decisions/ADR-0025-elevon-balancing.md), with avionics and **pitot installed** (a requirement of [O1](00-objectives-and-requirements.md)), able to fly in a stabilized way to run **E2, E3 and E7**. **Recommended build: SALAMANDRA-V1 (fixed centreline fin, ADR-0038/I-20)** — the fin doubles Cnr and removes the finless yaw divergence, giving cleaner test data; the finless CLEAN build remains the O1-efficiency configuration.
 
 It is not "something that prints and flies once". It is the instrumented platform that **can generate the `[M]` data the project still lacks** (G2, G4, G6, G7 in `gaps/`). If it does not carry an operational pitot and blackbox, it does not count as the project's prototype — it counts as a mock-up.
 
@@ -95,6 +95,7 @@ This is line D of `03-phase-1-plan.md` carried to closure. Only the sequence is 
 | S5 | Verify elevon authority across the whole envelope, including gust and extreme CG | **C6 — never done before**, see `03-phase-1-plan.md` | S2, F2 CG |
 | S6 | TPU hinge stiffness (ω_β) | Enters the flutter analysis (G7) | S3 |
 | S7 | Flutter verification with Southwell if prior flight data exist, otherwise preliminary analysis | G7 | S3, S6 |
+| S8 | **V1 fin (ADR-0038):** strength at V_NE (root t ≥ 2.5 mm, FS 1.29 `[D]`), bending mode ≈ 9 Hz, wake buffeting from the pusher slipstream | OP-26; fin flutter/strength | S3, F2 CG |
 
 ⚠️ **S5 is the task that corrects failure mode #1.** No final hinge is sized and no mass balancing is computed without having passed S5.
 

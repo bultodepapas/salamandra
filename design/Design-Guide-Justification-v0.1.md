@@ -1,7 +1,7 @@
 # Salamandra — Design Guide: Justification
 
-**Version 0.2** · 5 August 2026 · Companion to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.2)
+**Version 0.6** · 6 August 2026 · Companion to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.6)
 
 This document records **why** every value in the Design Guide is what it is: the source,
 the confidence tag, and — where the repository has no datum — the assumption and its
@@ -231,9 +231,33 @@ everything else now and swap the profile later.
 
 1. I-07 — neutral point, static margin, torsion window (`research/I-07-neutral-point-torsion-window.md`)
 2. I-01…I-15 (`research/`)
-3. ADR-0001, 0002, 0004, 0007, 0010, 0015, 0021, 0022, 0024, 0025, 0026, 0027, 0028, 0032, 0033, 0034, 0035, 0036, 0037 (`decisions/`) — **files pending for**: 0003, 0006, 0012, 0023, 0024, 0026, 0030, 0031, 0034, 0035 (see OP-22)
+3. ADR-0001, 0002, 0004, 0007, 0010, 0015, 0021, 0022, 0024, 0025, 0026, 0027, 0028, 0032, 0033, 0034, 0035, 0036, 0037, **0038** (`decisions/`) — **files pending for**: 0003, 0006, 0012, 0023, 0024, 0026, 0030, 0031, 0034, 0035 (see OP-22)
 4. docs/00 (objectives and requirements), docs/02 (measured references), docs/03 (phase-1 plan), docs/05 (master plan)
 5. Ananda, Sukumar & Selig (2015); Brandt & Selig (AIAA 2011-1255); Spedding & McArthur (2010); UIUC databases
 6. Corrections applied in v0.2: C22 (dihedral definition), C23 (elevon span), C24 (print fit), C25 (motor station), C26 (prop clearance), C27 (tube length), C28 (MH 45 t/c) — `CHANGELOG.md`
 7. I-10…I-14 — investigation threads opened 2026-08-05 (control authority, airfoil database, X-29 divergence, pusher/tractor, launch): `research/`
 8. I-15 — airfoil evidence campaign (11 investigations, 6 partially executed): `research/`
+9. **I-20 — directional (yaw) stability and the centreline-fin variant** (`research/I-20-yaw-stability-centerline-fin.md`) — full justification of §5.4 of the guide; **`calculations/yaw_stability.py`** (six validation cases)
+10. **ADR-0038 — dual directional configuration** (`decisions/ADR-0038-fixed-fin-variant.md`); TBS Mojito primary sources `[M]` (product page, manual, official INAV CLI — I-20 §10)
+
+## 11. Directional stability and the fin variant (I-20, ADR-0038)
+
+| Value | Basis | Tag |
+|---|---|---|
+| Finless Cnβ = **−0.0006…−0.0015/deg** | Cnβ budget: body (Raymer/DATCOM, k_f 0.40–0.96, S_fs 0.040 m², l_f 0.780 m) −0.0006…−0.0014 + FSW wing ≤ −0.0001. **Negative across the band** — statically unstable yaw; the FSW wing sign and the nose boom both destabilize (I-02/I-20) | `[D]`/`[E]` |
+| Yaw divergence τ ≈ 0.7 s (worst) | 2-DOF (β, r) eigenvalues, I_z ≈ 0.28 kg·m² (pack at x ≈ −0.42 m contributes ≈ 0.08) | `[E]` |
+| Fin CLα ≈ 0.050–0.060/deg | Helmbold-Diederich AR_v 3.0, Λ 12° × low-Re factor 0.85–1.00 (printed surface, Re 1.5–3e5) | `[D]`/`[E]` |
+| V1a S_v = 2.1 dm² → Cnβ total +0.0001…+0.0010 (nominal +0.0005) | Solve Cnβ_fin = η·(1+dσ)·(S_v/S)·(l_v/b)·CLα_v for the target at band centre; η 1.25 (slipstream), l_v 0.404 m (fin AC +285), V_v 0.023 | `[D]` |
+| V1b S_v = 2.8 dm² → +0.0005…+0.0015 (nominal +0.0010) | Same method, robust tier; V_v 0.030 (tailless practice 0.02–0.05 `[I]`) | `[D]` |
+| **Rudder rejected** | |Cnδr| ≈ 0.00043/deg (τ 0.32) cannot hold a 20 km/h crosswind slip at stall (δr ≈ 24° > ±20°); differential elevons ≈ 1/5 of a rudder's authority; no mission need (bank-to-turn); Mojito precedent `[M]` has no rudder servo | `[D]`/`[M]` |
+| Fin root t ≥ 2.5 mm | Cantilever at V_NE, CN 1.0, slipstream: F ≈ 38 N at h 110 mm → M 4.2 N·m; σ 39 MPa (FS 1.29) at 2.5 mm vs 108 MPa (fail) at 1.5 mm; bending mode ≈ 9 Hz | `[D]` |
+| Fin mass 36–60 g | Solid PETG 1.2–2.0 mm × S_v 2.1 dm² + 15 % mount; V1b 47–79 g | `[E]` |
+| ΔCD0 ≈ +0.0014 (V1a) → +9.6 % energy | Cf 0.0057 (Re 2.8e5) × S_wet 0.042 m² × k_int 1.35 × η 1.25 / S; Wh/km ≈ 1.26 `[E]` — still below the 1.40 `[M]` Mojito | `[D]`/`[E]` |
+| V_stall V1a ≈ 46.7 km/h | +48 g over AUW 1697 g; OP-24/OP-26 lever (shell 550, boom ≤ 40, servos 48) → ≈ 45.7 km/h | `[D]` |
+
+**Why two published configurations and not one:** the O1 efficiency target (≤ 1.15
+Wh/km) lives at the clean end of the drag budget — only SALAMANDRA-CLEAN can carry it;
+but the first flights of a new FSW airframe with a negative Cnβ and no yaw effector are
+an avoidable risk, and the fin also doubles Cnr (cleaner E2/E3 pitch data). The fin is a
+passive CORE component: the variant costs a print and a screw, and it is removable —
+there is no reason to force the choice on the whole platform (O14).

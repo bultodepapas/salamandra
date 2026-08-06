@@ -120,3 +120,44 @@ An example printed in PETG with the geometry of an airfoil calculated for LW-PLA
 | R2 | Airfoil coordinates at several stations | Mesh slicing |
 | R3 | StuntDouble family geometry | **Partial** — datasheet compared in [I-08](../research/I-08-stuntdouble-family.md); planform and twist of the STLs still to reconstruct |
 | R4 | **Quasi-controlled planform comparison**: forward sweep vs *plank* | **Partial** — same author and comparable AR, but PW51/PW75 and propulsion confound the sweep effect |
+| R5 | **Mojito vertical-stabilizer dimensions** | Photos downloaded (2026-08-05, TBS gallery); measurement pending human verification — feeds OP-26 |
+
+---
+
+# 3. TBS Mojito — published primary sources `[M]`
+
+The only in-service commercial aircraft of the **same configuration class** as the
+Salamandra (forward sweep + nose + pusher). Sources accessed 2026-08-05 (I-20 §3): TBS
+product page, official manual (PDF), official INAV CLI file.
+
+## 3.1 Configuration data `[M]`
+
+| Parameter | Value |
+|---|---|
+| Wingspan / AUW | 1300 mm / ≈ 1800 g ("or more") |
+| Battery | 6S–8S, max 70 × 50 × 230 mm; 8S1P Li-Ion ideal |
+| Cruise | 90–120 km/h; peaks > 200 km/h |
+| Servos | **2 (elevons only)** — kit includes exactly two |
+| **Vertical stabilizer** | **Fixed**, mounted on the motor mount ("the longer screw … mainly holding the vertical stabilizer"); ESC bay under it; receiver/antenna compartment **inside** it; plastic LE cover removable (LED option) |
+| **Rudder** | **None** — no rudder servo, no rudder channel in the official INAV CLI (`servo 1/2` only, elevons ±12°, one reversed) |
+| Flight control | INAV 7.1.2 on the TBS Lucid F4; `fw_ff_roll = 93` (feed-forward roll → **bank-to-turn**), `fw_p_yaw = 7` (yaw PID present, no effector); `fw_level_pitch_trim = 1.996` (consistent with the FSW trim datum of I-02) |
+| Elevon throws | Pitch 15 mm up/down; roll 20 mm up / 15 mm down |
+| Motor | 1000 KV, 14 poles (ESC setup page) |
+| Trim datum | CG mark ≈ 1 cm aft of the LE at the bottom |
+
+## 3.2 Consequences for the project
+
+1. **The fixed-fin precedent is configuration-class `[M]`:** the Mojito — the closest
+   in-service relative of the Salamandra — chose a **fixed** vertical stabilizer and
+   **no rudder**. It validates the direction of ADR-0038/I-20 (fixed fin, bank-to-turn),
+   not any specific size.
+2. **The fin is an integration part, not just a surface:** it houses the antenna and the
+   ESC bay and shares the motor-mount screw pattern — the same double-duty the V1 spec
+   proposes for the Salamandra rear-pod extension (I-20 §7).
+3. **Bank-to-turn is the in-service yaw strategy of this configuration class:** the
+   official INAV CLI configures no yaw effector; heading is held through roll.
+4. **Trim datum reinforcement:** `fw_level_pitch_trim ≈ 2.0°` is a second in-service
+   datum (after the Peregrine "0 → 3°", I-02) of the FSW trim state.
+5. **Limitation:** dimensions of the stabilizer are not published; R5 (photo
+   measurement) is pending. One manufacturer, one sample — the same limitation class as
+   I-08/I-09.

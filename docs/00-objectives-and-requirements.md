@@ -141,6 +141,29 @@ Mass range **610 g, 41 % of the base AUW**.
 | GPS and magnetometer | Out of the root current path |
 | Launch | Autolaunch via acceleration detection |
 
+## 3.6 Directional configuration (ADR-0038)
+
+The platform publishes **two directional configurations** for the reference design,
+differing only in an optional fixed centreline fin (a CORE component — no servo, no
+linkage, no FC change):
+
+| | SALAMANDRA-CLEAN | SALAMANDRA-V1 |
+|---|---|---|
+| Vertical stabilizer | None | Fixed centreline fin (passive), S_v ≈ 2.1 dm² (V1a) |
+| Cnβ total | **−0.0006…−0.0015/deg — negative** (FC-stabilized, documented risk G10) | **+0.0001…+0.0010/deg** (nominal +0.0005) `[D]`/`[E]` |
+| Role | O1 efficiency build (≤ 1.15 Wh/km) | Recommended build for the Article #1 test programme |
+| Cost | — | 36–60 g `[E]` · ΔCD0 +0.0014 (+9.6 % energy `[E]`) · V_stall +0.6 km/h (OP-24 lever) |
+
+**Rudder (movable): not required** — authority analysis shows it cannot hold a 20 km/h
+crosswind slip at stall and the mission coordinates turns through roll (I-20 §5.4;
+Mojito precedent `[M]` carries a fixed stabilizer and no rudder servo). Reopened as a
+future variant only if the E-flight programme (E8) demonstrates a yaw-handling failure
+mode.
+
+Full analysis: [I-20](../research/I-20-yaw-stability-centerline-fin.md),
+[ADR-0038](../decisions/ADR-0038-fixed-fin-variant.md), `calculations/yaw_stability.py`.
+Closure of the directional gap (G10) is by flight test (E8).
+
 ---
 
 # 4. Dominant risk
