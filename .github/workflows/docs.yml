@@ -71,7 +71,7 @@ jobs:
 
       - name: Lint wiki markdown
         working-directory: wiki
-        run: npx --yes markdownlint-cli2 "content/**/*.md" "content/**/*.mdx"
+        run: npx --yes markdownlint-cli2 --config ../.markdownlint.json "content/**/*.md" "content/**/*.mdx"
 
       - name: Generate site content (strict) and build
         working-directory: wiki
