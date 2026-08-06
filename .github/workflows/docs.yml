@@ -47,9 +47,15 @@ jobs:
         working-directory: wiki
         run: npm ci
 
-      - name: Generate site content and build
+      - name: Check referential integrity
         working-directory: wiki
-        run: npm run build
+        run: node scripts/check-refs.mjs
+
+      - name: Generate site content (strict) and build
+        working-directory: wiki
+        run: |
+          node scripts/gen-site.mjs --strict
+          npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

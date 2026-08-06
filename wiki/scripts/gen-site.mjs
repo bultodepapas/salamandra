@@ -33,6 +33,11 @@ const EDIT = `https://github.com/${REPO}/edit/main/`;
 const warnings = [];
 const warn = (msg) => warnings.push(msg);
 
+// Strict mode (--strict): any unresolved internal link that is not a declared
+// forward reference fails the run. CI uses it as a traceability gate.
+const STRICT = process.argv.includes('--strict');
+const isKnownForwardRef = (w) => w.includes('prompts/');
+
 // ---------------------------------------------------------------------------
 // small helpers
 
@@ -313,16 +318,24 @@ function genResearchIndex() {
       const md = readAbs(src);
       const title = extractTitle(md) || f;
       const status = md.match(/\*\*Status:\*\*\s*([^\n]+)/)?.[1] || '';
+      const closes =
+        md.match(/\*\*(?:Partially )?closes?:\*\*\s*([^\n]+)/i)?.[1] || '';
+      const feeds = md.match(/\*\*Feeds:\*\*\s*([^\n]+)/)?.[1] || '';
       const num = f.match(/^I-(\d{2})/)?.[1] || '';
       return {
         num,
         title: title.replace(/^I-\d{2}\s*—\s*/, ''),
         status: clean(status),
+        closes: clean(closes),
+        feeds: clean(feeds),
         url: destToUrl(`research/${f.toLowerCase()}`),
       };
     });
   const table = rows
-    .map((r) => `| [I-${r.num}](${r.url}) | ${r.title} | ${r.status} |`)
+    .map(
+      (r) =>
+        `| [I-${r.num}](${r.url}) | ${r.title} | ${r.status} | ${r.closes || '—'} | ${r.feeds || '—'} |`,
+    )
     .join('\n');
   writeOut(
     'research/index.md',
@@ -333,8 +346,8 @@ function genResearchIndex() {
 
 What was searched, what was found, with what sources — **not** what was decided (that is the [ADR index](../decisions/)). Generated at build time.
 
-| Thread | Topic | Status |
-|---|---|---|
+| Thread | Topic | Status | Closes | Feeds |
+|---|---|---|---|---|
 ${table}
 
 See also: [first investigation](./first-investigation/).
@@ -480,6 +493,54 @@ ${table}
 }
 
 // ---------------------------------------------------------------------------
+// llms.txt — the site map for AI agents, derived from the served pages
+
+function genLlmsTxt() {
+  const pages = [
+    ['', 'Salamandra — open 3D-printed FPV aircraft platform'],
+    ['guide/01-getting-started', 'Getting started'],
+    ['guide/02-how-to-read', 'How to read this repository'],
+    ['guide/03-architecture', 'Architecture'],
+    ['guide/04-glossary', 'Glossary'],
+    ['guide/05-contributing', 'Contributing'],
+    ['salamandra', 'Salamandra reference design'],
+    ['salamandra/design-guide', 'Design guide v0.1'],
+    ['salamandra/design-guide-justification', 'Design guide justification'],
+    ['salamandra/design-guide-open-points', 'Design guide open points'],
+    ['decisions', 'Decision record (ADR)'],
+    ['research', 'Research threads'],
+    ['gaps', 'Gap register'],
+    ['tests', 'Experimental program'],
+    ['calculations', 'Calculations'],
+    ['calculations/reproduction-guide', 'Reproduction guide'],
+    ['reference', 'Reference documents'],
+    ['reference/00-objectives-and-requirements', 'Objectives and requirements'],
+    ['reference/03-phase-1-plan', 'Phase-1 plan'],
+    ['platform/readme', 'Project readme'],
+    ['platform/changelog', 'Changelog'],
+    ['platform/contributing', 'Contributing'],
+  ];
+  const lines = [
+    '# Salamandra',
+    '',
+    'Open, community-driven 3D-printed FPV aircraft platform. The reasoning is the product:',
+    'every decision carries its rationale, its source and its confidence level ([M]/[D]/[E]/[I]).',
+    '',
+    '## Key pages',
+    '',
+  ];
+  for (const [p, label] of pages) {
+    const url = pagePaths.get(p);
+    if (url) lines.push(`- ${label}: ${url}`);
+  }
+  lines.push('');
+  const out = path.join(WIKI, 'public', 'llms.txt');
+  mkdirSync(path.dirname(out), { recursive: true });
+  writeFileSync(out, lines.join('\n'), 'utf8');
+  console.log(`[gen-site] wrote ${lines.length - 1} llms.txt entries.`);
+}
+
+// ---------------------------------------------------------------------------
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
@@ -492,6 +553,7 @@ genSalamandraIndex();
 genReferenceIndex();
 genCalculationsIndex();
 genPlatformIndex();
+genLlmsTxt();
 
 const count = (p) =>
   readdirSync(path.join(OUT, ...p.split('/')), { withFileTypes: true }).filter((e) => e.isFile()).length;
@@ -504,6 +566,15 @@ console.log(
 if (warnings.length) {
   console.warn(`[gen-site] ${warnings.length} unresolved link warning(s):`);
   for (const w of warnings) console.warn(`  - ${w}`);
+  if (STRICT) {
+    const blocking = warnings.filter((w) => !isKnownForwardRef(w));
+    if (blocking.length) {
+      console.error(
+        `[gen-site] STRICT: ${blocking.length} unresolved link(s) not declared as forward references.`,
+      );
+      process.exitCode = 1;
+    }
+  }
 } else {
   console.log('[gen-site] no unresolved internal links.');
 }

@@ -1,17 +1,29 @@
 # Salamandra
 
-Open, community-driven 3D-printed FPV aircraft platform. The reasoning is the product: every decision carries its rationale, its source and its confidence level.
+Open, community-driven 3D-printed FPV aircraft platform. The reasoning is the product:
+every decision carries its rationale, its source and its confidence level ([M]/[D]/[E]/[I]).
 
 ## Key pages
 
-- Getting started: /guide/01-getting-started/
-- Design guide v0.1: /salamandra/design-guide/
-- Decision record (ADR): /decisions/
-- Research threads: /research/
-- Gap register: /gaps/
-- Experimental program: /tests/
-- Calculations: /calculations/
-- Reproduction guide: /calculations/reproduction-guide/
-- Phase-1 plan: /reference/03-phase-1-plan/
-- Glossary: /guide/04-glossary/
-- Changelog: /platform/changelog/
+- Salamandra — open 3D-printed FPV aircraft platform: /salmandra/
+- Getting started: /salmandra/guide/01-getting-started/
+- How to read this repository: /salmandra/guide/02-how-to-read/
+- Architecture: /salmandra/guide/03-architecture/
+- Glossary: /salmandra/guide/04-glossary/
+- Contributing: /salmandra/guide/05-contributing/
+- Salamandra reference design: /salmandra/salamandra/
+- Design guide v0.1: /salmandra/salamandra/design-guide/
+- Design guide justification: /salmandra/salamandra/design-guide-justification/
+- Design guide open points: /salmandra/salamandra/design-guide-open-points/
+- Decision record (ADR): /salmandra/decisions/
+- Research threads: /salmandra/research/
+- Gap register: /salmandra/gaps/
+- Experimental program: /salmandra/tests/
+- Calculations: /salmandra/calculations/
+- Reproduction guide: /salmandra/calculations/reproduction-guide/
+- Reference documents: /salmandra/reference/
+- Objectives and requirements: /salmandra/reference/00-objectives-and-requirements/
+- Phase-1 plan: /salmandra/reference/03-phase-1-plan/
+- Project readme: /salmandra/platform/readme/
+- Changelog: /salmandra/platform/changelog/
+- Contributing: /salmandra/platform/contributing/

@@ -32,6 +32,7 @@ npm run dev          # local server (regenerates content first)
 npm run build        # production build (regenerates content first)
 npm run gen          # regenerate site content only
 npm run check        # astro check (type + schema validation)
+npm run check:refs   # referential integrity: broken .md links + unknown ADR/I/G/E ids
 ```
 
 `predev`/`prebuild` hooks run the generator automatically, so `npm run dev` and
@@ -55,10 +56,17 @@ Links between pages should be **relative** to the served location (e.g. from
 
 ## Checks that protect the record
 
-- The generator reports **unresolved internal links** on stderr. A new broken link
-  appears in the build log; keep the count at zero except for known forward
-  references (e.g. `prompts/` in the design guide).
+- **Referential integrity** (`check:refs`, run in CI): every inline markdown link
+  in the repo that targets a local `.md` file must resolve, and every mention of
+  `ADR-XXXX` / `I-XX` / `GX` / `EX` must match a real or intentionally
+  fileless record (superseded ADRs, withdrawn tests).
+- **Strict generation** (`gen-site.mjs --strict`, run in CI): the generator fails
+  on unresolved internal links that are not declared forward references
+  (currently only `prompts/` in the design guide).
+- The generator reports **unresolved internal links** on stderr; keep the count at
+  zero except for declared forward references.
 - Starlight's schema validation fails the build if a generated page is missing a
   required field.
-- The CI job (`npm ci` → `npm run build`) is the same pipeline used locally, so
-  what builds in CI builds here.
+- The CI job (`npm ci` → `node scripts/check-refs.mjs` → `gen-site --strict` →
+  `npm run build`) is the same pipeline used locally, so what builds in CI builds
+  here.
