@@ -1,6 +1,6 @@
 # Salamandra — Design Guide
 
-**Version 0.8** · 6 August 2026 · Status: **DRAFT — for designer review**
+**Version 0.9** · 6 August 2026 · Status: **DRAFT — for designer review**
 
 This document is the working specification handed to the CAD designer. It defines the
 reference configuration (Cruise, Article #1) of the Salamandra modular 3D-printed FPV
@@ -29,7 +29,7 @@ version live in [`prompts/`](prompts/).
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.8 |
+| Version | 0.9 |
 | Date | 2026-08-06 |
 | Status | DRAFT — pending designer iteration and Phase 1 closure |
 | Reference configuration | **Cruise — Article #1** |
@@ -445,6 +445,11 @@ following **binding constraints**; the final body shape is designer's choice wit
 > **V1 variant (ADR-0038):** + fin 36–60 g `[E]` at x ≈ +285 (I-20) → AUW ≈ 1733–1757 g;
 > ≈ 4 mm forward CG shift, absorbed by the battery slide; V_stall 46.7–47.0 km/h —
 > OP-24/OP-26 lever to F2. Finless CLEAN budget is the table above.
+>
+> **Material variants:** per-part mass with PETG / AERO-PLA wings / PLA+ policies in
+> `mass_budget.py` (docs/06): ALL PETG 1687 g (I-16 pack `[D]` 445 g, −10 g vs the
+> `[E]` 455 row above) · AERO WINGS 1508 g (stall-compliant, conditional on the
+> divergence re-check, OP-28) · PLA+ 1670 g (ADR-0016 rejected material).
 
 ### 8.2 CG target
 
@@ -578,6 +583,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
+| 0.9 | 2026-08-06 | **Material mass variants tool integrated (§8.1 note, OP-28):** `mass_budget.py` — per-part materials (PETG / AERO-PLA wings / PLA+), battery 4S–6S × P42A/50E (I-16 `[D]` pack model: baseline 1687 g, −10 g vs the `[E]` 455 g row), FC (I-17), FPV (I-19), motor/prop/servo options, V1 fin; results in docs/06. |
 | 0.8 | 2026-08-06 | **Filament dowel pins adopted (ADR-0039):** 2 × Ø1.75 mm filament per glued segment joint (alignment + shear redundancy, FS ≈ 11 `[D]`); holes Ø1.8–1.9 at x/c 0.40/0.60 with solid collars Ø8×4 (§7.3/§7.4/§12); fin root +1 dowel (§5.4); 2.6 g/aircraft, zero cost. Carbon Ø6 pin of the torque couple unchanged (pin-material trade, ADR-0031). |
 | 0.7 | 2026-08-06 | **Legacy DJI O3 Air Unit integrated (I-19 §2.4 `[M]`):** camera 21.2×20×19.5 mm fits the §7.6 cavity, module 32.5×30.5×14.5 fits the VTX tray, mass ≈ 39 g (§8.1 note); **all 14 missing ADR files published** (OP-22 closed) and referenced in §13; guide v0.7. |
 | 0.6 | 2026-08-06 | **Dual directional configuration (ADR-0038, I-20):** optional fixed centreline fin registered in §7.6 (rear-pod extension ≈ 30 mm, S_v ≈ 2.1 dm², b_v ≈ 250 mm, root t ≥ 2.5 mm, no rudder); finless baseline remains the O1 build; C16 stall tension with the fin mass flagged to F2 (OP-24); `yaw_stability.py` added |

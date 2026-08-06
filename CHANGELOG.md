@@ -4,6 +4,33 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.19] — 2026-08-06
+
+**Material mass variants tool (F2-class) — `mass_budget.py` + `docs/06`.**
+
+New data-driven weight calculator with per-part material selection: **ALL PETG**
+(baseline), **AERO WINGS / AERO MAX** (LW-PLA wings/tips ± elevons), **PLA+** (rejected
+material, computed for completeness), or arbitrary per-part assignment. Options:
+battery 4S1P/6S1P/4S2P/6S2P × Molicel P42A/Samsung 50E (I-16 `[D]` model), FC catalog
+(I-17 `[M]`, 8.4–26 g), FPV O4/Pro/Lite/O3 (I-19 `[M]`), motor/prop/servo class, V1 fin
+(ADR-0038). Twelve validation cases, ALL PASS.
+
+- **Baseline refinement (−10 g):** the script uses the I-16 `[D]` pack mass 445 g
+  (validated vs the measured packs) instead of the guide §8.1 `[E]` 455 g → 1687 g /
+  45.9 km/h vs 1697 / 46.1. The OP-24 stall tension holds in both; the guide's figures
+  remain the conservative published values.
+- **Results (6S1P P42A, O4 Pro, CLEAN):** ALL PETG 1687 g / 45.9 km/h · **AERO WINGS
+  1508 g / 43.4 (stall-compliant, −179 g)** · AERO MAX 1457 g / 42.7 · PLA+ 1670 g.
+- **Engineering flags:** AERO wings are E ≈ 0.5× PETG → divergence/torsion re-check
+  required before airworthiness (OP-28, F4/S3–S4); AERO needs flow 0.60 (never 0.95);
+  elevon balance mass derived from elevon mass (ADR-0025); PLA+ stays rejected
+  (ADR-0016).
+- Documents: `docs/06-material-mass-variants.md` (new), guide **v0.9** (§8.1 note),
+  open-points v0.9 (OP-28), calculations/README §13, docs/README index.
+  **Corrections:** none (refinement, not overturn).
+
+---
+
 ## [1.18] — 2026-08-06
 
 **Filament dowel pins adopted in the glued segment joints (ADR-0039).**

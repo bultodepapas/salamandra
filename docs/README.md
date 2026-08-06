@@ -13,6 +13,7 @@ define the reference design and the platform's conventions. See the
 | [`03-phase-1-plan.md`](03-phase-1-plan.md) | Phase 1 execution plan |
 | [`04-conventions.md`](04-conventions.md) | Tags, identifiers, symbols, signs |
 | [`05-master-plan.md`](05-master-plan.md) | Roadmap F1→F6 to the first prototype, integrating the CAD flow |
+| [`06-material-mass-variants.md`](06-material-mass-variants.md) | **Mass budget tool and results** — PETG / AERO-PLA wings / PLA+ policies, per-part materials, battery/FC/FPV options (`calculations/mass_budget.py`) |
 | `first_investigation.md` | Rev. 1.0, initial research *(add manually)* |
 
 **Decisions** live in [`../decisions/`](../decisions/), the **why** in [`../research/`](../research/), what we do **not know** in [`../gaps/`](../gaps/).

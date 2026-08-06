@@ -49,6 +49,7 @@ Data sources consumed (all `[M]`):
 | `yaw_stability.py` | **I-20: directional stability** — Cnβ budget (finless baseline vs centreline fin), fin sizing tiers V1a/V1b, rudder-authority vs crosswind, yaw damping/subsidence, fin bending at V_NE, mass/drag/stall cost | I-20, first variant (O14), guide §7.6, G10 | numpy |
 | `joint_pin_trade.py` | **ADR-0031: pin material trade** — carbon Ø6 vs printer filament (PETG/PLA Ø1.75) in the R-JOINT torque couple: strength (FS ≥ 3 all candidates) vs stiffness (E·I: filament ≈ 9000× softer → k_joint collapses → −29 % V_div per ADR-0032) | ADR-0031/0032, guide §7.3 | numpy |
 | `filament_dowel_pins.py` | **ADR-0039: dowel pins in the glued joints** — 2 × Ø1.75 filament per segment joint: shear demand at +6 g vs double-shear capacity (FS ≈ 11/24), position clearance (tube/hinge), collar bearing, mass 2.6 g | ADR-0039, guide §7.3/§7.4/§12, OP-27 | numpy |
+| `mass_budget.py` | **F2: material mass variants** — per-part material policies (ALL PETG baseline / AERO-PLA wings / PLA+ / arbitrary), battery 4S–6S × P42A/50E (I-16 model), FC catalog (I-17), FPV (I-19), motor/prop/servo options, V1 fin; AUW, g/dm², V_stall, printed cost | docs/06, guide §8.1, F2 (P1/P2), OP-28 | numpy |
 
 ## Reproducing the published results
 
@@ -247,6 +248,23 @@ and 24 (y = 498) `[D]`; positions x/c 0.40/0.60 verified clear of the carbon tub
 the hinge cell; collar Ø8 × 4 mm bearing FS ≈ 10; mass 2.6 g/aircraft, zero cost.
 The CORE↔PANEL torque couple is untouched (carbon Ø6 — `joint_pin_trade.py`). Six
 validation cases must pass.
+
+### 13. Material mass variants (F2 — docs/06)
+
+```bash
+python3 mass_budget.py --config all            # ALL PETG / AERO WINGS / AERO MAX / PLA+
+python3 mass_budget.py --config matrix         # per-part × material matrix
+python3 mass_budget.py --config aero_wings --battery 4S1P --fin
+python3 mass_budget.py --config all_petg --fc F765-WING --fpv O4-Lite
+```
+
+Data-driven weight budget with per-part material selection. Reproduces the guide §8.1
+baseline with the I-16 `[D]` pack mass (1687 g / 45.9 km/h — the guide's 1697/46.1 use
+the older `[E]` 455 g pack; a −10 g refinement, tension unchanged). Published results
+(docs/06 §3): ALL PETG 1687 g / 45.9; **AERO WINGS 1508 g / 43.4 (stall-compliant,
+conditional on the divergence re-check, OP-28)**; AERO MAX 1457 g / 42.7; PLA+ 1670 g
+(ADR-0016 rejected material). Twelve validation cases — a change to materials, parts,
+packs or options must reproduce them.
 
 ---
 
