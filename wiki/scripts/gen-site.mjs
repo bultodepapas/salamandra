@@ -493,51 +493,63 @@ ${table}
 }
 
 // ---------------------------------------------------------------------------
-// llms.txt — the site map for AI agents, derived from the served pages
+// llms.txt — site map for AI agents, generated per the llmstxt.org spec:
+// H1 + blockquote summary + H2 sections of markdown hyperlinks [name](url): notes.
 
 function genLlmsTxt() {
-  const pages = [
-    ['', 'Salamandra — open 3D-printed FPV aircraft platform'],
-    ['guide/01-getting-started', 'Getting started'],
-    ['guide/02-how-to-read', 'How to read this repository'],
-    ['guide/03-architecture', 'Architecture'],
-    ['guide/04-glossary', 'Glossary'],
-    ['guide/05-contributing', 'Contributing'],
-    ['salamandra', 'Salamandra reference design'],
-    ['salamandra/design-guide', 'Design guide v0.1'],
-    ['salamandra/design-guide-justification', 'Design guide justification'],
-    ['salamandra/design-guide-open-points', 'Design guide open points'],
-    ['decisions', 'Decision record (ADR)'],
-    ['research', 'Research threads'],
-    ['gaps', 'Gap register'],
-    ['tests', 'Experimental program'],
-    ['calculations', 'Calculations'],
-    ['calculations/reproduction-guide', 'Reproduction guide'],
-    ['reference', 'Reference documents'],
-    ['reference/00-objectives-and-requirements', 'Objectives and requirements'],
-    ['reference/03-phase-1-plan', 'Phase-1 plan'],
-    ['platform/readme', 'Project readme'],
-    ['platform/changelog', 'Changelog'],
-    ['platform/contributing', 'Contributing'],
-  ];
+  const section = (title, items) => {
+    if (!items.length) return [];
+    return ['', `## ${title}`, ''].concat(
+      items.map(([label, page, note]) => {
+        const url = pagePaths.get(page);
+        return url ? `- [${label}](${url})${note ? `: ${note}` : ''}` : null;
+      }).filter(Boolean),
+    );
+  };
   const lines = [
     '# Salamandra',
     '',
-    'Open, community-driven 3D-printed FPV aircraft platform. The reasoning is the product:',
-    'every decision carries its rationale, its source and its confidence level ([M]/[D]/[E]/[I]).',
-    '',
-    '## Key pages',
-    '',
+    '> Open, community-driven 3D-printed FPV aircraft platform. The reasoning is the product:',
+    '> every decision carries its rationale, its source and its confidence level (`[M]`/`[D]`/`[E]`/`[I]`),',
+    '> and every published number can be reproduced from a validated script.',
+    ...section('Getting started', [
+      ['Getting started', 'guide/01-getting-started', 'The shortest path from zero to a working model'],
+      ['How to read this repository', 'guide/02-how-to-read', 'Folder map and traceability flow'],
+      ['Architecture', 'guide/03-architecture', 'How research, decisions, gaps, tests and calculations feed each other'],
+      ['Glossary', 'guide/04-glossary', 'Confidence tags, identifiers, signs and key terms'],
+      ['Contributing', 'guide/05-contributing', 'Order of value of contributions and the workflow'],
+    ]),
+    ...section('Design', [
+      ['Salamandra design', 'salamandra', 'The forward-swept flying wing reference design'],
+      ['Design guide v0.1', 'salamandra/design-guide', 'The CAD-ready specification'],
+      ['Design guide justification', 'salamandra/design-guide-justification', 'Why every number is what it is'],
+      ['Open points', 'salamandra/design-guide-open-points', 'What still constrains the design'],
+    ]),
+    ...section('Reference', [
+      ['Decision record (ADR)', 'decisions', 'One file per decision: context, alternatives, consequences'],
+      ['Research threads', 'research', 'What was searched, found, and with what sources'],
+      ['Gap register', 'gaps', 'What we do not know and how it gets closed'],
+      ['Experimental program', 'tests', 'The tests that turn estimates into measurements'],
+      ['Calculations', 'calculations', 'Validated, rerunnable analysis scripts'],
+      ['Reproduction guide', 'calculations/reproduction-guide', 'Commands and validation discipline'],
+      ['Objectives and requirements', 'reference/00-objectives-and-requirements', 'The Phase-0 specification'],
+      ['Phase-1 plan', 'reference/03-phase-1-plan', 'What is due now'],
+    ]),
+    ...section('Platform', [
+      ['Project readme', 'platform/readme', 'Status and full navigation'],
+      ['Changelog', 'platform/changelog', 'Corrections C1–C21'],
+      ['Contributing', 'platform/contributing', 'Full contribution guide'],
+    ]),
+    ...section('Optional', [
+      ['First investigation', 'research/first-investigation', 'The original Rev 1.0 research'],
+      ['AI working rules', 'platform/ai-context', 'The rules AI assistants follow here'],
+      ['Documentation licence', 'platform/license-docs', 'CC BY-SA 4.0'],
+    ]),
   ];
-  for (const [p, label] of pages) {
-    const url = pagePaths.get(p);
-    if (url) lines.push(`- ${label}: ${url}`);
-  }
-  lines.push('');
   const out = path.join(WIKI, 'public', 'llms.txt');
   mkdirSync(path.dirname(out), { recursive: true });
-  writeFileSync(out, lines.join('\n'), 'utf8');
-  console.log(`[gen-site] wrote ${lines.length - 1} llms.txt entries.`);
+  writeFileSync(out, lines.join('\n') + '\n', 'utf8');
+  console.log('[gen-site] regenerated llms.txt per the llmstxt.org spec.');
 }
 
 // ---------------------------------------------------------------------------

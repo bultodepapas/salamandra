@@ -1,29 +1,43 @@
 # Salamandra
 
-Open, community-driven 3D-printed FPV aircraft platform. The reasoning is the product:
-every decision carries its rationale, its source and its confidence level ([M]/[D]/[E]/[I]).
+> Open, community-driven 3D-printed FPV aircraft platform. The reasoning is the product:
+> every decision carries its rationale, its source and its confidence level (`[M]`/`[D]`/`[E]`/`[I]`),
+> and every published number can be reproduced from a validated script.
 
-## Key pages
+## Getting started
 
-- Salamandra — open 3D-printed FPV aircraft platform: /salmandra/
-- Getting started: /salmandra/guide/01-getting-started/
-- How to read this repository: /salmandra/guide/02-how-to-read/
-- Architecture: /salmandra/guide/03-architecture/
-- Glossary: /salmandra/guide/04-glossary/
-- Contributing: /salmandra/guide/05-contributing/
-- Salamandra reference design: /salmandra/salamandra/
-- Design guide v0.1: /salmandra/salamandra/design-guide/
-- Design guide justification: /salmandra/salamandra/design-guide-justification/
-- Design guide open points: /salmandra/salamandra/design-guide-open-points/
-- Decision record (ADR): /salmandra/decisions/
-- Research threads: /salmandra/research/
-- Gap register: /salmandra/gaps/
-- Experimental program: /salmandra/tests/
-- Calculations: /salmandra/calculations/
-- Reproduction guide: /salmandra/calculations/reproduction-guide/
-- Reference documents: /salmandra/reference/
-- Objectives and requirements: /salmandra/reference/00-objectives-and-requirements/
-- Phase-1 plan: /salmandra/reference/03-phase-1-plan/
-- Project readme: /salmandra/platform/readme/
-- Changelog: /salmandra/platform/changelog/
-- Contributing: /salmandra/platform/contributing/
+- [Getting started](/salmandra/guide/01-getting-started/): The shortest path from zero to a working model
+- [How to read this repository](/salmandra/guide/02-how-to-read/): Folder map and traceability flow
+- [Architecture](/salmandra/guide/03-architecture/): How research, decisions, gaps, tests and calculations feed each other
+- [Glossary](/salmandra/guide/04-glossary/): Confidence tags, identifiers, signs and key terms
+- [Contributing](/salmandra/guide/05-contributing/): Order of value of contributions and the workflow
+
+## Design
+
+- [Salamandra design](/salmandra/salamandra/): The forward-swept flying wing reference design
+- [Design guide v0.1](/salmandra/salamandra/design-guide/): The CAD-ready specification
+- [Design guide justification](/salmandra/salamandra/design-guide-justification/): Why every number is what it is
+- [Open points](/salmandra/salamandra/design-guide-open-points/): What still constrains the design
+
+## Reference
+
+- [Decision record (ADR)](/salmandra/decisions/): One file per decision: context, alternatives, consequences
+- [Research threads](/salmandra/research/): What was searched, found, and with what sources
+- [Gap register](/salmandra/gaps/): What we do not know and how it gets closed
+- [Experimental program](/salmandra/tests/): The tests that turn estimates into measurements
+- [Calculations](/salmandra/calculations/): Validated, rerunnable analysis scripts
+- [Reproduction guide](/salmandra/calculations/reproduction-guide/): Commands and validation discipline
+- [Objectives and requirements](/salmandra/reference/00-objectives-and-requirements/): The Phase-0 specification
+- [Phase-1 plan](/salmandra/reference/03-phase-1-plan/): What is due now
+
+## Platform
+
+- [Project readme](/salmandra/platform/readme/): Status and full navigation
+- [Changelog](/salmandra/platform/changelog/): Corrections C1–C21
+- [Contributing](/salmandra/platform/contributing/): Full contribution guide
+
+## Optional
+
+- [First investigation](/salmandra/research/first-investigation/): The original Rev 1.0 research
+- [AI working rules](/salmandra/platform/ai-context/): The rules AI assistants follow here
+- [Documentation licence](/salmandra/platform/license-docs/): CC BY-SA 4.0

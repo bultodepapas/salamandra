@@ -9,22 +9,33 @@ const { diagram } = Astro.props;
 <pre class="mermaid">{diagram.trim()}</pre>
 
 <script>
-  // Lazy-load mermaid so the ~1 MB library stays in its own async chunk and is
-  // only fetched on pages that actually render a diagram.
-  function renderAll() {
+  // Mermaid is lazy-loaded and re-rendered when the Starlight theme changes,
+  // so diagrams stay legible in both light and dark mode.
+
+  function isDark() {
+    const theme = document.documentElement.dataset.theme;
+    if (theme === 'dark') return true;
+    if (theme === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  async function renderAll() {
     const nodes = document.querySelectorAll('pre.mermaid');
     if (!nodes.length) return;
-    import('mermaid').then(async ({ default: mermaid }) => {
-      mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
-      for (const [i, el] of Array.from(nodes).entries()) {
-        try {
-          const { svg } = await mermaid.render(`mermaid-svg-${i}`, el.textContent || '');
-          el.outerHTML = svg;
-        } catch (err) {
-          console.warn('Mermaid render failed:', err);
-        }
-      }
+    const { default: mermaid } = await import('mermaid');
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'strict',
+      theme: isDark() ? 'dark' : 'default',
     });
+    for (const [i, el] of Array.from(nodes).entries()) {
+      try {
+        const { svg } = await mermaid.render(`mermaid-svg-${i}`, el.textContent || '');
+        el.outerHTML = svg;
+      } catch (err) {
+        console.warn('Mermaid render failed:', err);
+      }
+    }
   }
 
   if (document.readyState === 'loading') {
@@ -32,4 +43,10 @@ const { diagram } = Astro.props;
   } else {
     renderAll();
   }
+
+  // Re-render when Starlight toggles the theme (data-theme attribute).
+  new MutationObserver(() => renderAll()).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
 </script>

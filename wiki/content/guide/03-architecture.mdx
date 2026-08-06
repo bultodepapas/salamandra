@@ -13,6 +13,8 @@ The project is built as a closed loop of evidence. A claim does not enter the de
 ## The reasoning ecosystem
 
 <Mermaid diagram={`
+accTitle: The reasoning ecosystem
+accDescr: Research threads feed the ADRs and the gap register. ADRs feed the design guide, which is realized as community CAD parts. Tests close gaps and feed measured data back to research.
 flowchart LR
   SRC["[M] primary sources<br/>UIUC · aerodesign.de · flight data"] --> CALC["Calculations<br/>validated scripts"]
   CALC --> RES["Research threads (I-XX)"]
@@ -33,6 +35,8 @@ Every arrow is a **traceability link**: a research thread names the sources and 
 A number earns its place through four levels:
 
 <Mermaid diagram={`
+accTitle: The confidence chain
+accDescr: A number starts as a measured datum, is turned into a derived value by calculation, or is declared as an estimate or an unverified inference.
 flowchart LR
   M["[M] Measured<br/>primary source"] --> D["[D] Derived by calculation<br/>from [M] data"]
   D --> E["[E] Estimated<br/>declared assumptions"]
