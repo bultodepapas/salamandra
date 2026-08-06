@@ -18,6 +18,23 @@ on:
       - 'CONTRIBUTING.md'
       - 'CLAUDE.md'
       - '.github/workflows/docs.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'wiki/**'
+      - 'README.md'
+      - 'docs/**'
+      - 'design/**'
+      - 'decisions/**'
+      - 'research/**'
+      - 'gaps/**'
+      - 'tests/**'
+      - 'calculations/**'
+      - 'first_investigation.md'
+      - 'CHANGELOG.md'
+      - 'CONTRIBUTING.md'
+      - 'CLAUDE.md'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 permissions:
@@ -26,7 +43,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  # One deploy at a time on main; PRs run their own checks in parallel.
+  group: pages-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
   cancel-in-progress: true
 
 jobs:
@@ -51,6 +69,10 @@ jobs:
         working-directory: wiki
         run: node scripts/check-refs.mjs
 
+      - name: Lint wiki markdown
+        working-directory: wiki
+        run: npx --yes markdownlint-cli2 "content/**/*.md" "content/**/*.mdx"
+
       - name: Generate site content (strict) and build
         working-directory: wiki
         run: |
@@ -66,6 +88,8 @@ jobs:
           path: wiki/dist
 
   deploy:
+    # Deploy only on pushes to main; PRs run the build and checks only.
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
