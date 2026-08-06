@@ -143,7 +143,24 @@ def main():
           f"stiffness added at the root")
     print(f"   mass (Ø3, 300 mm) = {m3*1000:.1f} g — negligible")
 
-    # ---- 6. Validation cases ----
+    # ---- 6. Tube channel vs dihedral kinks (CAD question Q2) ----
+    print("\n6. TUBE CHANNEL vs DIHEDRAL KINKS (CAD question Q2)")
+    # cumulative dihedral per segment (guide §5.3): CORE 0 / seg1 1.07 /
+    # seg2 1.53 / seg3 2.0 deg -> kinks at y=195 (1.07), 347 (0.46), 498 (0.47)
+    kinks = [1.07, 0.46, 0.47]
+    t_joint = 0.010                    # m, joint-face thickness (tenon) [E]
+    clear_ch = (0.0126 - 0.012) / 2    # radial clearance of the Ø12.4-12.6 channel
+    for kdeg in kinks:
+        dev = t_joint * np.tan(np.radians(kdeg))
+        print(f"   kink {kdeg:.2f}°: deviation across the joint face = "
+              f"{dev*1000:.2f} mm vs channel radial clearance "
+              f"{clear_ch*1000:.2f} mm -> "
+              f"{'FITS' if dev < clear_ch else 'INTERFERES'}")
+    k_flat = max(kinks)
+    dev_max = t_joint * np.tan(np.radians(k_flat))
+    # (checks moved to section 7 — check() is defined there)
+
+    # ---- 7. Validation cases ----
     print("\n6. VALIDATION CASES")
     ok = True
 
@@ -183,6 +200,18 @@ def main():
     check(f"Ø3 spar adds >= 50 % of the fin-root EI "
           f"(spar {ei3:.3f} vs root {ei_fin_root:.3f}; total "
           f"{(ei3+ei_fin_root)/ei_fin_root:.2f}x)", ei3 >= 0.5 * ei_fin_root)
+    # tube channel vs dihedral kinks (CAD question Q2)
+    clear_ch = (0.0126 - 0.012) / 2
+    dev_max = t_joint * np.tan(np.radians(max(kinks)))
+    check(f"Largest kink {max(kinks):.2f}° deviates {dev_max*1000:.2f} mm < "
+          f"clearance {clear_ch*1000:.2f} mm (straight channels OK)",
+          dev_max < clear_ch)
+    L_seg = 0.151
+    kappa = np.radians(0.47) / L_seg
+    sig_bend = 105e9 * 0.006 * kappa
+    check(f"Even forced, the kink bends the tube elastically at "
+          f"σ = {sig_bend/1e6:.0f} MPa (CFRP ~1600 MPa) — no plastic set",
+          sig_bend < 100e6)
 
     print(f"\n   VALIDATION: {'ALL PASS' if ok else 'FAILURES PRESENT'}")
     sys.exit(0 if ok else 1)

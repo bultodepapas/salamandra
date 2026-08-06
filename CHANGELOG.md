@@ -4,6 +4,21 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.25] — 2026-08-06
+
+**CAD questions Q1–Q5 answered — guide v0.13 (modelable as-is).**
+
+The 5 questions a CAD designer would raise are now resolved in the guide:
+
+- **Q1 — Cradle replaces the battery bay:** printed cradle (2 halves, 155×66×24 mm inner, ≤ 15 g, Ø8.2 channel gripping the tube, 2× velcro + spring-lock hatch) replaces the internal 200×70×32 bay; pack centred at x ≈ −415 between the two supports; CORE has no bay; boom socket Ø8.2 at z = 0 with a 4-perimeter collar (§7.6).
+- **Q2 — Tube/pin channels vs dihedral kinks (`[D]`, `boom_flexion.py` §6):** straight bores Ø12.4–12.6 / Ø6.3–6.5 per flat segment; the kinks (max 1.07°) deviate the tube ≤ 0.19 mm across the joint face — inside the 0.30 mm radial clearance; even forced, the elastic bend is σ 34 MPa (CFRP ~1600) (§7.3).
+- **Q3 — Elevon as a separate part:** TPU hinge strip 4×6 mm × 390 mm glued in a 4.2×6.2 groove; balance pocket 40×14×12 mm at x/c 0.74, lid 1× M2, 40 g capacity; the lead amount (not the geometry) closes the ADR-0025 balance in CAD (§7.5).
+- **Q4 — Fin section:** symmetric biconvex plate, 2.5 → 1.5 mm, LE r 1.5 / TE 0.8 mm, Ø3 spar in a Ø3.2 LE channel, slot + dowel + M2 mount (§5.4).
+- **Q5 — CAD method declared:** solid bodies; slicer makes skin 0.9 + gyroid 5 %; web, channels, collars, cavities, sockets modelled explicitly; CORE torsion box closed to the TE; print orientation is a slicer task.
+- Documents: guide **v0.13** (§5.4/§7.2/§7.3/§7.5/§7.6 + CAD-method note), `boom_flexion.py` §6 (kink check, 13 validations ALL PASS). **Corrections:** the internal battery bay is superseded by the cradle (prototype decision, no analysis depended on it).
+
+---
+
 ## [1.24] — 2026-08-06
 
 **PROTOTYPE 0.1 materials decided (user): aluminium nose boom Ø8/int6 + Ø3 aft spar — `boom_flexion.py`.**

@@ -1,6 +1,6 @@
 # Salamandra — Design Guide
 
-**Version 0.12** · 6 August 2026 · Status: **DRAFT — for designer review**
+**Version 0.13** · 6 August 2026 · Status: **DRAFT — for designer review**
 
 This document is the working specification handed to the CAD designer. It defines the
 reference configuration (Cruise, Article #1) of the Salamandra modular 3D-printed FPV
@@ -29,7 +29,7 @@ version live in [`prompts/`](prompts/).
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.12 |
+| Version | 0.13 |
 | Date | 2026-08-06 |
 | Status | DRAFT — pending designer iteration and Phase 1 closure |
 | Reference configuration | **Cruise — Article #1** |
@@ -238,6 +238,7 @@ FC change).
 | Cnβ total | **−0.0006…−0.0015 /deg — negative** (statically unstable yaw `[E]`; FC-stabilized bank-to-turn, documented risk G10) | **+0.0001…+0.0010 /deg nominal +0.0005 (V1a)**; V1b +0.0005…+0.0015 `[D]` on `[E]` bands (I-20) |
 | Yaw mode | Divergence τ ≈ 0.7 s `[E]` | Damped subsidence τ ≈ 1.5 s; Cnr doubled `[E]` |
 | Fin geometry (V1a) | — | S_v ≈ **2.1 dm²**; trapezoid **b_v ≈ 250 mm, c_r ≈ 105, c_t ≈ 63 mm**, AR_v ≈ 3.0; swept tip; root t ≥ **2.5 mm** solid (σ ≈ 39 MPa, FS 1.29 at V_NE); fin AC ≈ **x = +285 mm** (l_v = 404 mm from CG −119); **rear-pod extension ≈ 30 mm** aft of x ≈ +265 |
+| **Fin section (CAD question Q4, answered 2026-08-06)** | **Symmetric biconvex plate** (Mojito-pattern `[M]`): local thickness t_v(y) = 2.5 mm (root) → 1.5 mm (tip), linear; LE radius ≈ 1.5 mm; TE ≈ 0.8 mm; no camber. **Prototype: Ø3 mm Al spar in a Ø3.2 channel along the LE**, root to tip (EI ×2.05, `boom_flexion.py`). Mount: slot in the rear-pod extension (105 mm wide × 3 mm deep) + 1× Ø1.75 mm filament dowel + 1× M2 screw (ADR-0039/Mojito pattern) | — |
 | Fin mass | — | **36–60 g** `[E]` (solid 1.2–2.0 mm PETG + mount) |
 | Drag / energy | — | ΔCD0 ≈ **+0.0014** → **+9.6 % drag ≈ 1.26 Wh/km** `[E]` (still < Mojito 1.40 `[M]`) |
 | V_stall impact | 46.1 km/h (current budget) | +48 g → **46.7 km/h** — OP-24 lever to F2 |
@@ -348,6 +349,8 @@ all other geometry is defined independently of the exact profile except the twis
 | Anti-rotation pin | Solid carbon **Ø6 mm** | **65 mm aft** of the tube axis, in the CORE joiner region | R-JOINT couple; PROVISIONAL |
 | Tube spanwise extent | y = 195 → 585 (390 mm) | — | — |
 | **Tube physical length** | ≈ **485 mm**: ≈ 415 mm bonded in the panel along the swept c/4 line + ≈ 70 mm protruding into the CORE socket (no adhesive) | — | C27; cut length to be confirmed on the CAD geometry |
+| **Tube channel (panel)** | **Straight bore Ø12.4–12.6** in each flat segment, along the segment's local c/4 line; the dihedral kinks (1.07° at y = 195, 0.46° at 347, 0.47° at 498) deviate the tube ≤ 0.19 mm across each joint face — **inside the 0.2–0.3 mm radial clearance** (`boom_flexion.py` §6 `[D]`); no bending needed, the tube is bonded per segment and free in the CORE socket | CAD question Q2, answered 2026-08-06 |
+| **Pin channel (panel)** | Straight bore **Ø6.3–6.5** along the pin line (65 mm aft of the tube), same clearance rationale | — |
 | **Pin physical length** | ≈ **140 mm**: ≈ 70 mm bonded in the panel root + ≈ 70 mm protruding into the CORE socket (no adhesive) | — | matches the ≈ 70 mm socket depth |
 
 > Torsion is carried by the closed shell, not the carbon (ADR-0015, C11). The braided
@@ -405,6 +408,7 @@ all other geometry is defined independently of the exact profile except the twis
 | Servo bay cavity | **≈ 34 × 16 × 39 mm** per servo at y ≈ 195 and y ≈ 390 (per half, panel center cell): accepts every servo in the I-18 catalog (largest: KST DS115MG 30×10×35 + ~4 mm/axis); standard mini-servo width ~11–12 mm → one pocket width fits all | I-18 §3.3 `[M]` |
 | Servo current | 4 servos: **avg 1.2–2.8 A, peaks 5–9 A** on simultaneous reversal `[M]` (I-18 §5). Covered by the FC Vx BEC (≥ 4.5 A avg); **add capacitance near the servos** (peak alignment can brown-out a tired pack); **dual-actuation balance must be current-measured** (two servos fighting draw ~150 mA extra each, silent) | I-18 §5 `[M]` |
 | Hinges | TPU-printed (glued or live-hinge), ADR-0035 | PROVISIONAL |
+| **Elevon as a part (CAD question Q3, answered 2026-08-06)** | **Separate component**, modelled solid (skin 0.9 mm, gyroid 5 % by the slicer) from x/c 0.72 to 1.00; **TPU hinge strip 4 × 6 mm × 390 mm** (TPU 95A), glued into the panel seat and the elevon groove (groove **4.2 × 6.2 mm** continuous along x/c 0.72), exterior relief notches every 30 mm; **balance pocket** centred at local x/c 0.74, **40 × 14 × 12 mm**, lid 1× M2, capacity 40 g (lead); the exact balance (elevon CG on the hinge line, ADR-0025) is closed in CAD by the lead amount, not by geometry | ADR-0025/0035 |
 | Hinge alternative | Polyester (mylar) tape hinges, 25×30 mm, glued in slots — flight-proven on 900–1340 mm printed FPV (Pico Talon, Stallion, I-09) | acceptable if TPU results disappoint; stiffness to be characterized (OP-10) |
 
 ### 7.6 CORE (center module) — outer mold constraints
@@ -418,8 +422,9 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Spanwise extent | y = 0 → **±195** (30 % half-span) | The wing surface continues across the CORE (same planform and t/c schedule, §5) |
 | Centerline section | Root airfoil (c = 289.2 mm, t/c 13.5 %) at y = 0, mid-plane z = 0 | Same airfoil family as the panels (pending OP-02) |
 | Trailing edge | **Fixed** from y = 0 to ±195 (no hinge line on the CORE, C23) | The torsion box may run closed to the TE inboard of the panel root (PROVISIONAL) |
-| **Nose boom (battery)** | **PROTOTYPE 0.1 (user decision 2026-08-06):** aluminium tube **Ø8 / int Ø6 (wall 1.0 mm)** as the longitudinal beam from x ≈ −132 to ≈ −516 (≈ 385 mm) + **printed cradle** (≈ 15 g) wrapping the pack and the tube; the pack sits BETWEEN two supports (nose tip ≈ x −516 and the CORE socket ≈ x −132) — **two-support arrangement is a structural requirement** (`boom_flexion.py` `[D]`: pure cantilever FAILS at +6 g — σ 322 MPa vs 276 yield, δ 57 mm, 5.2 Hz; two-support PASSES — σ 60 MPa FS 4.6, δ 2.0 mm, 21 Hz); FPV camera on a short cantilever at the tip (≈ x −450); **printed skid at the tip as the crush zone** (bare tube must not see tip impacts > 3 g); carbon optimisation PENDING (deferred, ADR-0015) | Required so the 6S1P pack CG reaches x ≈ −415 (OP-01 resolution, `balance_cg.py` `[D]`, bay re-derived with the real pack envelope of I-16); structure ≈ 41 g (tube 26 + cradle 15, `boom_flexion.py`; OP-24 target 40 + 2 absorbed) |
-| Battery bay | Internal **200 × 70 × 32 mm** (x × y × z); forward end at x ≈ −516; centered on y = 0 at z = 0; slide rails along x; single 21 mm layer, never stacked | Sized for the 6S1P pack (153 × 64.5 × 22.2 mm, I-16 `[D]`) CG band **−434…−397 mm** (R-CG ±5 mm). **Only 6S1P fits and reaches the band**: 4S1P needs x ≈ −568 (outside the bay); 4S2P/6S2P do **not fit** the single-layer bay at all (I-16) — R-CG requirement re-derived in F2 (OP-23); §9; PROVISIONAL |
+| **Nose boom (battery)** | **PROTOTYPE 0.1 (user decision 2026-08-06):** aluminium tube **Ø8 / int Ø6 (wall 1.0 mm)** as the longitudinal beam from x ≈ −132 to ≈ −516 (≈ 385 mm) + **printed cradle** (≈ 15 g) wrapping the pack and the tube; the pack sits BETWEEN two supports (nose tip ≈ x −516 and the CORE socket ≈ x −132) — **two-support arrangement is a structural requirement** (`boom_flexion.py` `[D]`: pure cantilever FAILS at +6 g — σ 322 MPa vs 276 yield, δ 57 mm, 5.2 Hz; two-support PASSES — σ 60 MPa FS 4.6, δ 2.0 mm, 21 Hz); FPV camera on a short cantilever at the tip (≈ x −450); **printed skid at the tip as the crush zone** (bare tube must not see tip impacts > 3 g); carbon optimisation PENDING (deferred, ADR-0015) | Required so the 6S1P pack CG reaches x ≈ −415 (OP-01 resolution, `balance_cg.py` `[D]`); structure ≈ 41 g (tube 26 + cradle 15, `boom_flexion.py`; OP-24 target 40 + 2 absorbed) |
+| **Battery cradle** | **Replaces the internal bay (CAD question Q1, answered 2026-08-06).** Printed cradle, 2 halves, walls 1.2 mm, mass ≤ 15 g: inner envelope **155 × 66 × 24 mm** (pack 153.2 × 64.5 × 22.2, I-16 + 0.5 clearance), length 200 mm from x ≈ −516 to −316, **lower Ø8.2 channel gripping the tube** (the pack rests on the tube; the cradle transmits the load to the two supports); **2× 12 mm velcro straps + spring-lock hatch** (§9 pattern); camera mount (2× M2/16 mm) on the tip support piece | The pack is centred at x ≈ −415 (CG band −434…−397) by the cradle position; PROVISIONAL until F2 |
+| **Boom socket (CORE)** | Ø8.2 straight bore in the CORE nose face at x ≈ −132, **centered z = 0** on the centreline, with a 4-perimeter collar; the tube is bonded into the cradle and slips into the socket (no adhesive in the CORE) | — |
 | **Rear pod (motor)** | Extends **48 mm aft of the root TE** (to x ≈ +265); **lower surface at the prop plane ≤ z = −111.6 mm** (≈ 92 mm below the wing lower surface) | Required so the 8×8 prop (Ø203, axis at z = 0) keeps ≥ 10 mm tip ground clearance (C26); PROVISIONAL |
 | **Fin mount (V1 variant, ADR-0038)** | **Optional** rear-pod extension ≈ 30 mm (to x ≈ +295) with a fixed centreline fin: S_v ≈ 2.1 dm², b_v ≈ 250 mm, c_r 105 / c_t 63 mm (trapezoid, swept tip), root t ≥ 2.5 mm solid, fin AC ≈ +285 mm; no servo, no linkage. **PROTOTYPE 0.1: Ø3 mm aluminium spar along the fin leading edge** (near the TE region, aft stiffener — user decision 2026-08-06): doubles the root stiffness (EI 0.278 + 0.265 N·m², `boom_flexion.py`), load path vs pusher-slipstream buffeting (OP-26), 5.7 g; carbon pending. CORE component — panels untouched | I-20 `[D]`/`[E]`; `yaw_stability.py`; in-service Mojito pattern `[M]`; PROVISIONAL until F2 (flutter, stall arbitration) |
 | Motor mount | Face at x ≈ +230; motor body from ≈ +195 to +230 (28-class, 35 mm long, CG ≈ +212); prop disk plane at **x ≈ +235** (≥ 10 mm aft of the root TE at +216.9) | C25; PROVISIONAL |
@@ -429,6 +434,21 @@ following **binding constraints**; the final body shape is designer's choice wit
 | **FPV VTX** | DJI O4/Pro transmission module **33.5 × 33.5 × 13 mm** (Lite 30×30×6; **legacy O3 32.5 × 30.5 × 14.5 fits the tray — I-19 §2.4**), tray with **20 × 20 / 25.5 × 25.5 mm M2** holes (Lite: 25.5 only), in the CORE **with airflow** (shell runs hot — do not enclose; thermal pad to the frame); antennas **≥ 5 cm from VTX/camera/carbon/current path**, outside the shell, the two Pro antennas at **90°** | I-19 §2/§3 `[M]`; PROVISIONAL |
 | Hand launch | Grip area on the CORE sides; designer's choice within the OML | — |
 | Balance tabs | Small printed tabs on the CORE underside to rest the aircraft on a balance edge for CG verification (Pico Talon practice, I-09) | PROVISIONAL |
+
+> **CAD method (question Q5, answered 2026-08-06).** The designer has full freedom for
+> the CORE outer shape within the constraints above. **Modelling convention:**
+> 1. **Panels and CORE are modelled as solid bodies** of the wing shape; the slicer
+>    generates the 0.9 mm skin (2 perimeters) and the 5 % gyroid infill (ADR-0028).
+> 2. **The model must include EXPLICITLY** (the slicer will not create them): the D-box
+>    web (0.9 mm wall at x/c 0.30), the tube/pin channels (Ø12.4–12.6 / Ø6.3–6.5,
+>    §7.2), the dowel holes + solid collars Ø8 × 4 mm (§7.4), the servo bays
+>    (§7.5), the elevon balance pocket, the avionics cavities (§7.6), the boom
+>    socket Ø8.2 and the CORE joint sockets (Ø12.2–12.4 / Ø6.1–6.2, depth 70,
+>    centers x = −9.6 / +55.4 at z = 0, §7.3).
+> 3. **CORE torsion box**: the closed box runs to the TE inboard of the panel root
+>    (no hinge line on the CORE, C23) — the centre section has no elevon.
+> 4. **Print orientation is a slicer task** (45° airfoil roll, C24 §7.4): model in
+>    aircraft coordinates.
 
 ---
 
@@ -603,6 +623,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
+| 0.13 | 2026-08-06 | **CAD questions Q1–Q5 answered (2026-08-06):** Q1 cradle replaces the battery bay (155×66×24, 2 halves, Ø8.2 grip, velcro + spring-lock, ≤ 15 g; CORE without bay, boom socket Ø8.2 at z = 0); Q2 tube/pin channels are straight bores Ø12.4–12.6 / Ø6.3–6.5 — the dihedral kinks fit inside the radial clearance (max deviation 0.19 mm vs 0.30 mm, oom_flexion.py §6 [D]); Q3 elevon is a separate part with a 4×6 mm TPU hinge strip groove and a 40×14×12 balance pocket at x/c 0.74 (lead amount closes the balance in CAD); Q4 fin section = symmetric biconvex plate (2.5→1.5 mm, LE r 1.5, TE 0.8) with the Ø3 spar in a Ø3.2 LE channel; Q5 CAD method declared (solid bodies, slicer makes skin+gyroid; web/channels/collars/cavities modelled explicitly; CORE torsion box closed to the TE). §7.6/§7.3/§7.5/§5.4 updated. |
 | 0.12 | 2026-08-06 | **PROTOTYPE 0.1 materials (user decision):** nose boom = aluminium Ø8/int6 tube + printed cradle, two-support arrangement (boom_flexion.py: cantilever rejected — σ 322 MPa/δ 57 mm/5.2 Hz; two-support PASS — σ 60 MPa/δ 2.0 mm/21 Hz; ≈ 41 g); V1 fin + rear pod get an Ø3 aluminium spar near the TE (root stiffness ×2.05, 5.7 g); carbon optimisation deferred (ADR-0015). §7.6/§7.2/§5.4/§8.1 updated. |
 | 0.11 | 2026-08-06 | **Launch verdict corrected (I-14 rev. 2):** hand launch **FEASIBLE** — release gate is V_suelta ≥ V_stall (not k=1.20 at the release instant, which rev. 1 wrongly demanded); typical throw 48.4 km/h at release (k=1.05), k=1.20 in 0.39 s; anchored on the Mojito configuration class `[M]` (heavier, higher reported stall, hand-launched in service) and published throwing biomechanics (van den Tillaar 2004). §4/§12 envelope updated. |
 | 0.10 | 2026-08-06 | **Two weakest links closed with calculations: (1) absolute divergence (docs/07, `divergence.py`) — nominal 267.7 km/h (1.12×, barely PASS), conservative end 121.9 km/h (**FAIL** vs 240): ADR-0030's "criterion met" falsified, V_limit 110 km/h until S3/I-12/E7, OP-29; (2) hand launch (I-14 executed, `launch_speed.py`) — release ≥ 1.20 × V_stall at 0–5° pitch, typical throw releases BELOW stall (44.5 vs 45.9 km/h): launch envelope added to §4/§12 with INAV/ArduPlane autolaunch settings.** |
