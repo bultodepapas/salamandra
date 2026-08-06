@@ -1,7 +1,7 @@
 # Salamandra — Design Guide: Justification
 
-**Version 0.7** · 6 August 2026 · Companion to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.7)
+**Version 0.8** · 6 August 2026 · Companion to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.8)
 
 This document records **why** every value in the Design Guide is what it is: the source,
 the confidence tag, and — where the repository has no datum — the assumption and its
@@ -183,6 +183,7 @@ everything else now and swap the profile later.
 | TPU hinges | ADR-0035 (provisional); stiffness to be characterized (C7/S6) | `[I]` |
 | Mylar hinge alternative | Polyester tape hinges 25×30, glued in slots — flight-proven on 900–1340 mm printed FPV (I-09). Alternative if TPU results disappoint; K_hinge unknown for both, feeds OP-10 | `[M]` |
 | Balance tabs, hatch lock, nose retention | CORE integration details adopted from the Flightory practice (I-09): underside balance tabs for CG verification, spring-loaded bay hatch lock, threaded inserts + reinforcement collar for the nose pod. Proven patterns, PROVISIONAL in the guide (§7.6, §9) | `[M]` |
+| **Filament dowel pins in the glued joints (ADR-0039)** | 2 × Ø1.75 mm filament per segment joint at x/c 0.40/0.60 (solid collar Ø8×4): alignment during glue cure (primary, `[I]`) + shear redundancy vs the +6 g demand (FS ≈ 11 y=347 / 24 y=498 `[D]`, `filament_dowel_pins.py`); 2.6 g, zero cost. Does NOT replace the carbon Ø6 couple pin (stiffness, `joint_pin_trade.py`) | `[D]`/`[E]` |
 
 ## 6. Mass budget
 

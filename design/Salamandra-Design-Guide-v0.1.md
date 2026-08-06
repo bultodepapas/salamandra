@@ -1,6 +1,6 @@
 # Salamandra — Design Guide
 
-**Version 0.7** · 6 August 2026 · Status: **DRAFT — for designer review**
+**Version 0.8** · 6 August 2026 · Status: **DRAFT — for designer review**
 
 This document is the working specification handed to the CAD designer. It defines the
 reference configuration (Cruise, Article #1) of the Salamandra modular 3D-printed FPV
@@ -29,7 +29,7 @@ version live in [`prompts/`](prompts/).
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.7 |
+| Version | 0.8 |
 | Date | 2026-08-06 |
 | Status | DRAFT — pending designer iteration and Phase 1 closure |
 | Reference configuration | **Cruise — Article #1** |
@@ -235,7 +235,8 @@ FC change).
 
 Installation (V1): the fin mounts on the rear-pod extension, centreline, in the pusher
 slipstream (η ≈ 1.25 — maximum effectiveness at low speed, where launch and stall
-handling need it); optional antenna/ESC housing inside (Mojito pattern `[M]`). The fin is
+handling need it); **1× Ø1.75 mm filament alignment dowel + screw** (ADR-0039 practice,
+Mojito pattern `[M]`); optional antenna/ESC housing inside (Mojito pattern `[M]`). The fin is
 a **CORE component**: removable, printed separately, no effect on the panels or the
 balance table of §8.1 beyond its own mass at x ≈ +285 (≈ 4 mm forward CG shift from
 −119 mm — absorbed by the battery slide). Full analysis: I-20, `yaw_stability.py`.
@@ -359,6 +360,10 @@ all other geometry is defined independently of the exact profile except the twis
   - R-JOINT: joint torsional stiffness ≥ **5×** the adjacent section (ADR-0032).
 - **Segment joints** (within a panel): tenon + PETG adhesive, bond area ≥ **3× the skin
   section** (ADR-0023). Adhesive: 3D-Gloop PETG or 30-min epoxy (I-04; not E6000).
+  **Plus 2 × Ø1.75 mm filament dowels per joint** (ADR-0039): alignment during glue
+  cure + shear redundancy (FS ≈ 11, `filament_dowel_pins.py` `[D]`); holes Ø1.8–1.9 mm
+  at x/c = 0.40/0.60 on the joint face with a solid collar Ø8 × 4 mm; PETG scraps,
+  ≈ 2.6 g/aircraft, zero cost.
 
 ### 7.4 Segmentation and printing (ADR-0024)
 
@@ -371,6 +376,7 @@ all other geometry is defined independently of the exact profile except the twis
 | Material | Conventional PETG, **light color** (ADR-0012, ADR-0021) |
 | Profile | 0.4 mm nozzle, 0.2 mm layer, 0.45 mm wall width, **2 perimeters (0.9 mm)**, gyroid **5 %** |
 | Flow ratio | **0.95** — never the 0.60 LW-PLA value (docs/02 §1.7) |
+| Joint faces | **Dowel holes Ø1.8–1.9 mm with solid collars Ø8 × 4 mm** (4+ perimeters) at x/c 0.40/0.60, both mating faces (ADR-0039) |
 | Temperatures | Nozzle 240–250 °C, bed 70–80 °C, fan ≈ 30 % (PETG; PROVISIONAL) |
 | Print budget | ≤ 20 h per wing half (O5) |
 
@@ -529,8 +535,9 @@ following **binding constraints**; the final body shape is designer's choice wit
 ## 12. Assembly and control setup
 
 1. Print CORE + 6 segments (3 per half) per §7.4. Light-color PETG.
-2. Glue segment joints (tenon + adhesive, area ≥ 3× skin section). Do **not** glue the
-   CORE↔panel joint.
+2. Glue segment joints (tenon + adhesive, area ≥ 3× skin section): insert the
+   **2 Ø1.75 filament dowels per joint** (adhesive dab on one side, sliding fit on the
+   other — alignment during cure, ADR-0039); do **not** glue the CORE↔panel joint.
 3. Insert carbon tube (x/c = 0.25) and anti-rotation pin; **bond both inside the PANEL**
    (y = 195 → 585 for the tube) with continuous adhesive (ADR-0015 §3.3: continuous
    bonding, not housed), leaving ≈ 70 mm protruding at the panel root; the protruding ends
@@ -555,7 +562,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Set | Documents |
 |---|---|
-| Decisions | ADR-0001, 0002, 0004, 0007, 0010, 0015, 0021–0028, 0032–0038 ([`decisions/`](../decisions/)) |
+| Decisions | ADR-0001, 0002, 0004, 0007, 0010, 0015, 0021–0028, 0031–0039 ([`decisions/`](../decisions/)) |
 | Research | I-01…I-20 ([`research/`](../research/)); **directional stability: I-20** (`yaw_stability.py`) |
 | Specification | [`docs/00-objectives-and-requirements.md`](../docs/00-objectives-and-requirements.md) |
 | Measured data | [`docs/02-measured-references.md`](../docs/02-measured-references.md) |
@@ -571,6 +578,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
+| 0.8 | 2026-08-06 | **Filament dowel pins adopted (ADR-0039):** 2 × Ø1.75 mm filament per glued segment joint (alignment + shear redundancy, FS ≈ 11 `[D]`); holes Ø1.8–1.9 at x/c 0.40/0.60 with solid collars Ø8×4 (§7.3/§7.4/§12); fin root +1 dowel (§5.4); 2.6 g/aircraft, zero cost. Carbon Ø6 pin of the torque couple unchanged (pin-material trade, ADR-0031). |
 | 0.7 | 2026-08-06 | **Legacy DJI O3 Air Unit integrated (I-19 §2.4 `[M]`):** camera 21.2×20×19.5 mm fits the §7.6 cavity, module 32.5×30.5×14.5 fits the VTX tray, mass ≈ 39 g (§8.1 note); **all 14 missing ADR files published** (OP-22 closed) and referenced in §13; guide v0.7. |
 | 0.6 | 2026-08-06 | **Dual directional configuration (ADR-0038, I-20):** optional fixed centreline fin registered in §7.6 (rear-pod extension ≈ 30 mm, S_v ≈ 2.1 dm², b_v ≈ 250 mm, root t ≥ 2.5 mm, no rudder); finless baseline remains the O1 build; C16 stall tension with the fin mass flagged to F2 (OP-24); `yaw_stability.py` added |
 | 0.5 | 2026-08-05 | **Component catalogs integrated (I-16/17/18/19):** FPV DJI O4 system in the mass budget (§8.1: +37 g → AUW 1697 g), balance re-run (`balance_cg.py` — pack 6S1P ≈ −415, bay −516…−315); servo class 12–15 g + cavity 34×16×39 + torque not binding + current data (§7.5, I-18); FC reference class F405-WING-V2 / SpeedyBee + station cavity 64×45×21 + avionics 6.6 W (§7.6, §11, I-17); FPV camera/VTX mounts in the CORE (§7.6) and FPV/video power in §11 (I-19); battery energy reference 90.7/108 Wh (§10.1, I-16); stall flag updated (46.1 km/h, OP-24). |

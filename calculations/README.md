@@ -48,6 +48,7 @@ Data sources consumed (all `[M]`):
 | `servo_torque.py` | **I-18: hinge moment** — elevon hinge moment (Ch 0.01–0.05 `[E]`) at V_NE, per-servo with dual actuation, margin vs the catalog | I-18, guide §7.5, OP-06, ADR-0025 | stdlib only |
 | `yaw_stability.py` | **I-20: directional stability** — Cnβ budget (finless baseline vs centreline fin), fin sizing tiers V1a/V1b, rudder-authority vs crosswind, yaw damping/subsidence, fin bending at V_NE, mass/drag/stall cost | I-20, first variant (O14), guide §7.6, G10 | numpy |
 | `joint_pin_trade.py` | **ADR-0031: pin material trade** — carbon Ø6 vs printer filament (PETG/PLA Ø1.75) in the R-JOINT torque couple: strength (FS ≥ 3 all candidates) vs stiffness (E·I: filament ≈ 9000× softer → k_joint collapses → −29 % V_div per ADR-0032) | ADR-0031/0032, guide §7.3 | numpy |
+| `filament_dowel_pins.py` | **ADR-0039: dowel pins in the glued joints** — 2 × Ø1.75 filament per segment joint: shear demand at +6 g vs double-shear capacity (FS ≈ 11/24), position clearance (tube/hinge), collar bearing, mass 2.6 g | ADR-0039, guide §7.3/§7.4/§12, OP-27 | numpy |
 
 ## Reproducing the published results
 
@@ -233,6 +234,19 @@ PETG filament 0.0009 N·m² (≈ 9000× softer) → k_joint ∝ E·I collapses f
 dominant risk is divergence. Printed-PETG tenons need Ø17 for parity (≈ 40 g vs
 6.3 g). Cost saving ≈ €0.5–1.0/aircraft, complexity unchanged (the socket is the
 same). **Rejected; carbon Ø6 stands.** Five validation cases must pass.
+
+### 12. Filament dowel pins in the glued joints (ADR-0039)
+
+```bash
+python3 filament_dowel_pins.py
+```
+
+2 × Ø1.75 mm filament per glued segment joint (y = 347/498): alignment during glue
+cure (primary, `[I]`) + shear redundancy vs the +6 g V_NE demand — FS ≈ 11 (y = 347)
+and 24 (y = 498) `[D]`; positions x/c 0.40/0.60 verified clear of the carbon tube and
+the hinge cell; collar Ø8 × 4 mm bearing FS ≈ 10; mass 2.6 g/aircraft, zero cost.
+The CORE↔PANEL torque couple is untouched (carbon Ø6 — `joint_pin_trade.py`). Six
+validation cases must pass.
 
 ---
 

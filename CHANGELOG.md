@@ -4,7 +4,29 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
-## [1.17] — 2026-08-06
+## [1.18] — 2026-08-06
+
+**Filament dowel pins adopted in the glued segment joints (ADR-0039).**
+
+Community proposal (refined after the §1.17 trade): filament pins are NOT a carbon
+replacement — they are **alignment/shear dowels in the glued joints**. New tool
+`filament_dowel_pins.py` (six validation cases, ALL PASS):
+
+- **Spec:** 2 × Ø1.75 mm filament (PETG scraps preferred) per glued segment joint
+  (y = 347/498, 8 dowels/aircraft); holes Ø1.8–1.9 mm at x/c 0.40/0.60 with solid
+  collars Ø8 × 4 mm; adhesive dab on one side; length 20–22 mm.
+- **Shear redundancy:** demand at +6 g V_NE ≈ 27 N (y=347) / 12 N (y=498) `[E]` vs
+  2-dowel double-shear capacity ≈ 293 N → **FS ≈ 11 / 24** `[D]`.
+- **Alignment** (primary function, `[I]`): prevents shear slip during glue cure —
+  alignment IS strength; zero cost (scraps), 2.6 g/aircraft.
+- **Boundary declared:** the CORE↔PANEL torque couple keeps the carbon Ø6 pin
+  (§1.17); the ADR-0023 bond-area rule is unchanged (dowels are additive).
+
+Documents: ADR-0039 (new), guide **v0.8** (§7.3 spec, §7.4 print row, §5.4 fin-root
+dowel, §12 assembly, §13, §14), justification/open-points v0.8 (OP-27: first-print fit
+verification), calculations/README §12, decisions index. **Corrections:** none.
+
+---
 
 **R-JOINT pin material trade — filament proposal evaluated and rejected with numbers.**
 
@@ -63,7 +85,35 @@ None (catalog extension and file publication; no overturned datum).
 
 ---
 
-## [1.15] — 2026-08-06
+## [1.17] — 2026-08-06
+
+**R-JOINT pin material trade — filament proposal evaluated and rejected with numbers.**
+
+Community proposal: replace the carbon Ø6 anti-rotation pin with pieces of 3D-printer
+filament (PETG/PLA Ø1.75). New tool `joint_pin_trade.py` (five validation cases, ALL
+PASS) shows:
+
+- **Strength passes** (not the binding requirement): couple force F = T/arm =
+  2.3–15.4 N `[E]` → shear FS ≈ 4.7 (PETG) / 6.3 (PLA); bearing ≈ 5 MPa.
+- **Stiffness fails by ≈ 9000×**: E·I carbon Ø6 = 7.63 N·m² vs PETG filament
+  Ø1.75 = 0.0009 N·m². With identical sockets/arm/loads, k_joint ∝ E·I → R-JOINT
+  collapses from ≥ 5× to ≈ 0.005× the section → **−29 % V_div** (ADR-0032 table) on a
+  forward-swept wing whose dominant risk is aeroelastic divergence (I-05).
+- Printed-PETG alternatives: tenon Ø8 → 5 %, Ø10 → 12 %, Ø17 → parity (≈ 40 g vs
+  6.3 g) — worse than carbon on every axis.
+- Cost/complexity: carbon ≈ €0.25–0.50 per pin, 6.3 g; the socket (bore, embedment,
+  sliding fit) is identical for any pin — filament saves ≈ €1/aircraft, no complexity
+  change. **Verdict: −29 % divergence margin is not purchasable for €0.5.**
+
+Documents: ADR-0031 (trade-study section added), guide §7.3 (pin material fixed,
+with reference), calculations/README §11. **Corrections:** none (proposal evaluated,
+no datum overturned).
+
+---
+
+## [1.16] — 2026-08-06
+
+**Catalog audit — everything integrated, two gaps closed (O3 + 14 missing ADR files).**## [1.15] — 2026-08-06
 
 **Directional (yaw) stability quantified — dual configuration adopted (I-20, ADR-0038).**
 

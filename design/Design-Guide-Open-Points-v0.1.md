@@ -1,7 +1,7 @@
 # Salamandra — Design Guide: Open Points and Evolution
 
-**Version 0.7** · 6 August 2026 · Companion to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.7)
+**Version 0.8** · 6 August 2026 · Companion to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.8)
 
 This document lists everything in the Design Guide that is **not yet fixed**: assumptions
 that need verification, values that will change when the corresponding research closes,
@@ -69,6 +69,7 @@ value stands.
 | **OP-20** | Wing tips | Flat end caps at y = ±650, no winglet | Winglet option (drag/recovery); not required for the O1 cruise claim | First flights, F3 polar |
 | **OP-21** | CORE outer mold | Nose boom to x ≈ −516 (bay 200×70×32), FPV camera mount at the boom front, rear pod to x ≈ +265 with belly ≤ −111.6 mm at the prop plane, avionics stations (guide §7.6) — binding constraints given, body shape open | Real CORE geometry + mass (the pods add mass not in the §8.1 estimate) | F2 (P1–P3) |
 | **OP-22** | Missing ADR files | **RESOLVED (2026-08-06):** all 14 pending ADR files (0003, 0006, 0008, 0009, 0012, 0016, 0018, 0023, 0024, 0026, 0030, 0031, 0034, 0035) published from their guide/justification values; index updated | — | ✅ Closed |
+| **OP-27** | **Dowel-pin fit tolerance (ADR-0039)** | Holes Ø1.8–1.9 mm printed in both mating faces (solid collar Ø8×4); sliding fit across two parts depends on printer tolerance (±0.1–0.2 mm) | First-print verification: dowel must slide into both faces with light friction after glue application | M3 assembly step (F6), first print of the segments |
 
 ---
 
@@ -104,6 +105,7 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.8 | 2026-08-06 | **OP-27 added** (dowel-pin fit tolerance, ADR-0039 — verification at the first print/M3 assembly). |
 | 0.7 | 2026-08-06 | **OP-22 closed** — all 14 missing ADR files published (0003, 0006, 0008, 0009, 0012, 0016, 0018, 0023, 0024, 0026, 0030, 0031, 0034, 0035) from their guide/justification values; OP-25 extended with the legacy DJI O3 Air Unit compatibility row (I-19 §2.4 `[M]`). |
 | 0.6 | 2026-08-06 | **Dual directional configuration (ADR-0038, I-20):** OP-26 (fin variant verification) added — Mojito fin measurement, CORE S_fs from CAD, fin flutter/strength at ≈ 9 Hz (F4/S8), C16 with the fin mass at the OP-24 lever, E8 flight closure of G10; OP-24/OP-21 cross-referenced. Guide §5.4 defines the two published configurations (CLEAN / V1). |
 | 0.5 | 2026-08-05 | Component catalogs integrated: OP-01/OP-19 numbers re-derived with FPV in the balance (pack ≈ −415, bay −516); OP-06 partial closure (hinge moment not binding, I-18); OP-18 catalog check (I-17); OP-24 updated (AUW 1697 → 46.1 km/h, three levers); OP-25 (FPV selection/integration) added; OP-16/OP-21/OP-23 refreshed. |
