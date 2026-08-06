@@ -1,0 +1,31 @@
+/* Salamandra theme — aviation amber accents over the Starlight defaults. */
+
+:root {
+  --sl-color-accent-low: #4a3512;
+  --sl-color-accent: #d69e2e;
+  --sl-color-accent-high: #f2cf6a;
+  --sl-color-text-accent: #e8b83e;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #f5e2b8;
+  --sl-color-accent: #a26c00;
+  --sl-color-accent-high: #5c3a00;
+  --sl-color-text-accent: #8a5b00;
+}
+
+/* Keep tables readable on narrow content */
+.sl-markdown-content table {
+  font-size: var(--sl-text-xs);
+}
+
+/* Mermaid diagrams fit their container */
+pre.mermaid {
+  background: transparent;
+  text-align: center;
+}
+
+pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}

@@ -1,0 +1,35 @@
+---
+interface Props {
+  diagram: string;
+}
+
+const { diagram } = Astro.props;
+---
+
+<pre class="mermaid">{diagram.trim()}</pre>
+
+<script>
+  // Lazy-load mermaid so the ~1 MB library stays in its own async chunk and is
+  // only fetched on pages that actually render a diagram.
+  function renderAll() {
+    const nodes = document.querySelectorAll('pre.mermaid');
+    if (!nodes.length) return;
+    import('mermaid').then(async ({ default: mermaid }) => {
+      mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+      for (const [i, el] of Array.from(nodes).entries()) {
+        try {
+          const { svg } = await mermaid.render(`mermaid-svg-${i}`, el.textContent || '');
+          el.outerHTML = svg;
+        } catch (err) {
+          console.warn('Mermaid render failed:', err);
+        }
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderAll);
+  } else {
+    renderAll();
+  }
+</script>

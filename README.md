@@ -11,6 +11,9 @@ the community.
 
 **Revision 1.12** · 5 August 2026 · **Phase 0 closed · Phase 1 in progress**
 
+> 📖 **Read this project as a website:** <https://bultodepapas.github.io/salmandra/>
+> — searchable, with auto-generated indexes and an onboarding guide.
+
 ---
 
 ## What this project is
@@ -160,6 +163,7 @@ configuration contributed to the platform.
 | [`tests/`](tests/) | Experimental program and data |
 | [`calculations/`](calculations/) | Analysis scripts, with validation cases — **full reproduction guide in its README** |
 | `geometry/` `stl/` `cad/` | Community 3D parts and outputs; `geometry/airfoils/` holds the screening coordinate files with provenance |
+| [`wiki/`](wiki/) | **The served documentation site** (Astro Starlight): onboarding guide, auto-generated indexes, search. Deployed to GitHub Pages via `.github/workflows/docs.yml` |
 
 **Start with:** [`docs/00-objectives-and-requirements.md`](docs/00-objectives-and-requirements.md) → [`decisions/README.md`](decisions/README.md) → [`gaps/README.md`](gaps/README.md)
 

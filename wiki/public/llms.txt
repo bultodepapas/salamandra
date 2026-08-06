@@ -1,0 +1,17 @@
+# Salamandra
+
+Open, community-driven 3D-printed FPV aircraft platform. The reasoning is the product: every decision carries its rationale, its source and its confidence level.
+
+## Key pages
+
+- Getting started: /guide/01-getting-started/
+- Design guide v0.1: /salamandra/design-guide/
+- Decision record (ADR): /decisions/
+- Research threads: /research/
+- Gap register: /gaps/
+- Experimental program: /tests/
+- Calculations: /calculations/
+- Reproduction guide: /calculations/reproduction-guide/
+- Phase-1 plan: /reference/03-phase-1-plan/
+- Glossary: /guide/04-glossary/
+- Changelog: /platform/changelog/

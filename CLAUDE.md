@@ -82,8 +82,11 @@ Before proposing anything, read in this order:
 | `tests/` | Experimental program and data | A test is defined or run |
 | `calculations/` | Analysis scripts **with validation case** | A calculation is written or modified |
 | `geometry/` `stl/` `cad/` | Community 3D parts and outputs | Parts are contributed (from Phase 1 onward) |
+| `wiki/` | **Served documentation site** (Astro Starlight): onboarding guide + auto-generated indexes; canonical content is mounted, never duplicated | You add onboarding content or touch the site tooling |
 
 **`decisions/` and `research/` are separated on purpose.** An ADR says *what was decided*; a research thread says *what we know and how*. One piece of research feeds several decisions and one decision rests on several pieces of research. Merging them forces duplication or loss of traceability.
+
+**Wiki workflow:** `wiki/` is an Astro Starlight site. The generator (`node wiki/scripts/gen-site.mjs`, wired to `predev`/`prebuild`) reads the canonical folders above and emits `wiki/src/content/docs/` (gitignored) with auto-generated index tables and rewritten internal links. After changing any canonical `.md`, run `npm run gen` in `wiki/` (or just build) so the served indexes stay in sync. Content committed under `wiki/content/` is the only wiki-only source of truth.
 
 ---
 

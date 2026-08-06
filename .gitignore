@@ -23,6 +23,12 @@ tests/**/raw/*.bin
 tests/**/raw/*.BIN
 tests/**/raw/*.ulg
 
+# Wiki (Astro Starlight) — build artifacts and generated content
+wiki/node_modules/
+wiki/dist/
+wiki/.astro/
+wiki/src/content/docs/
+
 # System
 .DS_Store
 Thumbs.db

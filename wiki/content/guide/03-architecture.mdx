@@ -1,0 +1,61 @@
+---
+title: Architecture
+description: How research, decisions, gaps, tests and calculations feed each other — the reasoning ecosystem behind Salamandra.
+editUrl: https://github.com/bultodepapas/salmandra/edit/main/wiki/content/guide/03-architecture.mdx
+---
+
+import Mermaid from '@components/Mermaid.astro';
+
+# Architecture
+
+The project is built as a closed loop of evidence. A claim does not enter the design guide until it can be traced back to a source and, whenever possible, to a script anyone can rerun.
+
+## The reasoning ecosystem
+
+<Mermaid diagram={`
+flowchart LR
+  SRC["[M] primary sources<br/>UIUC · aerodesign.de · flight data"] --> CALC["Calculations<br/>validated scripts"]
+  CALC --> RES["Research threads (I-XX)"]
+  RES --> ADR["ADRs — decisions"]
+  RES --> GAP["Gap register (G-XX)"]
+  ADR --> DG["Design guide v0.1"]
+  GAP --> TESTS["Test program (E-XX)"]
+  TESTS --> RES
+  TESTS --> GAP
+  DG --> CAD["CAD / STL<br/>community parts"]
+  CAD --> TESTS
+`} />
+
+Every arrow is a **traceability link**: a research thread names the sources and the decisions it feeds; an ADR names the research and the gap it closes; a gap names the test that will close it.
+
+## The confidence chain
+
+A number earns its place through four levels:
+
+<Mermaid diagram={`
+flowchart LR
+  M["[M] Measured<br/>primary source"] --> D["[D] Derived by calculation<br/>from [M] data"]
+  D --> E["[E] Estimated<br/>declared assumptions"]
+  I["[I] Reasoned inference<br/>not verified"]
+`} />
+
+- **`[M]`** — measured and published by a primary source (e.g. the UIUC polar database, or the project's own flight tests).
+- **`[D]`** — derived by calculation from `[M]` data. This is what the scripts in [`calculations/`](../calculations/) produce.
+- **`[E]`** — estimated on declared assumptions; carries an uncertainty band and must be declared.
+- **`[I]`** — reasoned inference, not yet verified.
+
+**The hard rule** is that `[E]` and `[I]` data never support an irreversible decision without prior verification. When better data overturn a conclusion, it is recorded as a correction in the [changelog](../platform/changelog/).
+
+## How a design parameter is born
+
+1. **A gap opens** — e.g. G8: "the neutral point is unknown".
+2. **Research bounds it** — I-07 runs the in-house VLM; I-15 cross-checks it with an independent Weissinger-L method (NP = 26.7 % vs 28.0 % MAC, 3 mm agreement).
+3. **A decision is made** — the ADR records what was chosen, what was discarded, and *what datum would make the team reconsider*.
+4. **The guide states it** — the parameter enters the CAD-ready specification with its tag and its source.
+5. **A test will verify it** — E8 (yaw perturbation) or E7 (Southwell in flight) turns `[E]`/`[D]` into `[M]`.
+
+## Design principles that shape the work
+
+- **Falsifiable objectives.** The target is measurable (≤ 1.15 Wh/km at 95 km/h, measured with tests E2/E3) — not a wish.
+- **Phases with gates.** Phase 1 (geometry and stability) must close before any detail geometry is designed.
+- **The correction register is part of the product.** 21 corrections so far; documenting them is what allows trust in what remains standing.
