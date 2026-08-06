@@ -137,6 +137,10 @@ PANEL-xxxx-y    xxxx = resulting total wingspan · y = airfoil family
 | **Cruise** | 1300 | 6S1P Li-Ion 21700 | **Article #1** | Design |
 | **Sport** | 1100 | 6S LiPo | Fast flight | Design |
 
+**Directional variants (ADR-0038):** `SALAMANDRA-CLEAN` (finless, O1 efficiency build)
+and `SALAMANDRA-V1` (fixed centreline fin, no rudder — first platform variant, I-20,
+recommended for the test programme). The fin is a CORE component; panels are untouched.
+
 ⚠️ See [ADR-0032](decisions/ADR-0032-modularity.md): the panels **are not arbitrary**. Each
 set is designed against a common neutral point. The same discipline applies to every new
 configuration contributed to the platform.

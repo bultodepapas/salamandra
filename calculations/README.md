@@ -46,6 +46,7 @@ Data sources consumed (all `[M]`):
 | `inav_fc_match.py` | **I-17: FC compatibility** — cross-checks the popular INAV boards (Matek WING, SpeedyBee, Foxeer) against the Salamandra avionics requirements (≥5 PWM, ≥2 UART, ≥1 I2C, blackbox, current, baro, 6S voltage); footprint summary + power budget | I-17, guide §11, CORE avionics | stdlib only |
 | `fpv_power_budget.py` | **I-19: FPV power budget** — DJI O4 / Pro / Lite current-per-level (measured `[M]`), power at any input voltage, BEC margin vs the Matek 9V/2A and 5V/2A rails, energy impact on the 6S1P P42A pack | I-19, guide §11, O1 | stdlib only |
 | `servo_torque.py` | **I-18: hinge moment** — elevon hinge moment (Ch 0.01–0.05 `[E]`) at V_NE, per-servo with dual actuation, margin vs the catalog | I-18, guide §7.5, OP-06, ADR-0025 | stdlib only |
+| `yaw_stability.py` | **I-20: directional stability** — Cnβ budget (finless baseline vs centreline fin), fin sizing tiers V1a/V1b, rudder-authority vs crosswind, yaw damping/subsidence, fin bending at V_NE, mass/drag/stall cost | I-20, first variant (O14), guide §7.6, G10 | numpy |
 
 ## Reproducing the published results
 
@@ -198,6 +199,24 @@ Published results (I-19 §5): O4 Pro 1200 mW = 10.4 W, O4 standard max 9.5 W
 avionics+FPV = 17.0 W (15.5 % of cruise) and 18.8 % of the 6S1P P42A pack per
 flight-hour with the Pro. A change to the current table or BEC assumptions must
 reproduce these values.
+
+### 10. Directional stability and the fin variant (I-20)
+
+```bash
+python3 yaw_stability.py
+```
+
+Cnβ budget of the finless baseline (body + FSW wing: **−0.0006…−0.0015/deg — negative**),
+centreline-fin sizing for the two stability tiers (V1a 2.1 dm² → nominal +0.0005/deg;
+V1b 2.8 dm² → +0.0010/deg), rudder-authority vs crosswind (cannot hold a 20 km/h slip at
+stall), yaw damping (Cnr doubled) and subsidence, fin bending at V_NE (root t ≥ 2.5 mm),
+and the mass/drag/stall cost of each tier. In-service datum `[M]`: the TBS Mojito (same
+FSW + nose + pusher layout) flies a **fixed** stabilizer with elevons only — no rudder
+servo (product page, manual, official INAV CLI). Published results (I-20 §5, `[D]` on
+`[E]` bands): finless yaw divergence τ ≈ 0.7 s; V1a ΔCD0 +0.0014 (+9.6 % drag);
+V1b +12.6 %; both tiers push V_stall past 45 km/h at the current budget (OP-24 lever
+applies). A change to geometry, bands or methods must reproduce the six validation
+cases (Helmbold, fin reference, Raymer body, tier consistency, damping reference).
 
 ---
 

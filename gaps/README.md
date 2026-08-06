@@ -15,6 +15,7 @@ It is as important as the decision register: the project rule is that **no `[E]`
 | **G7** | Flutter | Unverified. Sudden onset, no warning | ⬜ Open | E5 |
 | **G8** | Neutral point and static margin | Blocks Phase 1 | 🔄 **Partial** — NP = 26.7 % MAC `[D]` by in-house VLM, **cross-checked by an independent Weissinger-L (28.0 % MAC, 3 mm agreement — I-15 §6.3)**; central-body effect still unquantified | I-07, I-15, C2 (body model) |
 | **G9** | Altitude-loop coupling with pitch (*porpoising*) | **Threatens the validity of E7** | ⬜ Open | PID adjustment before testing |
+| **G10** | **Directional stability Cnβ** — finless baseline estimated negative (FSW + nose boom); the fin/no-fin choice is an assumption, not a measured decision | The finless config is FC-dependent in yaw; the fin costs ≈ +10 % energy `[E]` | 🔄 **Bounded by calculation (I-20 `[D]`, `[E]` bands)** — finless −0.0006…−0.0015/deg; fin tiers V1a/V1b restore stability | **E-flight yaw test** (perturbation, Dutch-roll decay) + CAD side-area check (OP-21) |
 
 ---
 

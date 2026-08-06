@@ -48,6 +48,7 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | 0035 | TPU-printed hinges | 🔄 | Medium | Yes |
 | [0036](ADR-0036-open-community-platform.md) | Open, community-driven aircraft platform (AI-assisted research) | ✅ | Decided | No |
 | [0037](ADR-0037-licence.md) | Licence: CERN-OHL-S-2.0 + CC BY-SA 4.0 | ✅ | Decided | Yes |
+| [0038](ADR-0038-fixed-fin-variant.md) | Dual directional config: finless baseline + fixed-fin variant V1 (no rudder) | 🔄 | Medium `[D]`/`[E]` | Yes |
 
 ### Superseded or cancelled
 
