@@ -20,32 +20,32 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 |---|---|---|---|---|
 | [0001](ADR-0001-inverted-sweep.md) | Forward-swept flying wing | ✅ | High | No |
 | [0002](ADR-0002-closed-shell.md) | Closed three-cell shell structure | ✅ | Medium `[I]` | No |
-| 0003 | Wash-in type twist | 🔄 | High | Partial |
+| [0003](ADR-0003-wash-in-twist.md) | Wash-in type twist | 🔄 | High | Partial |
 | [0004](ADR-0004-aspect-ratio.md) | Aspect ratio 6.0 | 🔄 | Medium `[E]` | No |
 | 0005 | Reflexed and thin airfoil | ⬜ | — | — |
-| 0006 | Single pusher motor preferred | ⚠️ | Low `[I]` | Yes |
+| [0006](ADR-0006-single-pusher.md) | Single pusher motor preferred | ⚠️ | Low `[I]` | Yes |
 | [0007](ADR-0007-propeller.md) | Propeller P/D 0.8–1.0 matched by J | ✅ | High | Yes |
-| 0008 | Reject the 7×12 propeller | ✅ | High | Yes |
-| 0009 | Separate drag decomposition; never a single Oswald | ✅ | High | No |
+| [0008](ADR-0008-reject-7x12-propeller.md) | Reject the 7×12 propeller | ✅ | High | Yes |
+| [0009](ADR-0009-drag-decomposition.md) | Separate drag decomposition; never a single Oswald | ✅ | High | No |
 | [0010](ADR-0010-mission-branch.md) | Branch A — fast cruise | ✅ | Decided | No |
-| 0012 | Light color mandatory | ✅ | High | Yes |
+| [0012](ADR-0012-light-color.md) | Light color mandatory | ✅ | High | Yes |
 | [0015](ADR-0015-carbon-non-torsional.md) | Carbon as bending and pin, not torsion | ✅ | High `[D]` | Yes |
-| 0016 | Reject PLA+ | ✅ | High `[M]` | — |
-| 0018 | Reject ABS due to UV degradation | ✅ | High `[M]` | — |
+| [0016](ADR-0016-reject-pla-plus.md) | Reject PLA+ | ✅ | High `[M]` | — |
+| [0018](ADR-0018-reject-abs.md) | Reject ABS due to UV degradation | ✅ | High `[M]` | — |
 | [0021](ADR-0021-base-material.md) | PETG as the base material | ✅ | High | Partial |
 | [0022](ADR-0022-carbon-veil-cancelled.md) | Carbon veil ±45° | ❌ **Cancelled** | — | — |
-| 0023 | Joints: tenon + PETG adhesive, area ≥ 3× | 🔄 | Medium | Yes |
-| 0024 | 3 segments per wing half, 45° on bed | ✅ | High | Yes |
+| [0023](ADR-0023-joint-adhesive.md) | Joints: tenon + PETG adhesive, area ≥ 3× | 🔄 | Medium | Yes |
+| [0024](ADR-0024-segmentation.md) | 3 segments per wing half, 45° on bed | ✅ | High | Yes |
 | [0025](ADR-0025-elevon-balancing.md) | Elevon mass balancing | ✅ | High | No |
-| 0026 | No-freeplay linkage, dual actuation | ✅ | High | Yes |
+| [0026](ADR-0026-dual-actuation.md) | No-freeplay linkage, dual actuation | ✅ | High | Yes |
 | [0027](ADR-0027-relative-thickness.md) | t/c 13.5 % root / 9 % tip | ✅ | High `[M]` | No |
 | [0028](ADR-0028-gyroid-infill.md) | Gyroid 5 % infill | ✅ | Medium `[M]` | Yes |
-| 0030 | Plastic path as base; torsion tube option B | 🔄 | Medium | Yes |
-| 0031 | Carbon pin in the joints | ✅ | High | Yes |
+| [0030](ADR-0030-plastic-torsion-path.md) | Plastic path as base; torsion tube option B | 🔄 | Medium | Yes |
+| [0031](ADR-0031-carbon-pin.md) | Carbon pin in the joints | ✅ | High | Yes |
 | [0032](ADR-0032-modularity.md) | Modular CORE + PANEL architecture | ✅ | High | No |
 | [0033](ADR-0033-electronics-out.md) | Motor and battery out of the design | ✅ | Decided | — |
-| 0034 | Motor mount angle as a design parameter | 🔄 | Medium | Yes |
-| 0035 | TPU-printed hinges | 🔄 | Medium | Yes |
+| [0034](ADR-0034-motor-mount-angle.md) | Motor mount angle as a design parameter | 🔄 | Medium | Yes |
+| [0035](ADR-0035-tpu-hinges.md) | TPU-printed hinges | 🔄 | Medium | Yes |
 | [0036](ADR-0036-open-community-platform.md) | Open, community-driven aircraft platform (AI-assisted research) | ✅ | Decided | No |
 | [0037](ADR-0037-licence.md) | Licence: CERN-OHL-S-2.0 + CC BY-SA 4.0 | ✅ | Decided | Yes |
 | [0038](ADR-0038-fixed-fin-variant.md) | Dual directional config: finless baseline + fixed-fin variant V1 (no rudder) | 🔄 | Medium `[D]`/`[E]` | Yes |
@@ -60,3 +60,5 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | 0029 | Absorbed into [0002](ADR-0002-closed-shell.md) |
 
 > **0015 was corrected, not cancelled.** The original version claimed that carbon tubes add no torsion. See correction C11 in the [CHANGELOG](../CHANGELOG.md).
+>
+> **All indexed ADRs now have files (OP-22 closed, 2026-08-06).**

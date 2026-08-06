@@ -1,6 +1,6 @@
 # Salamandra — Design Guide
 
-**Version 0.6** · 6 August 2026 · Status: **DRAFT — for designer review**
+**Version 0.7** · 6 August 2026 · Status: **DRAFT — for designer review**
 
 This document is the working specification handed to the CAD designer. It defines the
 reference configuration (Cruise, Article #1) of the Salamandra modular 3D-printed FPV
@@ -29,7 +29,7 @@ version live in [`prompts/`](prompts/).
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.6 |
+| Version | 0.7 |
 | Date | 2026-08-06 |
 | Status | DRAFT — pending designer iteration and Phase 1 closure |
 | Reference configuration | **Cruise — Article #1** |
@@ -353,6 +353,9 @@ all other geometry is defined independently of the exact profile except the twis
   - **Removable** (no adhesive): panels swap for Range/Sport configurations. The tube and
     pin are bonded in the PANEL and protrude ≈ 70 mm (tube) / ≈ 70 mm (pin) into the CORE
     sockets.
+  - **Pin material is fixed: carbon Ø6** — the filament-pin alternative was evaluated
+    and rejected on stiffness (≈ 9000× softer, R-JOINT collapses, −29 % V_div;
+    `joint_pin_trade.py`, ADR-0031).
   - R-JOINT: joint torsional stiffness ≥ **5×** the adjacent section (ADR-0032).
 - **Segment joints** (within a panel): tenon + PETG adhesive, bond area ≥ **3× the skin
   section** (ADR-0023). Adhesive: 3D-Gloop PETG or 30-min epoxy (I-04; not E6000).
@@ -406,8 +409,8 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Motor mount | Face at x ≈ +230; motor body from ≈ +195 to +230 (28-class, 35 mm long, CG ≈ +212); prop disk plane at **x ≈ +235** (≥ 10 mm aft of the root TE at +216.9) | C25; PROVISIONAL |
 | Joint sockets | At y = ±195: tube socket Ø12.2–12.4, pin socket Ø6.1–6.2, depth ≈ 70 mm; centerlines x = −9.6 / +55.4 | §7.3 |
 | Avionics stations | FC/RX/blackbox ≈ x = 0…+40 (aft of or beside the bay); ESC ≈ x = +60 (rear pod, beside the motor); GPS/mag on the nose pedestal ≈ x = −120. **Station cavity 64 × 45 × 21 mm with a 30.5 × 30.5 mm (Φ4 mm) boss/tray** — accepts the entire I-17 catalog (min 28×28×7, avg 45×34×12, max 56×37×13 mm) | Matches the §8.1 balance; PROVISIONAL; I-17 §4.1 `[M]` |
-| **FPV camera mount** | In the **nose boom front** (≈ x = −450): 2× M2, **16 mm spacing**, cavity for the DJI O4 camera module **25.55 × 20 × 23.30 mm** (O4/Pro) or **13.44 × 12.36 × 16.50 mm** (Lite); clear forward view (155° FOV); coaxial cable run (130 mm, no bending at the base) to the VTX | I-19 §2/§6 `[M]`; PROVISIONAL |
-| **FPV VTX** | DJI O4/Pro transmission module **33.5 × 33.5 × 13 mm** (Lite 30×30×6), tray with **20 × 20 / 25.5 × 25.5 mm M2** holes (Lite: 25.5 only), in the CORE **with airflow** (shell runs hot — do not enclose; thermal pad to the frame); antennas **≥ 5 cm from VTX/camera/carbon/current path**, outside the shell, the two Pro antennas at **90°** | I-19 §2/§3 `[M]`; PROVISIONAL |
+| **FPV camera mount** | In the **nose boom front** (≈ x = −450): 2× M2, **16 mm spacing**, cavity for the DJI O4 camera module **25.55 × 20 × 23.30 mm** (O4/Pro) or **13.44 × 12.36 × 16.50 mm** (Lite); clear forward view (155° FOV); coaxial cable run (130 mm, no bending at the base) to the VTX. **Legacy O3 Air Unit** (I-19 §2.4): camera 21.2 × 20 × 19.5 mm **fits the same cavity**; hole spacing to verify (2× M2/16 mm) before use | I-19 §2/§6 `[M]`; PROVISIONAL |
+| **FPV VTX** | DJI O4/Pro transmission module **33.5 × 33.5 × 13 mm** (Lite 30×30×6; **legacy O3 32.5 × 30.5 × 14.5 fits the tray — I-19 §2.4**), tray with **20 × 20 / 25.5 × 25.5 mm M2** holes (Lite: 25.5 only), in the CORE **with airflow** (shell runs hot — do not enclose; thermal pad to the frame); antennas **≥ 5 cm from VTX/camera/carbon/current path**, outside the shell, the two Pro antennas at **90°** | I-19 §2/§3 `[M]`; PROVISIONAL |
 | Hand launch | Grip area on the CORE sides; designer's choice within the OML | — |
 | Balance tabs | Small printed tabs on the CORE underside to rest the aircraft on a balance edge for CG verification (Pico Talon practice, I-09) | PROVISIONAL |
 
@@ -427,7 +430,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Servos (4 × 15 g) | 60 | `[E]`; I-18: the 12–15 g digital metal-gear class fits (48–60 g); 17–21 g class exceeds |
 | Propeller + hub/spinner | 40 | `[E]` |
 | Elevon balance mass | 60 | `[E]` (ADR-0025) |
-| **FPV DJI O4/Pro (camera + VTX + 2 antennas)** | **37** | `[M]` (I-19: 33 g + 2×2.1 g; Lite 8.2 g) |
+| **FPV DJI O4/Pro (camera + VTX + 2 antennas)** | **37** | `[M]` (I-19: 33 g + 2×2.1 g; Lite 8.2 g; **legacy O3 ≈ 39 g** — 36.4 g + 3 g antenna, I-19 §2.4 `[M]`) |
 | **Battery boom structure** | **40** | `[E]` PROVISIONAL (OP-24; target ≤ 40 g) |
 | Hardware (screws, TPU hinges, adhesive, misc) | 20 | `[E]` |
 | **Battery 6S1P (21700)** | **455** | `[E]` (I-16: P42A 445 g / 50E 433 g) |
@@ -518,7 +521,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Servos | 4× digital, no freeplay, dual actuation per elevon (§7.5; class and current in I-18) | ADR-0026 |
 | Wiring | Current path (ESC→battery) separated from GPS/mag, pitot and FPV runs | docs/00 |
 | Avionics power | **≈ 6.6 W** = ≈ 6 % of cruise (5 V rail 300–555 mA vs 2 A BEC; servo rail 1.2–2.8 A avg vs ≥ 4.5 A Vx BEC) → **≈ 7.3 % of the 6S1P P42A pack per flight-hour** (I-17 §6 `[D]`) | I-17 |
-| FPV (video) | DJI O4 Air Unit series reference (I-19): O4/Pro (33 g, 7.4–26.4 V) or Lite (8.2 g, 3.7–13.2 V); camera in the nose boom, VTX in the CORE (§7.6). **Power:** Pro 7.4–10.4 W (max 1200 mW) — feed from the **9 V/2 A rail (≥ 13.5 W DJI minimum); do NOT power the Pro from the 5 V rail** (10.4 W @ 5 V ≈ 2.1 A > 2 A); O4 Lite fits the 5 V rail (1.2 A, 60 %) | I-19 §4–5 `[M]`/`[D]` |
+| FPV (video) | DJI O4 Air Unit series reference (I-19): O4/Pro (33 g, 7.4–26.4 V) or Lite (8.2 g, 3.7–13.2 V); camera in the nose boom, VTX in the CORE (§7.6). **Legacy O3 Air Unit** (36.4 g, 7.4–26.4 V) fits the mounts — camera hole spacing and measured current pending (I-19 §2.4). **Power:** Pro 7.4–10.4 W (max 1200 mW) — feed from the **9 V/2 A rail (≥ 13.5 W DJI minimum); do NOT power the Pro from the 5 V rail** (10.4 W @ 5 V ≈ 2.1 A > 2 A); O4 Lite fits the 5 V rail (1.2 A, 60 %) | I-19 §4–5 `[M]`/`[D]` |
 | Total electronics | Avionics + FPV = **17.0 W with O4 Pro** (15.5 % of cruise; 18.8 % of pack per flight-hour) / 12.6 W with Lite. Fly the lowest usable power level (CE legal limit is 14 dBm, not the FCC number) | I-19 §5 `[D]` |
 
 ---
@@ -559,10 +562,8 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Plans | [`docs/03-phase-1-plan.md`](../docs/03-phase-1-plan.md), [`docs/05-master-plan.md`](../docs/05-master-plan.md) |
 | Conventions | [`docs/04-conventions.md`](../docs/04-conventions.md) |
 
-> ⚠️ Several ADRs cited above (0003, 0006, 0012, 0023, 0024, 0026, 0030, 0031, 0034,
-> 0035) are listed in the decisions index but their **files have not been published**.
-> Their values, as used in this guide, are binding for v0.2; the files must be published
-> before v1.0 (OP-22).
+> ✅ **All ADRs cited in this guide now have published files** (0003, 0006, 0012, 0023,
+> 0024, 0026, 0030, 0031, 0034, 0035 published 2026-08-06 — OP-22 closed).
 
 ---
 
@@ -570,6 +571,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
+| 0.7 | 2026-08-06 | **Legacy DJI O3 Air Unit integrated (I-19 §2.4 `[M]`):** camera 21.2×20×19.5 mm fits the §7.6 cavity, module 32.5×30.5×14.5 fits the VTX tray, mass ≈ 39 g (§8.1 note); **all 14 missing ADR files published** (OP-22 closed) and referenced in §13; guide v0.7. |
 | 0.6 | 2026-08-06 | **Dual directional configuration (ADR-0038, I-20):** optional fixed centreline fin registered in §7.6 (rear-pod extension ≈ 30 mm, S_v ≈ 2.1 dm², b_v ≈ 250 mm, root t ≥ 2.5 mm, no rudder); finless baseline remains the O1 build; C16 stall tension with the fin mass flagged to F2 (OP-24); `yaw_stability.py` added |
 | 0.5 | 2026-08-05 | **Component catalogs integrated (I-16/17/18/19):** FPV DJI O4 system in the mass budget (§8.1: +37 g → AUW 1697 g), balance re-run (`balance_cg.py` — pack 6S1P ≈ −415, bay −516…−315); servo class 12–15 g + cavity 34×16×39 + torque not binding + current data (§7.5, I-18); FC reference class F405-WING-V2 / SpeedyBee + station cavity 64×45×21 + avionics 6.6 W (§7.6, §11, I-17); FPV camera/VTX mounts in the CORE (§7.6) and FPV/video power in §11 (I-19); battery energy reference 90.7/108 Wh (§10.1, I-16); stall flag updated (46.1 km/h, OP-24). |
 | 0.4 | 2026-08-05 | **Bay re-derived with the real pack envelope (I-16 `[D]`):** 6S1P = 153 × 64.5 × 22.2 mm (2×3, orient. A) → bay **200 × 70 × 32 mm**, forward end **x ≈ −521**, boom ≈ 390 mm (`balance_cg.py`). Fit verdict: only 6S1P fits and reaches the R-CG band; 4S1P fits but needs x ≈ −577 (outside); 4S2P/6S2P fit no single-layer arrangement (I-16) — OP-23 sharpened. |

@@ -47,6 +47,7 @@ Data sources consumed (all `[M]`):
 | `fpv_power_budget.py` | **I-19: FPV power budget** — DJI O4 / Pro / Lite current-per-level (measured `[M]`), power at any input voltage, BEC margin vs the Matek 9V/2A and 5V/2A rails, energy impact on the 6S1P P42A pack | I-19, guide §11, O1 | stdlib only |
 | `servo_torque.py` | **I-18: hinge moment** — elevon hinge moment (Ch 0.01–0.05 `[E]`) at V_NE, per-servo with dual actuation, margin vs the catalog | I-18, guide §7.5, OP-06, ADR-0025 | stdlib only |
 | `yaw_stability.py` | **I-20: directional stability** — Cnβ budget (finless baseline vs centreline fin), fin sizing tiers V1a/V1b, rudder-authority vs crosswind, yaw damping/subsidence, fin bending at V_NE, mass/drag/stall cost | I-20, first variant (O14), guide §7.6, G10 | numpy |
+| `joint_pin_trade.py` | **ADR-0031: pin material trade** — carbon Ø6 vs printer filament (PETG/PLA Ø1.75) in the R-JOINT torque couple: strength (FS ≥ 3 all candidates) vs stiffness (E·I: filament ≈ 9000× softer → k_joint collapses → −29 % V_div per ADR-0032) | ADR-0031/0032, guide §7.3 | numpy |
 
 ## Reproducing the published results
 
@@ -217,6 +218,21 @@ servo (product page, manual, official INAV CLI). Published results (I-20 §5, `[
 V1b +12.6 %; both tiers push V_stall past 45 km/h at the current budget (OP-24 lever
 applies). A change to geometry, bands or methods must reproduce the six validation
 cases (Helmbold, fin reference, Raymer body, tier consistency, damping reference).
+
+### 11. R-JOINT pin material trade (ADR-0031)
+
+```bash
+python3 joint_pin_trade.py
+```
+
+Evaluates the community proposal of replacing the carbon Ø6 anti-rotation pin with
+3D-printer filament (PETG/PLA Ø1.75). **Strength passes** (shear FS ≈ 4.7–6.3 at the
+declared torque band), **stiffness fails decisively**: E·I carbon Ø6 = 7.63 N·m² vs
+PETG filament 0.0009 N·m² (≈ 9000× softer) → k_joint ∝ E·I collapses from ≥ 5× to
+≈ 0.005× the section → **−29 % V_div** (ADR-0032 penalty table) on a wing whose
+dominant risk is divergence. Printed-PETG tenons need Ø17 for parity (≈ 40 g vs
+6.3 g). Cost saving ≈ €0.5–1.0/aircraft, complexity unchanged (the socket is the
+same). **Rejected; carbon Ø6 stands.** Five validation cases must pass.
 
 ---
 

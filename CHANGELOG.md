@@ -4,6 +4,65 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.17] — 2026-08-06
+
+**R-JOINT pin material trade — filament proposal evaluated and rejected with numbers.**
+
+Community proposal: replace the carbon Ø6 anti-rotation pin with pieces of 3D-printer
+filament (PETG/PLA Ø1.75). New tool `joint_pin_trade.py` (five validation cases, ALL
+PASS) shows:
+
+- **Strength passes** (not the binding requirement): couple force F = T/arm =
+  2.3–15.4 N `[E]` → shear FS ≈ 4.7 (PETG) / 6.3 (PLA); bearing ≈ 5 MPa.
+- **Stiffness fails by ≈ 9000×**: E·I carbon Ø6 = 7.63 N·m² vs PETG filament
+  Ø1.75 = 0.0009 N·m². With identical sockets/arm/loads, k_joint ∝ E·I → R-JOINT
+  collapses from ≥ 5× to ≈ 0.005× the section → **−29 % V_div** (ADR-0032 table) on a
+  forward-swept wing whose dominant risk is aeroelastic divergence (I-05).
+- Printed-PETG alternatives: tenon Ø8 → 5 %, Ø10 → 12 %, Ø17 → parity (≈ 40 g vs
+  6.3 g) — worse than carbon on every axis.
+- Cost/complexity: carbon ≈ €0.25–0.50 per pin, 6.3 g; the socket (bore, embedment,
+  sliding fit) is identical for any pin — filament saves ≈ €1/aircraft, no complexity
+  change. **Verdict: −29 % divergence margin is not purchasable for €0.5.**
+
+Documents: ADR-0031 (trade-study section added), guide §7.3 (pin material fixed,
+with reference), calculations/README §11. **Corrections:** none (proposal evaluated,
+no datum overturned).
+
+---
+
+**Catalog audit — everything integrated, two gaps closed (O3 + 14 missing ADR files).**
+
+### Audit result (batteries / FC / servos / FPV)
+Verified in the design guide: **batteries** (I-16: bay 200×70×32 mm, pack 6S1P
+153.2×64.5×22.2 mm, energy 90.7/108 Wh — §7.6/§8.1/§9/§10.1), **FC** (I-17: station
+cavity 64×45×21 mm, 30.5×30.5 boss, F405-WING-V2/SpeedyBee reference, exclusions —
+§7.6/§11), **servos** (I-18: class 12–15 g, cavity 34×16×39 mm, current 1.2–2.8/5–9 A —
+§7.5/§8.1/§11), **FPV O4 series** (I-19: camera 25.55×20×23.30 / Lite 13.44×12.36×16.50,
+VTX 33.5×33.5×13 / Lite 30×30×6, power rails — §7.6/§8.1/§11). **All integrated.**
+
+### Gap closed 1 — DJI O3 Air Unit (legacy) `[M]`
+Not previously cataloged. Added to **I-19 §2.4** with DJI official data (module
+32.5×30.5×14.5 mm, camera 21.2×20×19.5 mm, 36.4 g, 7.4–26.4 V, coax 115 mm): fits the
+Salamandra mounts (camera inside the O4 cavity, module on the O4 tray); declared
+verifications pending (camera hole spacing, measured current). Guide §7.6/§8.1/§11 and
+OP-25 updated. O4 series remains the reference.
+
+### Gap closed 2 — OP-22: all 14 missing ADR files published
+ADR-0003 (wash-in twist), 0006 (single pusher, ⚠️ dispute), 0008 (reject 7×12), 0009
+(drag decomposition), 0012 (light color), 0016 (reject PLA+), 0018 (reject ABS), 0023
+(joint adhesive), 0024 (segmentation), 0026 (dual actuation), 0030 (plastic torsion
+path), 0031 (carbon pin), 0034 (motor mount angle), 0035 (TPU hinges) — written from
+their guide/justification values with tags; decisions index linked; OP-22 **closed**;
+guide §13 note updated (all ADRs published).
+
+### Versioning
+Design guide **v0.7** (O3 + ADR publication; §14), justification/open-points v0.7.
+
+### Corrections
+None (catalog extension and file publication; no overturned datum).
+
+---
+
 ## [1.15] — 2026-08-06
 
 **Directional (yaw) stability quantified — dual configuration adopted (I-20, ADR-0038).**

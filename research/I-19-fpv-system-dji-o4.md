@@ -71,6 +71,36 @@ O4/04 digital video ecosystem (Goggles 2/3/N3/Integra):
 | Camera mounting | 2× M2, **16 mm spacing** |
 | microSD | yes |
 
+### 2.4 DJI O3 Air Unit (legacy generation) — compatibility row `[M]`
+
+The O3 Air Unit is the **previous generation** (2022, ecosystem: Goggles 2 / FPV Goggles
+V2 / Goggles Integra). It is **not the project reference** (O4 series is), but it is the
+system many builders already own — and the TBS Mojito (docs/02 §3) is marketed as
+"O3 or O4" compatible. Data from DJI official support (dji.com/support/product/o3-air-unit,
+accessed 2026-08-06):
+
+| Parameter | Value |
+|---|---|
+| Transmission module | **32.5 × 30.5 × 14.5 mm** (L×W×H) |
+| Camera module | **21.2 × 20 × 19.5 mm** (L×W×H), **≈ 8.3 g** incl. 115 mm coaxial cable |
+| Air Unit mass (camera excluded / included) | ≈ **28 g / 36.4 g**; antenna ≈ 3 g |
+| Coaxial cable | **115 mm** |
+| Camera FOV | **155°** (12.7 mm equiv.) |
+| Input voltage | **7.4–26.4 V** (2S–6S) |
+| Camera screws | M2 × 4 (4 pc) supplied |
+| TX power (EIRP) | FCC < 33 dBm · CE < 14 dBm |
+
+**Compatibility check vs the Salamandra mounts (guide §7.6):** the O3 module
+(32.5 × 30.5 × 14.5) fits the O4 VTX tray footprint (33.5 × 33.5) and the O3 camera
+(21.2 × 20 × 19.5) fits inside the O4/Pro camera cavity (25.55 × 20 × 23.30). The O3
+camera **hole spacing is not confirmed in the fetched sources** — verify against the
+2× M2 / 16 mm mount before using it. Power: same voltage range as the O4 Pro (7.4–26.4 V);
+measured current table pending (bench, D-series) — do not use the O4 Lite 5 V rail
+assumption for the O3.
+
+**Status:** O3 = accepted legacy option with declared verifications (camera hole
+spacing, power draw); the reference and the mounts stay O4 series.
+
 ## 3. Mounting and installation details (DJI manual, `[M]`)
 
 - **VTX:** install with the M2 screws; **M2 damping balls recommended** on the
@@ -192,10 +222,16 @@ electronics 17.0 W / 18.8 % per flight-hour (Pro) and 12.6 W / 13.9 % (Lite).
 ## 8. Sources
 
 1. DJI — *DJI O4 Air Unit Series* specs (`dji.com/o4-air-unit/specs`). `[M]`
+
 2. DJI — *DJI O4 Air Unit Series User Manual* v1.0 EN (PDF). `[M]`
+
 3. DJI Store — *O4 Air Unit Pro Camera Module* (25.55×20×23.30 mm, 16.4 g, coax 130 mm, M2×4 screws). `[M]`
+
 4. Oscar Liang — *DJI O4 Air Unit Pro* review (power/current table, mounting, 20×20 + 25.5×25.5). `[M]`
+
 5. Oscar Liang — *DJI O4 Air Unit Lite* review (power/current at 5 V, dims, 700 mW cap). `[M]`
+
+6. DJI — *O3 Air Unit support/specs page* (`dji.com/support/product/o3-air-unit`, accessed 2026-08-06). `[M]` — legacy generation (§2.4)
 6. Confidence: DJI specs/manual `[M]`; measured current `[M]` (review); power/energy `[D]`; any remaining quantities `[E]`. The single most valuable verification is measuring the current draw of the actual unit with the chosen goggles/firmware on the bench.
 
 **Designer checklist:** model camera mount (M2, 16 mm) in the nose pod; VTX tray
