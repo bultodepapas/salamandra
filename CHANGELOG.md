@@ -4,6 +4,18 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.24] — 2026-08-06
+
+**PROTOTYPE 0.1 materials decided (user): aluminium nose boom Ø8/int6 + Ø3 aft spar — `boom_flexion.py`.**
+
+- **Nose boom = aluminium tube Ø8 / int Ø6 (wall 1.0 mm, measured) + printed cradle (15 g):** the structural analysis found and resolved the governing trap — the tube **cannot cantilever** the 455 g pack (+6 g: σ 322 MPa > 276 yield, δ 57 mm, 5.2 Hz), but the existing geometry (pack centred x −415 between the tip support −516 and the CORE −132) is exactly a **two-support beam: σ 60 MPa (FS 4.6), δ 2.0 mm, mode 21 Hz — PASS** (`boom_flexion.py`, 11 validations ALL PASS). The cradle is a structural requirement; the tip skid is the crush zone.
+- **Boom mass ≈ 41 g** (tube 25.8 + cradle 15) — OP-24 target 40 + 2 absorbed (V_stall +0.03 km/h).
+- **Ø3 mm aluminium spar along the V1 fin leading edge** (aft, near the TE): root stiffness ×2.05 (EI 0.278 + 0.265 N·m²), 5.7 g, load path vs slipstream buffeting (OP-26).
+- **Carbon optimisation deferred** (documented pending, ADR-0015 revision).
+- Documents: guide **v0.12** (§7.6 nose boom, §7.2 fin mount, §8.1 table), OP-24/OP-26 updated, mass_budget boom 41 g, calculations/README §16. **Corrections:** none.
+
+---
+
 ## [1.23] — 2026-08-06
 
 **Divergence model refined: real profile geometry + literature sensitivity (docs/07 rev. 2).**

@@ -52,7 +52,7 @@ PRINTED = {
     "wings":   dict(m=341.0, src="[E] 62 % of shell, 6 seg", default="PETG"),
     "tips":    dict(m=44.0,  src="[E] 8 % of shell, 2 pcs",  default="PETG"),
     "elevons": dict(m=50.0,  src="[D] ADR-0025: 2 × 25 g",   default="PETG"),
-    "boom":    dict(m=40.0,  src="[E] OP-24, target <= 40",  default="PETG"),
+    "boom":    dict(m=41.0,  src="[E] OP-24 prototipo: Al tube Ø8/int6 26g + cradle 15g (boom_flexion.py); carbon pending", default="PETG"),
     "fin":     dict(m=48.0,  src="[E] ADR-0038 V1, mid 36-60", default="PETG",
                     optional=True),
 }

@@ -52,6 +52,7 @@ Data sources consumed (all `[M]`):
 | `mass_budget.py` | **F2: material mass variants** — per-part material policies (ALL PETG baseline / AERO-PLA wings / PLA+ / arbitrary), battery 4S–6S × P42A/50E (I-16 model), FC catalog (I-17), FPV (I-19), motor/prop/servo options, V1 fin; AUW, g/dm², V_stall, printed cost | docs/06, guide §8.1, F2 (P1/P2), OP-28 | numpy |
 | `divergence.py` | **G6 first pass: absolute divergence speed** — multi-cell Bredt-Batho J per station (guide §7.1), G `[M]` with G4 band, FEM weak form (eigh) cross-checked by an independent flux-form shooting (0.06 %); sweep factor 0.50–0.70 `[E]`, R-JOINT spring at y=195, tube contribution quantified; verdict vs 240 km/h | docs/07, guide §4/§13, F4 (S3/S4), OP-08/OP-29 | numpy |
 | `launch_speed.py` | **I-14: hand-launch feasibility (rev. 2)** — release gate V_suelta ≥ V_stall (corrected: k_safe applies post-release, built by acceleration); V_hand band from published biomechanics (van den Tillaar 2004), idle-thrust assist (INAV hover rule T/W ≈ 1.0, idle 0.5–0.67×), Mojito configuration-class anchor `[M]`, torque-roll threshold; INAV/ArduPlane autolaunch settings | I-14 executed, guide §4/§12, D1/D2 | numpy |
+| `boom_flexion.py` | **PROTOTYPE 0.1: nose boom Ø8/int6 aluminium + Ø3 aft spar** — tube section (I = 1.374e-10 m⁴, 25.8 g); pure cantilever REJECTED (σ 322 MPa vs 276 yield, δ 57 mm, 5.2 Hz); **two-support arrangement PASS (σ 60 MPa FS 4.6, δ 2.0 mm, 21 Hz)** — the pack must sit between the tip and CORE supports; cradle 15 g → boom ≈ 41 g; Ø3 fin spar doubles the root EI (2.05×, 5.7 g); carbon optimisation pending | guide §7.6/§7.2/§5.4, OP-24/OP-26, mass_budget | numpy |
 
 ## Reproducing the published results
 
@@ -299,6 +300,27 @@ technique is part of the specification.** Anchored on the Mojito configuration c
 `[M]` (1800 g, higher reported stall, hand-launched in service) and published
 biomechanics (van den Tillaar 2004). Nine validation cases must pass. Autolaunch
 settings table in research/I-14 §3.2.
+
+### 16. Nose boom Ø8/int6 aluminium + Ø3 aft spar (PROTOTYPE 0.1 — guide §7.6)
+
+```bash
+python3 boom_flexion.py
+```
+
+User decision 2026-08-06: the battery boom is an **aluminium tube Ø8 / int Ø6
+(wall 1.0 mm)** with a printed cradle, and a **Ø3 mm aluminium spar** stiffens
+the V1 fin near the trailing edge; carbon optimisation deferred (ADR-0015).
+
+- **Pure cantilever REJECTED** (`[D]`): +6 g with the 455 g pack at the tip →
+  σ 322 MPa vs 276 (6061-T6), δ 57 mm, first mode 5.2 Hz.
+- **Two-support arrangement ADOPTED** (`[D]`): pack between the nose-tip
+  support (x ≈ −516) and the CORE socket (x ≈ −132) → σ 60 MPa (FS 4.6),
+  δ 2.0 mm, mode 21 Hz. The cradle is a structural requirement, not
+  packaging.
+- Mass: tube 25.8 g + cradle 15 g = **≈ 41 g** (OP-24 target 40 + 2 absorbed;
+  V_stall +0.03 km/h); tip skid = crush zone (bare tube ≤ 3 g tip impacts).
+- Ø3 fin spar: root EI ×2.05 (0.278 + 0.265 N·m²), 5.7 g.
+- Eleven validation cases must pass.
 
 ---
 

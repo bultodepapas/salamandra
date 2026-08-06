@@ -1,6 +1,6 @@
 # Salamandra — Design Guide
 
-**Version 0.11** · 6 August 2026 · Status: **DRAFT — for designer review**
+**Version 0.12** · 6 August 2026 · Status: **DRAFT — for designer review**
 
 This document is the working specification handed to the CAD designer. It defines the
 reference configuration (Cruise, Article #1) of the Salamandra modular 3D-printed FPV
@@ -29,7 +29,7 @@ version live in [`prompts/`](prompts/).
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.11 |
+| Version | 0.12 |
 | Date | 2026-08-06 |
 | Status | DRAFT — pending designer iteration and Phase 1 closure |
 | Reference configuration | **Cruise — Article #1** |
@@ -418,10 +418,10 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Spanwise extent | y = 0 → **±195** (30 % half-span) | The wing surface continues across the CORE (same planform and t/c schedule, §5) |
 | Centerline section | Root airfoil (c = 289.2 mm, t/c 13.5 %) at y = 0, mid-plane z = 0 | Same airfoil family as the panels (pending OP-02) |
 | Trailing edge | **Fixed** from y = 0 to ±195 (no hinge line on the CORE, C23) | The torsion box may run closed to the TE inboard of the panel root (PROVISIONAL) |
-| **Nose boom (battery)** | Printed boom from the nose pod tip (x ≈ −132) to **x ≈ −516** (≈ 385 mm); width ≈ 70 mm; carries the battery bay (below) and the FPV camera mount (front, ≈ x = −450); **skid at the tip** (first contact on landing flare); wiring conduit from the bay to the CORE; GPS/mag pedestal kept on the nose pod top (x ≈ −120, out of the battery current path) | Required so the 6S1P pack CG reaches x ≈ −415 (OP-01 resolution, `balance_cg.py` `[D]`, bay re-derived with the real pack envelope of I-16); structure ≤ 40 g target (OP-24); PROVISIONAL until F2 |
+| **Nose boom (battery)** | **PROTOTYPE 0.1 (user decision 2026-08-06):** aluminium tube **Ø8 / int Ø6 (wall 1.0 mm)** as the longitudinal beam from x ≈ −132 to ≈ −516 (≈ 385 mm) + **printed cradle** (≈ 15 g) wrapping the pack and the tube; the pack sits BETWEEN two supports (nose tip ≈ x −516 and the CORE socket ≈ x −132) — **two-support arrangement is a structural requirement** (`boom_flexion.py` `[D]`: pure cantilever FAILS at +6 g — σ 322 MPa vs 276 yield, δ 57 mm, 5.2 Hz; two-support PASSES — σ 60 MPa FS 4.6, δ 2.0 mm, 21 Hz); FPV camera on a short cantilever at the tip (≈ x −450); **printed skid at the tip as the crush zone** (bare tube must not see tip impacts > 3 g); carbon optimisation PENDING (deferred, ADR-0015) | Required so the 6S1P pack CG reaches x ≈ −415 (OP-01 resolution, `balance_cg.py` `[D]`, bay re-derived with the real pack envelope of I-16); structure ≈ 41 g (tube 26 + cradle 15, `boom_flexion.py`; OP-24 target 40 + 2 absorbed) |
 | Battery bay | Internal **200 × 70 × 32 mm** (x × y × z); forward end at x ≈ −516; centered on y = 0 at z = 0; slide rails along x; single 21 mm layer, never stacked | Sized for the 6S1P pack (153 × 64.5 × 22.2 mm, I-16 `[D]`) CG band **−434…−397 mm** (R-CG ±5 mm). **Only 6S1P fits and reaches the band**: 4S1P needs x ≈ −568 (outside the bay); 4S2P/6S2P do **not fit** the single-layer bay at all (I-16) — R-CG requirement re-derived in F2 (OP-23); §9; PROVISIONAL |
 | **Rear pod (motor)** | Extends **48 mm aft of the root TE** (to x ≈ +265); **lower surface at the prop plane ≤ z = −111.6 mm** (≈ 92 mm below the wing lower surface) | Required so the 8×8 prop (Ø203, axis at z = 0) keeps ≥ 10 mm tip ground clearance (C26); PROVISIONAL |
-| **Fin mount (V1 variant, ADR-0038)** | **Optional** rear-pod extension ≈ 30 mm (to x ≈ +295) with a fixed centreline fin: S_v ≈ 2.1 dm², b_v ≈ 250 mm, c_r 105 / c_t 63 mm (trapezoid, swept tip), root t ≥ 2.5 mm solid, fin AC ≈ +285 mm; no servo, no linkage. CORE component — panels untouched | I-20 `[D]`/`[E]`; `yaw_stability.py`; in-service Mojito pattern `[M]`; PROVISIONAL until F2 (flutter, stall arbitration) |
+| **Fin mount (V1 variant, ADR-0038)** | **Optional** rear-pod extension ≈ 30 mm (to x ≈ +295) with a fixed centreline fin: S_v ≈ 2.1 dm², b_v ≈ 250 mm, c_r 105 / c_t 63 mm (trapezoid, swept tip), root t ≥ 2.5 mm solid, fin AC ≈ +285 mm; no servo, no linkage. **PROTOTYPE 0.1: Ø3 mm aluminium spar along the fin leading edge** (near the TE region, aft stiffener — user decision 2026-08-06): doubles the root stiffness (EI 0.278 + 0.265 N·m², `boom_flexion.py`), load path vs pusher-slipstream buffeting (OP-26), 5.7 g; carbon pending. CORE component — panels untouched | I-20 `[D]`/`[E]`; `yaw_stability.py`; in-service Mojito pattern `[M]`; PROVISIONAL until F2 (flutter, stall arbitration) |
 | Motor mount | Face at x ≈ +230; motor body from ≈ +195 to +230 (28-class, 35 mm long, CG ≈ +212); prop disk plane at **x ≈ +235** (≥ 10 mm aft of the root TE at +216.9) | C25; PROVISIONAL |
 | Joint sockets | At y = ±195: tube socket Ø12.2–12.4, pin socket Ø6.1–6.2, depth ≈ 70 mm; centerlines x = −9.6 / +55.4 | §7.3 |
 | Avionics stations | FC/RX/blackbox ≈ x = 0…+40 (aft of or beside the bay); ESC ≈ x = +60 (rear pod, beside the motor); GPS/mag on the nose pedestal ≈ x = −120. **Station cavity 64 × 45 × 21 mm with a 30.5 × 30.5 mm (Φ4 mm) boss/tray** — accepts the entire I-17 catalog (min 28×28×7, avg 45×34×12, max 56×37×13 mm) | Matches the §8.1 balance; PROVISIONAL; I-17 §4.1 `[M]` |
@@ -447,7 +447,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Propeller + hub/spinner | 40 | `[E]` |
 | Elevon balance mass | 60 | `[E]` (ADR-0025) |
 | **FPV DJI O4/Pro (camera + VTX + 2 antennas)** | **37** | `[M]` (I-19: 33 g + 2×2.1 g; Lite 8.2 g; **legacy O3 ≈ 39 g** — 36.4 g + 3 g antenna, I-19 §2.4 `[M]`) |
-| **Battery boom structure** | **40** | `[E]` PROVISIONAL (OP-24; target ≤ 40 g) |
+| **Battery boom structure** | **41** | `[E]` PROTOTYPE: Al tube Ø8/int6 (26 g) + cradle (15 g) (`boom_flexion.py`); carbon optimisation pending (ADR-0015) |
 | Hardware (screws, TPU hinges, adhesive, misc) | 20 | `[E]` |
 | **Battery 6S1P (21700)** | **455** | `[E]` (I-16: P42A 445 g / 50E 433 g) |
 | **Total** | **1697** | **60 g/dm²** |
@@ -603,6 +603,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 
 | Version | Date | Change |
 |---|---|---|
+| 0.12 | 2026-08-06 | **PROTOTYPE 0.1 materials (user decision):** nose boom = aluminium Ø8/int6 tube + printed cradle, two-support arrangement (boom_flexion.py: cantilever rejected — σ 322 MPa/δ 57 mm/5.2 Hz; two-support PASS — σ 60 MPa/δ 2.0 mm/21 Hz; ≈ 41 g); V1 fin + rear pod get an Ø3 aluminium spar near the TE (root stiffness ×2.05, 5.7 g); carbon optimisation deferred (ADR-0015). §7.6/§7.2/§5.4/§8.1 updated. |
 | 0.11 | 2026-08-06 | **Launch verdict corrected (I-14 rev. 2):** hand launch **FEASIBLE** — release gate is V_suelta ≥ V_stall (not k=1.20 at the release instant, which rev. 1 wrongly demanded); typical throw 48.4 km/h at release (k=1.05), k=1.20 in 0.39 s; anchored on the Mojito configuration class `[M]` (heavier, higher reported stall, hand-launched in service) and published throwing biomechanics (van den Tillaar 2004). §4/§12 envelope updated. |
 | 0.10 | 2026-08-06 | **Two weakest links closed with calculations: (1) absolute divergence (docs/07, `divergence.py`) — nominal 267.7 km/h (1.12×, barely PASS), conservative end 121.9 km/h (**FAIL** vs 240): ADR-0030's "criterion met" falsified, V_limit 110 km/h until S3/I-12/E7, OP-29; (2) hand launch (I-14 executed, `launch_speed.py`) — release ≥ 1.20 × V_stall at 0–5° pitch, typical throw releases BELOW stall (44.5 vs 45.9 km/h): launch envelope added to §4/§12 with INAV/ArduPlane autolaunch settings.** |
 | 0.9 | 2026-08-06 | **Material mass variants tool integrated (§8.1 note, OP-28):** `mass_budget.py` — per-part materials (PETG / AERO-PLA wings / PLA+), battery 4S–6S × P42A/50E (I-16 `[D]` pack model: baseline 1687 g, −10 g vs the `[E]` 455 g row), FC (I-17), FPV (I-19), motor/prop/servo options, V1 fin; results in docs/06. |
