@@ -2,7 +2,7 @@
 
 **Status:** Open — primary sources acquired, base comparison published
 **Feeds:** B3/G2 (E205 as a flight-proven low-Re section), CORE design patterns
-(guide §7.6), docs/02 measured-references register, ADR-0035 review (hinge alternatives)
+(guide §6.7), docs/02 measured-references register, ADR-0035 review (hinge alternatives)
 **Sources:** Flightory (Szymon Wójcik) user manuals V.1 2023 —
 `INSPIRATION/PICO TALON MANUAL.pdf`, `INSPIRATION/STALLION MANUAL.pdf`
 
@@ -79,9 +79,9 @@ causal** (same discipline as I-08).
 | Bed size | 200×200 mm, no supports | 220×220 mm, no supports; fuselage split L/R for small beds | Supports the 256 mm-bed constraint (O3) and Salamandra's segmentation (ADR-0024) |
 | Bending spars | 8×500 main + 6×490 + 4×220; V-tail 4×130 | 10×800 main + 2× 8×600 + 2× 6×430; tail boom 16×435; V-tail 4×260 | Multi-tube bending practice; the 6×430 wing tube is explicitly inserted **unglued** ("no need to glue, just insert into the designed slot") — the "housed" case ADR-0015 warns against **for torsion**. Not contradictory: these are non-swept wings with no divergence requirement |
 | Hinges | Polyester (mylar) 20×25/25×30, glued | Same, 25×30 | Flight-proven alternative to TPU-printed hinges (ADR-0035); lighter, cheaper; stiffness is the unknown for both — feeds OP-10 |
-| Modularity | Detachable nose (threaded inserts + printed reinforcement collar); hatch locks with pen springs; removable wings with M3 into inserts; STEP files | Same + removable tail boom (printed drill guides "BOOM DRILL" for drilling the carbon tube) | Direct pattern source for the CORE (§7.6): nose pod retention, battery hatch lock, battery pad, insert-reinforced roots, STEP for community customization (O12/O14/O15) |
+| Modularity | Detachable nose (threaded inserts + printed reinforcement collar); hatch locks with pen springs; removable wings with M3 into inserts; STEP files | Same + removable tail boom (printed drill guides "BOOM DRILL" for drilling the carbon tube) | Direct pattern source for the CORE (§6.7): nose pod retention, battery hatch lock, battery pad, insert-reinforced roots, STEP for community customization (O12/O14/O15) |
 | Balance aids | **Tabs on the underside of the wings** to balance on | — | Cheap CAD feature; adopt for the Salamandra CG verification (§12 step 7) |
-| Launch | — | Hand throw, "grab the fuselage under the wings, slight AoA" | Grip location under the wing at the CORE — consistent with the CORE-side grip in guide §7.6 |
+| Launch | — | Hand throw, "grab the fuselage under the wings, slight AoA" | Grip location under the wing at the CORE — consistent with the CORE-side grip in guide §6.7 |
 
 # 6. What transfers and what does not
 
@@ -106,7 +106,7 @@ the same cell format Salamandra's platform is built around).
    Re 1.5–3×10⁵, which brackets the Salamandra's stall-to-cruise root range. Its Cm0
    must come from the calibrated Ncrit 10–12 band (I-06) before it is admitted or
    discarded; the moderate camber supports the "lightly reflexed" direction of I-02 (C2).
-2. **CORE design (guide §7.6):** adopt the Flightory patterns where they fit the
+2. **CORE design (guide §6.7):** adopt the Flightory patterns where they fit the
    removable-joint philosophy: nose pod retention with threaded inserts + reinforcement
    collar, spring-loaded hatch lock for the battery bay, battery pad, and balance tabs
    on the CORE underside. These are `[M]`-proven details; their adoption is a design

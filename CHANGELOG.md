@@ -4,6 +4,48 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.27] — 2026-08-06
+
+**First release — tag `v0.1.0`: Salamandra Design Package (CAD baseline).**
+
+- Guide **v0.15** released (status RELEASED, tag v0.1.0): segment spans added (§6.5,
+  C24); new §6.9 bought-in items and consumables table; open items named with their
+  triggers (OP-02 airfoil, OP-21 CORE shape).
+- **`docs/08-release-v0.1.md`** (new): release notes — package contents, verification
+  status (all 16 scripts ALL PASS), frozen vs open items, binding constraints for the
+  designer and the build, working and feedback flow.
+- Indexes: `docs/README.md` row for docs/08; README release pointer.
+- **Corrections:** none — release of the v0.14/v0.15 state with documentation only.
+
+---
+
+## [1.26] — 2026-08-06
+
+**Design guide reorganized as a CAD designer's guide — v0.14 (structure only, no engineering change).**
+
+- **Guide structure** re-ordered for the designer's workflow: §4 reference planform →
+  §5 airfoil → §6 structure and parts (with a new **component map** listing the 11 parts
+  to model: CORE, 6 segments, 2 elevons, fin, cradle, skid, balance tabs) → §7 mass/CG →
+  §8 battery and cradle → §9 propulsion → §10 avionics → §11 flight envelope (stall,
+  divergence/V_limit, launch consolidated from old §4) → §12 assembly → §13 references →
+  §14 log. CAD method promoted to §6.8.
+- **Analysis moved out, nothing lost:** long blockquotes compressed to one-line flags;
+  the full rationale remains in `Design-Guide-Justification-v0.1.md` (v0.10: twist
+  working-value row, cradle row §9, boom row §6, straight-channel row §5, divergence row
+  §8) and the CHANGELOG. Historical bay sizing kept in justification §9 as the
+  fit-analysis basis.
+- **Values reconciled to the canonical scripts** (no silent changes, corrections listed):
+  twist working value **+0.5° → +3.0°** (parametric, C5; target 0.5° with the designed
+  section); divergence numbers updated to docs/07 rev. 2 (**275.6 / 151.5 / 107.1**,
+  V_limit 110 — the guide's v0.10-era 267.7/121.9 were stale); battery **bay → cradle**
+  throughout (§8, assembly step 8 verifies 6S1P only); AUW summary row reconciled
+  (1697 current / 1620 design ref.); guide §14 log compacted with CHANGELOG mapping.
+- Documents: guide **v0.14**, justification **v0.10**, open-points **v0.10** (OP-01/03/16/
+  19/21/23 reworded to the cradle). **Corrections:** stale divergence numbers; stale
+  twist value; bay-vs-cradle contradiction; 4S2P balance-verification step.
+
+---
+
 ## [1.25] — 2026-08-06
 
 **CAD questions Q1–Q5 answered — guide v0.13 (modelable as-is).**

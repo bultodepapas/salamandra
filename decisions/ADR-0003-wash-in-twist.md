@@ -41,7 +41,7 @@ closed by ≤ 0.6° of permanent elevon reflex (`elevon_authority.py`).
   I-05). The two add up and grow with dynamic pressure — the value is a *setting*, not a
   fixed property; it is re-derived when the final airfoil Cm0 is fixed (**C5**) and
   verified in flight (E7).
-- Keep the twist **parametric in CAD** (guide §6.3).
+- Keep the twist **parametric in CAD** (guide §5.2).
 
 ## Review conditions
 

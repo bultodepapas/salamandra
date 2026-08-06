@@ -22,7 +22,7 @@ experimental value.
 
 ## Decision
 
-**Single rear pusher as the reference layout** (guide §10.1), PROVISIONAL and under
+**Single rear pusher as the reference layout** (guide §9.1), PROVISIONAL and under
 dispute. The pusher keeps the wing unwashed by the propeller disk (disk plane at
 x ≈ +235, aft of the root TE at +216.9 — C25/C26).
 

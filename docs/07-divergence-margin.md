@@ -19,7 +19,7 @@ S3/S4). This document is the first absolute, reproducible estimate of V_div.
 
 | Element | Model | Source |
 |---|---|---|
-| Section | Torsion box x/c 0 → 0.72 (D-box 0→0.30 + center cell 0.30→0.72, common web at 0.30); hinge cell excluded ("the closed torsion box ends here") | guide §7.1, ADR-0002 |
+| Section | Torsion box x/c 0 → 0.72 (D-box 0→0.30 + center cell 0.30→0.72, common web at 0.30); hinge cell excluded ("the closed torsion box ends here") | guide §6.2, ADR-0002 |
 | **Geometry** | **REAL profile coordinates (mh60-135.dat): cell areas A1 = 0.0310c², A2 = 0.0415c², perimeters from the actual arcs, shear centre x/c = 0.353 → e = 0.103c, computed per station scaled to the local t/c** (the earlier k_h = 0.8 rectangle idealization validated within 0.4 % — area −6.7 % cancels against the shorter arc perimeters) | `geometry/airfoils/mh60-135.dat` |
 | Skin | 0.9 mm (2 perimeters, ADR-0028); web 0.9 mm | ADR-0028 |
 | J | Multi-cell Bredt-Batho, exact compatibility solution, real areas/perimeters | §5.2 station table |
@@ -118,6 +118,6 @@ python3 divergence.py
 
 14 model-validation cases must pass (ALL PASS on 2026-08-06). The criterion verdict is a
 printed finding, not a check. The profile file `geometry/airfoils/mh60-135.dat` is an
-input: any change to the section (guide §7.1), the material (ADR-0021), the stations
+input: any change to the section (guide §6.2), the material (ADR-0021), the stations
 (§5.2), the profile or the joint (ADR-0032) must reproduce the validation suite before
 the numbers are quoted.

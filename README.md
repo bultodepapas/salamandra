@@ -95,6 +95,11 @@ justification in [`design/`](design/). The baseline is a PETG forward-swept flyi
 **modular and configurable**: a standard center module and interchangeable wing panels.
 Efficient FPV cruise flight, with electronics chosen by the builder.
 
+**📦 First release — [tag `v0.1.0`](https://github.com/bultodepapas/salmandra/releases/tag/v0.1.0):**
+the design package (CAD baseline) — see
+[**release notes**](docs/08-release-v0.1.md). The wiki renders the package at
+<https://bultodepapas.github.io/salmandra/>.
+
 ### Measurable objective
 
 | | Value |
@@ -215,7 +220,7 @@ Phase-1 status (2026-08-05):
   the 6S1P pack at x ≈ −421 mm; a **nose boom** (≈ 360 mm, Mojito pattern) carries
   the battery bay forward of the nose pod. Pack stations map and honest flags
   (4S1P/6S2P R-CG tension, stall compliance) in the
-  [guide §8.2](design/Salamandra-Design-Guide-v0.1.md) and
+  [guide §7.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
 - **G10 (directional stability) — bounded by calculation (I-20, ADR-0038).** The
@@ -255,8 +260,8 @@ The Phase-1 results reproduce in five commands:
 python3 calculations/vlm_ala_volante.py       # NP (I-07)
 python3 calculations/weissinger_np.py         # C2 independent NP check (I-15 §6.3)
 python3 calculations/b3_screening.py --xfoil /path/to/xfoil.exe   # B3 screening (I-15 §6)
-python3 calculations/balance_cg.py            # OP-01 balance / nose-boom sizing (guide §8.2)
-python3 calculations/elevon_authority.py      # elevon control power (guide §5.3)
+python3 calculations/balance_cg.py            # OP-01 balance / nose-boom sizing (guide §7.2)
+python3 calculations/elevon_authority.py      # elevon control power (guide §4.3)
 ```
 
 Each script ships its validation case; a modification that breaks the validation is

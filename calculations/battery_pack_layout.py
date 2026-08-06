@@ -15,7 +15,7 @@ Outputs are [D] (derived from the declared cell inputs). The cell inputs are
 taken from manufacturer datasheets [M] plus a declared wrapper allowance [E].
 Full source / confidence discussion in research/I-16-battery-pack-layout.md.
 
-Bay check uses the Salamandra reference bay (guide §9, PROVISIONAL):
+Bay check uses the Salamandra reference bay (guide §8, PROVISIONAL; superseded by the cradle):
     bay (x,y,z) = 190 x 70 x 32 mm, single 21 mm layer, never stacked.
 """
 import itertools
@@ -33,7 +33,7 @@ NICKEL    = 0.3      # mm, nickel-strip stack added to the smallest face
 LEAD_ADD  = 12.0     # mm, XT60 main + balance lead protrusion on one Length end
 GAP       = 0.0      # mm inter-cell clearance, 0.0 = tight, 0.5 = with slack
 
-# --- Salamandra reference bay (guide §9, PROVISIONAL) ----------------------
+# --- Salamandra reference bay (guide §8, PROVISIONAL; superseded by the cradle) ----------------------
 BAY = (190.0, 70.0, 32.0)   # (x, y, z) mm
 
 # --- reference cells (datasheet [M], masses/pack via [D]) -------------------
@@ -117,7 +117,7 @@ def main():
     print(f"  wrapper +{WRAP} mm/side [E] -> wrapped D = {D:.1f}, L = {L:.1f} mm")
     print(f"Assembly: outer wrap +{PVC_OUTER} mm/side, nickel +{NICKEL} mm,")
     print(f"  leads +{LEAD_ADD:.0f} mm on Length, inter-cell gap {GAP} mm")
-    print(f"Reference bay (x,y,z) = {tuple(int(v) for v in BAY)} mm  (guide §9, PROVISIONAL)")
+    print(f"Reference bay (x,y,z) = {tuple(int(v) for v in BAY)} mm  (guide §8, PROVISIONAL; superseded by the cradle)")
     print(f"  note: bay height 32 mm accommodates a single 21 mm layer (n_z = 1).")
     print(f"  A pack taller than the bay is possible only if the bay is resized "
           f"by the designer; this is a reference, not a verdict.\n")

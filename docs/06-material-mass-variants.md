@@ -1,14 +1,14 @@
 # Material mass variants — Salamandra weight budget (F2-class tool)
 
 **Revision 1.0** · 6 August 2026 · Tool: `calculations/mass_budget.py` (reproducible,
-validated) · Companion to guide §8.1 and `docs/05-master-plan.md` F2 (P1/P2)
+validated) · Companion to guide §7.1 and `docs/05-master-plan.md` F2 (P1/P2)
 
 ---
 
 ## 1. Purpose
 
 Weight budget of the reference aircraft (Cruise, Article #1) under **three material
-policies** — all PETG (the guide §8.1 baseline), wings + wingtips in **AERO PLA**
+policies** — all PETG (the guide §7.1 baseline), wings + wingtips in **AERO PLA**
 (LW-PLA foamed, Bambu PLA-Aero class), and all **PLA+** — plus a **per-part material
 selection** for any mixture. The tool also covers the battery options (4S1P / 6S1P /
 4S2P / 6S2P × Molicel P42A / Samsung 50E), the FC catalog (I-17), the FPV options
@@ -28,11 +28,11 @@ properties in F2/P2 (OP-28); everything else is anchored to measured data.
 | Battery pack | n_cells × cell + 25 g packaging; P42A 70 g / 50E 68 g per cell | `[D]` (I-16, validated vs 445/433/305/297 g) |
 | FC | I-17 catalog `[M]`: F405-WING-V2 25 g · F765-WING 26 g · F722-WING 25 g · SpeedyBee F405 12 g · F411-WSE 8.5 g · Foxeer 8.4 g; avionics row = 110 g + (m_FC − 17.4 g survey avg) | `[M]`/`[D]` |
 | FPV | O4 32 g · **O4 Pro 37 g (reference)** · O4 Lite 8.2 g · legacy O3 39.4 g | `[M]` (I-19) |
-| Fixed rows | motor 170 g (28-class, option) · ESC 35 g · servos 60 g (4×15, class 12–15; heavy 17–21 = 76 g, exceeds budget) · prop 40 g (APC-E 8×8; 9×6 45, 10×7 55) · carbon 70 g · hardware 20 g | `[E]` (guide §8.1) |
+| Fixed rows | motor 170 g (28-class, option) · ESC 35 g · servos 60 g (4×15, class 12–15; heavy 17–21 = 76 g, exceeds budget) · prop 40 g (APC-E 8×8; 9×6 45, 10×7 55) · carbon 70 g · hardware 20 g | `[E]` (guide §7.1) |
 | Stall speed | V_stall = √(2W/(ρ·S·CL_max)), CL_max = 0.589 (I-07), S = 0.282 m² | `[D]` |
 
 > **Note on the baseline mass.** The script's baseline (1687 g) uses the **I-16 `[D]`
-> pack mass 445 g** (validated against the measured packs); the guide §8.1 uses the
+> pack mass 445 g** (validated against the measured packs); the guide §7.1 uses the
 > older `[E]` 455 g → 1697 g. This is a −10 g refinement, not a correction of the
 > model: the guide's 1697 g / 46.1 km/h figures remain the conservative published
 > values, and the OP-24 stall tension holds in both (45.9 vs 46.1 km/h > 45).

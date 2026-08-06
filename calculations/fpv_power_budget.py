@@ -19,7 +19,7 @@ import sys
 BEC_9V = (2.0, 3.0)      # A continuous / peak, Matek 9V BEC
 BEC_5V = (2.0, 3.0)      # A continuous / peak, Matek 5V BEC
 PACK_WH = 90.7            # Wh, 6S1P P42A (I-16 §6.1)
-CRUISE_W = 110.0          # W, guide §10.1 (5 A @ 22 V, 6S)
+CRUISE_W = 110.0          # W, guide §9.1 (5 A @ 22 V, 6S)
 AVIONICS_W = 6.6          # W, I-17 §6.2 (avionics without FPV)
 
 # model : (measured voltage V, disarmed current A, {power_mW: current_A})

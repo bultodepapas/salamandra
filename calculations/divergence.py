@@ -10,7 +10,7 @@ Peregrine (GJ 6.45x, V_div 1.14x) and explicitly says "it does not give the
 absolute value". This script is the first absolute, reproducible estimate.
 
 MODEL (first pass, S3/CAD remains the closure trigger):
-  1. Section per guide §7.1 + §5.2: torsion box x/c 0 -> 0.72 (D-box 0->0.30,
+  1. Section per guide §6.2 + §5.2: torsion box x/c 0 -> 0.72 (D-box 0->0.30,
      center cell 0.30->0.72; the hinge cell 0.72->1.00 is the elevon, OUT of the
      torsion path — "the closed torsion box ends here"). Idealized as a double
      rectangle of height k_h·h_max(y) with the shear web at 0.30 (OP-09), skin
@@ -49,7 +49,7 @@ RHO = 1.225                # kg/m³, ISA sea level
 V_NE = 160.0 / 3.6         # m/s, article #1 (docs/00)
 F_DIV = 1.5                # criterion V_div >= 1.5 x V_NE
 
-# Station table, guide §5.2: y (m), c (m), t/c (-)
+# Station table, guide §4.2: y (m), c (m), t/c (-)
 STATIONS = [
     (0.000, 0.2892, 0.135),
     (0.130, 0.2603, 0.126),

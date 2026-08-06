@@ -14,7 +14,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-06](I-06-reflexed-airfoils.md) | Reflexed airfoils at Re 3–5×10⁵ | **Open — B1 partial** | Gap G2 |
 | [I-07](I-07-neutral-point-torsion-window.md) | **Neutral point, static margin and torsion window** | **Open — preliminary result** | ADR-0003, ADR-0032, G8, G2 |
 | [I-08](I-08-stuntdouble-family.md) | **StuntDouble family: compared geometry** | **Open — base comparison** | A4, R3, R4 |
-| [I-09](I-09-flightory-inspiration.md) | **Flightory Pico Talon & Stallion: geometry and construction** | **Open — base comparison** | B3/G2 (E205), CORE design (guide §7.6), docs/02 |
+| [I-09](I-09-flightory-inspiration.md) | **Flightory Pico Talon & Stallion: geometry and construction** | **Open — base comparison** | B3/G2 (E205), CORE design (guide §6.7), docs/02 |
 | [I-10](I-10-control-authority-static-margin.md) | **Tailless pitch control authority and minimum static margin** | ⬜ **Proposed** | C6/S5, OP-01, OP-06, G8 |
 | [I-11](I-11-reflexed-airfoil-database.md) | **Reflexed-airfoil database for the B3 shortlist** | 🔄 **Partial — aerodesign.de reviewed** | B3/G2, OP-02, C28 |
 | [I-12](I-12-x29-divergence-sweep-factor.md) | **X-29 divergence data and sweep-factor bounds** | ⬜ **Proposed — sources located** | G6, G4, S4 |
@@ -25,7 +25,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-17](I-17-inav-flight-controllers.md) | **INAV flight controllers: popular boards and data sheets** | 🔄 **Reference catalog — open** | Guide §11, CORE avionics station, O2/O10 |
 | [I-18](I-18-servo-catalog.md) | **Elevon servos: popular models and data sheets** | 🔄 **Reference catalog — open** | Guide §5.3/§7.5, ADR-0025, ADR-0026, CORE servo bays |
 | [I-19](I-19-fpv-system-dji-o4.md) | **DJI O4 FPV system: O4 / Pro / Lite — data sheets + electrical data** | 🔄 **Reference catalog — open** | Guide §11, nose-pod/camera, O1, I-17 |
-| [I-20](I-20-yaw-stability-centerline-fin.md) | **Directional (yaw) stability and the centreline-fin variant** | 🔄 **New — quantitative budget `[D]`, `[E]` bands; flight-test closure pending** | First platform variant (O14), guide §7.6, OP-21, G10, E-series |
+| [I-20](I-20-yaw-stability-centerline-fin.md) | **Directional (yaw) stability and the centreline-fin variant** | 🔄 **New — quantitative budget `[D]`, `[E]` bands; flight-test closure pending** | First platform variant (O14), guide §6.7, OP-21, G10, E-series |
 
 ## Source quality
 

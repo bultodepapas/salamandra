@@ -47,7 +47,7 @@ RHO_AL = 2700.0           # kg/m³
 D_T, T_T = 0.008, 0.001
 D_I = D_T - 2 * T_T
 
-# Geometry (guide §7.6, OP-01 resolution)
+# Geometry (guide §6.7, OP-01 resolution)
 X_TIP = -0.516            # m, nose tip (first support)
 X_CORE = -0.132           # m, CORE nose-pod face (second support)
 L = X_CORE - X_TIP        # 0.384 m span
@@ -145,7 +145,7 @@ def main():
 
     # ---- 6. Tube channel vs dihedral kinks (CAD question Q2) ----
     print("\n6. TUBE CHANNEL vs DIHEDRAL KINKS (CAD question Q2)")
-    # cumulative dihedral per segment (guide §5.3): CORE 0 / seg1 1.07 /
+    # cumulative dihedral per segment (guide §4.3): CORE 0 / seg1 1.07 /
     # seg2 1.53 / seg3 2.0 deg -> kinks at y=195 (1.07), 347 (0.46), 498 (0.47)
     kinks = [1.07, 0.46, 0.47]
     t_joint = 0.010                    # m, joint-face thickness (tenon) [E]

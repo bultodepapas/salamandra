@@ -32,7 +32,7 @@ urgent:
 # 3. What is already known in the repo `[D]`
 
 - VLM NP = 26.7 % MAC, SM target 8 % (I-07).
-- Elevon 0.28 c, span 30–90 % half-span, ±20°, dual actuation (guide §7.5).
+- Elevon 0.28 c, span 30–90 % half-span, ±20°, dual actuation (guide §6.6).
 - Twist yield 0.00338/° (I-07); the torsion window R-TWIST ≤ 2.5° bounds how much the
   elevon must contribute at the extreme CG.
 - In-service trim data points: Peregrine INAV "level flight pitch 0→3°" `[M]` (I-02);
@@ -61,7 +61,7 @@ urgent:
 # 6. Deliverable
 
 - Cm_δ/deg `[D]`, validated; feasible SM band; recommended CG envelope for F2 (P3) and
-  S5; recommended elevon travel and chord for the guide §7.5.
+  S5; recommended elevon travel and chord for the guide §6.6.
 
 # 7. Transfer limits
 

@@ -14,7 +14,7 @@ even reach its efficiency peak within the measured range (first_investigation §
 
 **Reject the 7×12 propeller as reference**, unless experimentally validated. The
 reference band stays P/D 0.8–1.0 matched by advance ratio at cruise ([ADR-0007](ADR-0007-propeller.md));
-alternatives in the matching table: APC-E 9×6, 10×7 (guide §10.1).
+alternatives in the matching table: APC-E 9×6, 10×7 (guide §9.1).
 
 ## Rationale
 
