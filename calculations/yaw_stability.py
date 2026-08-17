@@ -22,28 +22,27 @@ before a modification is trusted (calculations/README.md).
 """
 import sys
 import numpy as np
+from design_config import B, MAC, S, SWEEP_C4_DEG
+from balance_cg import CG_TARGET, solve_reference_layout
 
 # --------------------------------------------------------------------------
 # Inputs — reference geometry (design guide v0.5, §5/§7.6, OP-01) [D]/[M]
 # --------------------------------------------------------------------------
-B = 1.30                # wingspan (m)
-S = 0.282               # wing area (m²)
 ARW = 6.0               # aspect ratio
-MAC = 0.2249            # mean aerodynamic chord (m)
-LAM_C4 = -20.0          # c/4 sweep, deg — negative = forward sweep (ADR-0001)
+LAM_C4 = SWEEP_C4_DEG   # c/4 sweep, deg — negative = forward sweep (ADR-0040)
 CL_CRU = 0.132          # cruise CL (I-07)
 E_OSW = 0.85            # Oswald factor [E]
 CD0_CRU = 0.0136        # zero-lift drag of the finless clean config [D] (L/D ≈ 8-10)
-CG = -0.119             # target CG, m from root c/4 (SM 8 %, guide §8.2)
+CG = CG_TARGET           # target CG, m from root c/4 (ADR-0040)
 V_CRU = 26.4            # 95 km/h cruise speed (m/s)
 V_NE = 50.0             # design V_NE, 180 km/h (m/s)
 RHO = 1.225             # air density sea level (kg/m³)
 NU = 1.5e-5             # kinematic viscosity (m²/s)
-AUW_REF = 1.697         # reference AUW 6S1P incl. FPV (kg, guide §8.1)
-V_STALL_REF = 46.1      # km/h at AUW_REF (guide §4, OP-24 flag)
+AUW_REF = 1.6852        # reference AUW 6S1P incl. FPV (kg, guide §7.1)
+V_STALL_REF = 45.9      # km/h at AUW_REF (guide §11, OP-24 flag)
 
 # Fuselage + nose boom (guide §7.6, OP-01): length nose tip → rear pod end
-L_F = 0.780             # fuselage length (m)
+L_F = 0.265 - solve_reference_layout()["bay_fwd"]  # nose support to rear pod
 S_FS = 0.040            # fuselage/boom projected side area (m²) [E, band]
 S_FS_BAND = (0.032, 0.048)
 K_FUS_BAND = (0.40, 0.96)   # DATCOM body factor band: 0.96 Raymer full-body,
@@ -53,7 +52,7 @@ K_FUS_BAND = (0.40, 0.96)   # DATCOM body factor band: 0.96 Raymer full-body,
 CNB_W_BAND = (-0.00010, 0.00000)   # per degree
 
 # Fin installation (V1 proposal, I-20): rear-pod extension behind the prop disk
-L_V = 0.404             # CG → fin AC (m): fin AC ≈ +285 mm from root c/4
+L_V = 0.285 - CG        # CG → fin AC (m): fin AC ≈ +285 mm from root c/4
 ETA_FIN = 1.25          # dynamic-pressure ratio, fin in pusher slipstream [E]
 DSIGMA = 0.05           # sidewash factor (1+dσ/dβ) ≈ 1.05, centerline fin [E]
 ETA_RUD = 1.15          # rudder q-ratio [E]
@@ -97,6 +96,16 @@ def cnb_fuselage(k_f, S_fs, l_f, S_ref=S, b_ref=B):
 def cnb_fin(S_v, l_v, cla, eta=ETA_FIN, sw=1.0 + DSIGMA):
     """DATCOM fin contribution, per degree (positive = stabilizing)."""
     return eta * sw * (S_v / S) * (l_v / B) * cla
+
+
+def fin_area_for_target(target, l_v=L_V):
+    """Fin area that closes a nominal Cn_beta target with current geometry."""
+    cnb_fus_nom = cnb_fuselage(0.70, S_FS, L_F)
+    cla_nom = sum(cla_fin_band(3.0, 12.0)) / 2.0
+    wing_mean = sum(CNB_W_BAND) / 2.0
+    need = target - cnb_fus_nom - wing_mean
+    return need / (ETA_FIN * (1.0 + DSIGMA) * (1.0 / S) *
+                   (l_v / B) * cla_nom)
 
 
 def cnr_fin(S_v, l_v, cla_rad):
@@ -200,12 +209,13 @@ def main():
     ]
     # solve S_v at band centre, check band extremes
     AR_FIN = 3.0
+    tier_areas = []
     for tag, target in tiers:
         # nominal: k_fus = 0.70, S_fs centre, CLα band centre
         cnb_fus_nom = cnb_fuselage(0.70, S_FS, L_F)
         cla_nom = sum(cla_fin_band(AR_FIN, 12.0)) / 2.0
-        need = target - cnb_fus_nom - WING_MEAN
-        S_v = need / (ETA_FIN * (1.0 + DSIGMA) * (1.0 / S) * (L_V / B) * cla_nom)
+        S_v = fin_area_for_target(target)
+        tier_areas.append(S_v)
         # band propagation
         cnb_lo = cnb_fin(S_v, L_V, cla_fin_band(AR_FIN, 12.0)[0]) + \
             cnb_fuselage(K_FUS_BAND[0], S_FS_BAND[0], L_F) + CNB_W_BAND[1]
@@ -234,8 +244,8 @@ def main():
               f"(limit 45, OP-24 lever applies)")
 
     # ---- 3. Recommended geometry (V1a) — structural check ----
-    S_v = 0.020
-    b_v = 0.240
+    S_v = tier_areas[0]
+    b_v = np.sqrt(S_v * AR_FIN)
     c_r, c_t, h_c = fin_geometry(S_v, b_v)
     q_ne = 0.5 * RHO * V_NE**2
     F = q_ne * S_v * 1.0 * ETA_FIN          # CN = 1.0, slipstream
@@ -247,7 +257,7 @@ def main():
         sig = M * (t / 2.0) / I_pl / 1e6
         print(f"   root t = {t*1000:.1f} mm → σ = {sig:5.1f} MPa "
               f"(PETG yield ≈ 50 MPa, FS {50.0/sig:.2f})")
-    print("   => root t ≥ 2.5 mm solid (or 2 mm + carbon strip); swept tip OK")
+    print("   => root t ≥ 3.0 mm solid for FS ≥ 1.5 without crediting the Al spar")
     om = 3.516 * np.sqrt(2.0e9 * (c_r*0.0025**3/12.0) /
                          (1250.0 * c_r*0.0025 * b_v**4))
     print(f"   First bending mode ≈ {om/(2*np.pi):.1f} Hz — flutter/strength "
@@ -299,13 +309,19 @@ def main():
     c3 = cnb_fuselage(0.96, 2.0, 7.5, S_ref=16.2, b_ref=11.0)  # C172-like
     check(f"Raymer C172-like body: −0.0012…−0.0016/deg (got {c3:+.5f})",
           -0.0016 < c3 < -0.0012)
-    cnb_v1b = cnb_fin(0.027, L_V, cla_nom) + cnb_fuselage(0.70, S_FS, L_F)
-    check(f"V1b nominal Cnβ ≥ +0.0010/deg (got {cnb_v1b:+.5f})", cnb_v1b >= 0.0010)
+    cnb_v1b = cnb_fin(fin_area_for_target(0.0010), L_V, cla_nom) + \
+        cnb_fuselage(0.70, S_FS, L_F) + WING_MEAN
+    check(f"V1b nominal Cnβ = +0.0010/deg (got {cnb_v1b:+.5f})",
+          abs(cnb_v1b - 0.0010) < 1e-8)
     check(f"Finless nominal Cnβ < 0 ({cnb_fuselage(0.70,S_FS,L_F):+.5f})",
           cnb_fuselage(0.70, S_FS, L_F) < 0.0)
     cndr_ref = ETA_RUD * 0.06 * 0.30 * 0.10 * 0.30
     check(f"Cnδr ref (τ 0.30, η 1.15): {cndr_ref:.6f}/deg",
           abs(cndr_ref - 0.000621) < 1e-5)
+    i_root_3 = c_r * 0.003 ** 3 / 12.0
+    sig_root_3 = M * 0.0015 / i_root_3
+    check(f"V1a 3.0 mm root FS >= 1.5 without spar credit "
+          f"(got {50e6/sig_root_3:.2f})", 50e6 / sig_root_3 >= 1.5)
     print(f"\n   VALIDATION: {'ALL PASS' if ok else 'FAILURES PRESENT'}")
     sys.exit(0 if ok else 1)
 

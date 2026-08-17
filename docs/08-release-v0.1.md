@@ -1,5 +1,11 @@
 # Salamandra — Release v0.1.0: Design Package (CAD Baseline)
 
+> **Superseded geometry notice (2026-08-17):** this document describes the original
+> v0.1.0 release. Do not use its −20° planform, −119 mm CG, old cradle coordinates or
+> 110 km/h limit for new CAD. Guide v0.16 / ADR-0040 now specify −15°, CG −93.8 mm,
+> pack −373 mm and initial V_limit 105 km/h. The historical values below are retained
+> as a release record.
+
 **Date:** 2026-08-06 · **Tag:** `v0.1.0` · **Status:** RELEASED
 
 This is the first formal release of the Salamandra open 3D-printed FPV aircraft

@@ -40,7 +40,7 @@ Every quantitative claim carries one of these:
 
 | Convention | Value |
 |---|---|
-| Sweep | **Negative forward** — the project uses ≈ −20° at c/4 |
+| Sweep | **Negative forward** — the project uses −15° at c/4 |
 | Twist | **Positive = wash-in** (tip at higher incidence) |
 | `x` axis in `calculations/` | **Positive backward**, origin at the root c/4 |
 | Units | SI in calculations; tables may use **km/h** and **g/dm²** |

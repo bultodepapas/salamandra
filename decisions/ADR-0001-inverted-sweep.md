@@ -34,7 +34,11 @@ The mission (FPV cruise, hand launch, compact transport) admits a flying wing or
 - Requires **wash-in** type twist (ADR-0003), not wash-out.
 - Requires prioritizing **torsional stiffness** over mass throughout the sizing.
 - The CG and neutral point stop being intuitive: they require calculation (gap G8).
+- The forward-swept configuration remains fixed; its magnitude is governed by
+  [ADR-0040](ADR-0040-quarter-chord-sweep.md).
 
 ## Review conditions
 
-Only reconsidered if test E7 measured an unacceptably low divergence speed and there were no structural solution within the mass budget.
+Reconsider the forward-swept configuration only if E7 measures an unacceptably low
+divergence speed and no structural solution fits the mass budget. Changes to the sweep
+magnitude within the forward-swept family follow ADR-0040's review conditions.

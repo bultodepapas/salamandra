@@ -1,8 +1,9 @@
 # I-10 — Tailless pitch control authority and minimum static margin
 
-**Status:** ⬜ **Open — proposed thread (not yet executed)**
-**Feeds:** C6/S5 of the master plan (elevon authority — **never done before**, failure
-mode #1), OP-01 (CG reachability), OP-06 (elevon span/travel), G8 (NP/SM verification)
+**Status:** 🔄 **Partial — potential-flow authority executed; measured validation and
+full envelope remain open**
+**Feeds:** C6/S5 of the master plan, OP-01 (CG reachability), OP-06 (elevon span/travel),
+G8 (NP/SM verification)
 **Gaps:** G8 · **Does not close:** G2
 
 ---
@@ -16,25 +17,24 @@ tailless FPV aircraft actually fly with?
 
 # 2. Why it matters
 
-The repo has **never computed elevon authority** (C6: "never done before"). It is the
-task that corrects failure mode #1 (CLAUDE.md §1): control surfaces were sized and their
-flutter/mass balance computed without the authority check. Two dependencies make it
-urgent:
+The repo now computes potential-flow elevon authority in `elevon_authority.py`, but it
+has not validated flap effectiveness against low-Re measurements or closed the
+gust/extreme-CG envelope. Two dependencies keep the thread open:
 
-1. **OP-01 (critical):** with NP at −101 mm and the reachable CG band ≈ −24…+9 mm
-   (v0.2 balance), **every reachable CG is aft of the NP** — i.e. statically unstable.
-   The resolution paths (re-verified NP, mass redistribution, planform revision) all
-   need a defensible SM floor: how much positive margin is actually *needed* once the CG
-   is reachable? That number is C6's output.
+1. **OP-01:** ADR-0040 now gives NP −75.8 mm and target CG −93.8 mm; the 6S1P pack closes
+   that point. The remaining question is the defensible SM floor and usable CG envelope,
+   not basic reachability.
 2. **OP-06:** the ±20° travel and 390 mm span are assumptions; authority verification
    decides them.
 
 # 3. What is already known in the repo `[D]`
 
-- VLM NP = 26.7 % MAC, SM target 8 % (I-07).
+- VLM NP = 25.72 % MAC / −75.8 mm, SM target 8 % (I-21/ADR-0040).
 - Elevon 0.28 c, span 30–90 % half-span, ±20°, dual actuation (guide §6.6).
-- Twist yield 0.00338/° (I-07); the torsion window R-TWIST ≤ 2.5° bounds how much the
-  elevon must contribute at the extreme CG.
+- Current VLM: wash-in yield +0.00249 Cm/°, elevon yield +0.00256 Cm/°. Five degrees
+  of elevon gives 2.6× the limiting provisional trim deficit; low-Re validation is open.
+- Printed twist cap is 3.0°. The favourable provisional polar needs ≈ 0.6° permanent
+  reflex, while the adverse Ncrit-12 polar needs ≈ 1.9° and fails that cap.
 - In-service trim data points: Peregrine INAV "level flight pitch 0→3°" `[M]` (I-02);
   Nemesis/Stormbird 1–2 mm of reflex `[M]` (I-08).
 
@@ -49,9 +49,9 @@ urgent:
 
 # 5. Method
 
-1. Extend the in-house VLM (`calculations/vlm_ala_volante.py`) with a control-surface
-   model (deflected flap panels) and validate the flap-effectiveness prediction against
-   at least one measured datum (search item 1).
+1. **Partial:** the in-house VLM models the elevon as a local incidence step over the
+   30–90 % half-span. Replace/validate that approximation with a hinged-flap model and
+   at least one measured low-Re datum (search item 1).
 2. Build the trim envelope: Cm_δ × δ_avail (minus authority reserve) vs. the torsion
    window of I-07 → feasible SM range.
 3. Cross it with the in-service SM survey (items 2–3) → recommended SM floor and CG

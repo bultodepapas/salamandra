@@ -4,6 +4,41 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.28] — 2026-08-17
+
+**Highest-ROI design audit — coupled sweep selection, canonical geometry and corrected
+elastic-axis uncertainty.**
+
+- **ADR-0040 / I-21:** full −20/−16/−15/−12/−10° trade using 32×5 VLM,
+  100-station Weissinger, trim/reflex, section-Cl, self-consistent balance and the NASA
+  TP-1685 divergence trend. **−15° selected**; −12° rejected because it requires 4.54°
+  equivalent trim against the 3.0° twist + 0.6° reflex cap.
+- **Single geometry source:** `calculations/design_config.py` now owns b, S, taper,
+  sweep, thickness and stations. Guide v0.16 receives the generated −15° station table.
+  **Correction:** v0.15 gave mutually inconsistent tip trailing-edge values (−128.1 in
+  the station table and +108.5 in the CAD controls); the correct −15° value is −65.7 mm.
+- **Aeroelastic correction:** the enclosed-area centroid x/c = 0.353 was incorrectly
+  called the shear centre in revision 2. It is only a geometric diagnostic. Revision 3
+  brackets xEA/c = 0.30…0.45 `[E]`: Vdiv 325.3 nominal / **128.8 conservative** /
+  91.1 AERO; initial **Vlimit 105 km/h**, 150 only after GXY validation. The shell-alone
+  240 km/h claim in ADR-0030 remains unproven.
+- **Balance/mass correction:** target CG −93.8 mm; 6S1P P42A at −372.7 mm; cradle
+  −473.3…−272.2; hybrid boom 38.2 g; AUW 1685.2 g. The aluminium boom is now a fixed
+  hybrid row in `mass_budget.py`, so printed-material policies no longer scale its mass.
+- **Yaw/structure correction:** the fin sizing block calculated 2.16 dm² but downstream
+  checks still used a stale fixed 2.0 dm². All blocks now consume the calculated area;
+  the 2.5 mm solid root is rejected at FS 1.15 and the baseline becomes **3.0 mm**
+  (FS 1.65). The Ø3 mm spar is retained for stiffness but receives no strength credit.
+- **Elevon-authority correction:** the script reported the current VLM wash-in yield
+  (+0.00249/°) but still calculated trim with a stale +0.00338/°. It now uses its own
+  computed yield: the favourable provisional polar closes at about **0.6°** reflex,
+  while the adverse Ncrit-12 polar needs about **1.9°** and therefore fails the
+  permanent-reflex cap. Control authority passes; the final B3 polar is a CAD gate.
+- Documents updated: guide v0.16, justification v0.11, open points v0.11 (OP-30 added),
+  docs/06 rev. 1.1, docs/07 rev. 3, README and calculation index.
+
+---
+
 ## [1.27] — 2026-08-06
 
 **First release — tag `v0.1.0`: Salamandra Design Package (CAD baseline).**

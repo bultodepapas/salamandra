@@ -19,12 +19,12 @@ autolaunch configuration
 
 What is a realistic hand-launch velocity, how much stall margin do in-service FPV
 aircraft actually operate with, and what does the INAV/ArduPlane autolaunch practice
-require of the stall speed and thrust — for a 1687 g, 57 g/dm² tailless wing?
+require of the stall speed and thrust — for a 1685 g, 59.8 g/dm² tailless wing?
 
 # 2. Why it matters
 
 The stall requirement was relaxed to ≤ 45 km/h (C16) and the design sits at **45.9 km/h
-(1687 g, `mass_budget.py`) — above the requirement** (OP-24 lever to F2). The launch is a
+(1685 g, `mass_budget.py`) — above the requirement** (OP-24 lever to F2). The launch is a
 mandatory hand throw (docs/00) with autolaunch via acceleration detection. If the
 achievable launch speed is below stall, the aircraft cannot leave the hand. This thread
 was opened with **zero project data**; it now closes with the quantitative envelope.
@@ -82,7 +82,7 @@ exceed hover** (backward G-forces confuse the FC climb detection).
 
 | Quantity | Value |
 |---|---:|
-| V_stall (1687 g, ALL PETG) | **45.9 km/h** (12.8 m/s) |
+| V_stall (1685 g, ALL PETG) | **45.9 km/h** (12.8 m/s) |
 | **Release gate (rev. 2):** V_suelta ≥ V_stall | **PASS for typical and firm throws** |
 | V_suelta, typical throw 10.5 m/s + ref idle | **13.4 m/s (48.4 km/h) — k = 1.05 at release; k = 1.20 reached in 0.39 s** |
 | V_suelta, firm throw 13 m/s + high idle | **17.3 m/s (62.4 km/h) — k = 1.36 at release** |
@@ -106,7 +106,7 @@ instrumented test programme; (d) accept the declared technique rule (firm throw)
 # 5. Deliverables
 
 1. **Declared launch envelope** (guide §4/§12, this document):
-   - **Release gate: V_suelta ≥ V_stall** (45.9 km/h at 1687 g) with the elevon-up
+   - **Release gate: V_suelta ≥ V_stall** (45.9 km/h at 1685 g) with the elevon-up
      launch attitude; margin k = 1.20 reached by acceleration in < 0.5 s.
    - **Technique rule: firm throw (V_hand ≥ 10 m/s), release at 0–5° pitch
      (ArduPilot guidance; higher → stall), launch throttle at the hover setting.**

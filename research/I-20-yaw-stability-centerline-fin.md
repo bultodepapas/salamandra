@@ -1,9 +1,14 @@
 # I-20 — Directional (yaw) stability and the centreline-fin variant
 
-**Status:** 🔄 New — quantitative budget `[D]`, band inputs `[E]`; flight-test closure pending (E-series)
-**Date:** 2026-08-05
+**Status:** 🔄 Updated for ADR-0040 — quantitative budget `[D]`, band inputs `[E]`; flight-test closure pending
+**Date:** 2026-08-17
 **Feeds:** First platform variant (O14, ADR-0032), CORE rear-pod design (guide §7.6), OP-21, gap G10, in-service Mojito comparison (docs/02, I-02)
 **Does not close:** G8 (pitch NP) — this is the lateral-directional axis, Phase 1's declared task (I-10 §7)
+
+> **ADR-0040 update:** `yaw_stability.py` now consumes the −15° geometry and solved
+> −93.8 mm CG. It also corrects an internal inconsistency: structure/rudder/damping now
+> use the calculated fin area instead of a stale fixed 2.0 dm². Current V1a is 2.16 dm²
+> with a 3.0 mm solid root; V1b is 2.86 dm².
 
 ---
 
@@ -25,9 +30,9 @@ fixed fin is. This thread reproduces that choice with numbers for the Salamandra
    - **Forward sweep** is the *destabilizing* yaw contribution (opposite of the aft-swept
      planks that dominate flying-wing FPV practice) — I-02 documents this family's known
      compensation (extremely forward CG, short elevon throws).
-   - **The nose boom** (OP-01, x ≈ −516…−132) is a long fuselage ahead of the CG: the
+   - **The nose boom** (OP-01, x ≈ −473…−132) is a long fuselage ahead of the CG: the
      body contribution to Cnβ is negative, and the boom adds yaw inertia
-     (I_z ≈ 0.28 kg·m², of which ≈ 0.08 from the 6S1P pack at ≈ −0.42 m).
+     (I_z ≈ 0.28 kg·m², with the 6S1P pack at ≈ −0.373 m).
    - **There is no yaw effector.** INAV yaw PIDs (fw_p_yaw) need a surface or
      differential thrust; with elevons only, yaw is open-loop and the aircraft is
      bank-to-turn by necessity.
@@ -74,7 +79,7 @@ Cnβ_total = Cnβ_fin(η, sidewash, S_v, l_v, CLα_v) + Cnβ_body(−k_f·S_fs·
 | Drag | ΔCD0 = η·k_int·Cf·(2S_v/S), Cf turbulent flat plate, k_int 1.35 | Hoerner |
 
 Fin installation (V1): centreline, on a **rear-pod extension** behind the prop disk
-(fin AC ≈ +285 mm from root c/4; l_v = 0.404 m from the CG at −119 mm). The dorsal
+(fin AC ≈ +285 mm from root c/4; l_v = 0.379 m from the CG at −93.8 mm). The dorsal
 alternative (on the wing, ahead of the prop) needs ≈ 1.7× the area for the same Cnβ
 (shorter arm, no slipstream η) — rejected on drag before running it.
 
@@ -89,9 +94,9 @@ alternative (on the wing, ahead of the prop) needs ≈ 1.7× the area for the sa
 
 | Term | Value (/deg) |
 |---|---|
-| Body (k 0.40 … 0.96, S_fs 0.040 m²) | **−0.00059 … −0.00143** |
+| Body (k 0.40 … 0.96, S_fs 0.040 m²) | **−0.00056 … −0.00135** |
 | Wing, FSW (band) | −0.00010 … 0.00000 |
-| **Total, no fin** | **−0.00059 … −0.00153** — negative across the whole band |
+| **Total, no fin** | **−0.00056 … −0.00145** — negative across the whole band |
 | Worst-case yaw mode | λ ≈ +1.5 1/s → **divergence τ ≈ 0.7 s** `[E]` |
 
 The finless Salamandra is **directionally unstable in the classical sense**. It would fly
@@ -100,18 +105,18 @@ enough for the FC — but there is no physical yaw effector, no restoring moment
 boom's yaw inertia (≈ 0.07 kg·m² from the pack alone) delays any correction. This is
 exactly why the Mojito — the closest in-service FSW + nose + pusher — carries a fin.
 
-## 5.2 Fin sizing (centreline, rear-pod, l_v = 404 mm, AR_v = 3.0)
+## 5.2 Fin sizing (centreline, rear-pod, l_v = 379 mm, AR_v = 3.0)
 
 | | **V1a — marginal** | **V1b — robust** |
 |---|---|---|
-| S_v | **2.1 dm²** | **2.8 dm²** |
-| b_v / c_r / c_t | 250 / 105 / 63 mm | 290 / 120 / 72 mm |
-| Cnβ_total band | −0.0001 … +0.0010 (nominal **+0.0005**) | +0.0005 … +0.0015 (nominal **+0.0010**) |
-| V_v = S_v·l_v/(S·b) | 0.023 | 0.030 (tailless practice ≈ 0.02–0.05 `[I]`) |
-| Mass (solid 1.2–2.0 mm) | **36–60 g** | **47–79 g** |
-| ΔCD0 | +0.0014 | +0.0018 |
-| Drag / Wh/km impact | **+9.6 % → ≈ 1.26** `[E]` | +12.6 % → ≈ 1.29 `[E]` |
-| AUW & V_stall | +48 g → 46.7 km/h | +63 g → 47.0 km/h |
+| S_v | **2.16 dm²** | **2.86 dm²** |
+| b_v / c_r / c_t | 254 / 106 / 64 mm | 293 / 122 / 73 mm |
+| Cnβ_total band | −0.00006 … +0.00096 (nominal **+0.0005**) | +0.00048 … +0.00142 (nominal **+0.0010**) |
+| V_v = S_v·l_v/(S·b) | 0.022 | 0.030 (tailless practice ≈ 0.02–0.05 `[I]`) |
+| Mass (distributed thickness) | **37–62 g** | **49–82 g** |
+| ΔCD0 | +0.0015 | +0.0019 |
+| Drag / Wh/km impact | **+9.9 % → ≈ 1.26** `[E]` | +13.0 % → ≈ 1.30 `[E]` |
+| AUW & V_stall | +50 g nominal → 46.6 km/h | +66 g nominal → 46.8 km/h |
 
 C16 tension: both options push V_stall above the 45 km/h requirement at the current
 budget; the guide's declared lever (shell 550 g, boom ≤ 40 g, servos 48 g → ≈ 1625 g)
@@ -119,16 +124,16 @@ absorbs V1a with ≈ 45.7 km/h at the lever — **flagged to F2/OP-24**.
 
 ## 5.3 Structure (V1a at V_NE 180 km/h, cantilever)
 
-- Side load F ≈ 38 N at the centroid (110 mm) → M ≈ 4.2 N·m.
-- Root thickness: 1.5 mm → σ ≈ 108 MPa (**fails**, FS 0.46); **2.5 mm → σ ≈ 39 MPa,
-  FS 1.29**; 3.0 mm → FS 1.86.
-- **Spec: root t ≥ 2.5 mm solid (or 2 mm + carbon strip), trapezoidal, swept tip.**
-- First bending mode ≈ 9 Hz — flutter/strength verification in F2 (G7 discipline).
+- Side load F = 41.3 N at the centroid (117 mm) → M = 4.81 N·m.
+- Root thickness: 1.5 mm → σ ≈ 121 MPa (**fails**); 2.5 mm → σ ≈ 43.6 MPa,
+  **FS 1.15 (rejected)**; **3.0 mm → σ 30.3 MPa, FS 1.65** without spar credit.
+- **Spec: root t ≥ 3.0 mm solid, trapezoidal, swept tip.**
+- First bending mode ≈ 7.9 Hz — flutter/strength verification in F2 (G7 discipline).
 
 ## 5.4 Movable rudder — quantified rejection
 
 - Authority |Cnδr| ≈ **0.00043/deg** (τ 0.32).
-- To hold a steady sideslip in a 20 km/h crosswind at stall (β ≈ 24°): **δr ≈ 24° —
+- To hold a steady sideslip in a 20 km/h crosswind at stall (β ≈ 24°): **δr ≈ 28° —
   beyond ±20° available. Cannot hold.** At cruise (β ≈ 12°): δr ≈ 12° — feasible but
   unnecessary (crab + bank is standard).
 - Differential elevons (the only no-fin yaw control) ≈ **0.00008/deg — one fifth of a
@@ -147,11 +152,11 @@ divergence into a damped subsidence.
 # 6. Recommendation (engineering)
 
 1. **V1 = fixed centreline fin, no rudder — first platform variant (O14), recommended
-   build for the Article #1 test programme.** Size V1a (S_v ≈ 2.1 dm², b_v ≈ 250 mm,
-   c_r ≈ 105 / c_t ≈ 63 mm, AR_v ≈ 3.0, root t ≥ 2.5 mm) on a ≈ 30 mm rear-pod extension
+   build for the Article #1 test programme.** Size V1a (S_v = 2.16 dm², b_v ≈ 254 mm,
+   c_r ≈ 106 / c_t ≈ 64 mm, AR_v ≈ 3.0, root t ≥ 3.0 mm) on a ≈ 30 mm rear-pod extension
    behind the prop disk, fin AC ≈ +285 mm, slipstream-mounted (η ≈ 1.25 — the fin is
    *most* effective at low speed, exactly where launch and stall handling need it).
-   Mass 36–60 g, ΔCD0 ≈ +0.0014. V1b (+0.0010/deg nominal) if the F2 mass lever allows.
+   Mass 37–62 g, ΔCD0 ≈ +0.0015. V1b (+0.0010/deg nominal) if the F2 mass lever allows.
 2. **The finless configuration remains the O1-efficiency baseline** (≤ 1.15 Wh/km needs
    the cleanest build; the fin costs ≈ +10 % energy `[E]`). It is documented here as
    directionally unstable and FC-dependent — a declared risk, not a silent assumption.
@@ -178,7 +183,7 @@ divergence into a damped subsidence.
 |---|---|
 | Real Mojito fin dimensions (photos downloaded, model cannot process images) | Human measurement of the 5 gallery files in session cache |
 | Exact CORE/boom side area S_fs from the CAD (affects the band midpoint) | OP-21 (CORE outer mold) |
-| Fin flutter/strength at the 9 Hz mode, wake buffeting | F2 (loads and structure) |
+| Fin flutter/strength at the 7.9 Hz mode, wake buffeting | F2 (loads and structure) |
 | **E-flight falsification:** yaw perturbation test (rudder-kick analog via aileron impulse, Dutch roll decay in blackbox) | E-series — the only `[M]` closure of §5 |
 | C16 (stall) with the fin mass at the declared lever | F2 mass arbitration (OP-24 extension) |
 
@@ -188,7 +193,7 @@ divergence into a damped subsidence.
   Munk-slim vs Raymer-full, differ ≈ 3× — the band brackets both), low-Re CLα of a
   printed surface, slipstream η, yaw inertia, and the simplified 2-DOF dynamics. The
   *sign* conclusions (finless negative; fin restores stability; rudder not needed) are
-  robust to the band; the *sizes* (2.1 vs 2.8 dm²) are not — hence the two tiers.
+  robust to the band; the *sizes* (2.16 vs 2.86 dm²) are not — hence the two tiers.
 - The 2-DOF (β, r) model is a subsidence check, not a Dutch-roll analysis (4-DOF with
   p, φ needed) — declared `[E]`, flight data to close.
 - Mojito practice is one data point from a single manufacturer `[M]` (same limitation

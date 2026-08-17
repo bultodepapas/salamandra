@@ -9,7 +9,7 @@ produced the absolute value: I-05 gives only a RELATIVE scaling anchor to the
 Peregrine (GJ 6.45x, V_div 1.14x) and explicitly says "it does not give the
 absolute value". This script is the first absolute, reproducible estimate.
 
-MODEL (first pass, S3/CAD remains the closure trigger):
+MODEL (revision 3, S3/CAD remains the closure trigger):
   1. Section per guide §6.2 + §5.2: torsion box x/c 0 -> 0.72 (D-box 0->0.30,
      center cell 0.30->0.72; the hinge cell 0.72->1.00 is the elevon, OUT of the
      torsion path — "the closed torsion box ends here"). Idealized as a double
@@ -17,10 +17,10 @@ MODEL (first pass, S3/CAD remains the closure trigger):
      0.9 mm (2 x 0.45, ADR-0028), web 0.9 mm.
   2. J multi-cell Bredt-Batho per station (compatibility system solved exactly).
   3. G_eff = 0.55 GPa [M] PETG (ADR-0021) with the G4 [E] band +/-35 %.
-  4. Elastic axis = shear center of the torsion box (x_EA = 0.36 c for equal
-     cells); AC at 0.25 c -> e = x_EA - x_AC = +0.11 c (AC ahead: divergence
-     arrangement, as expected for the forward-swept wing). Declared assumption,
-     CAD check in S3.
+  4. Elastic-axis position is NOT inferred from the enclosed-cell centroid.
+     The earlier implementation made that category error. Until S3 obtains the
+     shear center from multi-cell shear flow/warping FEM and a printed section,
+     x_EA/c is explicitly bracketed 0.30-0.45 [E]; AC is at 0.25 c.
   5. Section lift slope a [D] from the in-repo XFOIL polars of the MH60->13.5 %
      candidate (0.155-0.195/deg at Re 3-5e5), floor 2*pi.
   6. Divergence q_D = smallest eigenvalue of the spanwise twist problem
@@ -28,9 +28,11 @@ MODEL (first pass, S3/CAD remains the closure trigger):
      definite eigenproblem via eigh — root fixed, tip free), on a fine grid
      from the §5.2 station table. Validated against the uniform closed form
      pi^2·GJ/(4·L^2·c·e·a).
-  7. Forward-sweep reduction factor k_sweep = 0.50-0.70 [E] for -20° (I-05/I-12,
-     G6) and the R-JOINT series compliance at y = 195 (k_joint = 5x section,
-     ADR-0032; penalty -9% reproduced natively by the solver).
+  7. Forward-sweep speed factor k_sweep = 0.55-0.85 [D]/[E] for -15 degrees.
+     The update is anchored to NASA TP-1685 figures 7-8: reducing forward sweep
+     from -20 to -15 degrees raises divergence speed about 10-22 percent across
+     the AR 4-8 test models. Numerical transfer remains an uncertainty (I-21).
+     R-JOINT series compliance is included at y = 195 (k_joint = 5x section).
   8. Carbon tube Ø12x1.0: quantified, expected negligible (pultruded UD carbon
      G_12 ~ 3-7 GPa [E] -> GJ ~ 3-7 N·m² vs shell GJ ~ hundreds).
 
@@ -41,6 +43,7 @@ import os
 import sys
 from functools import lru_cache
 import numpy as np
+from design_config import HALF_SPAN, STATIONS, SWEEP_C4_DEG
 
 # ---------------------------------------------------------------------------
 # Inputs (all with confidence tags)
@@ -49,26 +52,13 @@ RHO = 1.225                # kg/m³, ISA sea level
 V_NE = 160.0 / 3.6         # m/s, article #1 (docs/00)
 F_DIV = 1.5                # criterion V_div >= 1.5 x V_NE
 
-# Station table, guide §4.2: y (m), c (m), t/c (-)
-STATIONS = [
-    (0.000, 0.2892, 0.135),
-    (0.130, 0.2603, 0.126),
-    (0.195, 0.2458, 0.122),
-    (0.325, 0.2169, 0.113),
-    (0.347, 0.2120, 0.111),
-    (0.4875, 0.1808, 0.101),
-    (0.498, 0.1784, 0.101),
-    (0.585, 0.1590, 0.095),
-    (0.650, 0.1446, 0.090),
-]
-L = 0.650                  # m, half-span
+L = HALF_SPAN              # m, half-span
 X_DBOX = 0.30              # D-box x/c extent; shear web position (OP-09)
 X_BOX = 0.72               # torsion box end x/c (hinge line, ADR-0002)
 T_SKIN = 0.0009            # m, skin 0.9 mm = 2 perimeters (ADR-0028)
 X_AC = 0.25                # aerodynamic centre x/c (reflexed sections 0.24-0.27)
-E_BAND = (0.1028, 0.090, 0.120)  # e = x_SC - X_AC from the REAL profile geometry
-                                # (x_SC = 0.3528 c, computed in section_geometry):
-                                # nominal / conservative / optimistic
+X_EA_BAND = (0.35, 0.30, 0.45)  # nominal / optimistic / conservative [E]
+E_BAND = tuple(x - X_AC for x in X_EA_BAND)
 PROFILE_FILE = r"geometry\airfoils\mh60-135.dat"   # real section coordinates
 AREA_BAND = (1.00, 0.95, 1.05)  # nominal / conservative / optimistic area
                                 # factor for the final-profile uncertainty (OP-02)
@@ -76,7 +66,7 @@ G_PETG = 0.55e9            # Pa, G_eff printed PETG [M] (ADR-0021)
 G_BAND = 0.35              # G4 [E] +/-35 %
 A_SLOPE = (9.7, 6.28, 11.2)   # /rad: nominal, floor (2pi), top — [D] XFOIL
                                 # polars MH60->13.5 % 0.155-0.195/deg; 2*pi floor
-K_SWEEP = (0.60, 0.50, 0.70)  # forward-sweep V_div reduction, -20° [E] (I-12)
+K_SWEEP = (0.70, 0.55, 0.85)  # nominal / conservative / optimistic, -15 deg (I-21)
 K_JOINT = 5.0              # R-JOINT stiffness ratio, ADR-0032 requirement
 JOINT_Y = 0.195            # m, CORE<->PANEL joint (30 % half-span)
 JOINT_HALF = 0.035         # m, socket region half-length [E] (≈ 70 mm socket)
@@ -87,6 +77,8 @@ D_TUBE, T_TUBE = 0.012, 0.001
 
 # AERO LW-PLA variant (docs/06, OP-28): E ~ 0.5 x PETG -> G ~ 0.5 x G_PETG [E]
 G_AERO = 0.5 * G_PETG
+V_LIMIT_FACTOR = 0.85      # explicit first-flight clearance below conservative V_div
+V_LIMIT_INCREMENT = 5.0    # km/h; operational limits always round down
 
 
 # ---------------------------------------------------------------------------
@@ -105,10 +97,14 @@ def load_profile():
 
 @lru_cache(maxsize=None)
 def section_geometry(tc_scale=1.0):
-    """Cell areas, perimeters, web length and shear-centre x/c of the REAL
+    """Cell areas, perimeters, web length and enclosed-area centroid of the REAL
     two-cell torsion box (D-box 0->X_DBOX, center cell X_DBOX->X_BOX) from
     the profile coordinates, scaled to the local t/c by tc_scale. Returns
-    (A1, A2, s1, s2, s12, x_sc) in units of c (areas c², perimeters c)."""
+    (A1, A2, s1, s2, s12, x_cell_area) in units of c.
+
+    IMPORTANT: x_cell_area is a geometric diagnostic only. It is not the shear
+    center and is never used as the elastic axis in the divergence calculation.
+    """
     upper, lower = load_profile()
 
     def interp_profile(xq):
@@ -161,8 +157,8 @@ def section_geometry(tc_scale=1.0):
     s12 = abs(web_out[0] - web_out[1])    # shared web at x = X_DBOX
     s1 += s12                             # web belongs to cell 1's perimeter
     # cell 2 already counts the web as its front closure
-    x_sc = (A1 * cx1 + A2 * cx2) / (A1 + A2)
-    return A1, A2, s1, s2, s12, x_sc
+    x_cell_area = (A1 * cx1 + A2 * cx2) / (A1 + A2)
+    return A1, A2, s1, s2, s12, x_cell_area
 
 
 def j_section(c, tc, t, area_factor=1.0):
@@ -301,7 +297,8 @@ def q_divergence_shooting(ys, c, j, g, a, e_frac=0.11, nq=40000, qmax=2e5):
 # ---------------------------------------------------------------------------
 def main():
     print("=" * 74)
-    print("ABSOLUTE DIVERGENCE SPEED — Salamandra Cruise (G6 first pass)")
+    print("ABSOLUTE DIVERGENCE SPEED - Salamandra Cruise (revision 3)")
+    print(f"Planform: sweep c/4 = {SWEEP_C4_DEG:+.1f} deg (ADR-0040)")
     print(f"Criterion: V_div >= {F_DIV:.1f} x V_NE = {F_DIV*V_NE*3.6:.0f} km/h")
     print("=" * 74)
 
@@ -315,10 +312,12 @@ def main():
         ji = j_section(ci, tci, T_SKIN)
         print(f"   {yi*1000:8.0f} {ci:7.4f} {tci:6.3f} {ji:12.4e}")
     js = [j_section(ci, tci, T_SKIN) for _, ci, tci in STATIONS]
-    A1r, A2r, s1r, s2r, s12r, x_sc_r = section_geometry(1.0)
+    A1r, A2r, s1r, s2r, s12r, x_cell_r = section_geometry(1.0)
     print(f"   -> J varies {min(js):.3e} .. {max(js):.3e} m⁴ along the span")
     print(f"   -> real geometry: A1={A1r:.4f} A2={A2r:.4f} c², "
-          f"shear centre x/c = {x_sc_r:.3f}, e = {x_sc_r-X_AC:.3f} c")
+          f"cell-area centroid x/c = {x_cell_r:.3f} (NOT the shear center)")
+    print(f"   -> elastic-axis bracket x_EA/c = {X_EA_BAND[1]:.2f}.."
+          f"{X_EA_BAND[2]:.2f} [E]; nominal {X_EA_BAND[0]:.2f}")
 
     # ---- 2. Carbon tube contribution ----
     j_tube = np.pi / 32.0 * (D_TUBE ** 4 - (D_TUBE - 2*T_TUBE) ** 4)
@@ -331,7 +330,7 @@ def main():
           f"{gj_shell_lo:.0f}-{gj_shell_hi:.0f} N·m² (root to tip)")
 
     # ---- 3. Divergence at nominal and band ends ----
-    print("\n3. DIVERGENCE SPEED")
+    print("\n3. DIVERGENCE SPEED - corrected elastic-axis uncertainty")
     a_nom, a_lo, a_hi = A_SLOPE
     k_nom, k_lo, k_hi = K_SWEEP
     # nominal
@@ -426,6 +425,15 @@ def main():
           f"conservative end (the sweep factor and the section GJ remain "
           f"the S3/I-12 closures)")
 
+    v_limit = V_LIMIT_FACTOR * v_cons
+    v_limit_gp = V_LIMIT_FACTOR * v_gp
+    print(f"   First-flight clearance factor: {V_LIMIT_FACTOR:.2f} x conservative V_div")
+    print(f"   -> V_limit = {v_limit*3.6:.1f} km/h, rounded DOWN to "
+          f"{np.floor(v_limit*3.6/V_LIMIT_INCREMENT)*V_LIMIT_INCREMENT:.0f} km/h")
+    print(f"   -> if S3 confirms G_XY=0.69 GPa: {v_limit_gp*3.6:.1f} km/h, "
+          f"rounded DOWN to "
+          f"{np.floor(v_limit_gp*3.6/V_LIMIT_INCREMENT)*V_LIMIT_INCREMENT:.0f} km/h")
+
     # ---- 5. Validation cases ----
     print("\n5. VALIDATION CASES")
     ok = True
@@ -476,6 +484,10 @@ def main():
     A_tot = section_geometry(1.0)[0] + section_geometry(1.0)[1]
     check(f"Box area sanity: A_box/(c·tmax) in [0.50, 0.65] "
           f"(got {A_tot/0.135:.3f})", 0.50 <= A_tot / 0.135 <= 0.65)
+    check("Cell-area centroid is diagnostic only and lies inside the box",
+          X_DBOX <= x_cell_r <= X_BOX)
+    check("Elastic-axis uncertainty is ordered (optimistic < nominal < conservative)",
+          E_BAND[1] < E_BAND[0] < E_BAND[2])
     # ADR-0032: the lumped table's own math (sqrt(N/(N+1))) must reproduce -9/-29
     for n_ratio, exp_p in [(5.0, -9.0), (1.0, -29.0)]:
         p_lump = 100.0 * (np.sqrt(n_ratio / (n_ratio + 1.0)) - 1.0)
@@ -514,6 +526,8 @@ def main():
                                              joint=True, e_frac=e_hi))
     check(f"AERO penalty ≈ √0.5 = 0.707 (got {v_aero/v_petg_hi:.3f})",
           abs(v_aero / v_petg_hi - np.sqrt(0.5)) < 0.03)
+    check("V_limit arithmetic uses the declared 0.85 clearance factor",
+          abs(v_limit - V_LIMIT_FACTOR * v_cons) < 1e-12)
 
     print(f"\n   MODEL VALIDATION: {'ALL PASS' if ok else 'FAILURES PRESENT'}")
     sys.exit(0 if ok else 1)

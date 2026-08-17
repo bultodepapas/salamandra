@@ -14,8 +14,8 @@ shows:
 | Configuration | Cnβ total (/deg) | Verdict |
 |---|---|---|
 | **Finless baseline** | **−0.0006 … −0.0015** `[E]` | **Negative across the band — statically unstable in yaw**; divergence τ ≈ 0.7 s; flies only FC-stabilized bank-to-turn, with no physical yaw effector |
-| **V1a — fixed fin, S_v 2.1 dm²** | +0.0001 … +0.0010 (nominal +0.0005) | Stable (marginal) |
-| **V1b — fixed fin, S_v 2.8 dm²** | +0.0005 … +0.0015 (nominal +0.0010) | Stable (robust) |
+| **V1a — fixed fin, S_v 2.16 dm²** | −0.00006 … +0.00096 (nominal +0.0005) | Marginal; lower uncertainty corner remains slightly negative |
+| **V1b — fixed fin, S_v 2.86 dm²** | +0.00048 … +0.00142 (nominal +0.0010) | Stable across the declared band |
 
 In-service precedent `[M]`: the TBS Mojito — the same FSW + nose + pusher class — carries
 a **fixed** vertical stabilizer on the motor mount and **no rudder servo** (product page,
@@ -45,22 +45,22 @@ SALAMANDRA-CLEAN   Finless baseline — O1 efficiency build (≤ 1.15 Wh/km targ
 SALAMANDRA-V1      Fixed centreline fin, NO rudder — first platform variant (O14),
                    recommended build for the Article #1 test programme.
                    Spec (I-20 §6, yaw_stability.py [D]):
-                     S_v 2.1 dm² (V1a) · b_v ≈ 250 mm · c_r 105 / c_t 63 mm · AR_v 3.0
-                     root t ≥ 2.5 mm solid (FS 1.29 at V_NE) · trapezoidal, swept tip
+                     S_v 2.16 dm² (V1a) · b_v ≈ 254 mm · c_r 106 / c_t 64 mm · AR_v 3.0
+                     root t ≥ 3.0 mm solid (FS 1.65 at V_NE, no spar credit) · swept tip
                      rear-pod extension ≈ 30 mm aft of x ≈ +265 · fin AC ≈ +285 mm
-                     l_v = 404 mm from CG · slipstream η ≈ 1.25
-                     mass 36–60 g [E] · ΔCD0 ≈ +0.0014 (+9.6 % energy [E])
+                     l_v = 379 mm from CG · slipstream η ≈ 1.25
+                     mass 37–62 g [E] · ΔCD0 ≈ +0.0015 (+9.9 % energy [E])
 ```
 
 The fin is a **CORE component** (ADR-0032): panels, elevons, mass balance, servos and FC
-are unchanged. V1a is the nominal build; V1b (2.8 dm², +0.0010/deg nominal) is the
+are unchanged. V1a is the nominal build; V1b (2.86 dm², +0.0010/deg nominal) is the
 budget-permitting upgrade. The movable rudder remains documented as a *future* variant,
 reopened only if the E-flight programme demonstrates a yaw-handling failure mode.
 
 ## Consequences
 
 - **C16 (stall):** both fin tiers push V_stall past 45 km/h at the current mass budget
-  (V1a +48 g → 46.7 km/h); the declared OP-24 lever (shell 550 g, boom ≤ 40 g, servos
+  (V1a +50 g → 46.6 km/h); the declared OP-24 lever (shell 550 g, boom ≤ 40 g, servos
   48 g) absorbs V1a to ≈ 45.7 km/h — **arbitrated in F2**.
 - **O1 (≤ 1.15 Wh/km):** only SALAMANDRA-CLEAN can carry the headline claim; V1 costs
   ≈ +10 % energy `[E]` — still better than the market reference (Mojito 1.40 Wh/km `[M]`).

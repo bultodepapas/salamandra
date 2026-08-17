@@ -12,6 +12,7 @@ Convenciones:
   epsilon positivo = wash-in (punta a mayor incidencia)
 """
 import numpy as np
+from design_config import B, S, SWEEP_C4_DEG, TAPER
 
 
 def geom(b, S, taper, sweep_c4_deg, tip_twist_deg, ny=40, nx=6):
@@ -143,7 +144,7 @@ def cl_local(g, dL, q=0.5):
 
 
 if __name__ == "__main__":
-    B, S, TAPER, SWEEP = 1.30, 0.282, 0.50, -20.0
+    SWEEP = SWEEP_C4_DEG
 
     print("=" * 68)
     print("VALIDACION: ala recta AR 6 sin flecha ni torsion")
@@ -153,7 +154,8 @@ if __name__ == "__main__":
     teo = 2 * np.pi * AR / (2 + np.sqrt(AR ** 2 + 4))
     print(f"  CL_alpha teorico (Helmbold) = {teo:.3f} /rad  "
           f"-> error {100*(r['CLa']-teo)/teo:+.1f} %")
-    print(f"  NP esperado en c/4 = {0.25*r['cbar']*1000:.1f} mm")
+    print(f"  NP esperado respecto al c/4 de raiz = 0.0 mm "
+          f"(obtenido {r['x_np']*1000:+.1f} mm)")
 
     print()
     print("=" * 68)

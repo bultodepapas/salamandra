@@ -1,6 +1,6 @@
 # ADR-0003 — Wash-in twist for trim (forward sweep)
 
-**Status:** 🔄 Provisional · **Date:** 2026-07-27 · **Confidence:** High · **Reversible:** Partial
+**Status:** 🔄 Provisional · **Date:** 2026-07-27 · **Reviewed:** 2026-08-17 · **Confidence:** Medium · **Reversible:** Partial
 **Research:** [I-02 — Tailless trim and forward sweep](../research/I-02-tailless-trim.md), I-07, I-15
 
 ## Context
@@ -18,20 +18,19 @@ symmetric: aft sweep needs **wash-out** (tip down, subtracts lift), forward swee
 
 **Geometric twist of the wash-in type** (project sign: ε positive = tip at higher
 incidence), linear root → tip, applied as a rotation of each section about the spanwise
-axis through the local c/4 point. Guide §5.3: **ε = +0.5° at the tip** (PROVISIONAL),
-bounded by the torsion window **R-TWIST ≤ 3.0°** (raised from 2.5° in the OP-01 pass —
-the stall criterion holds at 3.0°; `ventana_torsion.py`).
+axis through the local c/4 point. Guide §5.3: **ε = +3.0° at the tip** (PROVISIONAL
+cap), bounded by the torsion window: the section-Cl screen retains 0.012 margin at the
+1.620 kg O1 design mass (`ventana_torsion.py`). Keep the value parametric.
 
 ## Rationale `[D]`
 
-Trim requirement at SM 8 %: Cm0_req = CL·SM = 0.132 × 0.08 = **0.0106**. With an airfoil
-Cm0 of +0.010, twist needed ≈ 0.17°; with +0.008, ≈ 0.76° (yield 0.00338°/° wash-in, I-07;
-0.00348°/° over the 30–90 % elevon span). Mid-band value **+0.5°**, far below the
-R-TWIST cap that protects the tip-stall margin (I-02: wash-in raises the tip incidence —
-if it exceeds the window, the root-first-stall advantage is cancelled). The B3 screening
-(I-15 §6.2) shows the required wash-in at SM 8 % is 2.6–3.7° (MH60→13.5 %) — the
-provisional +0.5° is confirmed to be on the conservative side, and the residual trim is
-closed by ≤ 0.6° of permanent elevon reflex (`elevon_authority.py`).
+Trim requirement at SM 8 %: Cm0_req = CL·SM = 0.132 × 0.08 = **0.0106**. On the −15°
+planform the VLM gives +0.00249 Cm per degree of full-span wash-in and +0.00256 Cm per
+degree of elevon incidence over 30–90 % half-span. The favourable provisional
+MH60→13.5 % moment (cm0 +0.0016) therefore needs 3.60° equivalent: 3.0° printed wash-in
+plus ≈ 0.6° permanent reflex. The adverse Ncrit-12 polar (cm0 −0.0018) requires ≈ 1.9°
+reflex and fails the cap (`elevon_authority.py`). Final B3 polars are a CAD-freeze gate,
+even though 5° of actuator travel provides 2.6× the limiting trim deficit.
 
 ## Consequences
 

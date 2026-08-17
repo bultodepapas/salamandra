@@ -45,7 +45,7 @@ N_GLUED_JOINTS = 4        # y = 347 and 498, both halves
 # Joint shear demand at +6 g, V_NE (guide §4: n_max 6): half-wing lift at 6 g
 # ≈ 50 N; outboard-area fractions [E bands]:
 FRAC_OUT = {347: (0.40, 0.70), 498: (0.15, 0.35)}   # of the half-wing lift
-W = 1.697 * 9.81           # N, AUW 1697 g
+W = 1.6852 * 9.81          # N, current 6S1P P42A AUW (ADR-0040)
 N_MAX = 6.0
 
 # Material [M]/[E]: PETG printed shear strength band; PLA brittle in shear

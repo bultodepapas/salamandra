@@ -42,7 +42,10 @@ The original specification said **infill 0 %**, inherited from LW-PLA vase-mode 
 
 > **Correction C12.** Without infill, the GJ calculation was **overestimated, not underestimated**.
 
-The 4–5 % gyroid **does not add direct torsion** — it sits near the shear center — but **stabilizes the skin** so the closed cell works → [ADR-0028](../decisions/ADR-0028-gyroid-infill.md).
+The 4–5 % gyroid is not credited as a primary torsion path; its defensible role is to
+**stabilize the thin skin** so the closed cell works. Its direct GJ contribution remains
+an `[E]` sensitivity until S3 — no shear-centre location is inferred →
+[ADR-0028](../decisions/ADR-0028-gyroid-infill.md).
 
 ## Anchoring to an in-service article
 

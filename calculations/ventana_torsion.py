@@ -7,23 +7,26 @@ Es la decision central de la Fase 1.
 """
 import numpy as np
 from vlm_ala_volante import geom, solve, analiza, mac
+from design_config import B, S, SWEEP_C4_DEG, TAPER
 
 # --- configuracion Cruise, articulo #1 ---
-B, S, TAPER, SWEEP = 1.30, 0.282, 0.50, -20.0
-AUW = 1.620                    # kg, 6S1P
+SWEEP = SWEEP_C4_DEG
+DESIGN_REF_MASS = 1.620        # kg; O1 target, not current 1.6852 kg budget
 RHO = 1.225
 V_CRUCERO = 95 / 3.6           # m/s
 V_STALL = 45 / 3.6             # m/s
 CL_SEC_MAX = 0.65              # cl_max de seccion [M] Ananda et al. 0.55-0.70
+PROFILE_CM0 = 0.0016           # provisional MH60->13.5 %, I-15 / ADR-0040
 
-WS = AUW * 9.81 / S
+WS = DESIGN_REF_MASS * 9.81 / S
 CL_CRU = WS / (0.5 * RHO * V_CRUCERO ** 2)
 CL_MAX_REQ = WS / (0.5 * RHO * V_STALL ** 2)
 
 print("=" * 70)
 print("VENTANA DE TORSION — configuracion Cruise")
 print("=" * 70)
-print(f"  Carga alar         {WS:.1f} N/m2  ({AUW*1000/(S*100):.0f} g/dm2)")
+print(f"  Masa de referencia {DESIGN_REF_MASS:.3f} kg  (objetivo O1; presupuesto actual 1.685 kg)")
+print(f"  Carga alar         {WS:.1f} N/m2  ({DESIGN_REF_MASS*1000/(S*100):.0f} g/dm2)")
 print(f"  CL de crucero      {CL_CRU:.3f}   a {V_CRUCERO*3.6:.0f} km/h")
 print(f"  CL_max requerido   {CL_MAX_REQ:.3f}   para perder a {V_STALL*3.6:.0f} km/h")
 print(f"  cl_max de seccion  {CL_SEC_MAX:.2f}   [M]")
@@ -47,11 +50,11 @@ print(f"\n  Cm0 por grado de wash-in : {cm0_por_grado:+.5f} /deg")
 print("\n" + "-" * 70)
 print("LIMITE INFERIOR — wash-in necesario para trim en crucero")
 print("-" * 70)
-print("  MargenEst   Cm0 requerido   solo torsion   con perfil Cm0=+0.010")
+print(f"  MargenEst   Cm0 requerido   solo torsion   con perfil Cm0={PROFILE_CM0:+.4f}")
 for sm in [0.06, 0.08, 0.10, 0.12, 0.15]:
     cm0_req = CL_CRU * sm
     tw_solo = cm0_req / cm0_por_grado
-    tw_mixto = max(0.0, (cm0_req - 0.010) / cm0_por_grado)
+    tw_mixto = max(0.0, (cm0_req - PROFILE_CM0) / cm0_por_grado)
     print(f"    {sm*100:4.0f} %     {cm0_req:+.4f}        {tw_solo:5.2f} deg      "
           f"{tw_mixto:5.2f} deg")
 

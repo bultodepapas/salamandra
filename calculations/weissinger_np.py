@@ -21,6 +21,7 @@ negative = forward sweep; all output [D].
 import math
 
 import numpy as np
+from design_config import B, S, SWEEP_C4_DEG, TAPER
 
 
 def vortex_line(p, a, b_):
@@ -121,13 +122,14 @@ if __name__ == "__main__":
     print(f"  VALIDATION: NP = {r['pct_mac']:.2f} % MAC (expect ~25 %)")
 
     # 2) project wing
-    B, S, TAPER, SWEEP = 1.30, 0.282, 0.50, -20.0
+    SWEEP = SWEEP_C4_DEG
     r = weissinger(B, S, TAPER, SWEEP, ny=100)
-    print(f"\n  PROJECT: b=1300, S=0.282, lambda=0.5, sweep c/4 = -20 deg")
+    print(f"\n  PROJECT: b=1300, S=0.282, lambda=0.5, "
+          f"sweep c/4 = {SWEEP:+.0f} deg")
     print(f"  CL_alpha  = {r['CLa']:.3f} /rad")
     print(f"  x_NP      = {r['x_np']*1000:+.1f} mm (ref root c/4)")
     print(f"  NP        = {r['pct_mac']:.2f} % MAC")
-    print(f"  VLM reference: x_NP = -101.3 mm, 26.7 % MAC (I-07)")
+    print(f"  VLM reference: x_NP = -75.8 mm, 25.72 % MAC (I-21/ADR-0040)")
 
     # 3) mesh convergence
     for ny in (40, 80, 160, 320):

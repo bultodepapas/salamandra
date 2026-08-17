@@ -1,6 +1,6 @@
 # Salamandra — Design Guide
 
-**Version 0.15** · 6 August 2026 · Status: **RELEASED (tag v0.1.0) — CAD baseline.**
+**Version 0.16** · 17 August 2026 · Status: **CAD baseline amended by ADR-0040.**
 The geometry, structure and integration are frozen for the designer; the values still
 flagged `PROVISIONAL` or **PENDING** (airfoil §5, CORE outer shape §6.7) are the only
 items expected to change, each with a defined trigger (OP-02, OP-21).
@@ -32,11 +32,11 @@ version live in [`prompts/`](prompts/).
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.15 |
-| Date | 2026-08-06 |
-| Status | **RELEASED (tag v0.1.0) — CAD baseline**; OP-02 (airfoil) and OP-21 (CORE outer shape) remain open with defined triggers |
+| Version | 0.16 |
+| Date | 2026-08-17 |
+| Status | **CAD baseline amended by ADR-0040**; supersedes the v0.15 planform coordinates; OP-02 (airfoil) and OP-21 (CORE outer shape) remain open |
 | Reference configuration | **Cruise — Article #1** |
-| Inputs | ADR-0001…ADR-0039, I-01…I-20, docs/00, docs/02, docs/03, docs/04, docs/05, docs/06, docs/07 |
+| Inputs | ADR-0001…ADR-0040, I-01…I-21, docs/00, docs/02, docs/03, docs/04, docs/05, docs/06, docs/07 |
 | Intended reader | CAD designer (Fusion 360 or equivalent) |
 
 **How this guide evolves.** The design is expected to change as Phase 1 closes (airfoil
@@ -62,7 +62,7 @@ revisions (C-series) are in the CHANGELOG.
 
 | Quantity | Symbol | Sign |
 |---|---|---|
-| Sweep | Λ | Negative = **forward** (tips ahead of root). Project uses Λ_c/4 = **−20°** |
+| Sweep | Λ | Negative = **forward** (tips ahead of root). Project uses Λ_c/4 = **−15°** |
 | Twist | ε | Positive = **wash-in** (tip at higher incidence than root) |
 | Dihedral | Γ | Positive = tips up |
 
@@ -89,26 +89,26 @@ exists yet; it will be updated by the open point listed.
 | Root chord c_root | **289 mm** | I-07 |
 | Tip chord c_tip | **145 mm** | I-07 |
 | Mean aerodynamic chord (MAC) | **225 mm** | I-07 |
-| Sweep Λ_c/4 | **−20.0°** (LE −17.1°, TE −27.9°) | I-07 / derived |
+| Sweep Λ_c/4 | **−15.0°** (LE −11.99°, TE −23.50°) | ADR-0040 / I-21 `[D]` |
 | Relative thickness t/c | **13.5 % root → 9 % tip** (linear) | ADR-0027 |
 | Geometric twist ε | **+3.0° wash-in** (linear root→tip) — **working value**; target ≈ +0.5° once the designed airfoil closes trim; keep parametric (C5) | PROVISIONAL (§4.3) |
 | Dihedral Γ | **2.0° total** (polyhedral at segment joints: 0 / 1.07 / 1.53 / 2.0°) | PROVISIONAL |
 | Airfoil | Reflexed; provisional: MH 60-12 % scaled (root 13.5 %, tip 9 % camber-compensated); final pending B3 screening (G2) | **PENDING** — §5 |
-| Neutral point NP | **26.7 % MAC** (= −101 mm from root c/4) | `[D]` I-07 · **C2 cross-check −98.3 mm / 28.0 % MAC (Weissinger-L, I-15)** |
-| Target CG | **18.7 % MAC** (= −119 mm from root c/4, SM 8 %) | `[D]` I-07; see OP-01 |
-| All-up weight (6S1P) | **1697 g** current budget (§7.1); 1620 g design reference (C16) | §7.1 |
-| Wing loading (6S1P) | 57 g/dm² (design ref.) / 60 g/dm² (current) | derived |
+| Neutral point NP | **25.72 % MAC** (= −75.8 mm from root c/4) | `[D]` I-21; independent Weissinger −72.9 mm / 27.0 % MAC |
+| Target CG | **17.72 % MAC** (= −93.8 mm from root c/4, SM 8 %) | `[D]` ADR-0040; see OP-01 |
+| All-up weight (6S1P P42A) | **1685 g** current budget (§7.1) | `mass_budget.py` `[D]`/`[E]` |
+| Wing loading (6S1P) | **59.8 g/dm²** | derived |
 | Cruise speed / CL | **95 km/h** / CL 0.132 | docs/00, I-07 |
-| Stall speed | **≤ 45 km/h required**; ≈ 46.1 km/h at the current budget — the tightest margin (OP-24) | docs/00 (C16), §11 |
+| Stall speed | **≤ 45 km/h required**; **45.9 km/h** at the current budget — still the tightest margin (OP-24) | docs/00 (C16), §11 |
 | V_NE (article #1) | **160 km/h** (design 180) | docs/00 |
-| **V_limit (first flights)** | **110 km/h** (conservative V_div 151.5 × 0.9; ≈ 160 if S3 confirms G_XY ≈ 0.69 GPa) | docs/07, §11 |
+| **V_limit (first flights)** | **105 km/h** (0.85 × conservative V_div 128.8, rounded down; **150** if S3 confirms the G_XY model) | docs/07 rev. 3, §11 |
 | Load factors | +6 / −3 (later +9), gust-dominated | docs/00 |
 | Skin / infill | 0.9 mm (2 perimeters) / gyroid 5 % | ADR-0028 |
 | Panel carbon | Bending tube Ø12×1.0 + anti-rotation pin Ø6 | PROVISIONAL (ADR-0015), §6.3 |
-| **Battery boom (prototype)** | Aluminium tube **Ø8 / int Ø6** + printed cradle, ≈ **41 g**, two-support arrangement | §6.7, §8 |
+| **Battery boom (prototype)** | Aluminium tube **Ø8 / int Ø6** + printed cradle, ≈ **38.2 g**, two-support arrangement | ADR-0040, §6.7, §8 |
 | Reference propeller | APC-E 8×8 (J_opt 0.784, η 0.731) | ADR-0007 |
 | Reference motor | 28-class, 500–550 KV, ~170 g | PROVISIONAL (ADR-0033) |
-| Battery (reference) | 6S1P Li-Ion 21700, ~455 g (P42A 90.7 Wh / 50E 108 Wh) | docs/00, I-16 |
+| Battery (reference) | 6S1P Li-Ion 21700, **445 g P42A** (90.7 Wh; 50E 433 g / 108 Wh) | I-16 |
 
 ---
 
@@ -117,20 +117,20 @@ exists yet; it will be updated by the open point listed.
 ### 4.1 Overall geometry
 
 ```
-             y=650 (tip)              LE sweep −17.1°
+             y=650 (tip)             LE sweep −11.99°
                ┌─────────────────╮
-              /        c/4 line Λ=−20°
+              /        c/4 line Λ=−15°
              /                  ╲
             /        MAC 225    ╲
       y=0  ┼──────────────────────╮
-        CORE  |←── c_root 289 ──→|  TE sweep −27.9°
+        CORE  |←── c_root 289 ──→|  TE sweep −23.50°
        (joiners
       to 30%)
 ```
 
 - b = 1300 mm; S = 0.282 m²; AR = 6.0; λ = 0.50
 - c_root = 289.2 mm; c_tip = 144.6 mm; MAC = 224.9 mm
-- Sweep: Λ_c/4 = −20.0°; Λ_LE = −17.1°; Λ_TE = −27.9° (derived)
+- Sweep: Λ_c/4 = −15.0°; Λ_LE = −11.99°; Λ_TE = −23.50° (ADR-0040)
 - Twist: ε = +3.0° wash-in, linear from root (0°) to tip (+3.0°) — **working value, keep
   parametric** (§4.3)
 - Dihedral: Γ = 2.0° total at the tip, polyhedral at the segment joints (§4.3)
@@ -145,26 +145,26 @@ All x-values from the root c/4 origin; chord and thickness in mm.
 | y (mm) | y/(b/2) | Station | c (mm) | t/c (%) | t (mm) | x_LE (mm) | x_c/4 (mm) | x_TE (mm) |
 |---|---|---:|---:|---|---:|---:|---:|---:|
 | 0 | 0.00 | Centerline (root) | 289.2 | 13.5 | 39.0 | −72.3 | 0.0 | +216.9 |
-| 130 | 0.20 | In-CORE station (fixed TE) | 260.3 | 12.6 | 32.8 | −112.4 | −47.3 | +147.9 |
-| 195 | 0.30 | CORE joiner / joint | 245.8 | 12.2 | 29.9 | −132.4 | −71.0 | +113.4 |
-| 325 | 0.50 | Mid half-span | 216.9 | 11.3 | 24.4 | −172.5 | −118.3 | +44.4 |
-| 347 | 0.53 | Segment cut 1 | 212.0 | 11.1 | 23.5 | −179.3 | −126.3 | +32.7 |
-| 487.5 | 0.75 | 75 % half-span | 180.8 | 10.1 | 18.3 | −222.6 | −177.4 | −41.8 |
-| 498 | 0.77 | Segment cut 2 | 178.4 | 10.1 | 17.9 | −225.9 | −181.3 | −47.5 |
-| 585 | 0.90 | Elevon outer end / spar end | 159.0 | 9.5 | 15.1 | −252.7 | −212.9 | −93.7 |
-| 650 | 1.00 | Tip | 144.6 | 9.0 | 13.0 | −272.7 | −236.6 | −128.1 |
+| 130 | 0.20 | In-CORE station (fixed TE) | 260.3 | 12.6 | 32.8 | −99.9 | −34.8 | +160.4 |
+| 195 | 0.30 | CORE joiner / joint | 245.8 | 12.2 | 29.9 | −113.7 | −52.3 | +132.1 |
+| 325 | 0.50 | Mid half-span | 216.9 | 11.3 | 24.4 | −141.3 | −87.1 | +75.6 |
+| 347 | 0.53 | Segment cut 1 | 212.0 | 11.1 | 23.5 | −146.0 | −93.0 | +66.0 |
+| 487.5 | 0.75 | 75 % half-span | 180.8 | 10.1 | 18.3 | −175.8 | −130.6 | +5.0 |
+| 498 | 0.77 | Segment cut 2 | 178.4 | 10.1 | 17.9 | −178.0 | −133.4 | +0.4 |
+| 585 | 0.90 | Elevon outer end / spar end | 159.1 | 9.5 | 15.0 | −196.5 | −156.8 | −37.4 |
+| 650 | 1.00 | Tip | 144.6 | 9.0 | 13.0 | −210.3 | −174.2 | −65.7 |
 
 ### 4.3 Planform control values for CAD
 
 | Control | Value |
 |---|---|
 | Root chord | 289.2 mm at y = 0, LE at x = −72.3 |
-| Tip chord | 144.6 mm at y = 650, LE at x = −272.7 |
-| c/4 line | Straight line from (0, 0) to (−236.6, 650); slope −0.3640 (= tan 20°) |
-| LE line | Straight line from (−72.3, 0) to (−272.7, 650); slope −0.3084 |
-| TE line | Straight line from (+216.9, 0) to (+108.5, 650); slope −0.5308 |
+| Tip chord | 144.6 mm at y = 650, LE at x = −210.3 |
+| c/4 line | Straight line from (0, 0) to (−174.2, 650); slope −0.2679 (= tan 15°) |
+| LE line | Straight line from (−72.3, 0) to (−210.3, 650); slope −0.2123 |
+| TE line | Straight line from (+216.9, 0) to (−65.7, 650); slope −0.4348 |
 | t/c schedule | Linear: 13.5 % at y = 0 → 9.0 % at y = 650 |
-| Twist schedule | Linear: ε = 0° at y = 0 → **+3.0°** at y = 650 (wash-in, trailing edge down); applied as a rotation of each section about the **spanwise axis through the local c/4 point**. **Keep parametric**: the value is re-derived when the airfoil is fixed (C5); with the provisional MH60→13.5 % profile the required wash-in at SM 8 % is 2.6–3.7° (working value 3.0°, residual ≤ 0.6° closed by permanent elevon reflex — `elevon_authority.py` `[D]`); with a designed section (cm0 ≥ +0.008) the target falls to ≈ 0.5°. **R-TWIST cap = 3.0°** (at 3.0° the stall criterion holds: load peak 56 % b/2, margin +0.017; at 4° it drops to +0.009 — `ventana_torsion.py`) |
+| Twist schedule | Linear: ε = 0° at y = 0 → **+3.0°** at y = 650 (wash-in, trailing edge down); rotate each section about the spanwise axis through its local c/4 point. **Keep parametric**: at Λc/4 = −15° the provisional-profile trade requires 3.59° equivalent, closed by the 3.0° printed-twist cap plus **0.59° permanent elevon reflex** (`sweep_trade.py --full`, I-21). This is the binding reason that −12° was rejected. Final polars must confirm the value (C5/OP-02). |
 | Dihedral | **Polyhedral, piecewise-linear**; cumulative at the outboard end of each segment: CORE 0° (y 0–195) / seg 1 +1.07° (195–347) / seg 2 +1.53° (347–498) / seg 3 +2.0° (498–650). Values generated by Γ(y) = 2.0° × (y/650) sampled at the joints. Tip rise ≈ **12 mm** |
 | Dihedral — CAD recipe | Each printed segment is modeled **flat** (all its sections in one plane). In the assembly, each segment is rotated about the **chordwise (x) axis — through its inboard joint line, at the section mid-plane (z = 0)** — by its **cumulative** angle (seg 1 +1.07° at y = 195, seg 2 +1.53° at y = 347, seg 3 +2.0° at y = 498). Kinks occur at **every** segment joint (y = 195, 347, 498), including the CORE↔PANEL joint; the CORE stays at 0°. Within a segment the dihedral is constant, not continuous |
 
@@ -179,13 +179,13 @@ FC change).
 |---|---|---|
 | Vertical stabilizer | **None** | **Fixed centreline fin** (passive) |
 | Role | O1 efficiency build (≤ 1.15 Wh/km) | **Recommended build for the Article #1 test programme** |
-| Cnβ total | **−0.0006…−0.0015 /deg — negative** (statically unstable yaw `[E]`; FC-stabilized bank-to-turn, documented risk G10) | **+0.0001…+0.0010 /deg nominal +0.0005 (V1a)**; V1b +0.0005…+0.0015 `[D]` on `[E]` bands (I-20) |
+| Cnβ total | **−0.0006…−0.0015 /deg — negative** (statically unstable yaw `[E]`) | **−0.00006…+0.00096 /deg, nominal +0.0005 (V1a)**; V1b +0.00048…+0.00142 `[D]` on `[E]` bands (I-20) |
 | Yaw mode | Divergence τ ≈ 0.7 s `[E]` | Damped subsidence τ ≈ 1.5 s; Cnr doubled `[E]` |
-| Fin geometry (V1a) | — | S_v ≈ **2.1 dm²**; trapezoid **b_v ≈ 250 mm, c_r ≈ 105, c_t ≈ 63 mm**, AR_v ≈ 3.0; swept tip; root t ≥ **2.5 mm** solid (σ ≈ 39 MPa, FS 1.29 at V_NE); fin AC ≈ **x = +285 mm** (l_v = 404 mm from CG −119); **rear-pod extension ≈ 30 mm** aft of x ≈ +265 |
-| **Fin section (CAD question Q4, answered 2026-08-06)** | **Symmetric biconvex plate** (Mojito-pattern `[M]`): local thickness t_v(y) = 2.5 mm (root) → 1.5 mm (tip), linear; LE radius ≈ 1.5 mm; TE ≈ 0.8 mm; no camber. **Prototype: Ø3 mm Al spar in a Ø3.2 channel along the LE**, root to tip (EI ×2.05, `boom_flexion.py`). Mount: slot in the rear-pod extension (105 mm wide × 3 mm deep) + 1× Ø1.75 mm filament dowel + 1× M2 screw (ADR-0039/Mojito pattern) | — |
-| Fin mass | — | **36–60 g** `[E]` (solid 1.2–2.0 mm PETG + mount) |
-| Drag / energy | — | ΔCD0 ≈ **+0.0014** → **+9.6 % drag ≈ 1.26 Wh/km** `[E]` (still < Mojito 1.40 `[M]`) |
-| V_stall impact | 46.1 km/h (current budget) | +48 g → **46.7 km/h** — OP-24 lever to F2 |
+| Fin geometry (V1a) | — | S_v = **2.16 dm²**; trapezoid **b_v ≈ 254 mm, c_r ≈ 106, c_t ≈ 64 mm**, AR_v ≈ 3.0; swept tip; root t ≥ **3.0 mm solid** (σ 30.3 MPa, FS 1.65 at V_NE without spar credit); fin AC ≈ **x = +285 mm** (l_v = 379 mm from CG −93.8); rear-pod extension ≈ 30 mm |
+| **Fin section** | **Symmetric biconvex plate**: local thickness t_v(y) = **3.0 mm root → 1.5 mm tip**, linear; LE radius ≈ 1.5 mm; TE ≈ 0.8 mm; no camber. Ø3 mm Al spar in a Ø3.2 LE channel, root to tip (EI ×1.60 at the 3 mm root; no strength credit). Mount: 106 mm × 3 mm slot + 1× Ø1.75 mm filament dowel + 1× M2 screw. | ADR-0038 / `boom_flexion.py` |
+| Fin mass | — | **37–62 g** `[E]` (distributed thickness + mount) |
+| Drag / energy | — | ΔCD0 ≈ **+0.0015** → **+9.9 % drag ≈ 1.26 Wh/km** `[E]` |
+| V_stall impact | 45.9 km/h (current budget) | +50 g nominal → **46.6 km/h** — OP-24 lever to F2 |
 | Rudder | None | **None — not justified** (I-20 §5.4: cannot hold a 20 km/h crosswind slip at stall; bank-to-turn suffices; Mojito precedent `[M]` has no rudder servo) |
 
 Installation (V1): the fin mounts on the rear-pod extension, centreline, in the pusher
@@ -193,8 +193,8 @@ slipstream (η ≈ 1.25 — maximum effectiveness at low speed, where launch and
 handling need it); **1× Ø1.75 mm filament alignment dowel + screw** (ADR-0039 practice,
 Mojito pattern `[M]`); optional antenna/ESC housing inside (Mojito pattern `[M]`). The fin is
 a **CORE component**: removable, printed separately, no effect on the panels or the
-balance table of §7.1 beyond its own mass at x ≈ +285 (≈ 4 mm forward CG shift from
-−119 mm — absorbed by the battery slide). Full analysis: I-20, `yaw_stability.py`.
+balance table of §7.1 beyond its own mass at x ≈ +285 (the shift from the −93.8 mm target
+is absorbed by the battery slide). Full analysis: I-20, `yaw_stability.py`.
 
 > **Rudder (movable) is rejected in this analysis** and documented as a *future* variant,
 > reopened only if the E-flight programme (E8, yaw perturbation) demonstrates a
@@ -224,10 +224,11 @@ all other geometry is defined independently of the exact profile except the twis
 > Flags (analysis in justification §4, I-15, I-11): **R-AIRFOIL feasibility at 13.5 % t/c
 > is an open B3 question** — no published reflexed section reaches that thickness
 > (closest: MH 60-12 % at 12.0 %, cm0 +0.0030); the root section is expected to be
-> **designed, not selected**. **Trim-closure at SM 8 %:** no off-the-shelf candidate fits
-> the torsion window unaided (required wash-in 2.6–3.7° vs R-TWIST ≤ 3.0°); the residual
-> ≤ 0.6° is closed by permanent elevon reflex (`elevon_authority.py` `[D]`), or by a
-> designed section (cm0 ≥ +0.008) or a reduced SM target (F1).
+> **designed, not selected**. **Trim closure at SM 8 %:** the −15° trade's favourable
+> provisional moment (cm0 +0.0016) needs ≈ 0.6° permanent reflex after 3.0° wash-in and
+> just meets the cap. The adverse Ncrit-12 result (cm0 −0.0018) needs ≈ 1.9° and fails
+> it (`elevon_authority.py` `[D]`). Control authority is sufficient, but final B3 polars
+> are a CAD gate; alternatives are a designed section (cm0 ≥ +0.008) or reduced SM.
 
 ### 5.2 CAD instructions and provisional coordinates
 
@@ -365,15 +366,15 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Spanwise extent | y = 0 → **±195** (30 % half-span) | The wing surface continues across the CORE (same planform and t/c schedule, §4) |
 | Centerline section | Root airfoil (c = 289.2 mm, t/c 13.5 %) at y = 0, mid-plane z = 0 | Same airfoil family as the panels (pending OP-02) |
 | Trailing edge | **Fixed** from y = 0 to ±195 (no hinge line on the CORE, C23) | The torsion box may run closed to the TE inboard of the panel root (PROVISIONAL) |
-| **Nose boom (battery)** | **PROTOTYPE 0.1 (user decision 2026-08-06):** aluminium tube **Ø8 / int Ø6 (wall 1.0 mm)** as the longitudinal beam from x ≈ −132 to ≈ −516 (≈ 385 mm) + **printed cradle** (≈ 15 g) wrapping the pack and the tube; the pack sits BETWEEN two supports (nose tip ≈ x −516 and the CORE socket ≈ x −132) — **two-support arrangement is a structural requirement** (`boom_flexion.py` `[D]`: pure cantilever FAILS at +6 g — σ 322 MPa vs 276 yield, δ 57 mm, 5.2 Hz; two-support PASSES — σ 60 MPa FS 4.6, δ 2.0 mm, 21 Hz); FPV camera on a short cantilever at the tip (≈ x −450); **printed skid at the tip as the crush zone** (bare tube must not see tip impacts > 3 g); carbon optimisation PENDING (deferred, ADR-0015) | Required so the 6S1P pack CG reaches x ≈ −415 (OP-01 resolution, `balance_cg.py` `[D]`); structure ≈ 41 g (tube 26 + cradle 15, `boom_flexion.py`; OP-24 target 40 + 2 absorbed) |
-| **Battery cradle** | **Replaces the internal bay (CAD question Q1, answered 2026-08-06).** Printed cradle, 2 halves, walls 1.2 mm, mass ≤ 15 g: inner envelope **155 × 66 × 24 mm** (pack 153.2 × 64.5 × 22.2, I-16 + 0.5 clearance), length 200 mm from x ≈ −516 to −316, **lower Ø8.2 channel gripping the tube** (the pack rests on the tube; the cradle transmits the load to the two supports); **2× 12 mm velcro straps + spring-lock hatch** (§8 pattern); camera mount (2× M2/16 mm) on the tip support piece | The pack is centred at x ≈ −415 (CG band −434…−397) by the cradle position; PROVISIONAL until F2 |
+| **Nose boom (battery)** | Aluminium tube **Ø8 / int Ø6 (wall 1.0 mm)** from the CORE support at x ≈ −132 to the forward support at x ≈ **−473** (support span **341 mm**, plus 50 mm CORE insertion) + printed cradle. The pack sits between the supports. FPV camera station **x ≈ −407**; printed front skid is the crush zone. | Required for the 6S1P P42A station **x = −372.7 mm**. Current two-support check: σ 56 MPa, FS 4.96 (6061-T6), δ 1.6 mm, 25.3 Hz; pure cantilever fails at 278 MPa (`boom_flexion.py`). Hybrid assembly **38.2 g**. |
+| **Battery cradle** | Printed cradle, 2 halves, walls 1.2 mm, mass ≤ 15 g: inner envelope **155 × 66 × 24 mm**, length **201 mm** from x ≈ **−473 to −272**, lower Ø8.2 channel gripping the tube; **2× 12 mm velcro straps + spring-lock hatch**; camera mount (2× M2/16 mm) on the forward support piece. | Pack centred at x = **−372.7 mm** (CG band −391.7…−353.8); PROVISIONAL until F2. |
 | **Boom socket (CORE)** | Ø8.2 straight bore in the CORE nose face at x ≈ −132, **centered z = 0** on the centreline, with a 4-perimeter collar; the tube is bonded into the cradle and slips into the socket (no adhesive in the CORE) | — |
 | **Rear pod (motor)** | Extends **48 mm aft of the root TE** (to x ≈ +265); **lower surface at the prop plane ≤ z = −111.6 mm** (≈ 92 mm below the wing lower surface) | Required so the 8×8 prop (Ø203, axis at z = 0) keeps ≥ 10 mm tip ground clearance (C26); PROVISIONAL |
-| **Fin mount (V1 variant, ADR-0038)** | **Optional** rear-pod extension ≈ 30 mm (to x ≈ +295) with a fixed centreline fin: S_v ≈ 2.1 dm², b_v ≈ 250 mm, c_r 105 / c_t 63 mm (trapezoid, swept tip), root t ≥ 2.5 mm solid, fin AC ≈ +285 mm; no servo, no linkage. **PROTOTYPE 0.1: Ø3 mm aluminium spar along the fin leading edge** (near the TE region, aft stiffener — user decision 2026-08-06): doubles the root stiffness (EI 0.278 + 0.265 N·m², `boom_flexion.py`), load path vs pusher-slipstream buffeting (OP-26), 5.7 g; carbon pending. CORE component — panels untouched | I-20 `[D]`/`[E]`; `yaw_stability.py`; in-service Mojito pattern `[M]`; PROVISIONAL until F2 (flutter, stall arbitration) |
+| **Fin mount (V1 variant, ADR-0038)** | Optional rear-pod extension ≈ 30 mm (to x ≈ +295) with fixed centreline fin: S_v **2.16 dm²**, b_v 254 mm, c_r 106 / c_t 64 mm, root t **3.0 mm solid**, fin AC +285 mm; no rudder. Ø3 mm aluminium spar along the fin LE: total root EI ≈ **1.60×**, 5.7 g, but no strength credit is taken in the 3.0 mm requirement. | I-20 / `yaw_stability.py`; PROVISIONAL until F2 |
 | Motor mount | Face at x ≈ +230; motor body from ≈ +195 to +230 (28-class, 35 mm long, CG ≈ +212); prop disk plane at **x ≈ +235** (≥ 10 mm aft of the root TE at +216.9) | C25; PROVISIONAL |
 | Joint sockets | At y = ±195: tube socket Ø12.2–12.4, pin socket Ø6.1–6.2, depth ≈ 70 mm; centerlines x = −9.6 / +55.4 | §6.4 |
 | Avionics stations | FC/RX/blackbox ≈ x = 0…+40 (aft of the boom socket); ESC ≈ x = +60 (rear pod, beside the motor); GPS/mag on the nose pedestal ≈ x = −120. **Station cavity 64 × 45 × 21 mm with a 30.5 × 30.5 mm (Φ4 mm) boss/tray** — accepts the entire I-17 catalog (min 28×28×7, avg 45×34×12, max 56×37×13 mm) | Matches the §7.1 balance; PROVISIONAL; I-17 §4.1 `[M]` |
-| **FPV camera mount** | In the **nose boom front** (≈ x = −450): 2× M2, **16 mm spacing**, cavity for the DJI O4 camera module **25.55 × 20 × 23.30 mm** (O4/Pro) or **13.44 × 12.36 × 16.50 mm** (Lite); clear forward view (155° FOV); coaxial cable run (130 mm, no bending at the base) to the VTX. **Legacy O3 Air Unit** (I-19 §2.4): camera 21.2 × 20 × 19.5 mm **fits the same cavity**; hole spacing to verify (2× M2/16 mm) before use | I-19 §2/§6 `[M]`; PROVISIONAL |
+| **FPV camera mount** | At **x ≈ −407** on the nose boom: 2× M2, **16 mm spacing**, cavity for the DJI O4 camera module **25.55 × 20 × 23.30 mm** (O4/Pro) or **13.44 × 12.36 × 16.50 mm** (Lite); clear forward view (155° FOV); coaxial cable run without bending at the base to the VTX. **Legacy O3 Air Unit** camera 21.2 × 20 × 19.5 mm fits the same cavity; hole spacing to verify before use. | I-19 §2/§6 `[M]`; station from `balance_cg.py`; PROVISIONAL |
 | **FPV VTX** | DJI O4/Pro transmission module **33.5 × 33.5 × 13 mm** (Lite 30×30×6; **legacy O3 32.5 × 30.5 × 14.5 fits the tray — I-19 §2.4**), tray with **20 × 20 / 25.5 × 25.5 mm M2** holes (Lite: 25.5 only), in the CORE **with airflow** (shell runs hot — do not enclose; thermal pad to the frame); antennas **≥ 5 cm from VTX/camera/carbon/current path**, outside the shell, the two Pro antennas at **90°** | I-19 §2/§3 `[M]`; PROVISIONAL |
 | Hand launch | Grip area on the CORE sides; designer's choice within the OML | — |
 | Balance tabs | Small printed tabs on the CORE underside to rest the aircraft on a balance edge for CG verification (Pico Talon practice, I-09) | PROVISIONAL |
@@ -403,7 +404,7 @@ The designer has full freedom for the CORE outer shape within the constraints of
 |---|---|---|---|
 | Carbon tube | Pultruded Ø12 × 1.0 mm, **2 × ≈ 485 mm** | Main spar, bonded in each panel | §6.3 |
 | Carbon pin | Solid Ø6 mm, **2 × ≈ 140 mm** | Anti-rotation couple, bonded in each panel | §6.3 |
-| Aluminium boom | Tube **Ø8 / int Ø6** (wall 1.0 mm), ≈ 385 mm | Nose boom, prototype | §6.7 |
+| Aluminium boom | Tube **Ø8 / int Ø6** (wall 1.0 mm), support span **341 mm** + 50 mm CORE insertion | Nose boom, prototype | ADR-0040, §6.7 |
 | Aluminium spar (V1) | Ø3 mm, ≈ 300 mm | Fin leading edge | §4.4 |
 | PETG adhesive | 3D-Gloop PETG or 30-min epoxy (never E6000) | Segment joints (tenon), tube/pin bonding | §6.4 (I-04) |
 | TPU hinge strips | TPU 95A, 4 × 6 mm × 390 mm, **2×** | Elevon hinges | §6.6 |
@@ -420,7 +421,7 @@ The designer has full freedom for the CORE outer shape within the constraints of
 
 ## 7. Mass budget and CG
 
-### 7.1 Mass budget (Cruise, 6S1P) — sums to 1697 g AUW
+### 7.1 Mass budget (Cruise, 6S1P P42A) — sums to 1685.2 g AUW
 
 | Component | Mass (g) | Status |
 |---|---:|---|
@@ -433,38 +434,37 @@ The designer has full freedom for the CORE outer shape within the constraints of
 | Propeller + hub/spinner | 40 | `[E]` |
 | Elevon balance mass | 60 | `[E]` (ADR-0025) |
 | **FPV DJI O4/Pro (camera + VTX + 2 antennas)** | **37** | `[M]` (I-19: 33 g + 2×2.1 g; Lite 8.2 g; **legacy O3 ≈ 39 g** — 36.4 g + 3 g antenna, I-19 §2.4 `[M]`) |
-| **Battery boom structure** | **41** | `[E]` PROTOTYPE: Al tube Ø8/int6 (26 g) + cradle (15 g) (`boom_flexion.py`); carbon optimisation pending (ADR-0015) |
+| **Battery boom structure** | **38.2** | `[E]` Al tube Ø8/int6, 341 mm support span + 50 mm insertion + cradle (`balance_cg.py`); CAD mass pending |
 | Hardware (screws, TPU hinges, adhesive, misc) | 20 | `[E]` |
-| **Battery 6S1P (21700)** | **455** | `[E]` (I-16: P42A 445 g / 50E 433 g) |
-| **Total** | **1697** | **60 g/dm²** |
+| **Battery 6S1P P42A (21700)** | **445** | `[D]` I-16 |
+| **Total** | **1685.2** | **59.8 g/dm²** |
 
-> **V1 variant (ADR-0038):** + fin 36–60 g `[E]` at x ≈ +285 (I-20) → AUW ≈ 1733–1757 g;
-> ≈ 4 mm forward CG shift, absorbed by the battery slide; V_stall 46.7–47.0 km/h —
+> **V1 variant (ADR-0038):** + fin 37–62 g `[E]` at x ≈ +285 → AUW ≈ 1722–1747 g;
+> battery slide absorbs the CG shift; V_stall ≈ 46.4–46.7 km/h —
 > OP-24/OP-26 lever to F2. Finless CLEAN budget is the table above.
 >
 > **Material variants:** per-part mass with PETG / AERO-PLA wings / PLA+ policies in
-> `mass_budget.py` (docs/06): ALL PETG 1687 g (I-16 pack `[D]` 445 g, −10 g vs the
-> `[E]` 455 row above) · AERO WINGS 1508 g (stall-compliant, **not airworthy under the
+> `mass_budget.py` (docs/06): ALL PETG **1685.2 g** · AERO WINGS **1506.3 g**
+> (stall-compliant, **not airworthy under the
 > divergence model** — docs/07) · PLA+ 1670 g (ADR-0016 rejected material).
 
 ### 7.2 CG target
 
 | Quantity | Value |
 |---|---|
-| Neutral point | **26.7 % MAC** = −101 mm from root c/4 (VLM `[D]`, I-07); **independent Weissinger-L: 28.0 % MAC = −98.3 mm — 3 mm agreement (I-15 §6.3)**; central-body effect unquantified, moves the NP forward (margin applied in F2) |
-| **Target CG** | **18.7 % MAC** = **−119 mm from root c/4** (8 % static margin) |
-| CG vs root LE | 47 mm **forward** of the root leading edge |
+| Neutral point | **25.72 % MAC** = **−75.8 mm from root c/4** (32 × 5 VLM `[D]`, I-21); independent Weissinger-L: **27.0 % MAC = −72.9 mm** — 2.9 mm agreement; central-body effect remains unquantified |
+| **Target CG** | **17.72 % MAC** = **−93.8 mm from root c/4** (8 % static margin) |
+| CG vs root LE | **21.5 mm forward** of the root leading edge |
 | R-CG | CG within **±5 mm** of target (reference config 6S1P; other configs do not reach the band — OP-23) |
 | Adjustment | **Cradle longitudinal slide** along the boom (see §8); pack stations per config in `balance_cg.py` `[D]`; verify with the CORE underside balance tabs (§6.7) |
 
 > ⚠️ **OP-01 (critical) — resolution adopted (2026-08-05):** the reachable-CG analysis
-> (`balance_cg.py` `[D]`) shows the −119 mm target requires the 6S1P pack CG at
-> **x ≈ −415 mm** — unreachable with the v0.2 nose pod (reachable band was −24…+9 mm).
-> **Adopted: nose boom** carrying the pack from x ≈ −516 (≈ 385 mm forward of the
-> nose pod tip), Mojito pattern (I-02). Pack stations: 4S1P −568 / **6S1P −415
-> (reference)** / 4S2P −342 / 6S2P −267 (`balance_cg.py` `[D]`). **Fit (I-16 `[D]`): the
+> (`balance_cg.py` `[D]`) shows the −93.8 mm target requires the 6S1P pack CG at
+> **x = −372.7 mm**. The adopted nose boom support span is 341 mm forward of the CORE.
+> Pack stations: 4S1P −501 / **6S1P −373 (reference)** / 4S2P −306 / 6S2P −237.
+> **Fit (I-16 `[D]`): the
 > 6S1P pack (153 × 64.5 × 22.2 mm) is the only one that fits the cradle and reaches the
-> band; 4S1P needs x ≈ −568 (outside); 4S2P/6S2P do not fit at all — the R-CG
+> band; 4S1P needs x ≈ −501 (outside); 4S2P/6S2P do not fit at all — the R-CG
 > four-config requirement is re-derived in F2 (OP-23).** The central-body effect moves
 > the NP forward — direction known, margin applied in F2. Full analysis: justification
 > §3.1–3.2; the boom is part of the CORE outer mold (§6.7).
@@ -476,10 +476,10 @@ The designer has full freedom for the CORE outer shape within the constraints of
 | Parameter | Value | Status |
 |---|---|---|
 | Cells | Li-Ion **21700**, Ø21 × 70 mm, **single layer** (never stacked) | docs/00 |
-| **Cradle (CAD question Q1)** | **Replaces the internal bay.** Printed, 2 halves, walls 1.2 mm, ≤ 15 g: inner envelope **155 × 66 × 24 mm** (pack 153.2 × 64.5 × 22.2 + 0.5 clearance), length 200 mm from x ≈ −516 to −316, **lower Ø8.2 channel gripping the boom tube**; 2× 12 mm velcro straps + spring-lock hatch (Flightory pattern, I-09); camera mount (2× M2/16 mm) on the tip support piece; threaded inserts + reinforcement collar for repeated opening | PROVISIONAL until F2 |
-| Cradle position | Centres the pack at **x ≈ −415** (CG band −434…−397), between the two supports (nose tip x ≈ −516 and CORE socket x ≈ −132) — **structural requirement** (§6.7) | `[D]` |
+| **Cradle (CAD question Q1)** | Printed, 2 halves, walls 1.2 mm, ≤ 15 g: inner envelope **155 × 66 × 24 mm** (pack 153.2 × 64.5 × 22.2 + clearance), length **201 mm from x ≈ −473 to −272**, lower Ø8.2 channel gripping the boom tube; 2× 12 mm velcro straps + spring-lock hatch; threaded inserts + reinforcement collar | PROVISIONAL until F2 |
+| Cradle position | Centres the pack at **x = −372.7 mm** (CG band −391.7…−353.8), between the forward support x ≈ −473 and CORE socket x ≈ −132 — structural requirement (§6.7) | `balance_cg.py` `[D]` |
 | Longitudinal adjustment | Pack slide along x inside the cradle; range sized to keep CG within ±5 mm (reference 6S1P) | docs/00 R-CG; re-derived in F2 (OP-23) |
-| Pack configs | 4S1P ~300 g / 6S1P ~455 g / 4S2P ~605 g / 6S2P ~910 g (out of cruise envelope). Pack stations for CG −119 mm: −568 / **−415** / −342 / −267 (`balance_cg.py` `[D]`, incl. FPV). **Fit (I-16 `[D]`): only the 6S1P pack fits the 155×66×24 single-layer cradle and reaches the band; 4S2P/6S2P fit no n_z = 1 arrangement; 4S1P fits but needs x ≈ −568 (outside the cradle)** | docs/00 |
+| Pack configs | P42A: 4S1P **305 g** / 6S1P **445 g** / 4S2P **585 g** / 6S2P **865 g**. Stations for CG −93.8 mm: **−501 / −373 / −306 / −237 mm**. Only 6S1P fits the 155×66×24 one-layer cradle and reaches the band; 4S1P needs an out-of-cradle station and both 2P packs have no one-layer envelope. | I-16, `balance_cg.py` `[D]` |
 
 ---
 
@@ -541,7 +541,7 @@ The designer has full freedom for the CORE outer shape within the constraints of
 | Endurance | 60 min at minimum-power speed | docs/00 |
 | Cruise speed | 90–105 km/h; design point **95 km/h** | docs/00 |
 | V_NE article #1 | **160 km/h** (design V_NE 180) | docs/00 |
-| **V_limit (first test flights)** | **110 km/h** (conservative V_div 151.5 × 0.9 joint-aware margin); ≈ 160 km/h if S3 confirms G_XY ≈ 0.69 GPa (210.5 × 0.9) | docs/07, §11.3 |
+| **V_limit (first test flights)** | **105 km/h** (0.85 × 128.8, rounded down); **150 km/h** if S3 confirms the G_XY-plane model (0.85 × 179.0, rounded down) | docs/07 rev. 3, §11.3 |
 | Stall speed | **≤ 45 km/h** | docs/00 (C16) |
 | Required C_Lmax | ≥ 0.65 | docs/00 |
 | n_max / n_min | +6 / −3 (later +9) | docs/00 |
@@ -551,24 +551,23 @@ The designer has full freedom for the CORE outer shape within the constraints of
 
 ### 11.2 Stall margin (the tightest in the design — OP-24)
 
-> ≈ **46.1 km/h** at the current budget (1697 g, `balance_cg.py` `[D]`) vs the 45 km/h
-> requirement — a 0.4–1.1 km/h tension. **Declared levers:** shell at the low end of its
+> **45.9 km/h** at the current budget (1685 g, `mass_budget.py` `[D]`/`[E]`) vs the 45 km/h
+> requirement — a 0.9 km/h tension. **Declared levers:** shell at the low end of its
 > band (550 g instead of 600) + servos at the real 12–15 g class (48 g instead of 60)
 > → AUW ≈ 1625 g → ≈ 45.1 km/h — borderline; F2 must arbitrate the mass budget against
-> C16. **(The V1 fin variant adds 36–60 g → 46.7 km/h; §4.4, OP-26.)** Do not relax the
+> C16. **(The V1 fin variant adds 37–62 g → 46.4–46.7 km/h; §4.4, OP-26.)** Do not relax the
 > CL_max chain without re-deriving this requirement (C16 history).
 
-### 11.3 Divergence and V_limit (docs/07, `divergence.py` — G6)
+### 11.3 Divergence and V_limit (docs/07 rev. 3, `divergence.py` — G6)
 
-> V_div vs the **240 km/h criterion**: nominal **275.6 km/h (1.15× — PASS, barely)**;
-> **conservative end 151.5 km/h (0.63× — FAIL, below V_NE 160)**; AERO LW-PLA wings
-> **107.1 km/h (0.45× — not airworthy)**: the ADR-0030 "criterion met" claim is
-> **falsified** on the conservative end (OP-29). **Real-print sensitivity:** in-plane
-> G_XY 0.69–0.72 GPa (E 1.94 `[M]`, ν 0.35–0.40) → 210.5 km/h; even the combined best
-> case (G in-plane + gyroid + wall 1.1 mm) only touches 242 km/h. **Operating rule:**
-> V_limit **110 km/h** for first flights (160 if the S3 coupon confirms G_XY ≈ 0.69 GPa);
-> levers: 3 perimeters (+22 % V_div, +200 g), I-12 sweep factor, S3 GJ/EI verification
-> (mandatory), E7 Southwell in flight. Full analysis: docs/07; OP-29.
+> V_div vs the **240 km/h criterion** at Λc/4 = −15°: nominal **325.3 km/h
+> (1.36× — PASS)**; **conservative unmeasured end 128.8 km/h (0.54× — FAIL)**;
+> AERO LW-PLA wings **91.1 km/h (not airworthy)**. The old enclosed-area-centroid
+> "shear centre" was invalid; revision 3 instead brackets xEA/c = 0.30…0.45 `[E]`
+> (I-21). A validated in-plane G_XY model raises the conservative result to 179.0 km/h;
+> G_XY + gyroid + 1.1 mm wall reaches only 206 km/h. **Operating rule:** V_limit
+> **105 km/h** initially; **150 km/h** only after S3 confirms G_XY. S3 elastic-axis/GJ
+> measurement and E7 Southwell expansion remain mandatory. Full analysis: docs/07; OP-29.
 
 ### 11.4 Launch envelope (I-14 rev. 2 executed — `launch_speed.py` `[D]`)
 
@@ -591,7 +590,7 @@ out of scope for this version.
 ## 12. Assembly and control setup
 
 0. **Launch rules (I-14 rev. 2, `launch_speed.py`):** **firm throw (V_hand ≥ 10 m/s),
-   release at 0–5° pitch** — the gate is V_suelta ≥ V_stall (45.9 km/h at 1687 g); the
+   release at 0–5° pitch** — the gate is V_suelta ≥ V_stall (45.9 km/h at 1685 g); the
    k = 1.20 margin is reached by motor acceleration in < 0.5 s (typical throw:
    48.4 km/h at release, k = 1.20 in 0.39 s). INAV autolaunch: `nav_fw_launch_thr`
    = hover throttle (bench: nose-up until "about to fly out of your hand"),
@@ -617,7 +616,7 @@ out of scope for this version.
 7. **(V1 variant only, ADR-0038 §4.4):** install the fixed centreline fin on the
    rear-pod extension (no servo, no linkage, no FC change); optional antenna/ESC housing
    inside the fin (Mojito pattern `[M]`).
-8. Balance: target CG **−119 mm from root c/4** (47 mm forward of root LE); verify in the
+8. Balance: target CG **−93.8 mm from root c/4** (21.5 mm forward of root LE); verify in the
    **reference 6S1P config** using the CORE underside balance tabs (§6.7); 4S1P/4S2P/6S2P
    do not reach the band in the cradle — see OP-23.
 9. Avionics per §10; pitot, GPS/mag wiring clear of the current path.
@@ -628,8 +627,8 @@ out of scope for this version.
 
 | Set | Documents |
 |---|---|
-| Decisions | ADR-0001…ADR-0039 ([`decisions/`](../decisions/)) |
-| Research | I-01…I-20 ([`research/`](../research/)); **directional stability: I-20** (`yaw_stability.py`); **launch: I-14 executed** (`launch_speed.py`) |
+| Decisions | ADR-0001…ADR-0040 ([`decisions/`](../decisions/)) |
+| Research | I-01…I-21 ([`research/`](../research/)); **sweep/elastic-axis correction: I-21** (`sweep_trade.py`); **directional stability: I-20** (`yaw_stability.py`); **launch: I-14 executed** (`launch_speed.py`) |
 | Specification | [`docs/00-objectives-and-requirements.md`](../docs/00-objectives-and-requirements.md) |
 | Measured data | [`docs/02-measured-references.md`](../docs/02-measured-references.md) |
 | Plans | [`docs/03-phase-1-plan.md`](../docs/03-phase-1-plan.md), [`docs/05-master-plan.md`](../docs/05-master-plan.md) |
@@ -645,6 +644,7 @@ out of scope for this version.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.16 | 2026-08-17 | **Highest-ROI design audit implemented:** quarter-chord sweep −20° → **−15°** (ADR-0040/I-21); canonical station table generated from `design_config.py`; NP/CG and 6S1P cradle rebalanced; false shear-centre identification removed; divergence revision 3 and initial V_limit **105 km/h** adopted. Supersedes all v0.15 planform coordinates. |
 | 0.15 | 2026-08-06 | **First release (tag v0.1.0).** Status → RELEASED (CAD baseline); segment spans added (§6.5, C24); new §6.9 bought-in items and consumables table; the remaining open items are named with their triggers (OP-02 airfoil, OP-21 CORE shape). Release notes: [`docs/08-release-v0.1.md`](../docs/08-release-v0.1.md). |
 | 0.14 | 2026-08-06 | **Reorganized as a CAD designer's guide** (§4 geometry → §5 airfoil → §6 structure/parts → §7 mass → §8 battery → §9–10 subsystems → §11 envelope → §12 assembly): component map (§6.1); long analysis notes compressed into one-line flags with pointers to the justification doc and I-docs (no data lost — full rationale remains in `Design-Guide-Justification-v0.1.md` and the CHANGELOG). **Corrections (values reconciled to the canonical scripts):** twist working value +0.5° → **+3.0°** (parametric, C5); divergence numbers updated to docs/07 rev. 2 (nominal 275.6 / conservative 151.5 / AERO 107.1, V_limit 110); the internal battery bay superseded by the cradle throughout (§8); AUW row reconciled (1697 current / 1620 design ref.); assembly step 8 verifies balance in 6S1P only. |
 | 0.13 | 2026-08-06 | CAD questions Q1–Q5 answered (cradle replaces the bay; straight channels vs kinks; elevon as a part; biconvex fin; CAD method) — CHANGELOG [1.25] |

@@ -22,7 +22,9 @@ That is: **without infill, the GJ calculation was overestimated, not underestima
 
 ## Rationale
 
-- **The gyroid's contribution is not directly torsional** — it sits near the shear center and contributes little to `J`. Its function is to **stabilize the skin** so the closed cell actually works.
+- **The gyroid is not credited as the primary torsion path.** Its defensible function is
+  to stabilize the thin skin so the closed cell works. Its direct GJ contribution is an
+  `[E]` sensitivity pending S3; no shear-centre location is inferred from the infill.
 - **More stiffness per gram than an additional perimeter**, because it attacks the mode that actually fails.
 - **Precedent `[M]`:** the Peregrine 840 mm print profile specifies **4 % gyroid** with **a single perimeter**, and it flies.
 

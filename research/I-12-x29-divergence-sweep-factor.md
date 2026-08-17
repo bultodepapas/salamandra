@@ -1,8 +1,13 @@
 # I-12 — Forward-sweep divergence: X-29 flight data and sweep-factor bounds
 
-**Status:** ⬜ **Open — proposed thread; primary sources located**
+**Status:** ↪ **Partially superseded by I-21; X-29 follow-on research remains open**
 **Feeds:** G6 (sweep factor — **declared weakest link**), G4 (torsional stiffness bounds), S4 of the master plan, ADR-0001 review conditions
 **Closes:** G6 with E7 (flight data); this thread bounds the `[E]` factor before that
+
+> **2026-08-17 update:** [I-21](I-21-sweep-trade-and-elastic-axis-correction.md)
+> executed the immediate sweep trade with NASA TP-1685 and corrected the invalid
+> enclosed-area-centroid/shear-centre identification. This thread remains open only for
+> the X-29-specific follow-on data and a higher-fidelity EI/GJ sweep formulation.
 
 ---
 

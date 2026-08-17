@@ -32,7 +32,7 @@ MODEL:
               (incl. nav_fw_launch_motor_delay = 0.2 s)
   torque-roll check: T/W at launch <= 1.5 [I] (community risk threshold)
 
-Inputs: W 1.687 kg (ALL PETG, docs/06) / 1.620 (guide); CL_max 0.589 [D] I-07;
+Inputs: W 1.6852 kg (ALL PETG, docs/06) / 1.620 (legacy design reference); CL_max 0.589 [D] I-07;
 S 0.282 m2. V_hand: published throwing biomechanics (van den Tillaar 2004,
 JSSM: 0.409 kg -> 21.5 m/s, significant negative linear mass-speed
 relationship; extrapolation to 1.6-1.7 kg overhead/two-hand push: typical
@@ -52,7 +52,7 @@ S = 0.282
 CL_MAX = 0.589              # [D] I-07 (wing, non-elliptic) — matches mass_budget
 G = 9.81
 
-AUW = (1.620, 1.687)          # kg: guide §3 / mass_budget ALL PETG (docs/06)
+AUW = (1.620, 1.6852)         # kg: legacy reference / current ALL PETG (docs/06)
 K_REF = 1.20                  # margin reached AFTER release (acceleration)
 V_HAND = (10.5, 8.0, 13.0)    # m/s: [D]-ish band from throwing biomechanics
                               # (van den Tillaar 2004 + community): ref/lo/hi
@@ -80,7 +80,7 @@ def main():
     vs = v_stall(AUW[1])
     vs_g = v_stall(AUW[0])
     print(f"\n1. STALL SPEED")
-    print(f"   ALL PETG (1687 g): {vs*3.6:5.1f} km/h ({vs:4.1f} m/s) "
+    print(f"   ALL PETG (1685 g): {vs*3.6:5.1f} km/h ({vs:4.1f} m/s) "
           f"· guide 1620 g: {vs_g*3.6:5.1f} km/h ({vs_g:4.1f} m/s)")
     print(f"   Configuration-class anchor [M]: TBS Mojito 1800 g, stall "
           f"~{MOJITO_STALL*3.6:.0f} km/h reported, HAND-LAUNCHED in service")
@@ -145,7 +145,7 @@ def main():
         ok = ok and bool(cond)
         print(f"   [{'PASS' if cond else 'FAIL'}] {name}")
 
-    vs_c = v_stall(1.687)
+    vs_c = v_stall(1.6852)
     check(f"V_stall reproduces mass_budget ALL PETG 45.9 km/h (got "
           f"{vs_c*3.6:.1f})", abs(vs_c * 3.6 - 45.9) < 0.3)
     vs_g2 = v_stall(1.620)

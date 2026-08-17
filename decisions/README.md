@@ -50,6 +50,7 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | [0037](ADR-0037-licence.md) | Licence: CERN-OHL-S-2.0 + CC BY-SA 4.0 | ✅ | Decided | Yes |
 | [0038](ADR-0038-fixed-fin-variant.md) | Dual directional config: finless baseline + fixed-fin variant V1 (no rudder) | 🔄 | Medium `[D]`/`[E]` | Yes |
 | [0039](ADR-0039-filament-dowel-pins.md) | Filament dowel pins in the glued segment joints | ✅ | High `[D]`/`[E]` | Yes |
+| [0040](ADR-0040-quarter-chord-sweep.md) | Quarter-chord sweep reduced to −15° | 🔄 | Medium `[D]`/`[E]` | Yes, before CAD freeze |
 
 ### Superseded or cancelled
 

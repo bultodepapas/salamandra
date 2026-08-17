@@ -187,7 +187,7 @@ This is the project's central rule. Every quantitative claim carries a tag:
 
 > **Hard rule:** no `[E]` or `[I]` datum supports an irreversible decision without prior verification.
 >
-> **Corollary:** when better data overturn a conclusion, it is recorded in the [CHANGELOG](CHANGELOG.md) with a correction number. There are 21 so far.
+> **Corollary:** when better data overturn a conclusion, it is recorded in the [CHANGELOG](CHANGELOG.md) with a correction number.
 
 ---
 
@@ -203,32 +203,38 @@ This is the project's central rule. Every quantitative claim carries a tag:
 | 5 — Systems and propulsion | ⬜ |
 | 6 — Manufacturing and release | ⬜ |
 
-**Current blocker: [G2](gaps/README.md) — airfoil selection.**
+**Current blockers:** [G2](gaps/README.md) — airfoil design — and OP-29 — measured
+torsional stiffness/elastic axis before the speed envelope can expand beyond 105 km/h.
 
-Phase-1 status (2026-08-05):
+Phase-1 status (2026-08-17):
 
-- **G8 (neutral point) — largely closed.** NP = 26.7 % MAC by the in-house panel VLM,
-  **cross-checked by an independent Weissinger-L lifting line: 28.0 % MAC, 3 mm
-  agreement** ([I-15 §6.3](research/I-15-airfoil-evidence-campaign.md)). The
+- **G8 (neutral point) — largely closed.** On the ADR-0040 −15° planform, NP =
+  **25.72 % MAC / −75.8 mm** by the full panel VLM, cross-checked by Weissinger-L at
+  **27.0 % / −72.9 mm (2.9 mm agreement)** ([I-21](research/I-21-sweep-trade-and-elastic-axis-correction.md)). The
   central-body effect remains unquantified and moves the NP forward.
 - **G2 (airfoil) — screening executed.** The B3 XFOIL screening (24 polars,
   Re 3e5/5e5 × Ncrit 10/12) discarded E205 (cm0 ≈ −0.07) and showed that **no
   off-the-shelf reflexed section satisfies R-AIRFOIL at 13.5 % t/c nor closes the
   trim inside the torsion window at SM 8 %** — the root section must be **designed,
   not selected** ([I-15 §6](research/I-15-airfoil-evidence-campaign.md)).
-- **OP-01 (CG reachability) — resolved by decision.** The −119 mm target CG requires
-  the 6S1P pack at x ≈ −421 mm; a **nose boom** (≈ 360 mm, Mojito pattern) carries
-  the battery bay forward of the nose pod. Pack stations map and honest flags
+- **ADR-0040 / OP-01 — coupled planform and balance resolved.** A reproducible
+  −20…−10° trade selected **Λc/4 = −15°**: −12° would exceed the 3° twist + 0.6°
+  reflex cap. Target CG is **−93.8 mm** and the 6S1P P42A pack balances at **−373 mm**
+  in a 341 mm two-support nose boom. Pack stations and honest flags
   (4S1P/6S2P R-CG tension, stall compliance) in the
   [guide §7.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
+- **OP-29 (divergence) — operationally bounded, structurally open.** Revision 3 removed
+  an invalid area-centroid/shear-centre assumption. Nominal Vdiv is 325.3 km/h, but the
+  conservative unmeasured case is **128.8 km/h**; initial **Vlimit = 105 km/h**. S3 GJ,
+  GXY and elastic-axis measurements plus E7 Southwell expansion are mandatory.
 - **G10 (directional stability) — bounded by calculation (I-20, ADR-0038).** The
   finless baseline is estimated **directionally unstable** (Cnβ −0.0006…−0.0015/deg
   `[E]`, FSW + nose boom); the platform now publishes two configurations:
   **SALAMANDRA-CLEAN** (finless, O1 efficiency build) and **SALAMANDRA-V1** (fixed
   centreline fin, no rudder — first platform variant, recommended for the test
-  programme): S_v 2.1–2.8 dm², 36–79 g, ΔCD0 +0.0014–0.0018 `[D]`/`[E]`
+  programme): S_v 2.16–2.86 dm², 37–82 g, ΔCD0 +0.0015–0.0019 `[D]`/`[E]`
   (`calculations/yaw_stability.py`). A movable rudder is **rejected with numbers**
   (I-20 §5.4; Mojito `[M]` flies a fixed stabilizer with elevons only). Closure by
   flight test **E8** (yaw perturbation).

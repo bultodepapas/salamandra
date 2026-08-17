@@ -48,7 +48,7 @@
 
 ## Sign conventions
 
-- **Sweep:** negative forward. This project uses Λ ≈ −20°.
+- **Sweep:** negative forward. This project uses Λc/4 = **−15°** (ADR-0040).
 - **Twist:** positive wash-in (tip at higher incidence). This project uses wash-in.
 - **Load factor:** positive upward.
 

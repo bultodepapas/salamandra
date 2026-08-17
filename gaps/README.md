@@ -31,17 +31,22 @@ Sensitivity: a ±13 % in S produces ±13 % in aspect ratio and wing loading.
 
 ### G6 — sweep factor
 
-The divergence calculation uses a reduction factor of **0.50–0.70** for −20° of sweep, taken from generic literature and **not computed on this section's EI/GJ ratio**. It is the term that dominates the `[E]` ±35 % uncertainty.
+Revision 3 uses **0.55–0.85** at the selected −15° sweep, with its trend anchored to
+NASA TP-1685. The numerical transfer to this printed section remains `[E]`. Together
+with the unmeasured xEA/c = 0.30…0.45 bracket and GJ, it dominates the conservative
+128.8 km/h result (I-21, OP-29/30).
 
 ### G8 — neutral point and static margin
 
-**Partially closed.** The in-house VLM gives **NP = 26.7 % MAC** `[D]`, validated against an analytic case (straight AR 6 wing: 24.0 % calculated against 25 % theoretical).
+**Largely closed.** On the −15° planform, the full VLM gives **NP = 25.72 % MAC /
+−75.8 mm** `[D]`; independent Weissinger-L gives 27.0 % / −72.9 mm (2.9 mm spread).
 
-Target CG: **18.7 % MAC** for 8 % static margin.
+Target CG: **17.72 % MAC / −93.8 mm** for 8 % static margin.
 
-**Missing:** verification with a second independent method, incorporating the central body, and **verifying elevon authority** — which still has not been done.
+**Missing:** central-body model and measured flight NP. Elevon authority is calculated;
+final airfoil polars must confirm the 3.0° twist + 0.59° reflex closure.
 
-See [I-07](../research/I-07-neutral-point-torsion-window.md).
+See [I-21](../research/I-21-sweep-trade-and-elastic-axis-correction.md).
 
 ### G2 — now bounded with numbers
 

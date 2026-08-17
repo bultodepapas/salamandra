@@ -42,7 +42,7 @@ The folders are separated **on purpose**: an ADR says *what was decided*; a rese
 
 ## Conventions you will meet everywhere
 
-- **Signs:** sweep negative forward (the project uses ≈ −20°) · positive twist = wash-in (tip at higher incidence) · in `calculations/`, `x` positive backward with origin at the root c/4.
+- **Signs:** sweep negative forward (the project uses −15° at c/4) · positive twist = wash-in (tip at higher incidence) · in `calculations/`, `x` positive backward with origin at the root c/4.
 - **Units:** SI in calculations; tables may use km/h and g/dm².
 - **Drag:** never a single Oswald factor — the viscous and induced terms are always separated (ADR-0009).
 

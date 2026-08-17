@@ -212,7 +212,7 @@ Full detail in [`docs/04-conventions.md`](docs/04-conventions.md).
 | `ADR-XXXX` | Decision · `I-XX` Research · `GX` Gap |
 | `EX` | Test · `OX` Objective · `R-XXX` Requirement · `CX` Correction |
 
-**Signs:** sweep negative forward (the project uses ≈ −20°) · positive twist = wash-in (tip at higher incidence) · in `calculations/`, `x` positive backward with origin at the root c/4.
+**Signs:** sweep negative forward (the project uses −15° at c/4) · positive twist = wash-in (tip at higher incidence) · in `calculations/`, `x` positive backward with origin at the root c/4.
 
 **Units:** SI in calculations. Tables may use km/h and g/dm², as they are the common units.
 

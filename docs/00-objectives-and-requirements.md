@@ -107,14 +107,16 @@ See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 
 | Pack | Cells | Energy | Mass | AUW | Wing loading |
 |---|---|---|---|---|---|
-| 4S1P | 4 | 65 Wh | ~300 g | ~1480 g | 52 g/dm² |
-| **6S1P** | 6 | 97 Wh | ~455 g | **~1620 g** | **57 g/dm²** |
-| 4S2P | 8 | 130 Wh | ~605 g | ~1785 g | 63 g/dm² |
-| 6S2P | 12 | 195 Wh | ~910 g | ~2090 g | 74 g/dm² ⚠️ |
+| 4S1P P42A | 4 | 60.5 Wh | 305 g | 1545 g | 54.8 g/dm² |
+| **6S1P P42A** | 6 | **90.7 Wh** | **445 g** | **1685 g** | **59.8 g/dm²** |
+| 4S2P P42A | 8 | 121.0 Wh | 585 g | 1825 g | 64.7 g/dm² |
+| 6S2P P42A | 12 | 181.4 Wh | 865 g | 2105 g | 74.6 g/dm² ⚠️ |
 
-Mass range **610 g, 41 % of the base AUW**.
+Current modeled mass range: **560 g, 36 % of the 4S1P AUW** (I-16/ADR-0040).
 
-> **R-CG: the bay must allow enough longitudinal pack adjustment to keep the CG within ±5 mm in all four configurations.**
+> **R-CG: the carrier must allow enough longitudinal pack adjustment to keep the CG
+> within ±5 mm in all four configurations. Current status: NOT MET.** Only 6S1P fits
+> and balances in the present one-layer cradle; OP-23 owns the requirement revision.
 
 - The 21700 cells **do not stack**: single 21 mm layer. At 13.5 % t/c and c_root 260 mm there is ~35 mm — roomy. **At 11 % it did not fit.**
 - **6S2P falls outside the cruise band.** Mechanically supported, documented as out of envelope.

@@ -1,132 +1,171 @@
 #!/usr/bin/env python3
-"""
-Balance de masas y CG (OP-01) — deriva la solucion de la nariz-boom y las
-estaciones de pack necesarias para alcanzar el CG objetivo.
+"""Mass balance and battery-cradle layout for Salamandra Article #1.
 
-Convenciones: x positivo hacia atras, origen en c/4 de raiz.
-Salidas [D] salvo las etiquetadas PROVISIONAL/[E].
+The layout is solved self-consistently: changing sweep moves the neutral point,
+the shell centroid and the carbon-tube centroid; shortening the cradle boom also
+changes boom mass, boom centroid and camera station. The reference pack is the
+I-16 6S1P P42A pack (445 g), consistent with ``mass_budget.py``.
+
+Coordinates: x aft, origin at the root quarter chord. Outputs are [D] on [E]
+component locations until CAD mass properties replace the table in F2/P1-P3.
 """
 import numpy as np
 
-B, S, TAPER, SWEEP = 1.30, 0.282, 0.50, -20.0
-NP_VLM = -101.3e-3     # m, I-07 / I-15 §6.3 [D]
-NP_WL = -98.3e-3       # m, Weissinger-L, I-15 §6.3 [D]
-MAC = (2.0 / 3.0) * (2 * S / (B * (1 + TAPER))) * \
-      (1 + TAPER + TAPER ** 2) / (1 + TAPER)
-CG_TARGET = -119e-3    # m, 18.7 % MAC, SM 8 %
-R_CG = 5e-3            # m, docs/00 §3.3
-AUW_REF, V_STALL_REF = 1.620, 45.0   # km/h de referencia a 1620 g
-NOSE_POD_TIP = -132e-3               # guia §7.6 (v0.2)
+from design_config import (
+    MAC, S, SWEEP_C4_DEG, planform_centroid, x_c4,
+)
 
-# --- tablas de masas (Justification §3.1; boom PROVISIONAL [E], F2) ---
-COMPONENTS = [
-    ("Shell (centroide del planform)", 0.600, -49e-3),
-    ("Carbon (tubo en linea c/4)",     0.070, -142e-3),
-    ("Motor + helice",                 0.210, +217e-3),
-    ("ESC",                            0.035, +40e-3),
-    ("Avionica (FC, pitot, GPS, RX, cableria)", 0.110, -10e-3),
-    ("Servos + masa de balance",       0.120, -5e-3),
-    ("Hardware",                       0.020, +50e-3),
-    # FPV DJI O4/Pro (I-19 [M]): camara 16.4 g en el boom (x ~ -450 [E]),
-    # VTX 16.6 g en la estacion de avionica (x ~ +10), 2x antena 2.1 g (x ~ +20)
-    ("FPV DJI O4/Pro — camara (boom)", 0.0164, -450e-3),
-    ("FPV DJI O4/Pro — VTX (CORE)",    0.0166, +10e-3),
-    ("FPV DJI O4/Pro — antenas (CORE)", 0.0042, +20e-3),
-]
-BOOM_MASS, BOOM_STATION = 0.040, -320e-3   # PROVISIONAL [E]
-PACKS = [("4S1P", 0.300), ("6S1P", 0.455), ("4S2P", 0.605), ("6S2P", 0.910)]
-# Envolventes reales de pack terminado (I-16, battery_pack_layout.py [D]):
-# 4S1P 2x2 y 6S1P 2x3, orientacion A (eje de celula paralelo a x):
+
+NP_VLM = -75.8e-3       # m, VLM 40x6, I-21 [D]
+NP_WL = -72.9e-3        # m, Weissinger-L ny=100, I-21 [D]
+STATIC_MARGIN = 0.08
+CG_TARGET = NP_VLM - STATIC_MARGIN * MAC
+R_CG = 5e-3             # m, docs/00 section 3.3
+NOSE_POD_TIP = -132e-3  # unchanged root-geometry datum
+
+AUW_REF, V_STALL_REF = 1.685, 45.9  # P42A all-PETG baseline, mass_budget.py
+
+# I-16 P42A pack model: n cells x 70 g + 25 g packaging.
+PACKS = [("4S1P", 0.305), ("6S1P", 0.445),
+         ("4S2P", 0.585), ("6S2P", 0.865)]
 PACK_LEN = {"4S1P": 0.1532, "6S1P": 0.1532}
-# 4S2P (8 celdas) y 6S2P (12 celdas) NO CABEN en el bay de una capa
-# (I-16: ninguna disposicion n_z=1 entra en 200x70x32) -> fuera por geometria.
-# v0.2 bay (sin boom): extremo delantero -131.5, trasero +48.5 (guia §9)
+REFERENCE_PACK = 0.445
+PACK_CLEARANCE = 0.005
+
+# Prototype 0.1 calibration: the old structural check gave 26 g over the
+# 384 mm support span plus 50 mm inserted aft of the CORE support. The cradle
+# is modelled at its own centroid instead of being lumped at the tube midpoint.
+TUBE_CORE_INSERTION = 0.050
+AL_TUBE_LINEAR_MASS = 2700.0 * np.pi / 4.0 * (0.008 ** 2 - 0.006 ** 2)
+CRADLE_MASS = 0.015
+CRADLE_LENGTH = 0.201
+CAMERA_FROM_BAY_FWD = 0.066  # reproduces the old -450 mm station
 
 
-def planform_centroid():
-    """Centroide de area del planform (validacion de la estacion de la shell)."""
-    y = np.linspace(0, B / 2, 20001)
-    cr = 2 * S / (B * (1 + TAPER))
-    c = cr * (1 - (1 - TAPER) * y / (B / 2))
-    x_c4 = y * np.tan(np.radians(SWEEP))
-    x_mid = x_c4 - c / 4.0 + c / 2.0
-    return np.trapezoid(x_mid * c, y) / np.trapezoid(c, y)
+def pack_station(m_no_batt, moment_no_batt, m_pack, cg):
+    """Pack station required for a target aircraft CG."""
+    return (cg * (m_no_batt + m_pack) - moment_no_batt) / m_pack
 
 
-def pack_station(m_no_batt, mom_no_batt, m_pack, cg):
-    """Estacion de pack para un CG dado."""
-    return (cg * (m_no_batt + m_pack) - mom_no_batt) / m_pack
+def component_table(sweep_deg, bay_fwd):
+    """Non-battery components for one sweep and iterated bay position."""
+    extension = max(NOSE_POD_TIP - bay_fwd, 0.0)
+    tube_mass = AL_TUBE_LINEAR_MASS * (extension + TUBE_CORE_INSERTION)
+    tube_station = 0.5 * (bay_fwd + NOSE_POD_TIP + TUBE_CORE_INSERTION)
+    cradle_station = bay_fwd + 0.5 * CRADLE_LENGTH
+    boom_mass = CRADLE_MASS + tube_mass
+    boom_station = (CRADLE_MASS * cradle_station + tube_mass * tube_station) / boom_mass
+    camera_station = bay_fwd + CAMERA_FROM_BAY_FWD
+    return [
+        ("Shell (planform centroid)", 0.600, planform_centroid(sweep_deg)),
+        ("Carbon (mean c/4, y=195..585)", 0.070, x_c4(0.390, sweep_deg)),
+        ("Motor + propeller", 0.210, +217e-3),
+        ("ESC", 0.035, +40e-3),
+        ("Avionics (FC, pitot, GPS, RX, wiring)", 0.110, -10e-3),
+        ("Servos + elevon balance mass", 0.120, -5e-3),
+        ("Hardware", 0.020, +50e-3),
+        ("FPV DJI O4/Pro - camera", 0.0164, camera_station),
+        ("FPV DJI O4/Pro - VTX", 0.0166, +10e-3),
+        ("FPV DJI O4/Pro - antennas", 0.0042, +20e-3),
+        ("Battery boom + cradle", boom_mass, boom_station),
+    ]
+
+
+def solve_reference_layout(sweep_deg=SWEEP_C4_DEG, np_x=NP_VLM,
+                           pack_mass=REFERENCE_PACK):
+    """Iterate boom mass/camera station and the 6S1P R-CG cradle envelope."""
+    cg_target = np_x - STATIC_MARGIN * MAC
+    bay_fwd = -0.47
+    for _ in range(100):
+        components = component_table(sweep_deg, bay_fwd)
+        m0 = sum(m for _, m, _ in components)
+        moment0 = sum(m * x for _, m, x in components)
+        forward_pack_station = pack_station(
+            m0, moment0, pack_mass, cg_target - R_CG)
+        updated = forward_pack_station - PACK_LEN["6S1P"] / 2.0 - PACK_CLEARANCE
+        if abs(updated - bay_fwd) < 1e-10:
+            bay_fwd = updated
+            break
+        bay_fwd = 0.5 * (bay_fwd + updated)
+    else:
+        raise RuntimeError("battery-cradle iteration did not converge")
+
+    components = component_table(sweep_deg, bay_fwd)
+    m0 = sum(m for _, m, _ in components)
+    moment0 = sum(m * x for _, m, x in components)
+    bay_aft = pack_station(m0, moment0, pack_mass, cg_target + R_CG) \
+        + PACK_LEN["6S1P"] / 2.0 + PACK_CLEARANCE
+    return {
+        "sweep": sweep_deg,
+        "np": np_x,
+        "cg_target": cg_target,
+        "components": components,
+        "m0": m0,
+        "moment0": moment0,
+        "pack_station": pack_station(m0, moment0, pack_mass, cg_target),
+        "bay_fwd": bay_fwd,
+        "bay_aft": bay_aft,
+        "extension": max(NOSE_POD_TIP - bay_fwd, 0.0),
+    }
 
 
 def main():
-    print("=" * 70)
-    print("BALANCE DE MASAS Y CG — OP-01 (boom de bateria)")
-    print("=" * 70)
-    xc = planform_centroid()
-    print(f"\n  Validacion: centroide del planform = {xc*1000:+.1f} mm "
-          f"(tabla de masas: -49 mm)  ->  {'OK' if abs(xc*1000+49) < 2 else 'DESVIACION'}")
-    print(f"  MAC = {MAC*1000:.1f} mm  (I-07: 224.9)   NP = {NP_VLM*1000:+.1f} / "
-          f"{NP_WL*1000:+.1f} mm (VLM / Weissinger-L)")
+    layout = solve_reference_layout()
+    m0, moment0 = layout["m0"], layout["moment0"]
+    print("=" * 76)
+    print("SALAMANDRA MASS BALANCE - ADR-0040, 6S1P P42A REFERENCE")
+    print("=" * 76)
+    print(f"  sweep c/4 = {SWEEP_C4_DEG:+.1f} deg  MAC = {MAC*1000:.1f} mm")
+    print(f"  NP VLM / Weissinger = {NP_VLM*1000:+.1f} / {NP_WL*1000:+.1f} mm")
+    print(f"  target CG = {CG_TARGET*1000:+.1f} mm (SM {STATIC_MARGIN*100:.0f} % MAC)")
 
-    comps = COMPONENTS + [("Boom de bateria (estructura)", BOOM_MASS, BOOM_STATION)]
-    m0 = sum(m for _, m, _ in comps)
-    mm0 = sum(m * x for _, m, x in comps)
-    print("\n  Tabla de masas (sin pack):")
-    for name, m, x in comps:
-        print(f"    {name:42s} {m*1000:6.0f} g  x = {x*1000:+7.1f} mm")
-    print(f"    {'Subtotal':42s} {m0*1000:6.0f} g  CG = {mm0/m0*1000:+7.1f} mm")
+    print("\n  Mass table without pack:")
+    for name, mass, station in layout["components"]:
+        print(f"    {name:42s} {mass*1000:6.1f} g  x={station*1000:+7.1f} mm")
+    print(f"    {'Subtotal':42s} {m0*1000:6.1f} g  "
+          f"CG={moment0/m0*1000:+7.1f} mm")
 
-    print("\n" + "-" * 70)
-    print("ESTACIONES DE PACK PARA CG = -119 mm (SM 8 %)  y banda R-CG +/-5 mm")
-    print("-" * 70)
-    for name, mp in PACKS:
-        x_t = pack_station(m0, mm0, mp, CG_TARGET)
-        x_f = pack_station(m0, mm0, mp, CG_TARGET - R_CG)
-        x_a = pack_station(m0, mm0, mp, CG_TARGET + R_CG)
-        print(f"  {name:5s} {mp*1000:5.0f} g  ->  pack en x = {x_t*1000:+7.1f} mm  "
-              f"(banda {x_f*1000:+7.1f} ... {x_a*1000:+7.1f} mm)")
+    print("\n  Required pack stations at target CG:")
+    for name, mass in PACKS:
+        target = pack_station(m0, moment0, mass, CG_TARGET)
+        forward = pack_station(m0, moment0, mass, CG_TARGET - R_CG)
+        aft = pack_station(m0, moment0, mass, CG_TARGET + R_CG)
+        print(f"    {name:5s} {mass*1000:5.0f} g: x={target*1000:+7.1f} mm  "
+              f"band {forward*1000:+7.1f}..{aft*1000:+7.1f} mm")
 
-    print("\n" + "-" * 70)
-    print("BAY DE BATERIA (configuracion de referencia 6S1P, pack 153.2 mm I-16)")
-    print("-" * 70)
-    x6 = pack_station(m0, mm0, 0.455, CG_TARGET)
-    pl = PACK_LEN["6S1P"]
-    CLEAR = 0.005                       # holgura de extremo
-    bay_fwd = pack_station(m0, mm0, 0.455, CG_TARGET - R_CG) - pl / 2 - CLEAR
-    bay_aft = pack_station(m0, mm0, 0.455, CG_TARGET + R_CG) + pl / 2 + CLEAR
-    boom_len = bay_fwd - NOSE_POD_TIP
-    print(f"  Pack 6S1P: {pl*1000:.1f} mm de largo, centro en x = {x6*1000:+.1f} mm "
-          f"(banda {pack_station(m0, mm0, 0.455, CG_TARGET-R_CG)*1000:+.1f} ... "
-          f"{pack_station(m0, mm0, 0.455, CG_TARGET+R_CG)*1000:+.1f} mm)")
-    print(f"  Bay: {bay_fwd*1000:+.1f} ... {bay_aft*1000:+.1f} mm "
-          f"({(bay_aft-bay_fwd)*1000:.0f} mm de largo)")
-    print(f"  Boom: desde la punta del nose pod ({NOSE_POD_TIP*1000:+.0f} mm) hasta "
-          f"{bay_fwd*1000:+.0f} mm -> extension de boom = {boom_len*1000:.0f} mm")
+    print("\n  Reference 6S1P cradle:")
+    print(f"    pack center x={layout['pack_station']*1000:+.1f} mm")
+    print(f"    cradle envelope {layout['bay_fwd']*1000:+.1f}.."
+          f"{layout['bay_aft']*1000:+.1f} mm "
+          f"({(layout['bay_aft']-layout['bay_fwd'])*1000:.1f} mm)")
+    print(f"    forward extension from nose pod={layout['extension']*1000:.1f} mm")
 
-    print("\n  Cobertura del bay por configuracion (pack real de I-16):")
-    for name, mp in PACKS:
-        x_t = pack_station(m0, mm0, mp, CG_TARGET)
-        if name not in PACK_LEN:
-            print(f"    {name:5s} x = {x_t*1000:+7.1f} mm  ->  "
-                  f"NO CABE en el bay (I-16: ninguna disposicion n_z=1 en 200x70x32)")
-            continue
-        ok = bay_fwd + PACK_LEN[name] / 2 <= x_t <= bay_aft - PACK_LEN[name] / 2
-        print(f"    {name:5s} x = {x_t*1000:+7.1f} mm  ->  "
-              f"{'DENTRO' if ok else 'FUERA'}  "
-              f"{'(requerimiento R-CG a revisar en F2)' if not ok else ''}")
-
-    print("\n" + "-" * 70)
-    print("COMPROBACIONES DE ENVOLVENTE")
-    print("-" * 70)
-    for name, mp in PACKS:
-        auw = m0 + mp
+    print("\n  Envelope checks:")
+    for name, mass in PACKS:
+        auw = m0 + mass
+        target = pack_station(m0, moment0, mass, CG_TARGET)
+        physical = name in PACK_LEN
+        fits = physical and (
+            layout["bay_fwd"] + PACK_LEN[name] / 2.0 <= target
+            <= layout["bay_aft"] - PACK_LEN[name] / 2.0)
+        reason = "IN" if fits else (
+            "OUT: station" if physical else "OUT: no one-layer pack envelope")
         v_stall = V_STALL_REF * np.sqrt(auw / AUW_REF)
-        print(f"  {name:5s}: AUW = {auw*1000:.0f} g  ({auw/(S*100)*1000:.0f} g/dm2)  "
-              f"V_stall ~ {v_stall:.1f} km/h")
-    sm_t = (NP_VLM - CG_TARGET) / MAC * 100
-    print(f"\n  SM en CG objetivo: {sm_t:.1f} % MAC")
-    print(f"  Nota: el efecto de cuerpo central (I-07 §6) mueve el NP hacia delante "
-          f"(direccion conocida, ~-10 mm); absorbe margen, no revierte la solucion.")
+        print(f"    {name:5s}: AUW={auw*1000:.0f} g  V_stall={v_stall:.1f} km/h  {reason}")
+
+    checks = {
+        "canonical shell centroid": abs(planform_centroid()*1000 + 21.17) < 0.2,
+        "VLM/Weissinger NP agreement < 5 mm": abs(NP_VLM - NP_WL) < 0.005,
+        "SM is 8 percent MAC": abs((NP_VLM - CG_TARGET) / MAC - 0.08) < 1e-12,
+        "reference pack station -374 +/- 3 mm": abs(layout["pack_station"]*1000 + 374) < 3,
+        "boom estimate 36-40 g": 0.036 <= layout["components"][-1][1] <= 0.040,
+    }
+    print("\n  Validation:")
+    for name, passed in checks.items():
+        print(f"    [{'PASS' if passed else 'FAIL'}] {name}")
+    if not all(checks.values()):
+        raise SystemExit(1)
+    print("\n  VALIDATION: ALL PASS")
 
 
 if __name__ == "__main__":

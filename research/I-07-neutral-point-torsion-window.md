@@ -1,5 +1,10 @@
 # I-07 — Neutral point, static margin and torsion window
 
+> **2026-08-17 supersession notice:** the −20° planform numbers in this historical
+> thread are superseded by [I-21](I-21-sweep-trade-and-elastic-axis-correction.md) and
+> ADR-0040. The current −15° results are xNP = −75.8 mm (VLM), −72.9 mm
+> (Weissinger), xCG = −93.8 mm and 3.0° printed twist + 0.59° equivalent reflex.
+
 **Status:** Open — preliminary result `[D]` · **Partially closes:** G8
 **Feeds:** ADR-0003 (twist), ADR-0032 (R-NP), and the G2 airfoil requirement
 **Tool:** [`calculations/vlm_ala_volante.py`](../calculations/vlm_ala_volante.py), [`calculations/ventana_torsion.py`](../calculations/ventana_torsion.py)

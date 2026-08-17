@@ -21,9 +21,9 @@ Data model (all tagged, see docs/06-material-mass-variants.md):
     options where they exist.
   - Elevon balance mass derived [D] from ADR-0025: m_b = 1.2 × m_elevons.
   - Stall speed [D]: V_stall = sqrt(2W/(rho·S·CLmax)), CLmax = 0.589 (I-07);
-    reproduces the guide's 46.1 km/h at AUW 1697 g.
+    reproduces the guide's 45.9 km/h at the current 1685 g AUW.
 
-Validation: reproduces the guide §8.1 baseline (1697 g) and the I-16 pack
+Validation: reproduces the ADR-0040 baseline (1685 g) and the I-16 pack
 masses; a change that breaks them is not accepted (calculations/README.md).
 """
 import argparse
@@ -45,14 +45,14 @@ MATERIALS = {
 # --------------------------------------------------------------------------
 # 2. PRINTED PARTS — base mass in PETG [g], source, default material
 #    Fractions of the 600 g shell are [E] until F2/P2 CAD mass properties
-#    (OP-28). Validation: core+wings+tips+elevons = 600; boom separate (40 g).
+#    (OP-28). Validation: core+wings+tips+elevons = 600; the aluminium boom
+#    and its printed cradle are a fixed hybrid assembly, not a material-policy part.
 # --------------------------------------------------------------------------
 PRINTED = {
     "core":    dict(m=165.0, src="[E] 30 % of shell",        default="PETG"),
     "wings":   dict(m=341.0, src="[E] 62 % of shell, 6 seg", default="PETG"),
     "tips":    dict(m=44.0,  src="[E] 8 % of shell, 2 pcs",  default="PETG"),
     "elevons": dict(m=50.0,  src="[D] ADR-0025: 2 × 25 g",   default="PETG"),
-    "boom":    dict(m=41.0,  src="[E] OP-24 prototipo: Al tube Ø8/int6 26g + cradle 15g (boom_flexion.py); carbon pending", default="PETG"),
     "fin":     dict(m=48.0,  src="[E] ADR-0038 V1, mid 36-60", default="PETG",
                     optional=True),
 }
@@ -83,25 +83,26 @@ SERVO_REF = 60.0                              # [E] 4 × 15 g (class 12-15, I-18
 CARBON_REF = 70.0                             # [E] tubes + pins
 HARDWARE_REF = 20.0                           # [E] screws, TPU, adhesive, dowels
 AVIONICS_REF = 110.0                          # [E] guide §8.1 (incl. pitot/GPS/RX)
+BOOM_REF = 38.2                               # [E] 342 mm Al extension + 15 g cradle
 
 # Aircraft constants
 S = 0.282                                     # m²
 RHO_AIR = 1.225
 CLMAX = 0.589                                 # [D] I-07 (wing, non-elliptic)
-V_STALL_REF, AUW_REF = 46.1, 1697.0           # guide §4/§8.1 datum
+V_STALL_REF, AUW_REF = 45.9, 1685.0           # ADR-0040 / balance_cg.py datum
 
 # --------------------------------------------------------------------------
 # 3b. PRESET POLICIES
 # --------------------------------------------------------------------------
 POLICIES = {
     "all_petg":    {"core": "PETG", "wings": "PETG", "tips": "PETG",
-                    "elevons": "PETG", "boom": "PETG", "fin": "PETG"},
+                    "elevons": "PETG", "fin": "PETG"},
     "aero_wings":  {"core": "PETG", "wings": "AERO_PLA", "tips": "AERO_PLA",
-                    "elevons": "PETG", "boom": "PETG", "fin": "PETG"},
+                    "elevons": "PETG", "fin": "PETG"},
     "aero_max":    {"core": "PETG", "wings": "AERO_PLA", "tips": "AERO_PLA",
-                    "elevons": "AERO_PLA", "boom": "PETG", "fin": "PETG"},
+                    "elevons": "AERO_PLA", "fin": "PETG"},
     "pla_plus":    {"core": "PLA_PLUS", "wings": "PLA_PLUS", "tips": "PLA_PLUS",
-                    "elevons": "PLA_PLUS", "boom": "PLA_PLUS", "fin": "PLA_PLUS"},
+                    "elevons": "PLA_PLUS", "fin": "PLA_PLUS"},
 }
 
 
@@ -136,6 +137,8 @@ def build(policy, battery="6S1P", cell="P42A", fc="FC_AVG", fpv="O4-Pro",
     # fixed rows
     m_fc = FC[fc] if fc in FC else FC_AVG
     rows += [
+        dict(part="boom",     kind="fixed", m=BOOM_REF,      mat="Al + PETG",
+             src="[E] ADR-0040: 342 mm Al extension + 15 g cradle; CAD pending"),
         dict(part="carbon",   kind="fixed", m=CARBON_REF,    mat="carbon",
              src="[E] guide §8.1"),
         dict(part="motor",    kind="fixed", m=motor,         mat="(option)",
@@ -257,8 +260,8 @@ def main():
         print(f"  [{'PASS' if cond else 'FAIL'}] {name}")
 
     rows, tot = build("all_petg", "6S1P", "P42A", "FC_AVG", "O4-Pro")
-    check(f"Baseline all-PETG 6S1P = 1687 ± 2 g (I-16 pack 445 g; got {tot['auw']:.1f})",
-          abs(tot["auw"] - 1687.0) <= 2.0)
+    check(f"Baseline all-PETG 6S1P = 1685 ± 2 g (I-16 pack 445 g; got {tot['auw']:.1f})",
+          abs(tot["auw"] - 1685.0) <= 2.0)
     check(f"Baseline V_stall = 45.9 ± 0.15 km/h (got {tot['vs']:.2f})",
           abs(tot["vs"] - 45.9) <= 0.15)
     check("Baseline wing loading = 59.8 ± 0.5 g/dm² "
@@ -285,7 +288,7 @@ def main():
 
     # ---- markdown report ----
     if a.out:
-        lines = ["# Salamandra mass budget — material variants (2026-08-06)",
+        lines = ["# Salamandra mass budget — material variants (2026-08-17)",
                  "",
                  f"Battery {a.battery} {a.cell} · FC {a.fc} · FPV {a.fpv} · "
                  f"prop {a.prop} · fin {'V1' if a.fin else 'CLEAN'} · "

@@ -32,7 +32,7 @@ practices 2026).
 
 > Salamandra: a 1300 mm wingspan 3D-printed forward-swept tailless flying wing (FPV
 > drone). Fully 3D-printed in light gray PETG with visible FDM layer lines and a matte
-> finish. Planform: strongly forward-swept wing (quarter-chord sweep −20°), tapered from
+> finish. Planform: forward-swept wing (quarter-chord sweep −15°), tapered from
 > a 289 mm root chord to a 145 mm tip chord, aspect ratio 6, slight 2° dihedral at the
 > tips. Wing split into segments with visible panel joints, three segments per wing half
 > meeting a central fuselage pod. Central pod (CORE) with rounded nose, battery hatch and

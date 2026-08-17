@@ -1,7 +1,9 @@
 # ADR-0030 — Plastic torsion path as base; carbon torsion tube as option B
 
 **Status:** 🔄 Provisional · **Date:** 2026-07-28 · **Confidence:** Medium · **Reversible:** Yes
-**Research:** [I-05 — Divergence and flutter](../research/I-05-divergence-flutter.md), [I-12 — X-29 sweep factor](../research/I-12-x29-divergence-sweep-factor.md), [ADR-0015](ADR-0015-carbon-non-torsional.md)
+**Research:** [I-05 — Divergence and flutter](../research/I-05-divergence-flutter.md),
+[I-21 — sweep/elastic-axis correction](../research/I-21-sweep-trade-and-elastic-axis-correction.md),
+[ADR-0015](ADR-0015-carbon-non-torsional.md)
 
 ## Context
 
@@ -20,7 +22,9 @@ torsion tube added to the bending tube.
 
 ## Consequences
 
-- The divergence criterion V_div ≥ 1.5 × V_NE is met with the shell alone (ADR-0021/
-  ADR-0028 chain); option B would trade weight for margin.
+- **Correction (2026-08-17): the shell-alone criterion is not demonstrated.** Revision 3
+  gives 325.3 km/h nominal but only 128.8 km/h at the conservative unmeasured end versus
+  240 km/h required. The base structural architecture remains provisional; it is not a
+  speed-clearance claim. Option B must be sized if S3 confirms insufficient GJ.
 - G4/G6 remain the declared weakest links; validation: E5 (FFT) and E7 (Southwell in
   flight), plus the S3 GJ/EI verification on the real section (docs/05).
