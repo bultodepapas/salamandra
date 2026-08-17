@@ -4,6 +4,24 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.29] — 2026-08-17
+
+**Release v0.2.0 — safety-corrected CAD baseline, Design Guide first.**
+
+- Design Guide **v0.17** promoted to the controlling release specification, with an
+  explicit document-authority order and a breaking migration table from v0.1.0.
+- Release rule: do not mix v0.1.0 wing sketches, panels, CORE interfaces or cradle
+  coordinates with v0.2.0. Regenerate planform geometry from `design_config.py`.
+- Published `docs/09-release-v0.2.md`: package manifest, old/new CAD drivers,
+  verification record, known limitations and designer hand-off checklist.
+- Companion versions: justification **v0.12**, open points **v0.12**. README and docs
+  index now point to v0.2.0 as current; v0.1.0 remains a historical audit record.
+- **Engineering delta:** none beyond [1.28]; this entry freezes and releases that
+  audited state without pretending the airfoil, mass or measured aeroelastic gates are
+  closed.
+
+---
+
 ## [1.28] — 2026-08-17
 
 **Highest-ROI design audit — coupled sweep selection, canonical geometry and corrected

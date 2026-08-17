@@ -16,6 +16,7 @@ define the reference design and the platform's conventions. See the
 | [`06-material-mass-variants.md`](06-material-mass-variants.md) | **Mass budget tool and results** — PETG / AERO-PLA wings / PLA+ policies, per-part materials, battery/FC/FPV options (`calculations/mass_budget.py`) |
 | [`07-divergence-margin.md`](07-divergence-margin.md) | **Absolute divergence speed (G6, rev. 3)** — corrected elastic-axis uncertainty at −15°: nominal 325.3 km/h, conservative 128.8 (**FAIL**), AERO 91.1; combined GXY+gyroid+1.1 mm wall 206; initial **V_limit 105 km/h**, 150 only after S3 validates GXY (`calculations/divergence.py`) |
 | [`08-release-v0.1.md`](08-release-v0.1.md) | **First release (tag v0.1.0)** — the design package (CAD baseline): contents, verification status, frozen vs open items, binding constraints |
+| [`09-release-v0.2.md`](09-release-v0.2.md) | **Current release (tag v0.2.0)** — safety-corrected CAD baseline; Design Guide v0.17 authority, breaking v0.1 migration, verification and remaining gates |
 | `first_investigation.md` | Rev. 1.0, initial research *(add manually)* |
 
 **Decisions** live in [`../decisions/`](../decisions/), the **why** in [`../research/`](../research/), what we do **not know** in [`../gaps/`](../gaps/).

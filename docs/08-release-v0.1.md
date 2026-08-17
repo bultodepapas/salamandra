@@ -4,7 +4,8 @@
 > v0.1.0 release. Do not use its −20° planform, −119 mm CG, old cradle coordinates or
 > 110 km/h limit for new CAD. Guide v0.16 / ADR-0040 now specify −15°, CG −93.8 mm,
 > pack −373 mm and initial V_limit 105 km/h. The historical values below are retained
-> as a release record.
+> as a release record. The current package is
+> [`v0.2.0`](09-release-v0.2.md); its Design Guide v0.17 is authoritative for CAD.
 
 **Date:** 2026-08-06 · **Tag:** `v0.1.0` · **Status:** RELEASED
 

@@ -9,7 +9,7 @@ forward-swept flying wing, but that is only the first design. The repository is 
 grow into a whole family of airframes, parts, adapters and experiments — contributed by
 the community.
 
-**Revision 1.12** · 5 August 2026 · **Phase 0 closed · Phase 1 in progress**
+**Revision 1.13** · 17 August 2026 · **Release v0.2.0 · Phase 1 in progress**
 
 > 📖 **Read this project as a website:** <https://bultodepapas.github.io/salmandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
@@ -90,14 +90,17 @@ The aircraft is designed as a **modular platform**:
 
 This is the first, reference design on the platform, named **Salamandra**. Its current
 specification for the designer is the
-[**Salamandra Design Guide v0.1**](design/Salamandra-Design-Guide-v0.1.md), with the
+[**Salamandra Design Guide v0.17**](design/Salamandra-Design-Guide-v0.1.md), with the
 justification in [`design/`](design/). The baseline is a PETG forward-swept flying wing,
 **modular and configurable**: a standard center module and interchangeable wing panels.
 Efficient FPV cruise flight, with electronics chosen by the builder.
 
-**📦 First release — [tag `v0.1.0`](https://github.com/bultodepapas/salmandra/releases/tag/v0.1.0):**
-the design package (CAD baseline) — see
-[**release notes**](docs/08-release-v0.1.md). The wiki renders the package at
+**📦 Current release — `v0.2.0`: safety-corrected CAD baseline.** The Design Guide is
+the authoritative entry point; this release changes the planform to −15°, rebalances
+the aircraft and replaces the previous aeroelastic limit. Read the
+[**v0.2.0 release notes**](docs/09-release-v0.2.md) before continuing any v0.1.0 CAD.
+The historical [v0.1.0 release notes](docs/08-release-v0.1.md) remain as an audit record.
+The wiki renders the package at
 <https://bultodepapas.github.io/salmandra/>.
 
 ### Measurable objective
@@ -121,13 +124,16 @@ comes from the propulsion chain, which is where the data say the gap is.
 |---|---|---|
 | Wingspan | 1300 mm | [ADR-0010](decisions/ADR-0010-mission-branch.md) |
 | Aspect ratio | 6.0 · S = 0.282 m² `[E]` | [ADR-0004](decisions/ADR-0004-aspect-ratio.md) |
+| Quarter-chord sweep | **−15°** | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | **t/c** | **13.5 % root / 9 % tip** | [ADR-0027](decisions/ADR-0027-relative-thickness.md) |
 | Material | **Conventional PETG**, light color | [ADR-0021](decisions/ADR-0021-base-material.md) |
 | Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** | [ADR-0028](decisions/ADR-0028-gyroid-infill.md) |
 | Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
 | Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
-| AUW (6S1P) | ~1620 g · 57 g/dm² | — |
+| AUW (6S1P) | **1685 g · 59.8 g/dm²** current budget | [`mass_budget.py`](calculations/mass_budget.py) |
+| Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | V_NE article #1 | **160 km/h** (design 180) | — |
+| Initial V_limit | **105 km/h**; 150 only after GXY validation | [`docs/07`](docs/07-divergence-margin.md) |
 | Avionics | INAV 9.1+ or ArduPlane · **pitot mandatory** | — |
 | **Directional** | **CLEAN (finless, O1 build) / V1 (fixed fin, first variant)** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md) |
 
@@ -160,7 +166,7 @@ configuration contributed to the platform.
 
 | Folder | What it contains |
 |---|---|
-| [`design/`](design/) | **Salamandra Design Guide v0.1** — the CAD-ready specification handed to the designer, its justification, and the open points |
+| [`design/`](design/) | **Salamandra Design Guide v0.17** — the authoritative v0.2.0 CAD specification, its justification, and the open points |
 | [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |

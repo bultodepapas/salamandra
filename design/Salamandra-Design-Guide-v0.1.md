@@ -1,9 +1,15 @@
 # Salamandra — Design Guide
 
-**Version 0.16** · 17 August 2026 · Status: **CAD baseline amended by ADR-0040.**
+**Version 0.17** · 17 August 2026 · Status: **RELEASED — v0.2.0 CAD baseline.**
 The geometry, structure and integration are frozen for the designer; the values still
 flagged `PROVISIONAL` or **PENDING** (airfoil §5, CORE outer shape §6.7) are the only
 items expected to change, each with a defined trigger (OP-02, OP-21).
+
+> **AUTHORITATIVE RELEASE DOCUMENT:** this guide v0.17 is the controlling CAD
+> specification for release `v0.2.0`. It supersedes the complete v0.1.0 planform and
+> balance baseline. Do not reuse or mix v0.1.0 wing sketches, panel solids, CORE wing
+> interfaces or battery-cradle coordinates with this release. See §1.1 and
+> [`docs/09-release-v0.2.md`](../docs/09-release-v0.2.md).
 
 This document is the working specification handed to the **CAD designer**. It defines the
 reference configuration (Cruise, Article #1) of the Salamandra modular 3D-printed FPV
@@ -23,7 +29,7 @@ missing, the best available assumption was made and is flagged `PROVISIONAL`.
 optional CORE component, specified in §4.4. Everything else is identical between the two.
 
 Image-generation prompts (render, blueprint, realistic photo, creative) bound to this
-version live in [`prompts/`](prompts/).
+version live in `design/prompts/` (the site generator intentionally excludes them).
 
 ---
 
@@ -32,11 +38,12 @@ version live in [`prompts/`](prompts/).
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.16 |
+| Version | 0.17 |
 | Date | 2026-08-17 |
-| Status | **CAD baseline amended by ADR-0040**; supersedes the v0.15 planform coordinates; OP-02 (airfoil) and OP-21 (CORE outer shape) remain open |
+| Release | **v0.2.0 — safety-corrected CAD baseline** |
+| Status | **RELEASED**; supersedes the v0.1.0/v0.15 planform and balance coordinates; OP-02 (airfoil) and OP-21 (CORE outer shape) remain open |
 | Reference configuration | **Cruise — Article #1** |
-| Inputs | ADR-0001…ADR-0040, I-01…I-21, docs/00, docs/02, docs/03, docs/04, docs/05, docs/06, docs/07 |
+| Inputs | ADR-0001…ADR-0040, I-01…I-21, docs/00, docs/02, docs/03, docs/04, docs/05, docs/06, docs/07, docs/09 |
 | Intended reader | CAD designer (Fusion 360 or equivalent) |
 
 **How this guide evolves.** The design is expected to change as Phase 1 closes (airfoil
@@ -45,6 +52,32 @@ bumps the version number (0.1 → 0.2 → … → 1.0 at first prototype). Revis
 in §14 of this document and in the [CHANGELOG](../CHANGELOG.md). Values marked
 `PROVISIONAL` are the ones most likely to change. The corrections that drove past
 revisions (C-series) are in the CHANGELOG.
+
+### 1.1 Release authority and migration from v0.1.0
+
+For CAD and manufacturing, use this document in the following order of authority:
+
+1. the frozen dimensions and interfaces in this guide;
+2. the generated geometry in `calculations/design_config.py` and its station table;
+3. ADR-0040/I-21 and the companion justification for rationale;
+4. the open-points register for values explicitly marked provisional.
+
+If a CAD value conflicts with `design_config.py`, stop and raise the conflict; do not
+average or silently choose one. The v0.2.0 migration is **breaking**:
+
+| CAD driver | v0.1.0 release | v0.2.0 controlling value |
+|---|---:|---:|
+| Quarter-chord sweep | −20° | **−15°** |
+| Tip trailing-edge coordinate | contradictory legacy values | **−65.7 mm**, generated |
+| Neutral point / target CG | legacy −20° model / −119 mm CG | **−75.8 / −93.8 mm** |
+| 6S1P P42A station | legacy forward cradle | **−372.7 mm** |
+| Cradle longitudinal limits | legacy geometry | **−473.3…−272.2 mm** |
+| Initial flight limit | 110 km/h | **105 km/h** |
+| V1a fin root | previous under-sized check | **3.0 mm solid minimum**, FS 1.65 |
+
+The span, area, taper, thickness schedule, segmentation concept and CORE+PANEL
+architecture remain unchanged. Existing v0.1.0 CAD may be used only as a visual or
+construction reference; its wing geometry must be regenerated before reuse.
 
 ---
 
@@ -91,7 +124,7 @@ exists yet; it will be updated by the open point listed.
 | Mean aerodynamic chord (MAC) | **225 mm** | I-07 |
 | Sweep Λ_c/4 | **−15.0°** (LE −11.99°, TE −23.50°) | ADR-0040 / I-21 `[D]` |
 | Relative thickness t/c | **13.5 % root → 9 % tip** (linear) | ADR-0027 |
-| Geometric twist ε | **+3.0° wash-in** (linear root→tip) — **working value**; target ≈ +0.5° once the designed airfoil closes trim; keep parametric (C5) | PROVISIONAL (§4.3) |
+| Geometric twist ε | **+3.0° wash-in** (linear root→tip) — **working cap**; the favourable provisional polar also needs ≈0.6° permanent reflex, while the adverse polar needs ≈1.9° and fails the cap. Keep parametric; final B3 polars are a CAD gate (C5/OP-02). | PROVISIONAL (§4.3) |
 | Dihedral Γ | **2.0° total** (polyhedral at segment joints: 0 / 1.07 / 1.53 / 2.0°) | PROVISIONAL |
 | Airfoil | Reflexed; provisional: MH 60-12 % scaled (root 13.5 %, tip 9 % camber-compensated); final pending B3 screening (G2) | **PENDING** — §5 |
 | Neutral point NP | **25.72 % MAC** (= −75.8 mm from root c/4) | `[D]` I-21; independent Weissinger −72.9 mm / 27.0 % MAC |
@@ -644,6 +677,7 @@ out of scope for this version.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.17 | 2026-08-17 | **Released in tag v0.2.0 as the controlling CAD specification.** Added an explicit authority hierarchy and breaking migration table; prohibited mixing v0.1.0 wing/CORE/cradle geometry with the −15° baseline; corrected the summary twist statement so the adverse 1.9° reflex case remains an open B3 gate. Release notes: [`docs/09-release-v0.2.md`](../docs/09-release-v0.2.md). |
 | 0.16 | 2026-08-17 | **Highest-ROI design audit implemented:** quarter-chord sweep −20° → **−15°** (ADR-0040/I-21); canonical station table generated from `design_config.py`; NP/CG and 6S1P cradle rebalanced; false shear-centre identification removed; divergence revision 3 and initial V_limit **105 km/h** adopted. Supersedes all v0.15 planform coordinates. |
 | 0.15 | 2026-08-06 | **First release (tag v0.1.0).** Status → RELEASED (CAD baseline); segment spans added (§6.5, C24); new §6.9 bought-in items and consumables table; the remaining open items are named with their triggers (OP-02 airfoil, OP-21 CORE shape). Release notes: [`docs/08-release-v0.1.md`](../docs/08-release-v0.1.md). |
 | 0.14 | 2026-08-06 | **Reorganized as a CAD designer's guide** (§4 geometry → §5 airfoil → §6 structure/parts → §7 mass → §8 battery → §9–10 subsystems → §11 envelope → §12 assembly): component map (§6.1); long analysis notes compressed into one-line flags with pointers to the justification doc and I-docs (no data lost — full rationale remains in `Design-Guide-Justification-v0.1.md` and the CHANGELOG). **Corrections (values reconciled to the canonical scripts):** twist working value +0.5° → **+3.0°** (parametric, C5); divergence numbers updated to docs/07 rev. 2 (nominal 275.6 / conservative 151.5 / AERO 107.1, V_limit 110); the internal battery bay superseded by the cradle throughout (§8); AUW row reconciled (1697 current / 1620 design ref.); assembly step 8 verifies balance in 6S1P only. |

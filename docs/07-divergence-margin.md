@@ -34,7 +34,7 @@ measured.
 | Lift slope | 9.7 rad⁻¹ nominal; 6.28–11.2 band | in-repo provisional-profile polars `[D]` |
 | Forward-sweep factor | 0.70 nominal; 0.55 conservative; 0.85 optimistic at −15° | NASA TP-1685 trend; numerical transfer `[E]` |
 | Joint | Discrete spring at y = 195 mm, k = 5× local section | ADR-0032 |
-| Carbon tube | Ø12×1.0 mm, pultruded-UD G12 = 3–7 GPa | `[E]`; eigenvalue effect quantified |
+| Carbon tube | Ø12×1.0 mm, pultruded-UD G₁₂ = 3–7 GPa | `[E]`; eigenvalue effect quantified |
 
 NASA TP-1685 tested/calculated aspect-ratio 4 and 8 forward-swept wings and shows that
 reducing the magnitude of forward sweep increases divergence dynamic pressure/speed.

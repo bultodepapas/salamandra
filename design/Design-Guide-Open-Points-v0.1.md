@@ -1,7 +1,7 @@
 # Salamandra — Design Guide: Open Points and Evolution
 
-**Version 0.11** · 17 August 2026 · Companion to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.16)
+**Version 0.12** · 17 August 2026 · **v0.2.0 release companion** to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.17)
 
 This document lists everything in the Design Guide that is **not yet fixed**: assumptions
 that need verification, values that will change when the corresponding research closes,
@@ -108,6 +108,7 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.12 | 2026-08-17 | **Released with v0.2.0 / guide v0.17.** No engineering closure was invented for release: OP-02 airfoil/trim, OP-24 mass, OP-29 divergence and OP-30 elastic-axis measurement remain explicit gates. |
 | 0.11 | 2026-08-17 | ADR-0040/I-21 propagated: −15° sweep, NP/CG and cradle rebalanced; OP-28/29 updated to divergence revision 3; **OP-30 added** because the old enclosed-area centroid was not a valid shear-centre solution. |
 | 0.10 | 2026-08-06 | **Guide v0.14 reorganization absorbed:** OP-01/OP-16/OP-19/OP-21/OP-23 reworded to the battery cradle (supersedes the 200×70×32 bay — guide §8, CAD question Q1); OP-02/OP-03 refreshed to the twist working value (+3.0° parametric, C5); OP-29 refreshed to docs/07 rev. 2 numbers (275.6/151.5/107.1, V_limit 110). |
 | 0.9 | 2026-08-06 | **OP-28 added** (material mass variants: `[E]` printed fractions → CAD; AERO divergence re-check; `docs/06-material-mass-variants.md`, `mass_budget.py`). |
