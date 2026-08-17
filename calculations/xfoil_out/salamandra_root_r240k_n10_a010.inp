@@ -1,0 +1,16 @@
+LOAD C:\salmandra\geometry\airfoils\salamandra-root-r1.dat
+PANE
+OPER
+ITER 300
+VISC 240000
+VPAR
+N
+10
+
+PACC
+salamandra_root_r240k_n10_a010.pol
+
+ASeq 0.0 16 0.5
+PACC
+
+QUIT

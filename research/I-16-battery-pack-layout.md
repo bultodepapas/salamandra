@@ -15,10 +15,11 @@ dimensions of every admissible rectangular layout** of a 4-cell (4S) and a 6-cel
 (6S) pack of cylindrical **21700 Li-Ion** cells, together with the assembly
 allowances from wrapper, nickel interconnects and wiring/terminals.
 
-It gives the designer the numbers for the four packs of the mission table
-(docs/00 §3.3): **4S1P, 6S1P, 4S2P, 6S2P** — and any other arrangement, as a menu
-of options. The current reference bay dimensions are reported for context, but the
-document does not rule out any pack.
+It gives the designer the numbers for **4S1P, 6S1P, 4S2P and 6S2P** — and any other
+arrangement — as a menu for future power modules. ADR-0042/0043 select **6S1P only for
+Article #1**; the catalog does not imply that one motor or cradle must interchange all
+packs. Current reference dimensions are reported for context, but this document does
+not rule out a separately engineered module.
 
 The calculator is `calculations/battery_pack_layout.py`. Every figure below
 labelled `[D]` is produced by it and is reproducible in one command:

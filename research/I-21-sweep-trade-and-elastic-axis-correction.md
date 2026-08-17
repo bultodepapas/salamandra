@@ -7,6 +7,10 @@
 [divergence.py](../calculations/divergence.py),
 [balance_cg.py](../calculations/balance_cg.py)
 
+> **v0.3 supersession note:** the −15° sweep and aeroelastic conclusions remain
+> controlling. ADR-0041/0043 replace this trade's provisional profile moment, mass and
+> battery station with Salamandra r1, 1583.5 g CLEAN and x_pack = −359.6 mm.
+
 ## 1. Questions
 
 1. What quarter-chord forward sweep gives the best aeroelastic and packaging return

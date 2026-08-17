@@ -11,12 +11,12 @@ from design_config import B, S, SWEEP_C4_DEG, TAPER
 
 # --- configuracion Cruise, articulo #1 ---
 SWEEP = SWEEP_C4_DEG
-DESIGN_REF_MASS = 1.620        # kg; O1 target, not current 1.6852 kg budget
+DESIGN_REF_MASS = 1.620        # kg; O1/V1 target, current allocation 1.6202 kg
 RHO = 1.225
 V_CRUCERO = 95 / 3.6           # m/s
 V_STALL = 45 / 3.6             # m/s
 CL_SEC_MAX = 0.65              # cl_max de seccion [M] Ananda et al. 0.55-0.70
-PROFILE_CM0 = 0.0016           # provisional MH60->13.5 %, I-15 / ADR-0040
+PROFILE_CM0 = 0.002095         # conservative r1 root/tip integral, Ncrit 12 [D]
 
 WS = DESIGN_REF_MASS * 9.81 / S
 CL_CRU = WS / (0.5 * RHO * V_CRUCERO ** 2)
@@ -25,7 +25,7 @@ CL_MAX_REQ = WS / (0.5 * RHO * V_STALL ** 2)
 print("=" * 70)
 print("VENTANA DE TORSION — configuracion Cruise")
 print("=" * 70)
-print(f"  Masa de referencia {DESIGN_REF_MASS:.3f} kg  (objetivo O1; presupuesto actual 1.685 kg)")
+print(f"  Masa de referencia {DESIGN_REF_MASS:.3f} kg  (objetivo O1/V1; asignacion actual 1.6202 kg)")
 print(f"  Carga alar         {WS:.1f} N/m2  ({DESIGN_REF_MASS*1000/(S*100):.0f} g/dm2)")
 print(f"  CL de crucero      {CL_CRU:.3f}   a {V_CRUCERO*3.6:.0f} km/h")
 print(f"  CL_max requerido   {CL_MAX_REQ:.3f}   para perder a {V_STALL*3.6:.0f} km/h")

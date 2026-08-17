@@ -20,13 +20,14 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-12](I-12-x29-divergence-sweep-factor.md) | **X-29 divergence data and sweep-factor bounds** | ↪ **Partially superseded by I-21; X-29 follow-on remains open** | G6, G4, S4 |
 | [I-13](I-13-pusher-tractor-slipstream.md) | **Pusher vs tractor slipstream at low Re** | ⬜ **Proposed** | G5, ADR-0006, OP-14 |
 | [I-14](I-14-hand-launch-stall-margin.md) | **Hand-launch and stall-margin practice** | ⬜ **Proposed** | O1 (stall), C16, launch, D1/D2 |
-| [I-15](I-15-airfoil-evidence-campaign.md) | **Airfoil evidence campaign (root + tip)** | 🔄 **Running — 11 investigations, 6 partial** | B3/G2, OP-02, R-AIRFOIL |
+| [I-15](I-15-airfoil-evidence-campaign.md) | **Airfoil evidence campaign (root + tip)** | 🔄 **Computational closure — Salamandra r1 released; E2 measured acceptance open** | B3/G2, OP-02, R-AIRFOIL |
 | [I-16](I-16-battery-pack-layout.md) | **Battery pack layout: physical envelope of 4S / 6S · 21700** | 🔄 **Sizing baseline — open** | Guide §9, `balance_cg.py` OP-01/OP-23, R-CG |
 | [I-17](I-17-inav-flight-controllers.md) | **INAV flight controllers: popular boards and data sheets** | 🔄 **Reference catalog — open** | Guide §11, CORE avionics station, O2/O10 |
 | [I-18](I-18-servo-catalog.md) | **Elevon servos: popular models and data sheets** | 🔄 **Reference catalog — open** | Guide §5.3/§7.5, ADR-0025, ADR-0026, CORE servo bays |
 | [I-19](I-19-fpv-system-dji-o4.md) | **DJI O4 FPV system: O4 / Pro / Lite — data sheets + electrical data** | 🔄 **Reference catalog — open** | Guide §11, nose-pod/camera, O1, I-17 |
 | [I-20](I-20-yaw-stability-centerline-fin.md) | **Directional (yaw) stability and the centreline-fin variant** | 🔄 **New — quantitative budget `[D]`, `[E]` bands; flight-test closure pending** | First platform variant (O14), guide §6.7, OP-21, G10, E-series |
 | [I-21](I-21-sweep-trade-and-elastic-axis-correction.md) | **Sweep trade and elastic-axis correction** | 🔄 **Executed — design selected; material tests open** | ADR-0040, OP-01, OP-03, OP-23, OP-29 |
+| [I-22](I-22-high-roi-v0.3-audit.md) | **High-ROI v0.3 audit: airfoil, propulsion and mass/CG** | ✅ **Executed — three design closures released; physical gates retained** | ADR-0041…0043, guide v0.18, release v0.3.0 |
 
 ## Source quality
 

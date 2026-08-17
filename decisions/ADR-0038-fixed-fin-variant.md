@@ -8,14 +8,14 @@ panels, elevons, balance or avionics) · **Feeds:** I-20, gap G10, O1, O14, guid
 
 The Salamandra (forward-swept flying wing, nose boom, pusher, elevons only) is specified
 finless. The yaw axis was never analysed — the same failure mode that C6 corrected for
-pitch (docs/03). The directional budget (I-20, `yaw_stability.py`, six validation cases)
+pitch (docs/03). The directional budget (I-20, `yaw_stability.py`, nine validation cases)
 shows:
 
 | Configuration | Cnβ total (/deg) | Verdict |
 |---|---|---|
-| **Finless baseline** | **−0.0006 … −0.0015** `[E]` | **Negative across the band — statically unstable in yaw**; divergence τ ≈ 0.7 s; flies only FC-stabilized bank-to-turn, with no physical yaw effector |
-| **V1a — fixed fin, S_v 2.16 dm²** | −0.00006 … +0.00096 (nominal +0.0005) | Marginal; lower uncertainty corner remains slightly negative |
-| **V1b — fixed fin, S_v 2.86 dm²** | +0.00048 … +0.00142 (nominal +0.0010) | Stable across the declared band |
+| **Finless baseline** | **−0.0006 … −0.0014** `[E]` | **Negative across the band — statically unstable in yaw**; divergence τ ≈ 0.8 s; flies only FC-stabilized bank-to-turn, with no physical yaw effector |
+| **V1a — fixed fin, S_v 2.13 dm²** | −0.00005 … +0.00095 (nominal +0.0005) | Marginal; lower uncertainty corner remains slightly negative |
+| **V1b — fixed fin, S_v 2.83 dm²** | +0.00049 … +0.00141 (nominal +0.0010) | Stable across the declared band |
 
 In-service precedent `[M]`: the TBS Mojito — the same FSW + nose + pusher class — carries
 a **fixed** vertical stabilizer on the motor mount and **no rudder servo** (product page,
@@ -45,23 +45,23 @@ SALAMANDRA-CLEAN   Finless baseline — O1 efficiency build (≤ 1.15 Wh/km targ
 SALAMANDRA-V1      Fixed centreline fin, NO rudder — first platform variant (O14),
                    recommended build for the Article #1 test programme.
                    Spec (I-20 §6, yaw_stability.py [D]):
-                     S_v 2.16 dm² (V1a) · b_v ≈ 254 mm · c_r 106 / c_t 64 mm · AR_v 3.0
-                     root t ≥ 3.0 mm solid (FS 1.65 at V_NE, no spar credit) · swept tip
+                     S_v 2.13 dm² (V1a) · b_v ≈ 253 mm · c_r 105 / c_t 63 mm · AR_v 3.0
+                     root t ≥ 3.0 mm solid (FS 1.67 at V_NE, no spar credit) · swept tip
                      rear-pod extension ≈ 30 mm aft of x ≈ +265 · fin AC ≈ +285 mm
                      l_v = 379 mm from CG · slipstream η ≈ 1.25
-                     mass 37–62 g [E] · ΔCD0 ≈ +0.0015 (+9.9 % energy [E])
+                     mass 36.72–61.20 g [E] · CAD cap 36.72 g · ΔCD0 ≈ +0.0014 (+9.8 % energy [E])
 ```
 
 The fin is a **CORE component** (ADR-0032): panels, elevons, mass balance, servos and FC
-are unchanged. V1a is the nominal build; V1b (2.86 dm², +0.0010/deg nominal) is the
+are unchanged. V1a is the nominal build; V1b (2.83 dm², +0.0010/deg nominal) is the
 budget-permitting upgrade. The movable rudder remains documented as a *future* variant,
 reopened only if the E-flight programme demonstrates a yaw-handling failure mode.
 
 ## Consequences
 
-- **C16 (stall):** both fin tiers push V_stall past 45 km/h at the current mass budget
-  (V1a +50 g → 46.6 km/h); the declared OP-24 lever (shell 550 g, boom ≤ 40 g, servos
-  48 g) absorbs V1a to ≈ 45.7 km/h — **arbitrated in F2**.
+- **C16 (stall):** ADR-0043 selects the lower-band 36.72 g V1a build; 1583.5 g CLEAN +
+  36.72 g fin = **1620.2 g / 45.0 km/h**, only 0.2 g below the analytical ceiling.
+  The average/heavier fin band fails C16 and is not the Article #1 allocation.
 - **O1 (≤ 1.15 Wh/km):** only SALAMANDRA-CLEAN can carry the headline claim; V1 costs
   ≈ +10 % energy `[E]` — still better than the market reference (Mojito 1.40 Wh/km `[M]`).
 - **Test programme:** V1 is the instrumented article — doubled Cnr, no yaw divergence,
@@ -74,5 +74,5 @@ reopened only if the E-flight programme demonstrates a yaw-handling failure mode
 ## Governing data
 
 `calculations/yaw_stability.py` (validation cases: Helmbold, fin reference, Raymer body,
-tier consistency, damping) · `research/I-20-yaw-stability-centerline-fin.md` · TBS Mojito
+tier consistency, mass/stall and damping) · `research/I-20-yaw-stability-centerline-fin.md` · TBS Mojito
 primary sources `[M]` (product page, manual, INAV CLI) · G10.

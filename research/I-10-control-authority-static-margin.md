@@ -32,9 +32,10 @@ gust/extreme-CG envelope. Two dependencies keep the thread open:
 - VLM NP = 25.72 % MAC / −75.8 mm, SM target 8 % (I-21/ADR-0040).
 - Elevon 0.28 c, span 30–90 % half-span, ±20°, dual actuation (guide §6.6).
 - Current VLM: wash-in yield +0.00249 Cm/°, elevon yield +0.00256 Cm/°. Five degrees
-  of elevon gives 2.6× the limiting provisional trim deficit; low-Re validation is open.
-- Printed twist cap is 3.0°. The favourable provisional polar needs ≈ 0.6° permanent
-  reflex, while the adverse Ncrit-12 polar needs ≈ 1.9° and fails that cap.
+  of elevon gives 12.8× the limiting r1 trim residual; low-Re physical validation is open.
+- Printed twist is 3.0°. ADR-0041 supersedes the provisional root-only cases: the
+  c²-integrated Salamandra r1 family needs −0.06°…+0.39° neutral elevon across
+  Ncrit 10/12, inside the ±0.6° cap.
 - In-service trim data points: Peregrine INAV "level flight pitch 0→3°" `[M]` (I-02);
   Nemesis/Stormbird 1–2 mm of reflex `[M]` (I-08).
 

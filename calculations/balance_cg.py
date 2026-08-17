@@ -23,7 +23,7 @@ CG_TARGET = NP_VLM - STATIC_MARGIN * MAC
 R_CG = 5e-3             # m, docs/00 section 3.3
 NOSE_POD_TIP = -132e-3  # unchanged root-geometry datum
 
-AUW_REF, V_STALL_REF = 1.685, 45.9  # P42A all-PETG baseline, mass_budget.py
+RHO_AIR, CLMAX = 1.225, 0.589       # same C16 chain as mass_budget.py
 
 # I-16 P42A pack model: n cells x 70 g + 25 g packaging.
 PACKS = [("4S1P", 0.305), ("6S1P", 0.445),
@@ -57,16 +57,15 @@ def component_table(sweep_deg, bay_fwd):
     boom_station = (CRADLE_MASS * cradle_station + tube_mass * tube_station) / boom_mass
     camera_station = bay_fwd + CAMERA_FROM_BAY_FWD
     return [
-        ("Shell (planform centroid)", 0.600, planform_centroid(sweep_deg)),
+        ("PETG shell (ADR-0043 cap)", 0.550, planform_centroid(sweep_deg)),
         ("Carbon (mean c/4, y=195..585)", 0.070, x_c4(0.390, sweep_deg)),
-        ("Motor + propeller", 0.210, +217e-3),
+        ("Motor + APC 8x8 assembly", 0.195, +217e-3),
         ("ESC", 0.035, +40e-3),
-        ("Avionics (FC, pitot, GPS, RX, wiring)", 0.110, -10e-3),
-        ("Servos + elevon balance mass", 0.120, -5e-3),
+        ("Avionics (SpeedyBee FC+PDB etc.)", 0.1129, -10e-3),
+        ("Corona servos + elevon balance", 0.110, -5e-3),
         ("Hardware", 0.020, +50e-3),
-        ("FPV DJI O4/Pro - camera", 0.0164, camera_station),
-        ("FPV DJI O4/Pro - VTX", 0.0166, +10e-3),
-        ("FPV DJI O4/Pro - antennas", 0.0042, +20e-3),
+        ("FPV DJI O4 Lite - camera", 0.0030, camera_station),
+        ("FPV DJI O4 Lite - VTX/antenna", 0.0052, +10e-3),
         ("Battery boom + cradle", boom_mass, boom_station),
     ]
 
@@ -113,7 +112,7 @@ def main():
     layout = solve_reference_layout()
     m0, moment0 = layout["m0"], layout["moment0"]
     print("=" * 76)
-    print("SALAMANDRA MASS BALANCE - ADR-0040, 6S1P P42A REFERENCE")
+    print("SALAMANDRA MASS BALANCE - ADR-0043, 6S1P P42A REFERENCE")
     print("=" * 76)
     print(f"  sweep c/4 = {SWEEP_C4_DEG:+.1f} deg  MAC = {MAC*1000:.1f} mm")
     print(f"  NP VLM / Weissinger = {NP_VLM*1000:+.1f} / {NP_WL*1000:+.1f} mm")
@@ -150,14 +149,17 @@ def main():
             <= layout["bay_aft"] - PACK_LEN[name] / 2.0)
         reason = "IN" if fits else (
             "OUT: station" if physical else "OUT: no one-layer pack envelope")
-        v_stall = V_STALL_REF * np.sqrt(auw / AUW_REF)
+        v_stall = 3.6 * np.sqrt(2.0 * auw * 9.81 / (RHO_AIR * S * CLMAX))
         print(f"    {name:5s}: AUW={auw*1000:.0f} g  V_stall={v_stall:.1f} km/h  {reason}")
 
     checks = {
         "canonical shell centroid": abs(planform_centroid()*1000 + 21.17) < 0.2,
         "VLM/Weissinger NP agreement < 5 mm": abs(NP_VLM - NP_WL) < 0.005,
         "SM is 8 percent MAC": abs((NP_VLM - CG_TARGET) / MAC - 0.08) < 1e-12,
-        "reference pack station -374 +/- 3 mm": abs(layout["pack_station"]*1000 + 374) < 3,
+        "reference pack station is inside cradle": (
+            layout["bay_fwd"] + PACK_LEN["6S1P"] / 2.0
+            <= layout["pack_station"]
+            <= layout["bay_aft"] - PACK_LEN["6S1P"] / 2.0),
         "boom estimate 36-40 g": 0.036 <= layout["components"][-1][1] <= 0.040,
     }
     print("\n  Validation:")

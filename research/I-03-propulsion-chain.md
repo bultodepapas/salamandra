@@ -2,6 +2,10 @@
 
 **Status:** Closed · **Feeds:** ADR-0007, ADR-0008, and the project's **objective O1**
 
+> **v0.3 clarification:** this thread established the value of propeller matching but
+> did not solve the aircraft operating point. ADR-0042/I-22 correct the former use of
+> peak propeller efficiency as a commanded cruise point.
+
 ## Why this thread is the most important in the project
 
 The range equation decomposes into three independent multiplicative factors:

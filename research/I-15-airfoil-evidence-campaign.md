@@ -1,10 +1,15 @@
 # I-15 — Airfoil evidence campaign (root and tip of the Salamandra)
 
-**Status:** 🔄 **Open — B3 screening EXECUTED (2026-08-05): 24 XFOIL cases + C2 NP cross-check done; extraction of the NTRS literature still pending**
+**Status:** 🔄 **Open measured closure — corrected B3 + Salamandra r1 design executed
+(2026-08-17); E2 and literature calibration remain pending**
 **Feeds:** B3/G2 (airfoil screening), OP-02 (provisional profile), R-AIRFOIL
 re-derivation, guide §6.1/§6.2/§6.3
 **Closes:** G2 (with I-06, E2)
 **Companion:** I-11 (aerodesign.de database review), I-09 (E205 in-service evidence)
+
+> **Correction notice:** §6 preserves the 2026-08-05 result for audit history but its
+> generated-geometry method and root-only trim conclusion are superseded by §8. The old
+> routine scaled camber/reflex with thickness and could reuse a stale cached polar.
 
 ---
 
@@ -262,3 +267,45 @@ independent NP check was **executed**. Scripts: `calculations/b3_screening.py`,
   thickness-distribution practice.
 - No reflexed-section measured polar is known to exist at Re 3–5×10⁵; if A1 finds one,
   it becomes the single most valuable document in this campaign.
+
+# 8. Corrected B3 and released r1 family (2026-08-17)
+
+## 8.1 Pipeline corrections
+
+The v0.2 audit found four analysis faults:
+
+1. `y *= factor` scaled the mean camber/reflex together with thickness;
+2. the polar cache did not hash geometry or analysis settings;
+3. the shared 300k/500k Reynolds grid missed the real tip range (120k/255k);
+4. the Cm0 regression could include post-stall points whose CL fell below 0.6 again.
+
+`b3_screening.py` now changes thickness about an interpolated mean line, verifies exact
+t/c, stores a SHA-256 geometry/configuration sidecar, and fits only the first pre-stall
+branch. Official XFOIL 6.99 is invoked with short local output paths to avoid the legacy
+Fortran filename limit.
+
+## 8.2 Coupled root/tip trade `[D]`
+
+`airfoil_reflex_trade.py` applies smooth geometric reflex aft x/c = 0.72 and screens
+root/tip pairs against the full Ncrit 10–12 neutral-trim cap. Section moments are
+integrated with exact c² weights: root 0.6071, tip 0.3929.
+
+| Released profile | t/c | Reflex | Re | Ncrit | Cm0 | clmax | cd at CL 0.132 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| r1 root | 13.5 % | +1.0° | 240k | 10 / 12 | +0.0091 / +0.0029 | 1.268 / 1.275 | 0.0103 / 0.0113 |
+| r1 root | 13.5 % | +1.0° | 510k | 10 / 12 | +0.0160 / +0.0169 | 1.331 / 1.336 | 0.0069 / 0.0069 |
+| r1 tip | 9.0 % | +0.5° | 120k | 10 / 12 | −0.0478 / −0.0769 | 1.101 / 1.076 | 0.0122 / 0.0115 |
+| r1 tip | 9.0 % | +0.5° | 255k | 10 / 12 | −0.0165 / −0.0208 | 1.136 / 1.112 | 0.0083 / 0.0087 |
+
+At cruise the integrated profile Cm0 is +0.00326/+0.00209. VLM gives
+`dCm/dtwist = +0.00249/deg` and `dCm/delevon = +0.00256/deg`; therefore +3.0°
+printed wash-in trims at **−0.06°/+0.39° neutral elevon**. The complete band passes
+the ±0.6° CAD cap. Coordinate and thickness validations pass at every CAD station.
+
+## 8.3 Decision boundary
+
+ADR-0041 fixes Salamandra r1 for CAD and closes OP-02/OP-03 computationally. XFOIL
+stall and moment remain predictions; E2 must measure the printed surface before the
+flight envelope expands. The prior §6 claim that thickening itself improved Cm0 is not
+accepted as a causal conclusion because the earlier geometry changed camber at the same
+time.

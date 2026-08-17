@@ -1,0 +1,16 @@
+LOAD C:\salmandra\geometry\airfoils\salamandra-tip-r1.dat
+PANE
+OPER
+ITER 300
+VISC 120000
+VPAR
+N
+10
+
+PACC
+salamandra_tip_r120k_n10_a005.pol
+
+ASeq 0.0 16 0.5
+PACC
+
+QUIT

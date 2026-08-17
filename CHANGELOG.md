@@ -4,6 +4,36 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.30] — 2026-08-17
+
+**Release v0.3.0 — the three highest-ROI open design chains are corrected and closed
+for CAD: airfoil, propulsion equilibrium and Article #1 mass/CG.**
+
+- **Airfoil-pipeline correction (ADR-0041 / I-15 §8):** the previous thickness routine
+  multiplied all ordinates and therefore changed camber/reflex while claiming to
+  preserve the mean line. Polar caches also did not identify geometry, and cm0 could
+  include post-stall points. The corrected pipeline changes thickness about the mean
+  camber line, hashes geometry/settings, fits only the pre-stall branch and uses actual
+  local Reynolds numbers. It releases the Salamandra r1 root/tip and station DAT files:
+  13.5/9.0 % t/c, +1.0/+0.5° reflex, +3.0° wash-in, −0.06°…+0.39° neutral trim.
+- **Propulsion correction (ADR-0042):** v0.2 prescribed the APC E 8×8
+  peak-efficiency point without satisfying aircraft thrust/power equilibrium. That row
+  requires about 230 W against O1's 109.25 W. The measured UIUC curve now solves at
+  J 0.899, 8,667 rpm, 2.42 N and ηprop 0.688. Article #1 is 6S1P, 500–550 Kv; a 4S
+  installation needs approximately 730 Kv and is a separate module.
+- **Mass/stall closure (ADR-0043):** conventional PETG is retained with a binding 550 g
+  shell cap and selected FC/PDB, O4 Lite, four Corona servos and 25 g prop assembly.
+  CLEAN is 1,583.5 g / 44.5 km/h; V1 is ≤1,620.2 g / 45.0 km/h. The 36.7 g fin cap
+  matches the calculated V1a lower mass bound. The exact modeled ceiling is 1,620.4 g,
+  so V1 has only 0.2 g allocation margin and remains an F2 scale
+  gate. Coupled balance moves the 6S1P pack to −359.6 mm and the boom to 37.4 g.
+- Design Guide **v0.18**, justification/open points **v0.13**, I-22 audit and
+  `docs/10-release-v0.3.md` are the released record. The v0.2 numerical case remains an
+  automated regression; its provisional profile, −372.7 mm station and 1,685.2 g mass
+  are historical, not current CAD inputs.
+
+---
+
 ## [1.29] — 2026-08-17
 
 **Release v0.2.0 — safety-corrected CAD baseline, Design Guide first.**

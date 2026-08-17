@@ -3,6 +3,10 @@
 **Status:** ✅ Active · **Date:** 2026-07-27 · **Confidence:** High · **Reversible:** Yes
 **Research:** [I-03 — Propulsion chain](../research/I-03-propulsion-chain.md)
 
+> **v0.3 correction:** the peak-efficiency rows below compare propellers; they do not
+> prescribe cruise rpm. ADR-0042 now solves rpm where propeller thrust/power matches
+> aircraft drag and the O1 power ceiling.
+
 ## Context
 
 The propulsion chain is the term of the range equation with the largest margin for immediate improvement, and the one that sustains objective O1 (≤ 1.15 Wh/km).
@@ -42,6 +46,7 @@ Three readings:
 
 ## Consequences
 
-- The motor must be chosen so the propeller falls at its optimal J at cruise speed, not by static thrust.
+- The propeller family is selected using its measured efficiency map, but motor Kv and
+  cruise rpm are set by the aircraft-equilibrium solution in ADR-0042, not by `J_opt`.
 - The matching table per pack is a publishable output ([ADR-0033](ADR-0033-electronics-out.md)).
 - Realized and verified with test E3.

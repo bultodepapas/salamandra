@@ -1,7 +1,8 @@
 # Phase 1 plan — Geometry and stability
 
-**Revision 1.2** · 28 July 2026
-Closes G1, G2 and G8. **Exit gate: frozen OML and verified static margin.**
+**Revision 1.3** · 17 August 2026
+Closes G1, the computational/CAD part of G2, and G8. **Exit gate: frozen OML and
+verified static margin; E2 retains physical airfoil acceptance.**
 
 ---
 
@@ -54,15 +55,15 @@ constructive family and comparable AR, but PW51/PW75 airfoils and non-identical 
 It serves to bound geometry; **it does not allow attributing causality to the sweep**. See
 [I-08](../research/I-08-stuntdouble-family.md).
 
-## B — Airfoil and polars *(blocker, G2)*
+## B — Airfoil and polars *(CAD closure complete; measured G2 acceptance open)*
 
 Solved by **calibration**, not by search.
 
 | # | Task | Method |
 |---|---|---|
 | **B1** | **Calibrate XFOIL against measured data** | **Partial — [I-06](../research/I-06-reflexed-airfoils.md).** E387 (C) shows there is no single Ncrit; validate the 10–12 band against a second E387 model |
-| B2 | Screening criteria | t/c 13.5 % · C_Lmax ≥ 0.65 · **C_m0 ≥ +0.008, preferably +0.010–0.015** (R-AIRFOIL) · L/D at cruise CL |
-| B3 | Screen candidates with calibrated N_crit | MH and EH families (aerodesign.de), plus lightly reflexed candidates if A2 confirms sufficient wash-in |
+| B2 | Screening criteria | t/c 13.5/9 % · C_Lmax ≥ 0.65 · coupled SM 8 % trim within ±0.6° neutral elevon · L/D at cruise CL |
+| B3 | Screen/design candidates with calibrated N_crit | **Executed computationally:** Salamandra r1 root/tip family (ADR-0041); E2 remains the measured closer |
 | B4 | Publish polars with their calibration | `[D]` output, declare it |
 
 ⚠️ Without calibration, XFOIL at low Re is optimistic and systematically wrong in the laminar bubble. Output is always `[D]`; it becomes `[M]` with E2.
@@ -74,7 +75,7 @@ Solved by **calibration**, not by search.
 | C1 | Neutral point with a panel method | XFLR5 VLM on the A1 planform with the B3 airfoil |
 | C2 | Verify with an independent analytical method | Sweep correction on section AC. **Two methods that disagree = error in one** |
 | C3 | Set the target static margin | 8–12 % of MAC. Not below 6 % even with FC |
-| C4 | CG position and **adjustment window** | Must meet **R-CG**: ±5 mm in the four configurations |
+| C4 | CG position and **adjustment window** | Must meet **R-CG ±5 mm** in the 6S1P Article #1 configuration; other packs are separate modules |
 | C5 | Resolve the torsion window (§2) | Iterate twist and reflex until trim closes with tip-stall margin |
 | **C6** | **Verify elevon authority** | Deflection needed across the whole envelope, including gust and extreme CG |
 | C7 | Characterize TPU hinge stiffness | Enters ω_β and therefore the flutter analysis |
@@ -92,8 +93,8 @@ Solved by **calibration**, not by search.
 |---|---|---|
 | D1 | Build the measurement chain: pitot + blackbox + current logging | Instrument of E2, E3 and E7 |
 | **D2** | **Validate the method on an existing platform** | Stabilized flight, speed sweep, data reduction |
-| D3 | Propeller-matching sweep | 3–4 combinations against the J predicted by UIUC |
-| D4 | Matching table per pack (4S / 6S) | **Publishable project output** |
+| D3 | Propeller-matching sweep | APC 8×8 equilibrium solved at O1 power; bench alternatives remain |
+| D4 | Matching table per power module | 6S reference published; 4S requires ~730 Kv and its own carrier/CG closure |
 
 **D2 is the most underrated step in the plan.** It validates the whole measurement chain on an aircraft that already flies, before the new one exists. If the method does not work there, it will not work later — and it would be far worse to discover that with article #1.
 
@@ -130,7 +131,7 @@ PARALLEL       D3 D4  (any time after D2)
 - [ ] Twist distribution defined
 - [ ] Neutral point computed by **two methods** that agree
 - [ ] Static margin 8–12 % with achievable CG
-- [ ] **R-CG verified** in all four configurations
+- [ ] **R-CG verified** in the 6S1P Article #1 configuration
 - [ ] **Elevon authority verified** across the whole envelope
 - [ ] Torsion window closed with tip-stall margin
 - [ ] **Directional stability budget quantified and the yaw test defined (C8/I-20, ADR-0038)**
@@ -144,7 +145,7 @@ PARALLEL       D3 D4  (any time after D2)
 | Risk | Prob. | Mitigation |
 |---|---|---|
 | **The torsion window comes out empty** | Medium | Accept reflex and lose C_Lmax → may force increasing area |
-| **R-CG not met with 6S2P** | **High** | Already foreseen: 6S2P declared out of envelope |
+| Future 4S/2P module fails its propulsion/CG chain | Medium | Treat each as a separate variant ADR; do not promise drop-in packs |
 | Calibrated XFOIL still unreliable in the bubble | Medium | Declare `[D]`, close with E2. Do not freeze irreversible decisions on B |
 | Cannot get the Peregrine wing files | **High** | A4 (StuntDouble) as an alternative planform source |
 | The test FC does not support pitot | Medium | Verify before buying; look for an alternative FC for the bench |

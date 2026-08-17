@@ -1,6 +1,6 @@
 # Material mass variants — Salamandra weight budget (F2-class tool)
 
-**Revision 1.1** · 17 August 2026 · Tool: `calculations/mass_budget.py` (reproducible,
+**Revision 1.2** · 17 August 2026 · Tool: `calculations/mass_budget.py` (reproducible,
 validated) · Companion to guide §7.1 and `docs/05-master-plan.md` F2 (P1/P2)
 
 ---
@@ -10,9 +10,9 @@ validated) · Companion to guide §7.1 and `docs/05-master-plan.md` F2 (P1/P2)
 Weight budget of the reference aircraft (Cruise, Article #1) under **three material
 policies** — all PETG (the guide §7.1 baseline), wings + wingtips in **AERO PLA**
 (LW-PLA foamed, Bambu PLA-Aero class), and all **PLA+** — plus a **per-part material
-selection** for any mixture. The tool also covers the battery options (4S1P / 6S1P /
-4S2P / 6S2P × Molicel P42A / Samsung 50E), the FC catalog (I-17), the FPV options
-(I-19), motor, propeller, servo class and the V1 fin variant (ADR-0038).
+selection** for any mixture. Article #1 is 6S1P; other packs remain calculation options
+for future platform modules. The tool also covers the FC catalog, FPV, propulsion,
+servo and V1-fin options.
 
 The printed-part mass fractions are `[E]` placeholders to be replaced by CAD mass
 properties in F2/P2 (OP-28); everything else is anchored to measured data.
@@ -22,46 +22,45 @@ properties in F2/P2 (OP-28); everything else is anchored to measured data.
 | Item | Model | Tag |
 |---|---|---|
 | Materials (ρ, g/cm³) | PETG **1.27** · PLA 1.24 · PLA+ 1.24 · AERO PLA **0.68** (foamed, flow 0.60) | `[M]` (I-04) / `[E]` band 0.55–0.70 for AERO |
-| Printed parts (PETG base) | core 165 g (30 %) + wings 341 g (62 %, 6 segments) + tips 44 g (8 %) + elevons 50 g (`[D]` ADR-0025, 2×25 g) = **600 g**; fin 48 g optional | `[E]` fractions / `[D]` elevons |
-| Hybrid nose boom | 341 mm support span + 50 mm CORE insertion + printed cradle = **38.2 g**; fixed across material policies | `[E]` ADR-0040 / `balance_cg.py` |
+| Printed parts | v0.2 raw estimate 600 g is retained as a regression input. Article #1 applies a **550 g PETG CAD cap**: core 150 + wings 310 + tips 40 + elevons 50; optional V1a fin ≤36.72 g (the calculated lower mass bound) | ADR-0043 `[E]` |
+| Hybrid nose boom | 327 mm support span + 50 mm CORE insertion + printed cradle = **37.4 g** | `[D]`/`[E]` ADR-0043 / `balance_cg.py` |
 | Material scaling | m_part(mat) = m_part(PETG) × ρ_mat/ρ_PETG (same geometry) | `[D]` |
 | Elevon balance mass | m_b = 1.2 × m_elevons (ADR-0025: 25 g, 24 mm offset, 20 mm horn → 30 g/elevon) | `[D]` |
 | Battery pack | n_cells × cell + 25 g packaging; P42A 70 g / 50E 68 g per cell | `[D]` (I-16, validated vs 445/433/305/297 g) |
-| FC | I-17 catalog `[M]`: F405-WING-V2 25 g · F765-WING 26 g · F722-WING 25 g · SpeedyBee F405 12 g · F411-WSE 8.5 g · Foxeer 8.4 g; avionics row = 110 g + (m_FC − 17.4 g survey avg) | `[M]`/`[D]` |
-| FPV | O4 32 g · **O4 Pro 37 g (reference)** · O4 Lite 8.2 g · legacy O3 39.4 g | `[M]` (I-19) |
-| Fixed rows | motor 170 g (28-class, option) · ESC 35 g · servos 60 g (4×15, class 12–15; heavy 17–21 = 76 g, exceeds budget) · prop 40 g (APC-E 8×8; 9×6 45, 10×7 55) · carbon 70 g · hardware 20 g | `[E]` (guide §7.1) |
+| FC | Article #1 SpeedyBee F405 WING = **20.3 g** (8.9 FC + mandatory 11.4 PDB/current board; wireless omitted). Avionics row = 110 + (20.3 − 17.4) = 112.9 g | I-17 `[M]`/`[D]` |
+| FPV | Article #1 **O4 Lite 8.2 g**; O4 32, O4 Pro 37 and legacy O3 39.4 remain options requiring a mass re-check | I-19 `[M]` |
+| Fixed rows | motor 170 `[E]` · ESC 35 `[E]` · 4× Corona servo 50 `[M]` · APC E 8×8 assembly 25 (15 blade `[M]` + 10 adapter `[E]`) · carbon 70 `[E]` · hardware 20 `[E]` | ADR-0043 |
 | Stall speed | V_stall = √(2W/(ρ·S·CL_max)), CL_max = 0.589 (I-07), S = 0.282 m² | `[D]` |
 
-> **Baseline mass:** 1685.2 g uses the I-16 `[D]` P42A pack mass (445 g) and the
-> ADR-0040 38.2 g hybrid boom. The guide and this document now use the same values.
+> **Reference mass:** 1583.5 g CLEAN uses the I-16 P42A pack (445 g), selected
+> Article #1 equipment and the coupled 37.4 g boom. The released 1685.2 g v0.2 case is
+> retained as an automated regression, not as the current build.
 
-## 3. Results — the three policies (6S1P P42A · O4 Pro · CLEAN)
+## 3. Results — the material policies (6S1P P42A · Article #1 equipment · CLEAN)
 
 | Config | AUW (g) | g/dm² | V_stall (km/h) | Printed (g) | Printed cost (€) `[E]` | Verdict |
 |---|---:|---:|---:|---:|---:|---|
-| **ALL PETG** (guide baseline) | **1685.2** | 59.8 | **45.9** | 600 | ≈ 12 | Stall over 45 — OP-24 lever required |
-| **AERO WINGS** (CORE+rest PETG) | **1506.3** | 53.4 | **43.4** | 421 | ≈ 13 | Stall compliant; **divergence rejects it** |
-| **AERO MAX** (wings+tips+elevons AERO) | **1455.2** | 51.6 | **42.6** | 398 | ≈ 13 | Stall compliant; structure not cleared |
-| **PLA+** (all printed parts) | **1669.6** | 59.2 | **45.7** | 586 | ≈ 14 | Stall over 45; **ADR-0016 rejected material** |
+| **ALL PETG** (guide baseline) | **1583.5** | 56.2 | **44.5** | 550 | ≈ 11 | **Article #1 CLEAN; compliant** |
+| **AERO WINGS** (CORE+rest PETG) | **1420.9** | 50.4 | **42.1** | 387 | ≈ 12 | Mass passes; **divergence rejects it** |
+| **AERO MAX** (wings+tips+elevons AERO) | **1369.8** | 48.6 | **41.4** | 364 | ≈ 12 | Structure not cleared |
+| **PLA+** (all printed parts) | **1569.1** | 55.6 | **44.3** | 537 | ≈ 13 | ADR-0016 rejected material |
 
 Example option combinations (all validated runs of `mass_budget.py`):
 
 | Scenario | AUW (g) | V_stall (km/h) |
 |---|---:|---:|
-| AERO WINGS · 4S1P P42A · V1 fin | 1414 | 42.0 |
-| ALL PETG · 6S1P · O4 Lite | 1656 | 45.5 |
-| AERO WINGS · 4S2P 50E | 1630 | 45.1 |
-| AERO MAX · 6S1P · O3 legacy · V1 fin | 1506 | 43.4 |
+| ALL PETG · Article #1 CLEAN | 1583.5 | 44.5 |
+| ALL PETG · Article #1 V1 | 1620.2 | 45.0 |
 
 Per-part × material matrix (mass, g, from the PETG base):
 
 | part | PETG | PLA | PLA+ | AERO_PLA |
 |---|---:|---:|---:|---:|
-| core | 165.0 | 161.1 | 161.1 | 88.3 |
-| wings (6 seg) | 341.0 | 332.9 | 332.9 | 182.6 |
-| tips (2) | 44.0 | 43.0 | 43.0 | 23.6 |
+| core | 150.0 | 146.5 | 146.5 | 80.3 |
+| wings (6 seg) | 310.0 | 302.7 | 302.7 | 166.0 |
+| tips (2) | 40.0 | 39.1 | 39.1 | 21.4 |
 | elevons (2) | 50.0 | 48.8 | 48.8 | 26.8 |
-| fin (V1) | 48.0 | 46.9 | 46.9 | 25.7 |
+| fin (V1) | 36.0 | 35.1 | 35.1 | 19.3 |
 
 ## 4. Engineering flags (honest, not silent)
 
@@ -88,7 +87,8 @@ Per-part × material matrix (mass, g, from the PETG base):
 
 ## 5. Recommendation (engineering)
 
-- **ALL PETG** remains the reference and the O1-efficiency baseline.
+- **ALL PETG at the 550 g shell cap** remains the reference and closes C16 without
+  introducing the divergence penalty of a softer wing.
 - **AERO WINGS is not cleared for flight:** the −179 g return does not compensate for
   V_div = 91.1 km/h in the conservative model. It remains a coupon/section experiment,
   not the first aircraft material policy.
@@ -106,15 +106,14 @@ python3 calculations/mass_budget.py --config aero_wings --battery 4S1P --fin
 python3 calculations/mass_budget.py --config all_petg --fc F765-WING --fpv O4-Lite
 ```
 
-Twelve validation cases (baseline 1685 g / 45.9 km/h, I-16 pack masses, material
-scaling, shell sum, balance rule, stall compliance) — ALL PASS; a change that breaks
-them is not accepted.
+Validation preserves the v0.2 1685.2 g / 45.9 km/h regression and checks the new CLEAN
+and V1 allocations, pack masses, material scaling and balance rule. All must pass.
 
 ## 7. Evolution path
 
 | Item | Today | Replaced by | At |
 |---|---|---|---|
-| Printed-part fractions (165/341/44 g) | `[E]` | CAD mass properties (Fusion 360, P2) | F2 |
+| Printed-part caps (150/310/40/50 g) | `[E]` | CAD mass properties (Fusion 360, P2) | F2 |
 | AERO E / G data | `[E]` 1.0 GPa | Measured coupon (I-04 extension) or flight | F4/E5 |
 | Pack masses 4S2P/6S2P | `[D]` model | Measured packs (E-series bench) | F2 |
 | FC/FPV/motor catalogs | `[M]`/`[E]` | Component additions as PRs | continuous |

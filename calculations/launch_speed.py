@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
 Hand-launch feasibility of the Salamandra Cruise (I-14 — executed 2026-08-06,
-revised after the Mojito configuration-class anchor and published throwing
-biomechanics).
+rev. 3 updated to the ADR-0043 Article #1 masses after the Mojito
+configuration-class correction and published throwing biomechanics).
 
 WHY THIS DOCUMENT EXISTS: the launch is a mandatory hand throw (docs/00) and
-the stall speed is the tightest margin in the design (45.9 km/h = 12.8 m/s at
-the current budget, OP-24). The FIRST revision of this script demanded
+the stall speed is the tightest margin in the design (45.0 km/h = 12.5 m/s for
+the current V1 allocation, ADR-0043). The FIRST revision of this script demanded
 k_safe = 1.20 at the RELEASE INSTANT and concluded "infeasible". That was too
 strict on two counts, corrected here:
 
@@ -23,7 +23,7 @@ community-reported stall ~60 km/h (16.7 m/s), i.e. HEAVIER and with a HIGHER
 stall than the Salamandra — is hand-launched in service (TBS manual includes
 a bungee hook as an option; community launches it by hand with idle 1300 +
 launch 1850 and over-head techniques). If the configuration class launches at
-16.7 m/s stall, the Salamandra at 12.8 m/s is a strictly easier case.
+16.7 m/s stall, the Salamandra at 12.5 m/s is a strictly easier case.
 
 MODEL:
   V_suelta  = V_hand + (T_idle/m) * t_gesture     (thrust during the throw)
@@ -32,7 +32,7 @@ MODEL:
               (incl. nav_fw_launch_motor_delay = 0.2 s)
   torque-roll check: T/W at launch <= 1.5 [I] (community risk threshold)
 
-Inputs: W 1.6852 kg (ALL PETG, docs/06) / 1.620 (legacy design reference); CL_max 0.589 [D] I-07;
+Inputs: W 1.5835 kg CLEAN / 1.6202 kg V1 (ADR-0043); CL_max 0.589 [D] I-07;
 S 0.282 m2. V_hand: published throwing biomechanics (van den Tillaar 2004,
 JSSM: 0.409 kg -> 21.5 m/s, significant negative linear mass-speed
 relationship; extrapolation to 1.6-1.7 kg overhead/two-hand push: typical
@@ -52,7 +52,7 @@ S = 0.282
 CL_MAX = 0.589              # [D] I-07 (wing, non-elliptic) — matches mass_budget
 G = 9.81
 
-AUW = (1.620, 1.6852)         # kg: legacy reference / current ALL PETG (docs/06)
+AUW = (1.5835, 1.6202)        # kg: Article #1 CLEAN / V1 allocations (ADR-0043)
 K_REF = 1.20                  # margin reached AFTER release (acceleration)
 V_HAND = (10.5, 8.0, 13.0)    # m/s: [D]-ish band from throwing biomechanics
                               # (van den Tillaar 2004 + community): ref/lo/hi
@@ -74,14 +74,14 @@ def v_stall(weight):
 
 def main():
     print("=" * 74)
-    print("HAND-LAUNCH FEASIBILITY — Salamandra Cruise (I-14 executed, rev. 2)")
+    print("HAND-LAUNCH FEASIBILITY — Salamandra Cruise (I-14 executed, rev. 3)")
     print("=" * 74)
 
     vs = v_stall(AUW[1])
     vs_g = v_stall(AUW[0])
     print(f"\n1. STALL SPEED")
-    print(f"   ALL PETG (1685 g): {vs*3.6:5.1f} km/h ({vs:4.1f} m/s) "
-          f"· guide 1620 g: {vs_g*3.6:5.1f} km/h ({vs_g:4.1f} m/s)")
+    print(f"   V1 (1620.2 g): {vs*3.6:5.1f} km/h ({vs:4.1f} m/s) "
+          f"· CLEAN (1583.5 g): {vs_g*3.6:5.1f} km/h ({vs_g:4.1f} m/s)")
     print(f"   Configuration-class anchor [M]: TBS Mojito 1800 g, stall "
           f"~{MOJITO_STALL*3.6:.0f} km/h reported, HAND-LAUNCHED in service")
     print(f"   -> Salamandra stall is LOWER: strictly easier launch case")
@@ -145,12 +145,12 @@ def main():
         ok = ok and bool(cond)
         print(f"   [{'PASS' if cond else 'FAIL'}] {name}")
 
-    vs_c = v_stall(1.6852)
-    check(f"V_stall reproduces mass_budget ALL PETG 45.9 km/h (got "
-          f"{vs_c*3.6:.1f})", abs(vs_c * 3.6 - 45.9) < 0.3)
-    vs_g2 = v_stall(1.620)
-    check(f"V_stall at 1620 g = 45.0 km/h (got {vs_g2*3.6:.1f})",
-          abs(vs_g2 * 3.6 - 45.0) < 0.3)
+    vs_c = v_stall(1.6202)
+    check(f"V_stall reproduces mass_budget V1 45.0 km/h (got "
+          f"{vs_c*3.6:.1f})", abs(vs_c * 3.6 - 45.0) < 0.3)
+    vs_g2 = v_stall(1.5835)
+    check(f"V_stall reproduces mass_budget CLEAN 44.5 km/h (got {vs_g2*3.6:.1f})",
+          abs(vs_g2 * 3.6 - 44.5) < 0.3)
     v_zero = vh_r + 0.0 / AUW[1] * t_r
     check(f"No thrust: V_suelta = V_hand ({v_zero:.1f} m/s)",
           abs(v_zero - vh_r) < 1e-9)

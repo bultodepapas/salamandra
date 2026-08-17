@@ -2,20 +2,23 @@
 """
 B3 screening: XFOIL polars for the Salamandra airfoil shortlist.
 
-Reproducible method (2026-08-05, results in research/I-15 §6):
+Reproducible method (revision 2, 2026-08-17):
   - Coordinates: geometry/airfoils/*.dat (UIUC Selig format, TE->LE->TE).
     Provenance documented in geometry/airfoils/README.md.
-  - Variants: affine thickness scaling (y * target_tc / current_tc).
+  - Variants: vertical thickness scaling about the interpolated mean camber
+    line.  This preserves camber/reflex instead of multiplying every y value.
   - XFOIL 6.99 (official MIT Windows console binary, GPL), batch mode.
-  - Re = 3e5 and 5e5; Ncrit = 10 and 12 (the I-06 calibrated band).
+  - Re = 1.2e5, 2.5e5 and 5e5; Ncrit = 10 and 12.  These Reynolds numbers
+    bracket the tip at 45 km/h, tip at cruise/root at stall, and root at cruise.
   - Alpha sweep 0..16 deg step 0.5, ITER 300.
-  - Polar files land in calculations/xfoil_out/ and are reused if their
-    header already carries the requested Re and Ncrit (incremental runs).
+  - Polar files land in calculations/xfoil_out/ and are reused only when a
+    sidecar records the requested Re, Ncrit and SHA-256 of the input geometry.
 
 XFOIL batch-mode notes (solved on 2026-08-05, baked in):
   - The Ncrit command lives in the VPAR submenu: OPER -> VPAR -> N <value>.
   - Polar accumulation: PACC (prompts: save file, then dump file = blank),
-    then ASEQ; end with PACC (off) + PWRT 1 + filename.
+    then ASEQ; end with PACC (off).  PACC already writes every converged row;
+    issuing PWRT to the same file creates an overwrite prompt and can hang batch mode.
   - The input file must use CRLF line endings; the Fortran runtime emits a
     harmless "End of file" message after QUIT (tolerated).
 
@@ -30,11 +33,15 @@ Outputs (all [D]): XFOIL predictions, NOT measured polars. The I-06
 calibration applies: Ncrit 10-12 band, E387 anchor (NASA-CR-186263).
 """
 import argparse
+import bisect
+import hashlib
+import json
 import math
 import os
 import re
 import subprocess
 import sys
+import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AF_DIR = os.path.join(ROOT, "geometry", "airfoils")
@@ -75,20 +82,76 @@ def load_dat(path):
 
 
 def thickness(pts):
-    n = len(pts) // 2
-    top = sorted(pts[:n], key=lambda p: p[0])
-    bot = sorted(pts[n:], key=lambda p: p[0])
-    tmax = 0.0
-    for u, l in zip(top, bot):
-        tmax = max(tmax, u[1] - l[1])
-    return tmax
+    """Maximum vertical thickness on a common x grid."""
+    upper, lower = split_surfaces(pts)
+    x0 = max(upper[0][0], lower[0][0])
+    x1 = min(upper[-1][0], lower[-1][0])
+    return max(
+        interp_surface(upper, x) - interp_surface(lower, x)
+        for x in (x0 + (x1 - x0) * i / 2000.0 for i in range(2001))
+    )
+
+
+def split_surfaces(pts):
+    """Return upper/lower surfaces ordered from LE to TE."""
+    if len(pts) < 5:
+        raise ValueError("airfoil needs at least five coordinate points")
+    ile = min(range(len(pts)), key=lambda i: pts[i][0])
+    if ile == 0 or ile == len(pts) - 1:
+        raise ValueError("expected Selig TE-upper -> LE -> TE-lower ordering")
+    upper = sorted(pts[:ile + 1], key=lambda p: p[0])
+    lower = sorted(pts[ile:], key=lambda p: p[0])
+    return upper, lower
+
+
+def interp_surface(surface, x):
+    """Linear interpolation on an LE-to-TE surface."""
+    xs = [p[0] for p in surface]
+    i = bisect.bisect_left(xs, x)
+    if i <= 0:
+        return surface[0][1]
+    if i >= len(surface):
+        return surface[-1][1]
+    x0, y0 = surface[i - 1]
+    x1, y1 = surface[i]
+    if abs(x1 - x0) < 1e-12:
+        return 0.5 * (y0 + y1)
+    f = (x - x0) / (x1 - x0)
+    return y0 + f * (y1 - y0)
 
 
 def scale_tc(pts, target_tc):
-    """Affine thickness scaling: y *= target_tc / current_tc (camber line kept)."""
-    tc = thickness(pts)
-    k = target_tc / tc
-    return [(x, y * k) for x, y in pts]
+    """Scale vertical thickness while preserving the interpolated camber line."""
+    upper, lower = split_surfaces(pts)
+    k = target_tc / thickness(pts)
+    ile = min(range(len(pts)), key=lambda i: pts[i][0])
+    scaled = []
+    for i, (x, y) in enumerate(pts):
+        if i <= ile:
+            opposite = interp_surface(lower, x)
+        else:
+            opposite = interp_surface(upper, x)
+        camber = 0.5 * (y + opposite)
+        scaled.append((x, camber + k * (y - camber)))
+
+    # Interpolation between unequal upper/lower point grids introduces a small
+    # second-order error.  One correction makes the written t/c exact to <1e-5.
+    correction = target_tc / thickness(scaled)
+    if abs(correction - 1.0) > 1e-7:
+        return scale_thickness_by_factor(scaled, correction)
+    return scaled
+
+
+def scale_thickness_by_factor(pts, factor):
+    """Apply a known thickness factor about the current mean camber line."""
+    upper, lower = split_surfaces(pts)
+    ile = min(range(len(pts)), key=lambda i: pts[i][0])
+    out = []
+    for i, (x, y) in enumerate(pts):
+        opposite = interp_surface(lower if i <= ile else upper, x)
+        camber = 0.5 * (y + opposite)
+        out.append((x, camber + factor * (y - camber)))
+    return out
 
 
 def write_dat(pts, path):
@@ -98,52 +161,89 @@ def write_dat(pts, path):
             f.write(f"{x: .8f} {y: .8f}\n")
 
 
-def run_xfoil(dat_path, re_no, ncrit, tag, xfoil):
+def run_xfoil(dat_path, re_no, ncrit, tag, xfoil, *, alpha_end=16.0,
+              alpha_step=0.5, iter_limit=300, stable_seconds=15.0):
     pol = os.path.join(OUT, f"{tag}.pol")
-    if os.path.exists(pol):
+    pol_name = os.path.basename(pol)  # XFOIL has a short Fortran filename buffer
+    meta_path = os.path.join(OUT, f"{tag}.meta.json")
+    with open(dat_path, "rb") as f:
+        dat_sha256 = hashlib.sha256(f.read()).hexdigest()
+    expected_meta = {
+        "analysis": (
+            f"xfoil-6.99-aseq-0-{alpha_end:g}-{alpha_step:g}-"
+            f"iter-{iter_limit}"),
+        "dat_sha256": dat_sha256,
+        "ncrit": int(ncrit),
+        "reynolds": int(re_no),
+    }
+    if os.path.exists(pol) and os.path.exists(meta_path):
         header = open(pol, encoding="utf-8", errors="ignore").read()
         ok_ncrit = re.search(rf"Ncrit\s*=\s*{ncrit}\.000", header) is not None
         ok_re = re.search(rf"Re\s*=\s*{re_no/1e6:.3f} e 6", header) is not None
-        if ok_ncrit and ok_re:
+        try:
+            with open(meta_path, encoding="utf-8") as f:
+                meta = json.load(f)
+        except (OSError, ValueError):
+            meta = None
+        meta_matches = meta is not None and all(
+            meta.get(key) == value for key, value in expected_meta.items())
+        if ok_ncrit and ok_re and meta_matches:
             return parse_polar(pol)          # reuse valid polar (incremental)
-        os.remove(pol)
+    for stale in (pol, meta_path):
+        if os.path.exists(stale):
+            os.remove(stale)
     inp_file = os.path.join(OUT, f"{tag}.inp")
     inp = (
         f"LOAD {dat_path}\r\n"
         "PANE\r\n"
         "OPER\r\n"
-        f"ITER 300\r\n"
+        f"ITER {iter_limit}\r\n"
         f"VISC {re_no}\r\n"
         "VPAR\r\n"
         f"N\r\n{ncrit}\r\n"
         "\r\n"
         "PACC\r\n"
-        f"{pol}\r\n"
+        f"{pol_name}\r\n"
         "\r\n"
-        "ASeq 0.0 16.0 0.5\r\n"
+        f"ASeq 0.0 {alpha_end:g} {alpha_step:g}\r\n"
         "PACC\r\n"
-        "PWRT 1\r\n"
-        f"{pol}\r\n"
+        "\r\n"
         "QUIT\r\n"
-        "Y\r\n"
     )
     with open(inp_file, "w", encoding="ascii", newline="") as f:
         f.write(inp)
+    # XFOIL can spend minutes iterating the first non-converged post-stall
+    # point.  PACC flushes each converged row, so stop once the polar has made
+    # no progress for 15 s.  This retains the converged pre-/near-stall data
+    # and avoids misclassifying a solver hang as a completed 0..16 deg sweep.
+    stopped_on_stable_polar = False
     with open(inp_file, "r", encoding="ascii") as f:
-        for attempt in range(3):
-            try:
-                proc = subprocess.run(
-                    [xfoil], stdin=f, capture_output=True, text=True, timeout=300
-                )
-                break
-            except subprocess.TimeoutExpired:
-                f.seek(0)
-                if attempt == 2:
-                    print(f"  !! xfoil timed out 3x for {tag}")
-                    return None
-                print(f"  !! timeout for {tag}, retrying ({attempt+1})")
+        proc = subprocess.Popen(
+            [xfoil], stdin=f, stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL, text=True, cwd=OUT)
+        deadline = time.monotonic() + 120.0
+        last_signature = None
+        last_progress = time.monotonic()
+        while proc.poll() is None and time.monotonic() < deadline:
+            if os.path.exists(pol):
+                signature = (os.path.getsize(pol), os.path.getmtime(pol))
+                if signature != last_signature:
+                    last_signature = signature
+                    last_progress = time.monotonic()
+                elif time.monotonic() - last_progress >= stable_seconds:
+                    stopped_on_stable_polar = True
+                    proc.terminate()
+                    break
+            time.sleep(0.25)
+        if proc.poll() is None:
+            proc.terminate()
+        try:
+            proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait(timeout=5)
     if not os.path.exists(pol):
-        print(f"  !! no polar for {tag} (xfoil tail: {proc.stdout[-300:]})")
+        print(f"  !! no polar for {tag}")
         return None
     header = open(pol, encoding="utf-8", errors="ignore").read()
     ok_ncrit = re.search(rf"Ncrit\s*=\s*{ncrit}\.000", header) is not None
@@ -154,7 +254,18 @@ def run_xfoil(dat_path, re_no, ncrit, tag, xfoil):
     if not ok_re:
         print(f"  !! Re NOT applied for {tag} (header: "
               f"{[l for l in header.splitlines() if 'Re =' in l]})")
-    return parse_polar(pol)
+    rows = parse_polar(pol)
+    if ok_ncrit and ok_re and rows:
+        meta_out = dict(expected_meta)
+        meta_out.update({
+            "alpha_max_converged": max(row[0] for row in rows),
+            "rows": len(rows),
+            "stopped_on_stable_polar": stopped_on_stable_polar,
+        })
+        with open(meta_path, "w", encoding="utf-8") as f:
+            json.dump(meta_out, f, indent=2, sort_keys=True)
+            f.write("\n")
+    return rows
 
 
 def parse_polar(pol):
@@ -174,7 +285,14 @@ def parse_polar(pol):
 def summarize(rows):
     if not rows:
         return None
-    lin = [r for r in rows if r[1] < 0.6]          # linear pre-stall range
+    # Only the first monotonic pre-stall branch belongs in the CM(CL) fit.
+    # A global ``CL < 0.6`` filter also admitted post-stall points after CL had
+    # fallen again and could shift cm0 by more than 0.01 on reflexed sections.
+    lin = []
+    for row in rows:
+        if row[1] >= 0.6:
+            break
+        lin.append(row)
     a, cl, cd, cm = zip(*rows)
     cm0 = None
     if len(lin) >= 3:
@@ -216,6 +334,8 @@ def main():
         ("e205-9", "e205.dat", 0.09, "E205 scaled to 9 % (tip variant)"),
         ("s5010", "s5010.dat", None, "S5010 (9.83 %)"),
         ("mh60", "mh60.dat", None, "MH60 (10.08 %)"),
+        ("mh60-9", "mh60.dat", 0.09,
+         "MH60 scaled to 9 % with camber preserved (tip diagnostic)"),
         ("mh60-12", "mh60.dat", 0.12, "MH60 scaled to 12 %"),
         ("mh60-135", "mh60.dat", 0.135, "MH60 scaled to 13.5 % (root variant)"),
     ]
@@ -233,7 +353,7 @@ def main():
         cases.append((tag, dat, label))
 
     print("=" * 110)
-    print("B3 SCREENING — XFOIL 6.99 batch, Ncrit 10/12, Re 3e5/5e5 (all [D])")
+    print("B3 SCREENING — XFOIL 6.99, Ncrit 10/12, Re 1.2e5/2.5e5/5e5 (all [D])")
     print("=" * 110)
     hdr = f"{'case':<12}{'Re':>6}{'Nc':>4}{'cm0':>9}{'clmax':>7}{'a_st':>6}{'L/Dmax':>8}{'cd@CL.132':>10}"
     print(hdr)
@@ -242,9 +362,9 @@ def main():
     for tag, dat, label in cases:
         tc_now = thickness(load_dat(dat))
         print(f"# {label}  (t/c = {tc_now*100:.2f} %)")
-        for re_no in (3e5, 5e5):
+        for re_no in (1.2e5, 2.5e5, 5e5):
             for ncrit in (10, 12):
-                rtag = f"{tag}_r{int(re_no/1e5)}e5_n{ncrit}"
+                rtag = f"{tag}_r{int(re_no/1e3)}k_n{ncrit}_v2"
                 rows = run_xfoil(dat, int(re_no), ncrit, rtag, xfoil)
                 s = summarize(rows)
                 results[rtag] = s

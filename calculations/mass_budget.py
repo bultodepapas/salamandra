@@ -15,16 +15,17 @@ Data model (all tagged, see docs/06-material-mass-variants.md):
   - Batteries: I-16 model [D]: pack = n_cells × cell + 25 g packaging,
     validated against the measured packs (445/433/305/297 g).
   - FC: I-17 catalog [M] (8.4–26 g); the avionics row (110 g) absorbs any
-    board around the I-17 survey average (17.4 g).
+    board around the I-17 survey average (17.4 g).  SpeedyBee mass includes
+    the FC and mandatory PDB/current-sensor board, not the FC PCB alone.
   - FPV: I-19 [M] (O4 32 / O4 Pro 37 / O4 Lite 8.2 / legacy O3 39.4 g).
-  - Motor / ESC / prop / servos / carbon / hardware: guide §8.1 [E] with
-    options where they exist.
+  - Motor / ESC / prop adapter / carbon / hardware: guide §8.1 [E].  APC's
+    published 8x8E blade mass and catalog servo masses are [M].
   - Elevon balance mass derived [D] from ADR-0025: m_b = 1.2 × m_elevons.
   - Stall speed [D]: V_stall = sqrt(2W/(rho·S·CLmax)), CLmax = 0.589 (I-07);
-    reproduces the guide's 45.9 km/h at the current 1685 g AUW.
+    reproduces the historical v0.2 45.9 km/h result at 1685 g.
 
-Validation: reproduces the ADR-0040 baseline (1685 g) and the I-16 pack
-masses; a change that breaks them is not accepted (calculations/README.md).
+Validation: preserves the released v0.2 baseline as a historical case, closes
+the post-v0.2 Article #1 mass allocation, and reproduces the I-16 pack masses.
 """
 import argparse
 import sys
@@ -53,7 +54,7 @@ PRINTED = {
     "wings":   dict(m=341.0, src="[E] 62 % of shell, 6 seg", default="PETG"),
     "tips":    dict(m=44.0,  src="[E] 8 % of shell, 2 pcs",  default="PETG"),
     "elevons": dict(m=50.0,  src="[D] ADR-0025: 2 × 25 g",   default="PETG"),
-    "fin":     dict(m=48.0,  src="[E] ADR-0038 V1, mid 36-60", default="PETG",
+    "fin":     dict(m=36.72, src="[E] V1a lower-band estimate / CAD cap", default="PETG",
                     optional=True),
 }
 
@@ -69,21 +70,33 @@ PACKAGING = 25.0                              # [D] I-16 (445-420, 305-280)
 
 FC = {  # [M] I-17 catalog; masses are the board alone
     "F405-WING-V2":    25.0, "F765-WING": 26.0, "F722-WING": 25.0,
-    "SpeedyBee-F405":  12.0, "F411-WSE":  8.5,  "Foxeer-F405": 8.4,
+    # 8.9 g FC + 11.4 g mandatory PDB/current-sensor board; wireless board omitted.
+    "SpeedyBee-F405":  20.3, "F411-WSE":  8.5,  "Foxeer-F405": 8.4,
 }
 FC_AVG = 17.4                                 # [D] I-17 survey average (8 boards)
 
 FPV = {  # [M] I-19: unit + antennas
     "O4": 32.0, "O4-Pro": 37.0, "O4-Lite": 8.2, "O3": 39.4,
 }
-PROPS = {"APC-E-8x8": 40.0, "APC-E-9x6": 45.0, "APC-E-10x7": 55.0}   # [E]
+PROPS = {
+    "APC-E-8x8": 25.0,          # 15 g blade [M] + 10 g adapter/collet [E]
+    "APC-E-8x8-v0.2": 40.0,     # historical released estimate only
+    "APC-E-9x6": 45.0,
+    "APC-E-10x7": 55.0,
+}
 MOTOR_REF = 170.0                             # [E] 28-class
 ESC_REF = 35.0                                # [E]
 SERVO_REF = 60.0                              # [E] 4 × 15 g (class 12-15, I-18)
+SERVOS = {
+    "class-15g": 60.0,                       # historical estimate [E]
+    "Corona-DS939MG": 50.0,                  # 4 x 12.5 g [M], I-18
+    "Hitec-HS5055MG": 38.0,                  # 4 x 9.5 g [M], I-18
+    "heavy": 76.0,                           # 4 x 19 g class [E]
+}
 CARBON_REF = 70.0                             # [E] tubes + pins
 HARDWARE_REF = 20.0                           # [E] screws, TPU, adhesive, dowels
 AVIONICS_REF = 110.0                          # [E] guide §8.1 (incl. pitot/GPS/RX)
-BOOM_REF = 38.2                               # [E] 342 mm Al extension + 15 g cradle
+BOOM_REF = 37.4                               # [D]/[E] 327 mm Al extension + 15 g cradle
 
 # Aircraft constants
 S = 0.282                                     # m²
@@ -115,17 +128,31 @@ def pack_mass(config, cell):
     return n * CELLS[cell] + PACKAGING
 
 
-def build(policy, battery="6S1P", cell="P42A", fc="FC_AVG", fpv="O4-Pro",
-          prop="APC-E-8x8", fin=False, servo_heavy=False, motor=MOTOR_REF):
+def shell_base_mass(part, shell_cap):
+    """PETG base mass after applying the shell cap; fin is outside the cap."""
+    if not 50.0 <= shell_cap <= 600.0:
+        raise ValueError("shell_cap must be between the fixed 50 g elevons and 600 g")
+    mass = PRINTED[part]["m"]
+    if part in ("core", "wings", "tips"):
+        mass *= (shell_cap - PRINTED["elevons"]["m"]) / 550.0
+    return mass
+
+
+def build(policy, battery="6S1P", cell="P42A", fc="SpeedyBee-F405",
+          fpv="O4-Lite", prop="APC-E-8x8", fin=False, servo_heavy=False,
+          motor=MOTOR_REF, shell_cap=550.0, servo="Corona-DS939MG"):
     """Returns (rows, totals) for one configuration. rows: list of dicts."""
     mat = dict(POLICIES[policy])
     if not fin:
         mat.pop("fin", None)
     rows, printed_m = [], 0.0
+    # Preserve the 50 g balanced-elevon geometry; distribute the CAD shell saving
+    # over CORE+wings+tips in proportion to their v0.2 estimates.
     for pid, spec in PRINTED.items():
         if spec.get("optional") and pid not in mat:
             continue
-        m = scale(spec["m"], mat[pid])
+        base_m = shell_base_mass(pid, shell_cap)
+        m = scale(base_m, mat[pid])
         printed_m += m
         rows.append(dict(part=pid, kind="printed", m=m, mat=mat[pid],
                          src=spec["src"]))
@@ -138,7 +165,7 @@ def build(policy, battery="6S1P", cell="P42A", fc="FC_AVG", fpv="O4-Pro",
     m_fc = FC[fc] if fc in FC else FC_AVG
     rows += [
         dict(part="boom",     kind="fixed", m=BOOM_REF,      mat="Al + PETG",
-             src="[E] ADR-0040: 342 mm Al extension + 15 g cradle; CAD pending"),
+             src="[D]/[E] ADR-0043: 327 mm Al extension + 15 g cradle; CAD pending"),
         dict(part="carbon",   kind="fixed", m=CARBON_REF,    mat="carbon",
              src="[E] guide §8.1"),
         dict(part="motor",    kind="fixed", m=motor,         mat="(option)",
@@ -149,10 +176,12 @@ def build(policy, battery="6S1P", cell="P42A", fc="FC_AVG", fpv="O4-Pro",
              m=AVIONICS_REF + (m_fc - FC_AVG), mat=f"FC {fc}",
              src="[E] 110 g incl. pitot/GPS/RX; FC adjust [D]"),
         dict(part="servos",   kind="fixed",
-             m=SERVO_REF if not servo_heavy else 76.0, mat="servos",
-             src="[E] 4 × 15 g (I-18 class); heavy 17-21 g exceeds budget"),
+             m=SERVOS["heavy"] if servo_heavy else SERVOS[servo], mat="servos",
+             src=("[M] I-18 catalog" if not servo_heavy
+                  else "[E] 4 x 19 g heavy class")),
         dict(part="prop",     kind="fixed", m=PROPS[prop],   mat=f"prop {prop}",
-             src="[E] incl. hub/spinner"),
+             src=("[M] 15 g blade + [E] 10 g adapter" if prop == "APC-E-8x8"
+                  else "[E] incl. adapter")),
         dict(part="fpv",      kind="fixed", m=FPV[fpv],      mat=f"FPV {fpv}",
              src="[M] I-19"),
         dict(part="hardware", kind="fixed", m=HARDWARE_REF,  mat="fixed",
@@ -190,11 +219,15 @@ def main():
                     help="material policy or 'all'/'matrix'")
     ap.add_argument("--battery", default="6S1P", choices=BATTERIES)
     ap.add_argument("--cell", default="P42A", choices=CELLS)
-    ap.add_argument("--fc", default="FC_AVG",
+    ap.add_argument("--fc", default="SpeedyBee-F405",
                     help="FC from I-17 catalog: " + ", ".join(FC))
-    ap.add_argument("--fpv", default="O4-Pro", choices=FPV)
+    ap.add_argument("--fpv", default="O4-Lite", choices=FPV)
     ap.add_argument("--prop", default="APC-E-8x8", choices=PROPS)
     ap.add_argument("--motor", type=float, default=MOTOR_REF)
+    ap.add_argument("--shell-cap", type=float, default=550.0,
+                    help="PETG printed-shell CAD acceptance cap in grams")
+    ap.add_argument("--servo", default="Corona-DS939MG", choices=SERVOS,
+                    help="four-servo installed-mass option")
     ap.add_argument("--fin", action="store_true", help="V1 fixed fin (ADR-0038)")
     ap.add_argument("--servo-heavy", action="store_true",
                     help="17-21 g servo class (exceeds the 60 g budget)")
@@ -213,23 +246,29 @@ def main():
         print(hdr)
         for pid, spec in PRINTED.items():
             row = f"  {pid:10s}" + "".join(
-                f"{scale(spec['m'], m):10.1f} " for m in MATERIALS)
+                f"{scale(shell_base_mass(pid, a.shell_cap), m):10.1f} "
+                for m in MATERIALS)
             print(row)
+        totals_by_material = {
+            material: sum(scale(shell_base_mass(pid, a.shell_cap), material)
+                          for pid in PRINTED)
+            for material in MATERIALS
+        }
         print(f"  {'TOTAL':10s}" + "".join(
-            f"{sum(scale(s['m'], m) for s in PRINTED.values()):10.1f} "
-            for m in MATERIALS))
+            f"{totals_by_material[m]:10.1f} " for m in MATERIALS))
         print("\n  Note: the matrix shows each part fully in each material;")
         print("  the printed total includes only the selected assignment.")
         results = [("MATRIX", None, None)]
     elif a.config == "all":
         for name in POLICIES:
             rows, tot = build(name, a.battery, a.cell, a.fc, a.fpv, a.prop,
-                              a.fin, a.servo_heavy, a.motor)
+                              a.fin, a.servo_heavy, a.motor, a.shell_cap,
+                              a.servo)
             print_config(name, rows, tot)
             results.append((name, rows, tot))
     else:
         rows, tot = build(a.config, a.battery, a.cell, a.fc, a.fpv, a.prop,
-                          a.fin, a.servo_heavy, a.motor)
+                          a.fin, a.servo_heavy, a.motor, a.shell_cap, a.servo)
         print_config(a.config, rows, tot)
         results.append((a.config, rows, tot))
 
@@ -259,8 +298,10 @@ def main():
         ok = ok and bool(cond)
         print(f"  [{'PASS' if cond else 'FAIL'}] {name}")
 
-    rows, tot = build("all_petg", "6S1P", "P42A", "FC_AVG", "O4-Pro")
-    check(f"Baseline all-PETG 6S1P = 1685 ± 2 g (I-16 pack 445 g; got {tot['auw']:.1f})",
+    rows, tot = build("all_petg", "6S1P", "P42A", "FC_AVG", "O4-Pro",
+                      "APC-E-8x8-v0.2", False, False, MOTOR_REF, 600.0,
+                      "class-15g")
+    check(f"Released v0.2 baseline = 1685 ± 2 g (got {tot['auw']:.1f})",
           abs(tot["auw"] - 1685.0) <= 2.0)
     check(f"Baseline V_stall = 45.9 ± 0.15 km/h (got {tot['vs']:.2f})",
           abs(tot["vs"] - 45.9) <= 0.15)
@@ -281,6 +322,14 @@ def main():
               PRINTED["tips"]["m"] + PRINTED["elevons"]["m"] - 600.0) < 1e-6)
     check("Balance rule: 50 g elevons -> 60 g balance",
           abs(1.2 * PRINTED["elevons"]["m"] - 60.0) < 1e-6)
+    _, reference = build("all_petg", fin=False)
+    _, reference_v1 = build("all_petg", fin=True)
+    check(f"Article #1 CLEAN <= 1620.4 g (got {reference['auw']:.1f})",
+          reference["auw"] <= 1620.4)
+    check(f"Article #1 V1 <= 1620.4 g (got {reference_v1['auw']:.1f})",
+          reference_v1["auw"] <= 1620.4)
+    check(f"Article #1 V1 V_stall <= 45 km/h (got {reference_v1['vs']:.2f})",
+          reference_v1["vs"] <= 45.0)
     _, ta = build("aero_wings", "6S1P", "P42A")
     check(f"AERO_WINGS 6S1P: V_stall <= 45 km/h (got {ta['vs']:.2f})",
           ta["vs"] <= 45.0)
@@ -292,7 +341,8 @@ def main():
                  "",
                  f"Battery {a.battery} {a.cell} · FC {a.fc} · FPV {a.fpv} · "
                  f"prop {a.prop} · fin {'V1' if a.fin else 'CLEAN'} · "
-                 f"servos {'heavy' if a.servo_heavy else '12-15 g class'}",
+                 f"servos {'heavy' if a.servo_heavy else a.servo} · "
+                 f"shell cap {a.shell_cap:.0f} g",
                  "", "| Config | AUW (g) | g/dm² | V_stall (km/h) | printed (g) | "
                  "printed cost (€) |",
                  "|---|---|---|---|---|---|"]

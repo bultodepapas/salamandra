@@ -38,8 +38,9 @@ V_CRU = 26.4            # 95 km/h cruise speed (m/s)
 V_NE = 50.0             # design V_NE, 180 km/h (m/s)
 RHO = 1.225             # air density sea level (kg/m³)
 NU = 1.5e-5             # kinematic viscosity (m²/s)
-AUW_REF = 1.6852        # reference AUW 6S1P incl. FPV (kg, guide §7.1)
-V_STALL_REF = 45.9      # km/h at AUW_REF (guide §11, OP-24 flag)
+AUW_REF = 1.5835        # CLEAN Article #1 allocation (kg, ADR-0043)
+V_STALL_REF = 44.5      # km/h at AUW_REF (guide §11)
+V1_FIN_CAP_G = 36.72    # lower-band V1a estimate and CAD acceptance cap [E]
 
 # Fuselage + nose boom (guide §7.6, OP-01): length nose tip → rear pod end
 L_F = 0.265 - solve_reference_layout()["bay_fwd"]  # nose support to rear pod
@@ -242,6 +243,11 @@ def main():
               f"Wh/km ≈ {1.15*(1+dwhkm/100):.2f} [E]")
         print(f"   AUW +{1000*(auw_new-AUW_REF):.0f} g → V_stall ≈ {vs:.1f} km/h "
               f"(limit 45, OP-24 lever applies)")
+        if target == 0.0005:
+            selected_auw = AUW_REF + V1_FIN_CAP_G / 1000.0
+            print(f"   V1 allocation   : {V1_FIN_CAP_G:.2f} g cap → "
+                  f"AUW {selected_auw*1000:.1f} g / V_stall "
+                  f"{stall_speed_kmh(selected_auw):.1f} km/h")
 
     # ---- 3. Recommended geometry (V1a) — structural check ----
     S_v = tier_areas[0]
@@ -322,6 +328,12 @@ def main():
     sig_root_3 = M * 0.0015 / i_root_3
     check(f"V1a 3.0 mm root FS >= 1.5 without spar credit "
           f"(got {50e6/sig_root_3:.2f})", 50e6 / sig_root_3 >= 1.5)
+    v1a_lo = fin_mass_band(tier_areas[0])[0]
+    check(f"V1 fin cap matches the lower mass estimate "
+          f"({V1_FIN_CAP_G:.2f} vs {v1a_lo:.2f} g)",
+          abs(V1_FIN_CAP_G - v1a_lo) <= 0.01)
+    check("V1 allocation remains below the 1620.4 g stall ceiling",
+          AUW_REF * 1000.0 + V1_FIN_CAP_G <= 1620.4)
     print(f"\n   VALIDATION: {'ALL PASS' if ok else 'FAILURES PRESENT'}")
     sys.exit(0 if ok else 1)
 

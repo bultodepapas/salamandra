@@ -1,8 +1,8 @@
 # I-14 — Hand-launch and stall-margin practice for printed FPV wings
 
-**Status:** ✅ **Executed 2026-08-06 (rev. 2 — verdict corrected)** · **Feeds:** O1
+**Status:** ✅ **Executed (rev. 3 — ADR-0043 mass propagated)** · **Feeds:** O1
 stall-speed requirement (≤ 45 km/h), C16 review, launch method (docs/00), D1/D2
-autolaunch configuration
+autolaunch configuration · **Updated:** 2026-08-17
 **Tool:** `calculations/launch_speed.py` (9 validation cases, ALL PASS)
 
 > **Correction record (2026-08-06):** rev. 1 concluded "infeasible" by demanding
@@ -19,12 +19,12 @@ autolaunch configuration
 
 What is a realistic hand-launch velocity, how much stall margin do in-service FPV
 aircraft actually operate with, and what does the INAV/ArduPlane autolaunch practice
-require of the stall speed and thrust — for a 1685 g, 59.8 g/dm² tailless wing?
+require of the stall speed and thrust — for the 1583.5 g CLEAN / 1620.2 g V1 wing?
 
 # 2. Why it matters
 
-The stall requirement was relaxed to ≤ 45 km/h (C16) and the design sits at **45.9 km/h
-(1685 g, `mass_budget.py`) — above the requirement** (OP-24 lever to F2). The launch is a
+The stall requirement is ≤45 km/h (C16). ADR-0043 closes the design allocation at
+**44.5 km/h CLEAN / 45.0 km/h V1** (`mass_budget.py`); F2 must confirm the masses. The launch is a
 mandatory hand throw (docs/00) with autolaunch via acceleration detection. If the
 achievable launch speed is below stall, the aircraft cannot leave the hand. This thread
 was opened with **zero project data**; it now closes with the quantitative envelope.
@@ -43,7 +43,7 @@ was opened with **zero project data**; it now closes with the quantitative envel
   **hand-launched in service** (TBS manual, community launches with INAV idle 1300 +
   launch 1850, over-head techniques; bungee hook documented as an option). Heavier
   and higher-stall than the Salamandra, it launches by hand: the Salamandra at
-  12.8 m/s stall is a strictly easier case.
+  12.5 m/s V1 stall is a strictly easier case.
 - In-service failure reports exist on record (Mojito "a few throwing failures" on the
   first day, Chupito autolaunch roll, ZOHD Dart XL "difficult and dangerous to
   launch") — launch is the documented weak moment of this aircraft class, but the
@@ -82,21 +82,21 @@ exceed hover** (backward G-forces confuse the FC climb detection).
 
 | Quantity | Value |
 |---|---:|
-| V_stall (1685 g, ALL PETG) | **45.9 km/h** (12.8 m/s) |
-| **Release gate (rev. 2):** V_suelta ≥ V_stall | **PASS for typical and firm throws** |
-| V_suelta, typical throw 10.5 m/s + ref idle | **13.4 m/s (48.4 km/h) — k = 1.05 at release; k = 1.20 reached in 0.39 s** |
-| V_suelta, firm throw 13 m/s + high idle | **17.3 m/s (62.4 km/h) — k = 1.36 at release** |
+| V_stall (V1 1620.2 g / CLEAN 1583.5 g) | **45.0 / 44.5 km/h** (12.5 / 12.4 m/s) |
+| **Release gate:** V_suelta ≥ V_stall | **PASS for typical and firm throws** |
+| V_suelta, typical throw 10.5 m/s + ref idle | **13.4 m/s (48.4 km/h) — k = 1.08 at release; k = 1.20 reached in 0.36 s** |
+| V_suelta, firm throw 13 m/s + high idle | **17.3 m/s (62.4 km/h) — k = 1.39 at release** |
 | V_suelta, weak throw 8 m/s + low idle | 9.8 m/s (35.2 km/h) — **below stall: technique is part of the specification** |
-| Time to k = 1.20 after release (typical, incl. 0.2 s motor delay) | 0.39 s |
+| Time to k = 1.20 after release (typical, incl. 0.2 s motor delay) | 0.36 s |
 | Launch T/W (hover rule) | 0.9–1.1 — inside the 1.5 torque-roll threshold |
 
-**Verdict (rev. 2): HAND LAUNCH IS FEASIBLE** with a firm throw (V_hand ≥ 10 m/s) +
+**Verdict: HAND LAUNCH IS FEASIBLE** with a firm throw (V_hand ≥ 10 m/s) +
 high idle throttle (`nav_fw_launch_idle_thr` 1350–1450) + launch throttle at the hover
 setting (T/W ≈ 1.0). The margin is not at the release instant — it is built by the
 motor acceleration in the first 0.4 s. Corroborated by the configuration-class anchor
 `[M]` (Mojito 1800 g / ~60 km/h reported stall, hand-launched). The V1 fin (ADR-0038)
 remains recommended for the test programme (directional stability in the first
-seconds, finless yaw divergence τ ≈ 0.7 s).
+seconds, finless yaw divergence τ ≈ 0.8 s).
 
 **Levers (unchanged, now for comfort not feasibility):** (a) mass reduction to the
 OP-24 low end; (b) CL_max raise via the designed airfoil (R-AIRFOIL, OP-02) — lowers
@@ -106,14 +106,14 @@ instrumented test programme; (d) accept the declared technique rule (firm throw)
 # 5. Deliverables
 
 1. **Declared launch envelope** (guide §4/§12, this document):
-   - **Release gate: V_suelta ≥ V_stall** (45.9 km/h at 1685 g) with the elevon-up
+   - **Release gate: V_suelta ≥ V_stall** (45.0 km/h at the V1 allocation) with the elevon-up
      launch attitude; margin k = 1.20 reached by acceleration in < 0.5 s.
    - **Technique rule: firm throw (V_hand ≥ 10 m/s), release at 0–5° pitch
      (ArduPilot guidance; higher → stall), launch throttle at the hover setting.**
    - Autolaunch configuration table (§3.2) for D1/D2 validation.
-2. **Stall-margin policy (C16 chain):** the ≤ 45 km/h requirement stands and is
-   **not reachable at the current budget** (45.9 km/h); F2 must arbitrate mass vs stall
-   (OP-24). The launch analysis (rev. 2) no longer blocks the first flight — it
+2. **Stall-margin policy (C16 chain):** the ≤45 km/h allocation now closes at
+   44.5 km/h CLEAN / 45.0 km/h V1; F2 must verify the 1583.5/1620.2 g caps (OP-24).
+   The launch analysis no longer blocks the first flight — it
    prescribes the technique. The CL_max chain (R-AIRFOIL, designed section, OP-02)
    remains double-critical for COMFORT: it lowers V_stall AND raises the release
    margin.
@@ -143,5 +143,5 @@ envelope says when the launch is *allowed*, blackbox data (E-series) will say ho
 - In-service stall margins are community estimates, not measured polars.
 - Autolaunch behavior is firmware-specific: the table pins INAV 9.x per docs/00; D2
   must validate on the bench + first flights.
-- The 0.4 s margin time is `[D]` on the declared bands; it is the quantity to measure
+- The 0.36 s margin time is `[D]` on the declared bands; it is the quantity to measure
   first (blackbox launch log).

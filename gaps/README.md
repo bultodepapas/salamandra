@@ -7,7 +7,7 @@ It is as important as the decision register: the project rule is that **no `[E]`
 | # | Gap | Impact | Status | Closes with |
 |---|---|---|---|---|
 | **G1** | Reference geometry: area, airfoil, twist | All calculations depend on S ≈ 0.282 m² `[E]` | 🔄 **Partial** — t/c measured `[M]`, planform missing | E1 |
-| **G2** | No measured polars of reflexed airfoils at Re 3–5×10⁵ | Blocks airfoil selection | 🔄 **Partial** — XFOIL bounded with E387; aerodesign.de database reviewed (I-11); still to screen and measure reflexed airfoils | I-06, I-11, E2 |
+| **G2** | No measured polars of the released r1 printed sections at local Re 1.2–5.1×10⁵ | Blocks flight-envelope acceptance, not CAD | 🔄 **Computational/CAD closure:** Salamandra r1 selected and generated (ADR-0041, I-15 §8); measured lift/drag/moment/stall remain open | E2 |
 | **G3** | C_D0 breakdown by component | Prevents prioritizing parasitic-drag reduction | ⬜ Open | E2 |
 | **G4** | Real torsional stiffness | ADR-0002 unverified | 🔄 `[E]` ±35 %, anchored to measured reference; printed-shell torsion bounds proposed (I-12) | E5, E7 |
 | **G5** | Propeller wash effect on a thin airfoil at Re 4×10⁵ | ADR-0006 under dispute | ⬜ Open; literature bounds proposed (I-13) | I-13, comparative in-flight test |
@@ -44,7 +44,8 @@ with the unmeasured xEA/c = 0.30…0.45 bracket and GJ, it dominates the conserv
 Target CG: **17.72 % MAC / −93.8 mm** for 8 % static margin.
 
 **Missing:** central-body model and measured flight NP. Elevon authority is calculated;
-final airfoil polars must confirm the 3.0° twist + 0.59° reflex closure.
+Salamandra r1 closes the computed trim band with 3.0° twist and −0.06°…+0.39°
+neutral elevon. E2 must confirm the printed-airframe result.
 
 See [I-21](../research/I-21-sweep-trade-and-elastic-axis-correction.md).
 
@@ -54,15 +55,18 @@ The I-07 analysis turns airfoil selection from an open problem into a bounded on
 
 | Requirement | Value |
 |---|---|
-| **R-AIRFOIL** | Cm0 ≥ +0.008, preferably +0.010–0.015 |
-| **R-TWIST** | Wash-in ≤ 2.5° |
+| **R-AIRFOIL** | Coupled root/tip profile moment + twist shall trim at SM 8 % with neutral elevon within ±0.6° |
+| **R-TWIST** | Printed wash-in = 3.0° for Salamandra r1; exposed for E2 refinement |
 
-And it exposes the central conflict: **the reflex that gives positive Cm0 costs cl_max**, and with cl_max 0.65 the stall speed comes out at 44.5 km/h, just inside the 45 requirement. If reflex lowers cl_max to 0.60, the requirement is violated.
+The coupled criterion replaces the earlier single-section Cm0 target, which ignored the
+large negative low-Re tip moment and c² weighting. XFOIL endpoint `clmax` passes with
+large computational margin, but printed roughness and three-dimensional stall remain E2
+questions.
 
 [I-06](../research/I-06-reflexed-airfoils.md) additionally bounds the transition model:
 the E387 (C) calibration gives an Ncrit 10–12 band `[D]`, not a single value. At
 Re ≈ 3–5×10⁵, Ncrit 12 minimizes the grid disagreement `[D]`, but it still needs validating
-against a second physical model and screening the reflexed airfoils. **G2 is not closed.**
+against a second physical model. **G2 is closed for CAD, not for flight acceptance.**
 
 ### G9 — porpoising
 

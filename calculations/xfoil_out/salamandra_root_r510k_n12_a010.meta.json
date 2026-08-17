@@ -1,0 +1,9 @@
+{
+  "alpha_max_converged": 16.0,
+  "analysis": "xfoil-6.99-aseq-0-16-0.5-iter-300",
+  "dat_sha256": "38c10876ae2d9d94c465c8614ba0bcc1d86069c8d2859ddbc6a1cff293970853",
+  "ncrit": 12,
+  "reynolds": 510000,
+  "rows": 33,
+  "stopped_on_stable_polar": false
+}

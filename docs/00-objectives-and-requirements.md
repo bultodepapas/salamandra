@@ -1,6 +1,6 @@
 # Objectives and requirements — Phase 0 specification
 
-**Revision 1.2** · 28 July 2026 · **Phase 0 closed**
+**Revision 1.3** · 17 August 2026 · **Phase 0 closed**
 Defines **what is built and why**. No geometry line precedes this document.
 
 This is an **open, community-driven, modular 3D-printed FPV aircraft platform**. The core
@@ -34,7 +34,7 @@ Therefore "efficient" and "Mojito-like" are only compatible if efficiency is sou
 | # | Objective | Acceptance criterion |
 |---|---|---|
 | **O1** | Demonstrated efficiency | ≤ 1.15 Wh/km at 95 km/h, measured with blackbox |
-| **O2** | Flexible battery 4S–6S | 4S1P, 4S2P, 6S1P and 6S2P in 21700 without changing the outer mold |
+| **O2** | Flexible 4S–6S platform | The platform may host 4S and 6S power modules without changing the wing/CORE interface. Each module has its own matched motor and carrier; Article #1 is 6S1P only (ADR-0042) |
 | **O3** | Printable on a 256 mm machine | Bambu P1S class. No active chamber. No exotic filament |
 | **O4** | PETG as the single structural material | Price, availability, thermal tolerance, ease |
 | **O5** | Easy to manufacture | ≤ 20 h of printing per wing half · ≤ 3 h of assembly · **no fiber lamination** |
@@ -103,23 +103,20 @@ See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 - **R-NP** — common family neutral point. **Arbitrary panels are not admitted.**
 - **R-JOINT** — joint torsional stiffness ≥ 5× that of the adjacent section. Joint at 30 % of half-span, two pins.
 
-## 3.3 R-CG — balancing with variable battery
+## 3.3 R-CG — Article #1 balance and future battery modules
 
 | Pack | Cells | Energy | Mass | AUW | Wing loading |
 |---|---|---|---|---|---|
-| 4S1P P42A | 4 | 60.5 Wh | 305 g | 1545 g | 54.8 g/dm² |
-| **6S1P P42A** | 6 | **90.7 Wh** | **445 g** | **1685 g** | **59.8 g/dm²** |
-| 4S2P P42A | 8 | 121.0 Wh | 585 g | 1825 g | 64.7 g/dm² |
-| 6S2P P42A | 12 | 181.4 Wh | 865 g | 2105 g | 74.6 g/dm² ⚠️ |
+| **6S1P P42A (Article #1)** | 6 | **90.7 Wh** | **445 g** | **1583.5 g CLEAN** | **56.2 g/dm²** |
 
-Current modeled mass range: **560 g, 36 % of the 4S1P AUW** (I-16/ADR-0040).
-
-> **R-CG: the carrier must allow enough longitudinal pack adjustment to keep the CG
-> within ±5 mm in all four configurations. Current status: NOT MET.** Only 6S1P fits
-> and balances in the present one-layer cradle; OP-23 owns the requirement revision.
+> **R-CG:** the Article #1 carrier shall hold CG within ±5 mm with the 6S1P pack. The
+> current solution places it at x = −359.6 mm (band −377.4…−341.9). A 4S aircraft
+> requires approximately 730 Kv rather than the 500–550 Kv 6S motor and therefore is a
+> separate power module. The former requirement to interchange 4S1P/4S2P/6S1P/6S2P in
+> one cradle is superseded by ADR-0042.
 
 - The 21700 cells **do not stack**: single 21 mm layer. At 13.5 % t/c and c_root 260 mm there is ~35 mm — roomy. **At 11 % it did not fit.**
-- **6S2P falls outside the cruise band.** Mechanically supported, documented as out of envelope.
+- Future 4S/2P modules must re-close propulsion, fit, CG, mass and stall independently.
 
 ## 3.4 Structure
 
@@ -152,7 +149,7 @@ linkage, no FC change):
 | | SALAMANDRA-CLEAN | SALAMANDRA-V1 |
 |---|---|---|
 | Vertical stabilizer | None | Fixed centreline fin (passive), S_v ≈ 2.1 dm² (V1a) |
-| Cnβ total | **−0.0006…−0.0015/deg — negative** (FC-stabilized, documented risk G10) | **+0.0001…+0.0010/deg** (nominal +0.0005) `[D]`/`[E]` |
+| Cnβ total | **−0.0006…−0.0014/deg — negative** (FC-stabilized, documented risk G10) | **−0.00005…+0.00095/deg** (nominal +0.0005) `[D]`/`[E]` |
 | Role | O1 efficiency build (≤ 1.15 Wh/km) | Recommended build for the Article #1 test programme |
 | Cost | — | 36–60 g `[E]` · ΔCD0 +0.0014 (+9.6 % energy `[E]`) · V_stall +0.6 km/h (OP-24 lever) |
 

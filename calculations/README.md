@@ -41,7 +41,9 @@ Data sources consumed (all `[M]`):
 | `weissinger_np.py` | **C2: independent NP check** — Weissinger-L swept lifting line (bound vortex on the c/4 line, control points at 3/4 chord). Structurally different formulation from the panel VLM | I-07, C2, G8 | numpy |
 | `ventana_torsion.py` | Twist required for trim vs tip-stall margin (torsion window) | I-07, G2 | numpy |
 | `calibra_xfoil_e387.py` | XFOIL Ncrit-grid calibration against the measured E387 (C) polar (UIUC, vol. 3) | I-06, G2 | XFOIL |
-| `b3_screening.py` | **B3: airfoil screening** — batch XFOIL polars (Re 3e5/5e5 × Ncrit 10/12) for the shortlist in `../geometry/airfoils/`; generates the scaled variants; parses cm0/clmax/α_stall/L/D/cd@cruise | B3, G2, OP-02 | numpy + XFOIL |
+| `b3_screening.py` | **B3: corrected diagnostic screening** — changes thickness about the mean camber line, keys cached polars to geometry/settings, uses the 120k/250k/500k envelope and fits cm0 only on the pre-stall branch | B3, I-15, correction audit | numpy + XFOIL |
+| `airfoil_reflex_trade.py` | **Salamandra r1 profile generator** — screens coupled root/tip reflex at the actual local Reynolds numbers, integrates section moment with c² weights, verifies trim, and writes every CAD station coordinate file | ADR-0041, guide §5, OP-02/03 | numpy + XFOIL |
+| `propulsion_match.py` | **Aircraft–propeller equilibrium** — interpolates the measured UIUC APC E 8×8 coefficient curve at the O1 electrical-power ceiling; checks 4S/6S Kv feasibility and APC rpm margin | ADR-0042, guide §9, D2/E3 | stdlib only |
 | `balance_cg.py` | **OP-01: mass/CG balance** — pack-station solver for the CG target; planform-centroid self-check; bay sizing for the nose boom; envelope checks (AUW, V_stall) | OP-01, justification §3.1–3.2 | numpy |
 | `elevon_authority.py` | **Elevon control power** — ΔCm per degree of elevon deflection (step incidence over 30–90 % half-span) via the VLM; trim closure and control margin at SM 8 % | Guide §5.3/§6.1, C6 (partial) | numpy |
 | `battery_pack_layout.py` | **I-16: pack envelope** — enumerates every rectangular (n_x,n_y,n_z) layout of the 4S/6S 21700 pack, computes finished envelope (wrapper, nickel, leads) and fit-checks against the pack carrier (guide §8; the 200×70×32 bay is superseded by the cradle) | I-16, guide §8, OP-23 | stdlib only |
@@ -53,8 +55,8 @@ Data sources consumed (all `[M]`):
 | `filament_dowel_pins.py` | **ADR-0039: dowel pins in the glued joints** — 2 × Ø1.75 filament per segment joint: shear demand at +6 g vs double-shear capacity (FS ≈ 11/24), position clearance (tube/hinge), collar bearing, mass 2.6 g | ADR-0039, guide §6.4/§6.5/§12, OP-27 | numpy |
 | `mass_budget.py` | **F2: material mass variants** — per-part material policies (ALL PETG baseline / AERO-PLA wings / PLA+ / arbitrary), battery 4S–6S × P42A/50E (I-16 model), FC catalog (I-17), FPV (I-19), motor/prop/servo options, V1 fin; AUW, g/dm², V_stall, printed cost | docs/06, guide §7.1, F2 (P1/P2), OP-28 | numpy |
 | `divergence.py` | **G6 revision 3: absolute divergence speed** — multicell Bredt-Batho J, explicit elastic-axis bracket (no false shear-centre claim), FEM cross-checked by flux-form shooting, −15° sweep-factor band, R-JOINT and tube sensitivities; auditable V_limit | docs/07, I-21, guide §11/§13, OP-29 | numpy |
-| `launch_speed.py` | **I-14: hand-launch feasibility (rev. 2)** — release gate V_suelta ≥ V_stall (corrected: k_safe applies post-release, built by acceleration); V_hand band from published biomechanics (van den Tillaar 2004), idle-thrust assist (INAV hover rule T/W ≈ 1.0, idle 0.5–0.67×), Mojito configuration-class anchor `[M]`, torque-roll threshold; INAV/ArduPlane autolaunch settings | I-14 executed, guide §4/§12, D1/D2 | numpy |
-| `boom_flexion.py` | **ADR-0040 nose boom Ø8/int6 aluminium + Ø3 aft spar** — imports solved balance geometry; pure cantilever REJECTED (278 MPa, FS 0.99); **two-support PASS** (56 MPa, FS 4.96, δ 1.6 mm, 25.3 Hz); tube+cradle 38.2 g; Ø3 spar gives total 3 mm fin-root EI 1.60× | guide §6.7, OP-24/OP-26 | numpy |
+| `launch_speed.py` | **I-14: hand-launch feasibility (rev. 3)** — release gate V_suelta ≥ V_stall, ADR-0043 V1 worst-case mass, post-release acceleration, published throw band, idle-thrust assist, Mojito configuration-class anchor and torque-roll threshold | I-14 executed, guide §4/§12, D1/D2 | numpy |
+| `boom_flexion.py` | **ADR-0043 coupled nose boom Ø8/int6 aluminium + Ø3 aft spar** — imports the solved mass/balance geometry; pure cantilever REJECTED (266 MPa, FS 1.04); **two-support PASS** (54 MPa, FS 5.08, δ 1.4 mm, 27.0 Hz); tube+cradle 37.4 g | guide §6.7, OP-24/OP-26 | numpy |
 
 ## Reproducing the published results
 
@@ -70,7 +72,7 @@ Weissinger-L **−72.9 mm** (27.0 % MAC) — **2.9 mm agreement**. Both validati
 reproduce: straight AR 6 wing → NP at 25.00 % MAC; CL_α within ~7 % of the Helmbold
 formula (the classical 1-D/2-D difference).
 
-### 2. B3 airfoil screening (I-15 §6)
+### 2. Corrected B3 diagnostic screening (I-15 §6 and §8)
 
 ```bash
 python3 b3_screening.py --xfoil /path/to/xfoil.exe
@@ -78,17 +80,19 @@ python3 b3_screening.py --xfoil /path/to/xfoil.exe
 
 1. Reads the candidate coordinates from `../geometry/airfoils/` (E205, S5010, MH60 —
    provenance in `geometry/airfoils/README.md`).
-2. Generates the thickness variants `mh60-12.dat`, `mh60-135.dat`, `e205-9.dat`
-   (affine y-scaling — the declared provisional scaling rule of the design guide §6.3).
-3. Runs **24 XFOIL cases** (6 airfoils × Re 3e5/5e5 × Ncrit 10/12), alpha sweep
-   0–16° step 0.5°, ITER 300, in the calibrated band of I-06.
-4. Saves the raw polars in `xfoil_out/<case>.pol` and **verifies each header** carries
-   the requested `Re` and `Ncrit` (a polar whose Ncrit failed to apply is regenerated).
-5. Prints the summary table: cm0 (linear fit of CM(CL) evaluated at CL=0, about c/4),
+2. Generates the thickness variants about the interpolated mean camber line. This
+   preserves camber/reflex instead of multiplying every ordinate; the old affine-y
+   rule was an implementation error.
+3. Runs **42 diagnostic XFOIL cases** (7 profiles × Re 120k/250k/500k × Ncrit 10/12),
+   covering the actual root/tip stall and cruise envelope.
+4. Saves the raw polars in `xfoil_out/<case>.pol`; the cache metadata contains a SHA-256
+   of the coordinates plus Reynolds number, Ncrit and solver settings, so changed
+   geometry cannot reuse stale data.
+5. Prints the summary table: cm0 (pre-stall linear fit of CM(CL) evaluated at CL=0),
    clmax, α_stall, (L/D)max, cd at cruise CL 0.132.
 
-**Incremental:** polars whose header already matches are reused — rerunning after a
-crash only recomputes the missing cases.
+**Incremental:** only polars whose full metadata match are reused; rerunning after a
+crash recomputes missing or stale cases.
 
 **Batch-mode notes for XFOIL 6.99 on Windows** (all baked into the script, kept here
 for anyone maintaining it):
@@ -99,16 +103,25 @@ for anyone maintaining it):
 - The input stream must be a **CRLF file redirected as stdin** (a PowerShell pipe
   truncates it; the Fortran runtime reads until EOF and prints a harmless
   "Fortran runtime error: End of file" after QUIT — ignored).
-- Full paths in the polar filenames are fine.
+- The script runs XFOIL from a short local working directory because its Fortran file
+  handling is unreliable with long paths.
 
-Published result highlights (I-15 §6.2, `[D]`):
-- E205 **discarded**: cm0 ≈ −0.07 (fails R-AIRFOIL by ~0.08).
-- MH60→13.5 %: cm0 = +0.0016 (Re 5e5, Ncrit 10); published cm0 values are not
-  achieved at project Re.
-- At SM 8 % no off-the-shelf candidate closes trim inside R-TWIST ≤ 3.0° unaided.
-  The favourable provisional polar closes at about 0.6° permanent reflex, but the
-  adverse Ncrit-12 polar requires about 1.9° and fails that cap
-  (`elevon_authority.py`); final B3 polars are a CAD gate.
+The corrected screening invalidates the old root-only trim conclusion. It is retained
+as a candidate diagnostic; the coupled r1 generator below is the controlling CAD tool.
+
+### 2.1 Salamandra r1 coupled airfoil closure (ADR-0041)
+
+```bash
+python3 airfoil_reflex_trade.py --xfoil /path/to/xfoil.exe
+```
+
+The generator uses root Re 240k/510k and tip Re 120k/255k, Ncrit 10/12, exact c²
+root/tip moment weights 0.6071/0.3929, and the VLM twist/elevon yields. It selects
+**MH60 mean line, 13.5 % root with +1.0° reflex and 9.0 % tip with +0.5° reflex**,
+then writes the endpoint and seven intermediate station DAT files. The full-envelope
+polars give neutral elevon **−0.06°/+0.39°** at +3.0° wash-in, inside the ±0.6° cap;
+all endpoint cases have section clmax ≥1.076. These are `[D]` CAD inputs; E2 is still
+the physical polar/stall acceptance.
 
 ### 3. Balance and CG reachability (OP-01, guide §8.2)
 
@@ -120,9 +133,10 @@ Self-validating: it imports the canonical planform, computes the shell and carbo
 stations, iterates boom mass/length with the pack solution, and solves all four P42A
 pack stations at target CG **−93.8 mm** (SM 8 %).
 
-Published results (I-21/ADR-0040, `[D]`): pack stations 4S1P **−501** / 6S1P
-**−373** / 4S2P **−306** / 6S2P **−237 mm**; 6S1P band −392…−354; cradle
-−473…−272; support span 341 mm; AUW 1685 g → V_stall 45.9 km/h.
+Published Article #1 result (ADR-0043, `[D]`): CLEAN mass **1583.5 g**, 6S1P pack
+station **−359.6 mm**, allowable CG-band station −377.4…−341.9 mm, cradle
+approximately −460…−259 mm, and support span **327 mm**. Diagnostic stations for
+future modules are 4S1P −481.7 / 4S2P −296.0 / 6S2P −230.6 mm; they are not Article #1.
 
 ### 4. Elevon authority (guide §5.3/§6.1)
 
@@ -130,11 +144,10 @@ Published results (I-21/ADR-0040, `[D]`): pack stations 4S1P **−501** / 6S1P
 python3 elevon_authority.py
 ```
 
-Models the elevon as step incidence over 30–90 % half-span in the same VLM (no section
-Cm0 — the section cm0 is added as the B3 screening datum). Results at the −15° planform:
-elevon yield 0.00256 Cm/° vs 0.00249 Cm/° full-span wash-in; 5° elevon gives 2.6×
-the limiting trim deficit. The favourable provisional polar needs ≈ 0.6° permanent
-reflex; the adverse Ncrit-12 polar needs ≈ 1.9°, outside the cap.
+Models the elevon as step incidence over 30–90 % half-span in the same VLM and adds the
+c²-integrated r1 root/tip moment. Results at the −15° planform: elevon yield
+0.00256 Cm/° vs 0.00249 Cm/° full-span wash-in; neutral trim is **−0.06°/+0.39°**
+over Ncrit 10/12. A 5° command provides **12.8×** the limiting residual.
 
 ### 5. Twist window (I-07)
 
@@ -209,20 +222,33 @@ avionics+FPV = 17.0 W (15.5 % of cruise) and 18.8 % of the 6S1P P42A pack per
 flight-hour with the Pro. A change to the current table or BEC assumptions must
 reproduce these values.
 
+### 9.1 Cruise propulsion equilibrium (ADR-0042)
+
+```bash
+python3 propulsion_match.py
+```
+
+Interpolates the measured UIUC APC E 8×8 curve at 95 km/h and the O1 electrical
+ceiling of 109.25 W. At motor+ESC efficiency 0.85 the equilibrium is **J 0.899,
+8667 rpm, 2.42 N, propeller efficiency 0.688**; the 0.80–0.88 sensitivity spans
+8568–8722 rpm and 2.25–2.52 N. The old peak-efficiency point would require about
+230 W and therefore is not the cruise command. The validation also demonstrates that
+6S 500–550 Kv is feasible, the same motor on 4S is not, and the APC rpm margin is 2.16×.
+
 ### 10. Directional stability and the fin variant (I-20)
 
 ```bash
 python3 yaw_stability.py
 ```
 
-Cnβ budget of the finless baseline (body + FSW wing: **−0.0006…−0.0015/deg — negative**),
-centreline-fin sizing for the two stability tiers (V1a 2.16 dm² → nominal +0.0005/deg;
-V1b 2.86 dm² → +0.0010/deg), rudder authority vs crosswind, yaw damping and
+Cnβ budget of the finless baseline (body + FSW wing: **−0.0006…−0.0014/deg — negative**),
+centreline-fin sizing for the two stability tiers (V1a 2.13 dm² → nominal +0.0005/deg;
+V1b 2.83 dm² → +0.0010/deg), rudder authority vs crosswind, yaw damping and
 subsidence, fin bending at V_NE (**root t ≥ 3.0 mm**), and the mass/drag/stall cost of
 each tier. In-service datum `[M]`: the TBS Mojito (same
 FSW + nose + pusher layout) flies a **fixed** stabilizer with elevons only — no rudder
 servo (product page, manual, official INAV CLI). Published results (I-20 §5, `[D]` on
-`[E]` bands): finless yaw divergence τ ≈ 0.7 s; V1a ΔCD0 +0.0015 (+9.9 % drag);
+`[E]` bands): finless yaw divergence τ ≈ 0.8 s; V1a ΔCD0 +0.0014 (+9.8 % drag);
 V1b +13.0 %; both tiers push V_stall past 45 km/h at the current budget (OP-24 lever
 applies). A change to geometry, bands or methods must reproduce the seven validation
 cases (Helmbold, fin reference, Raymer body, tier consistency, damping reference).
@@ -264,13 +290,13 @@ python3 mass_budget.py --config aero_wings --battery 4S1P --fin
 python3 mass_budget.py --config all_petg --fc F765-WING --fpv O4-Lite
 ```
 
-Data-driven weight budget with per-part material selection. Reproduces the guide §8.1
-baseline with the I-16 `[D]` P42A pack and the ADR-0040 hybrid boom assembly.
-Published results (docs/06 §3): ALL PETG **1685.2 g / 45.9**; **AERO WINGS
-1506.3 g / 43.4** (stall-compliant but fails the conservative divergence model);
-AERO MAX 1455.2 g / 42.6; PLA+ 1669.6 g
-(ADR-0016 rejected material). Twelve validation cases — a change to materials, parts,
-packs or options must reproduce them.
+Data-driven weight budget with per-part material selection. The Article #1 default is
+6S1P P42A, SpeedyBee F405 WING + mandatory PDB, DJI O4 Lite, four Corona DS-939MG,
+APC E 8×8 assembly and the coupled ADR-0043 boom. Published results (docs/06 §3):
+ALL PETG CLEAN **1583.5 g / 44.5 km/h**; V1 with its 36.72 g fin **1620.2 g /
+45.0 km/h**. The AERO policies save more mass but remain rejected by the conservative
+divergence model. Validation retains the released v0.2 1685.2 g case as a historical
+regression and checks the new allocation, pack models and material scaling.
 
 ### 14. Absolute divergence speed (G6 revision 3 — docs/07)
 
@@ -285,23 +311,24 @@ uses an explicit xEA/c = 0.30…0.45 uncertainty bracket. Results at −15° swe
 GXY+gyroid+1.1 mm wall case reaches only 206 km/h. Initial V_limit is **105 km/h**
 (0.85× conservative, rounded down); **150 km/h** only after S3 validates GXY.
 
-### 15. Hand-launch feasibility (I-14 executed, rev. 2 — guide §4/§12)
+### 15. Hand-launch feasibility (I-14 executed, rev. 3 — guide §4/§12)
 
 ```bash
 python3 launch_speed.py
 ```
 
-Gate check of the mandatory hand throw, rev. 2 (the first revision wrongly demanded
+Gate check of the mandatory hand throw, rev. 3 (the first revision wrongly demanded
 k_safe = 1.20 at the release instant; the correct gate is V_suelta ≥ V_stall — the
-margin is built by motor acceleration in 0.2–0.4 s). **Result: FEASIBLE — typical
-throw 10.5 m/s + ref idle → 13.4 m/s (48.4 km/h) at release (k = 1.05), k = 1.20 in
-0.39 s; firm throw → 17.3 m/s (62.4 km/h, k = 1.36). Weak throw stays below stall:
+margin is built by motor acceleration). Rev. 3 propagates the ADR-0043 V1 worst-case
+mass/stall. **Result: FEASIBLE — typical throw 10.5 m/s + ref idle → 13.4 m/s
+(48.4 km/h) at release (k = 1.08), k = 1.20 in 0.36 s; firm throw → 17.3 m/s
+(62.4 km/h, k = 1.39). Weak throw stays below stall:
 technique is part of the specification.** Anchored on the Mojito configuration class
 `[M]` (1800 g, higher reported stall, hand-launched in service) and published
 biomechanics (van den Tillaar 2004). Nine validation cases must pass. Autolaunch
 settings table in research/I-14 §3.2.
 
-### 16. Nose boom Ø8/int6 aluminium + Ø3 aft spar (ADR-0040 — guide §6.7)
+### 16. Nose boom Ø8/int6 aluminium + Ø3 aft spar (ADR-0043 — guide §6.7)
 
 ```bash
 python3 boom_flexion.py
@@ -312,12 +339,12 @@ User decision 2026-08-06: the battery boom is an **aluminium tube Ø8 / int Ø6
 the V1 fin near the trailing edge; carbon optimisation deferred (ADR-0015).
 
 - **Pure cantilever REJECTED** (`[D]`): +6 g with the 445 g pack →
-  σ 278 MPa vs 276 (6061-T6), δ 39 mm, first mode 6.2 Hz.
-- **Two-support arrangement ADOPTED** (`[D]`): pack at −373 mm between the forward
-  support (x ≈ −473) and CORE support (x ≈ −132) → σ 56 MPa (FS 4.96),
-  δ 1.6 mm, mode 25.3 Hz. The cradle is a structural requirement, not
+  σ 266 MPa vs 276 (6061-T6), δ 34 mm.
+- **Two-support arrangement ADOPTED** (`[D]`): pack at −359.6 mm between the forward
+  support (x ≈ −459) and CORE support (x ≈ −132) → σ 54 MPa (FS 5.08),
+  δ 1.4 mm, mode 27.0 Hz. The cradle is a structural requirement, not
   packaging.
-- Mass: 391 mm tube 23.2 g + cradle 15 g = **38.2 g**; tip skid = crush zone.
+- Mass: 377 mm tube 22.4 g + cradle 15 g = **37.4 g**; tip skid = crush zone.
 - Ø3 fin spar: 3.0 mm root EI ×1.60 (0.278 + 0.463 N·m²), 5.7 g.
 - Twelve validation cases must pass.
 

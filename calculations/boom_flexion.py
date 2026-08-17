@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
 Nose-boom and rear-fin structural check for PROTOTYPE 0.1 (updated for
-ADR-0040): the battery boom is an ALUMINIUM tube Ø8x1.0 (ext 8, int
+ADR-0040/0043): the battery boom is an ALUMINIUM tube Ø8x1.0 (ext 8, int
 6 mm — the designer already owns it) and a Ø3 mm aluminium tube is added
 aft, near the trailing edge, as the V1 fin / rear-pod stiffener. Carbon
 optimisation is deferred (documented as pending, ADR-0015 revision).
 
 WHY THIS SCRIPT EXISTS: the printed boom (70x32 mm box, 0.9 mm skin, <= 40 g
-target, OP-24) carries the 445 g 6S1P pack at x ~= -374 with supports at the
-front cradle face (x ~= -475) and the CORE (x = -132) — a 343 mm span. Replacing the
+target, OP-24) carries the 445 g 6S1P pack at x ~= -360 with supports at the
+front cradle face (x ~= -459) and the CORE (x = -132) — a 327 mm span. Replacing the
 box by a Ø8 aluminium tube changes stiffness by ~250x and strength by ~4x in
 section properties; the governing question is whether the TUBE ALONE can
 carry the pack, and under which support arrangement.
 
 KEY FINDING: the Ø8x1.0 tube remains unacceptable as a pure cantilever at
 +6 g, but passes as a simply-supported beam with the pack between the two
-supports. The ADR-0040 geometry (pack centred near -374, front support near
--475 and CORE support at -132) is exactly a two-support configuration — the printed cradle around
+supports. The ADR-0043 geometry (pack centred near -360, front support near
+-459 and CORE support at -132) is exactly a two-support configuration — the printed cradle around
 the pack is what makes it work.
 
 Loads: pack 445 g [D] (I-16), FPV camera ~15 g at the tip (short cantilever),
@@ -68,7 +68,7 @@ def tube_i(d_ext, d_int):
 
 def main():
     print("=" * 74)
-    print("NOSE BOOM Ø8x1.0 ALUMINIUM + Ø3 AFT STIFFENER — ADR-0040")
+    print("NOSE BOOM Ø8x1.0 ALUMINIUM + Ø3 AFT STIFFENER — ADR-0040/0043")
     print("=" * 74)
 
     i_t = tube_i(D_T, D_I)
@@ -183,8 +183,8 @@ def main():
     check(f"Cantilever σ at +6 g in 260-300 MPa band (got {sig_cl/1e6:.0f})",
           260 < sig_cl / 1e6 < 300)
     d_cl = f_cl * L ** 3 / (3 * E_AL * i_t)
-    check(f"Cantilever δ at +6 g in 35-45 mm band (got {d_cl*1000:.0f})",
-          35 < d_cl * 1000 < 45)
+    check(f"Cantilever δ at +6 g in 30-38 mm band (got {d_cl*1000:.0f})",
+          30 < d_cl * 1000 < 38)
     # two-support point load at the current solved station
     mp = N_MAX * M_PACK * G * a * b / L
     check(f"Two-support M in 1.7-2.0 N·m band (got {mp:.2f})",

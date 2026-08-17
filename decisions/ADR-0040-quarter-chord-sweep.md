@@ -6,6 +6,10 @@
 **Calculation:** [sweep_trade.py](../calculations/sweep_trade.py)
 **Feeds:** guide §§3/5/9, OP-01, OP-03, OP-23, OP-29, ADR-0003
 
+> **v0.3 update:** the sweep selection remains active. Its provisional profile/mass
+> inputs in the trade table are superseded by ADR-0041 and ADR-0043; current trim is
+> −0.06°…+0.39° neutral elevon and the 6S1P station is −359.6 mm.
+
 ## Context
 
 The −20° quarter-chord sweep was inherited from the concept geometry. It had not been
@@ -65,8 +69,8 @@ coupon/wing measurements close E7.
   span, area, taper, sweep, thickness schedule and planform stations.
 - The nominal design closes with 3.0° printed wash-in plus approximately 0.59° equivalent
   permanent reflex; the final airfoil polars must verify this before CAD freeze.
-- The 6S1P P42A pack station becomes approximately −373 mm and is inside the one-layer
-  cradle. The 4S1P and both 2P packs do not satisfy the present one-layer balance envelope.
+- Under the current ADR-0043 allocation, the 6S1P P42A pack station is −359.6 mm and
+  lies inside the one-layer cradle. Other packs require separate module closure.
 - The conservative unmeasured divergence case supports an initial limit of **105 km/h**.
   If the Gxy-plane stiffness coupon validates the corresponding model, the calculated
   limit becomes **150 km/h**. These are test gates, not structural promises.

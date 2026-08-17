@@ -1,6 +1,6 @@
 # ADR-0003 — Wash-in twist for trim (forward sweep)
 
-**Status:** 🔄 Provisional · **Date:** 2026-07-27 · **Reviewed:** 2026-08-17 · **Confidence:** Medium · **Reversible:** Partial
+**Status:** ✅ Active · **Date:** 2026-07-27 · **Reviewed:** 2026-08-17 · **Confidence:** Medium `[D]` · **Reversible:** Partial
 **Research:** [I-02 — Tailless trim and forward sweep](../research/I-02-tailless-trim.md), I-07, I-15
 
 ## Context
@@ -18,19 +18,17 @@ symmetric: aft sweep needs **wash-out** (tip down, subtracts lift), forward swee
 
 **Geometric twist of the wash-in type** (project sign: ε positive = tip at higher
 incidence), linear root → tip, applied as a rotation of each section about the spanwise
-axis through the local c/4 point. Guide §5.3: **ε = +3.0° at the tip** (PROVISIONAL
-cap), bounded by the torsion window: the section-Cl screen retains 0.012 margin at the
-1.620 kg O1 design mass (`ventana_torsion.py`). Keep the value parametric.
+axis through the local c/4 point. Guide §5.3: **ε = +3.0° at the tip**, bounded by the
+torsion window. Keep the value parametric until E2 measures the released r1 sections.
 
 ## Rationale `[D]`
 
 Trim requirement at SM 8 %: Cm0_req = CL·SM = 0.132 × 0.08 = **0.0106**. On the −15°
 planform the VLM gives +0.00249 Cm per degree of full-span wash-in and +0.00256 Cm per
-degree of elevon incidence over 30–90 % half-span. The favourable provisional
-MH60→13.5 % moment (cm0 +0.0016) therefore needs 3.60° equivalent: 3.0° printed wash-in
-plus ≈ 0.6° permanent reflex. The adverse Ncrit-12 polar (cm0 −0.0018) requires ≈ 1.9°
-reflex and fails the cap (`elevon_authority.py`). Final B3 polars are a CAD-freeze gate,
-even though 5° of actuator travel provides 2.6× the limiting trim deficit.
+degree of elevon incidence over 30–90 % half-span. ADR-0041 integrates the released r1
+root/tip moments with c² weighting: +3.0° wash-in closes neutral trim at
+**−0.06°…+0.39° elevon** over Ncrit 10/12. Five degrees of actuator travel provides
+12.8× the limiting residual (`elevon_authority.py`).
 
 ## Consequences
 
@@ -38,10 +36,9 @@ even though 5° of actuator travel provides 2.6× the limiting trim deficit.
   and ahead of the CG — I-02).
 - **Elastic wash-in is dangerous:** aeroelastic divergence also produces wash-in (I-02,
   I-05). The two add up and grow with dynamic pressure — the value is a *setting*, not a
-  fixed property; it is re-derived when the final airfoil Cm0 is fixed (**C5**) and
-  verified in flight (E7).
+  fixed property; it is verified against the r1 section behavior in E2 and in flight E7.
 - Keep the twist **parametric in CAD** (guide §5.2).
 
 ## Review conditions
 
-C5 closure (torsion window with the B3 airfoil), then E2/E7 flight data.
+Review if E2 moment/stall data move neutral trim outside ±0.6°, then verify in E7.

@@ -62,10 +62,12 @@ F1 (geometry, NP)
 |---|---|---|---|
 | P1 | Per-component mass model (shell, carbon, servos, wiring, avionics) | Basis for real CG | Frozen OML (F1) |
 | P2 | Parametric CAD model of CORE-1 and PANEL-1300 with per-material densities | Replaces the estimated mass table with real geometry | **Fusion 360** — see §8 |
-| P3 | Verify R-CG: CG within ±5 mm in 4S1P, 4S2P, 6S1P, 6S2P | R-CG (docs/00, §3.3) | P1, P2 |
-| P4 | If P3 fails: redesign bay / move CORE relative to the NP | C4 of `03-phase-1-plan.md` | P3 |
+| P3 | Verify R-CG and mass in CAD for the **6S1P Article #1**; record the station of every optional power module separately | R-CG (docs/00, §3.3), ADR-0043 | P1, P2 |
+| P4 | If Article #1 fails: redesign cradle / move equipment relative to the NP | C4 of `03-phase-1-plan.md` | P3 |
 
-**Known risk:** `03-phase-1-plan.md` already marks "R-CG not met with 6S2P" as **High** probability and takes it as assumed — 6S2P stays out of the cruise envelope, documented, no need to rediscover it.
+**Known constraint:** Article #1 is 6S1P. A 4S or 2P installation is a separate power
+module with its own motor, carrier and CG closure; the common airframe is not required
+to interchange all historical packs (ADR-0042/0043).
 
 ---
 
@@ -169,7 +171,7 @@ The server is a third-party Beta project, not Autodesk. If it is abandoned or br
 ## 9. Exit gates — consolidated checklist
 
 - [ ] **F1** — complete checklist of `03-phase-1-plan.md §4`
-- [ ] **F2** — R-CG verified in CAD for 4S1P, 4S2P, 6S1P, 6S2P
+- [ ] **F2** — Article #1 6S1P R-CG and the 1583.5/1620.2 g CLEAN/V1 allocations verified in CAD and on scales
 - [ ] **F3** — D3/D4 completed, matching table published
 - [ ] **F4** — n_max/n_min fixed, GJ/EI verified on the real section, elevon authority confirmed (S5), G6 sweep factor computed on the real section
 - [ ] **F5** — instrumentation chain operational and validated on an existing platform (D2), G9 resolved
@@ -178,6 +180,7 @@ The server is a third-party Beta project, not Autodesk. If it is abandoned or br
 ## 10. What this plan does not cover
 
 - It sets no calendar dates — the repo has no `[M]` data to estimate them.
-- It does not prescribe motor or battery — see [ADR-0033](../decisions/ADR-0033-electronics-out.md).
+- It prescribes the Article #1 power-module envelope but keeps future modules open — see
+  [ADR-0033](../decisions/ADR-0033-electronics-out.md) and ADR-0042/0043.
 - It does not replace any existing ADR or research thread — it only sequences them.
 - It does not authorize skipping F1: while G1/G2/G8 remain open, F2 onward has no valid input.
