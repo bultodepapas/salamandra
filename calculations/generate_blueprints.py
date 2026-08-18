@@ -87,6 +87,8 @@ class DrawingContract:
     fin_ac_m: float = 0.285
     fin_aspect_ratio: float = 3.0
     fin_root_thickness_m: float = 0.003
+    equipment_top_scale: float = 6.5
+    equipment_side_scale: float = 4.0
 
 
 CONTRACT = DrawingContract()
@@ -1125,8 +1127,9 @@ def draw_side_elevations() -> SvgSheet:
 
 
 def draw_equipment_mass_skeleton() -> SvgSheet:
-    """Draw the equipment-only mass skeleton from the 3D component ledger."""
-    scale = 4.0
+    """Draw the mass skeleton over a controlled top-view planform context."""
+    top_scale = CONTRACT.equipment_top_scale
+    side_scale = CONTRACT.equipment_side_scale
     top_origin = (137.0, 137.0)
     side_origin = (330.0, 73.0)
     clean, clean_battery_x = equipment_layout.solve_battery_x(
@@ -1170,31 +1173,32 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
 
     def top_point(x_mm: float, y_mm: float) -> tuple[float, float]:
         return (
-            top_origin[0] + x_mm / scale,
-            top_origin[1] + y_mm / scale,
+            top_origin[0] + x_mm / top_scale,
+            top_origin[1] + y_mm / top_scale,
         )
 
     def side_mass_point(x_mm: float, z_mm: float) -> tuple[float, float]:
         return (
-            side_origin[0] + x_mm / scale,
-            side_origin[1] - z_mm / scale,
+            side_origin[0] + x_mm / side_scale,
+            side_origin[1] - z_mm / side_scale,
         )
 
     def top_box(component: equipment_layout.Component3D) -> tuple[float, ...]:
         minimum, maximum = component.aabb()
         x0, y0 = top_point(minimum[0], minimum[1])
-        return x0, y0, (maximum[0] - minimum[0]) / scale, (
+        return x0, y0, (maximum[0] - minimum[0]) / top_scale, (
             maximum[1] - minimum[1]
-        ) / scale
+        ) / top_scale
 
     def side_box(component: equipment_layout.Component3D) -> tuple[float, ...]:
         minimum, maximum = component.aabb()
         x0, y0 = side_mass_point(minimum[0], maximum[2])
-        return x0, y0, (maximum[0] - minimum[0]) / scale, (
+        return x0, y0, (maximum[0] - minimum[0]) / side_scale, (
             maximum[2] - minimum[2]
-        ) / scale
+        ) / side_scale
 
     top_reference_offsets = {
+        "battery_6s1p": (6.0, -7.5),
         "motor": (-4.0, -7.0),
         "prop_adapter": (3.5, 7.0),
         "propeller": (5.0, -5.0),
@@ -1204,6 +1208,8 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         "receiver_antenna": (0.0, -8.0),
         "pitot_sensor": (-5.0, 7.0),
         "buzzer": (6.0, -7.0),
+        "o4_camera": (0.0, 7.5),
+        "o4_vtx": (-6.0, -7.5),
         "avionics_installation_reserve": (20.0, 11.0),
     }
     side_reference_offsets = {
@@ -1268,30 +1274,76 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
 
     sheet = SvgSheet(
         "Salamandra equipment mass skeleton",
-        "Metric A3 equipment-only orthographic drawing generated from the three-dimensional component ledger. It shows CLEAN component envelopes and mass centres, the battery travel and V1 battery-stop overlay, without an airframe, outer mould line or manufacturing geometry.",
+        "Metric A3 orthographic mass-skeleton drawing generated from the three-dimensional component ledger. The top view places CLEAN component envelopes and mass centres over the controlled wing planform for spatial context; the side view shows the battery travel and V1 battery-stop overlay. No fuselage outer mould line, wing construction or manufacturing geometry is defined.",
         "SLM-EQP-001",
     )
     title_block(
         sheet,
         "EQUIPMENT MASS SKELETON",
         "SLM-EQP-001",
-        "TOP / SIDE 1:4",
+        "TOP 1:6.5 · SIDE 1:4",
         "SOURCE: equipment_layout.py · equipment_catalog.py · P42A MAX CAD ENVELOPE",
         title_font_size=3.55,
     )
     sheet.text(
         210,
         249,
-        "DRAFT · EQUIPMENT ONLY · NO AIRFRAME / OML",
+        "DRAFT · MASS SKELETON + PLANFORM CONTEXT · NO OML",
         "watermark",
         "middle",
     )
 
+    # Controlled planform context.  It shares the top-view datum and scale with
+    # every component, but does not represent wing skin, structure or an OML.
+    wing_outline = [
+        top_point(x_le(HALF_SPAN) * 1000.0, -HALF_SPAN * 1000.0),
+        top_point(x_le(0.0) * 1000.0, 0.0),
+        top_point(x_le(HALF_SPAN) * 1000.0, HALF_SPAN * 1000.0),
+        top_point(x_te(HALF_SPAN) * 1000.0, HALF_SPAN * 1000.0),
+        top_point(x_te(0.0) * 1000.0, 0.0),
+        top_point(x_te(HALF_SPAN) * 1000.0, -HALF_SPAN * 1000.0),
+    ]
+    sheet.polyline(
+        wing_outline,
+        "outline",
+        close=True,
+        id="equipment-wing-planform-context",
+        style=(
+            "fill:#dbe7ee;fill-opacity:.30;stroke:#334a5a;"
+            "stroke-width:.48"
+        ),
+    )
+    sheet.polyline(
+        [
+            top_point(x_c4(HALF_SPAN) * 1000.0, -HALF_SPAN * 1000.0),
+            top_point(x_c4(0.0) * 1000.0, 0.0),
+            top_point(x_c4(HALF_SPAN) * 1000.0, HALF_SPAN * 1000.0),
+        ],
+        "derived",
+        id="equipment-wing-quarter-chord-context",
+        style="fill:none;stroke:#6d8796;stroke-width:.3;stroke-dasharray:5 1.5",
+    )
+    sheet.leader(
+        *top_point(x_le(0.55) * 1000.0, -550.0),
+        61,
+        57,
+        "CONTROLLED WING PLANFORM [D]",
+    )
+
     # Orthographic datums.  Forward is negative x and starboard is positive y.
     sheet.text(18, 20, "A · TOP VIEW · CLEAN", "sheet-subtitle")
-    sheet.text(18, 25, "x/y ENVELOPES + COMPONENT MASS CENTRES", "micro")
+    sheet.text(
+        18,
+        25,
+        "x/y ENVELOPES + MASS CENTRES · WING CONTEXT [D]",
+        "micro",
+    )
     sheet.line(*top_point(-485.0, 0.0), *top_point(255.0, 0.0), "centre")
-    sheet.line(*top_point(0.0, -420.0), *top_point(0.0, 420.0), "centre")
+    sheet.line(
+        *top_point(0.0, -HALF_SPAN * 1000.0),
+        *top_point(0.0, HALF_SPAN * 1000.0),
+        "centre",
+    )
     sheet.line(52, 31, 29, 31, "medium", marker_end="url(#arrow-end)")
     sheet.text(55, 32, "FORWARD · −x", "label")
     sheet.line(18, 38, 18, 53, "medium", marker_end="url(#arrow-end)")
@@ -1500,7 +1552,7 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         "SERVOS: E04/E05 = 1 PER ELEVON AT y=390 mm · E02/E03 RETIRED WITH 4-SERVO CONCEPT.",
         "COLOUR = SYSTEM FUNCTION · SOLID = MEASURED/CONTROLLED · AMBER DASH = OPEN.",
         "R = unresolved reserve · U = outside released budget · dimensions are envelopes.",
-        "NO FUSELAGE, WING SKIN, FAIRING OR MANUFACTURING SURFACE IS DEFINED HERE.",
+        "WING OUTLINE = CONTROLLED PLANFORM CONTEXT [D]; NO SKIN, STRUCTURE, FUSELAGE OR OML.",
     ], "micro", 4.1)
     provenance_legend(sheet, 214, 103)
     sheet.text(282, 99.5, "SYSTEM COLOUR (FILL)", "micro")
@@ -1745,6 +1797,9 @@ def validate_contract() -> dict[str, bool]:
     checks = {
         "canonical geometry validation passes": all(validate_geometry().values()),
         "drawing half-span matches design contract": abs(CONTRACT.segment_joints_m[-1] - HALF_SPAN) < 1e-12,
+        "equipment top scale fits the complete 1300 mm span in 200 mm": abs(
+            2.0 * HALF_SPAN * 1000.0 / CONTRACT.equipment_top_scale - 200.0
+        ) < 1e-12,
         "CORE join is at 30 percent half-span": abs(CONTRACT.core_half_span_m / HALF_SPAN - 0.30) < 1e-12,
         "panel segment spans are 152/151/152 mm": all(
             abs(actual - expected) < 1e-9
@@ -1906,6 +1961,11 @@ def validate_svg(source: str, filename: str, drawing_number: str) -> dict[str, b
             and sum(child.tag.endswith("path") for child in cg_group) == 2
         )
     if drawing_number == "SLM-EQP-001":
+        element_by_id = {
+            element.attrib.get("id"): element
+            for element in elements
+            if element.attrib.get("id")
+        }
         cg_groups = {
             element.attrib.get("id"): element
             for element in elements
@@ -1917,6 +1977,17 @@ def validate_svg(source: str, filename: str, drawing_number: str) -> dict[str, b
                 sum(child.tag.endswith("path") for child in group) == 2
                 for group in cg_groups.values()
             )
+        )
+        checks[f"{filename}: controlled wing planform context is present"] = (
+            element_by_id.get("equipment-wing-planform-context") is not None
+            and element_by_id["equipment-wing-planform-context"].tag.endswith(
+                "polygon"
+            )
+            and element_by_id.get("equipment-wing-quarter-chord-context")
+            is not None
+        )
+        checks[f"{filename}: mixed orthographic scales are declared"] = (
+            "TOP 1:6.5 · SIDE 1:4" in labels
         )
         checks[f"{filename}: functional colour legend is complete"] = all(
             label in labels

@@ -43,7 +43,7 @@ PETG_DENSITY_KG_M3 = 1270.0    # 1.27 g/cm3, project material contract [M]/[E]
 # Aerodynamic and mass contract used by coupled performance calculations.
 CL_MAX_WING = 0.589           # I-07 wing value [D], pending E2
 STATIC_MARGIN = 0.08
-ARTICLE_CLEAN_MASS_KG = 1.55925
+ARTICLE_CLEAN_MASS_KG = 1.55325
 V1_FIN_MASS_CAP_KG = 0.03672          # allocation target retained by ADR-0043
 V1_FIN_SHELL_MOUNT_LOWER_KG = 0.03731 # current V1a analytical lower model [E]
 V1_FIN_SPAR_MASS_KG = 0.00570         # mandatory aluminium spar [D]/[E]
@@ -58,6 +58,18 @@ TIP_CHORD = TAPER * ROOT_CHORD
 MAC = (2.0 / 3.0) * ROOT_CHORD * (1.0 + TAPER + TAPER**2) / (1.0 + TAPER)
 Y_MAC = (B / 6.0) * (1.0 + 2.0 * TAPER) / (1.0 + TAPER)
 ASPECT_RATIO = B**2 / S
+
+# Article #1 control-surface contract (ADR-0045 / I-27).  The 35 % inboard
+# limit creates a fixed 32.5 mm trailing-edge bridge outboard of the removable
+# CORE/PANEL joint; the 90 % limit preserves a fixed 65 mm wingtip.
+ELEVON_ETA_IN = 0.35
+ELEVON_ETA_OUT = 0.90
+ELEVON_HINGE_XC = 0.72
+ELEVON_CHORD_FRACTION = 1.0 - ELEVON_HINGE_XC
+ELEVON_INBOARD_M = ELEVON_ETA_IN * HALF_SPAN
+ELEVON_OUTBOARD_M = ELEVON_ETA_OUT * HALF_SPAN
+ELEVON_SPAN_M = ELEVON_OUTBOARD_M - ELEVON_INBOARD_M
+ELEVON_SERVO_STATION_M = 0.5 * (ELEVON_INBOARD_M + ELEVON_OUTBOARD_M)
 
 STATION_Y = (0.000, 0.130, 0.195, 0.325, 0.347, 0.4875, 0.498, 0.585, 0.650)
 
@@ -184,6 +196,14 @@ def validate_geometry():
             isclose(thickness_ratio(0.0), ROOT_TC)
             and isclose(thickness_ratio(HALF_SPAN), TIP_TC)),
         "canonical aspect ratio is six": isclose(ASPECT_RATIO, 6.0, rel_tol=5e-3),
+        "Article #1 elevon spans 35--90 percent half-span": (
+            isclose(ELEVON_INBOARD_M, 0.2275, abs_tol=1e-12)
+            and isclose(ELEVON_OUTBOARD_M, 0.585, abs_tol=1e-12)
+            and isclose(ELEVON_SPAN_M, 0.3575, abs_tol=1e-12)),
+        "Article #1 elevon chord closes at the hinge": isclose(
+            ELEVON_HINGE_XC + ELEVON_CHORD_FRACTION, 1.0, abs_tol=1e-12),
+        "Article #1 servo is at elevon midspan": isclose(
+            ELEVON_SERVO_STATION_M, 0.40625, abs_tol=1e-12),
         "mission power identity is 109.25 W": isclose(
             electrical_power_limit_w(), 109.25, abs_tol=1e-12),
         "reference BEC efficiency is physical":
@@ -202,9 +222,9 @@ def validate_geometry():
             ARTICLE_CLEAN_MASS_KG + V1_FIN_SHELL_MOUNT_LOWER_KG
             + V1_FIN_SPAR_MASS_KG,
             abs_tol=1e-12),
-        "two-servo V1 allocation stall rounds to 44.7 km/h": isclose(
+        "two-servo V1 allocation stall rounds to 44.6 km/h": isclose(
             stall_speed(ARTICLE_V1_ALLOCATION_MASS_KG) * 3.6,
-            44.7, abs_tol=0.05),
+            44.6, abs_tol=0.05),
         "two-servo analytical V1 remains below the 45 km/h ceiling":
             stall_speed(ARTICLE_V1_MASS_KG) * 3.6 < STALL_SPEED_LIMIT_KMH,
     }
