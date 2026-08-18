@@ -6,6 +6,150 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ## [Unreleased] — 2026-08-18
 
+**C43 — Three verification checks could not fail, and the suite was never run by CI.**
+
+- `balance_cg.py` asserted "VLM/Weissinger NP agreement < 5 mm" by comparing **two
+  hardcoded literals** to each other; `generate_blueprints.py` carried the same check. It
+  could only fail if a human edited one of the two numbers, and verified nothing about the
+  solvers. Replaced by a live re-derivation of both methods (`aero_contract.py`).
+- The companion check "SM is 8 percent MAC" evaluated
+  `abs((NP_VLM - CG_TARGET) / MAC - 0.08)` where `CG_TARGET := NP_VLM - STATIC_MARGIN*MAC`
+  — algebraically the identity `abs(STATIC_MARGIN - 0.08)`. Worse, it hardcoded `0.08`
+  instead of reading `STATIC_MARGIN`, so a legitimate revision of the static margin would
+  have turned it **red for the wrong reason**. It now reads the contract and compares the
+  solved layout CG against the derived target.
+- `servo_torque.py` asserted that the per-servo torque equalled the elevon hinge moment,
+  with `HORN_RADIUS_RATIO = 1.0` and `N_SERVOS_PER_ELEVON = 1` — true by construction.
+  Replaced by a parameterised lever-arm test: two actuators must halve the demand, and
+  halving the horn ratio must halve it again.
+- `flight_envelope.py` **asserted that a problem exists**: the reference-gust check
+  required the gust to breach the +6/−3 limits. Had the design improved, the suite would
+  have reported a failure for a good outcome. It is now a printed diagnostic under `G11`.
+- `vlm_ala_volante.py` accepted the lift slope "within 8 percent of Helmbold" — wider than
+  any error the discretisation makes, and blind to correction **C17** (a missing MAC
+  normalisation), which is the defect class it was supposed to guard. Replaced by exact
+  linear-model identities (linearity in α, twist superposition, spanwise symmetry), a
+  bounded mesh-convergence statement, and a direct **C17 guard**: re-taking the pitching
+  moment about the computed neutral point must give dCm/dCL = 0.
+- Root cause of the whole class: nothing measured whether the suite could fail.
+  `calculations/mutation_test.py` now seeds 19 deliberate defects — sign flips, dropped
+  normalisations, desynchronised copies — and requires each to turn at least one check
+  red. Three survived the first run and were real holes; all 19 are now caught.
+- `.github/workflows/docs.yml` ran exactly one Python step, `generate_blueprints.py
+  --check`. It never ran `verify_calculations.py`. A new required workflow,
+  `.github/workflows/calculations.yml`, runs the contracts, every deterministic script,
+  the contract lint and the mutation test on a Python × numpy matrix.
+- **No geometry, mass or aerodynamic result changed.** What changed is that the checks
+  protecting them can now fail.
+
+---
+
+**C42 — Drag was treated three incompatible ways, one of them forbidden by ADR-0009.**
+
+- `CLAUDE.md` and ADR-0009 are explicit: never use a single Oswald factor; always separate
+  the viscous term from the induced one. That rule exists because conflating them produced
+  correction **C1**. The project honoured it in exactly one place: `yaw_stability.py` held
+  `CD_PROFILE_CRUISE = 0.0136` and `SPAN_EFFICIENCY = 0.85` as local literals and added the
+  induced term separately. `launch_speed.py` used a single lumped `CD_LAUNCH = 0.08` `[E]`
+  with no decomposition at all, and `propulsion_match.py` inverted an *allowable* drag from
+  the power budget without a polar.
+- `calculations/drag_model.py` is now the single polar, returning the two terms separately
+  so a caller that conflates them has to do so visibly. `yaw_stability` and `launch_speed`
+  both consume it.
+- The decomposition alone gives CD ≈ 0.035 at launch incidence — **2.3× lower** than the
+  retired lumped estimate. Adopting that outright would have made the hand-launch analysis
+  markedly more optimistic on drag with no new evidence, which is precisely the unwarranted
+  -transfer failure mode of **C7/C12**. Instead the launch CD is carried as a declared band
+  whose conservative end reproduces the retired 0.08, and the release gate is judged on
+  that end, because higher drag is what makes reaching V_release harder. **The published
+  launch conclusions are unchanged** (typical throw 12.9 m/s vs V_stall 12.4 m/s).
+- `launch_speed.py` also gained the term it was missing entirely: the along-path equation
+  was `m dV/dt = T − ½ρV²S·CD`, with **no gravity component and no declared flight-path
+  angle**. Below V_stall the wing cannot carry the weight by definition, so the trajectory
+  is not level and the sign of the model's conservatism was unstated. The equation is now
+  `m dV/dt = T − ½ρV²S·CD − m g sin γ` with γ declared, banded (−10°/0°/+10°) and
+  propagated; the released level throw is shown to be the conservative end against a
+  descent.
+
+---
+
+**C41 — The speed ladder had no ordering invariant, and V_A sits above the speed being
+used as V_C.**
+
+- Five speeds (45 / 95 / 105 / 160 / 180 km/h) carried five different roles and **nothing
+  asserted their order**. Any single edit could silently invert two roles.
+- Worse, `flight_envelope.py` used the 105 km/h initial limit as the Part 23 design
+  cruising speed `V_C` in the discrete-gust schedule, while the manoeuvring speed at the
+  +6 g limit is **107.9 km/h (CLEAN) and 109.4 km/h (V1)** — above it. In a V-n
+  construction `V_C ≥ V_A` is a structural premise, not a convention. Resolved by
+  declaring 105 km/h an **operational cap**, not a `V_C`: the module labels its screening
+  speeds accordingly and `design_config.validate_geometry` now asserts the relationship
+  explicitly rather than leaving it silent.
+- `divergence.py` publishes a first-flight clearance of 110 km/h at the conservative band
+  while V_NE 160 and a 180 km/h structural case sit in the same contract. That clearance is
+  now an exported function, `operational_speed_limit_kmh()`, and the shared harness asserts
+  the operational cap respects it. **G6 remains open**: the conservative V_div of 129.6
+  km/h is still short of the 240 km/h criterion, and that is reported, not asserted away.
+- `V_NE` also meant two different speeds: `divergence.V_NE` was 160 km/h and
+  `yaw_stability.V_NE` was 180 km/h, and the harness codified the confusion. Renamed to
+  `V_ARTICLE_NE` and `V_STRUCTURAL`.
+- **No speed value changed.** What changed is that they now have declared roles, an
+  asserted order, and one name each.
+
+---
+
+**C40 — Two irreconcilable yaw inertias, and a declared band that the code could not
+propagate.**
+
+- `yaw_stability.py` carried `I_z = 0.28 kg·m²` `[E]` with a `(0.23, 0.33)` band, while
+  `equipment_layout.py` computed **0.1587 kg·m²** from the released three-dimensional mass
+  model of the same aircraft. A factor **1.76** disagreement, with the computed value lying
+  entirely outside the declared band, and nothing cross-checking the two. The harness
+  accepted both in the same run.
+- The 2-DOF yaw mode scales as 1/√I_z, so the published frequency was **33 % low**.
+  Resolved in favour of the traceable `[D]` derivation: `yaw_inertia()` now reads the 3-D
+  mass model, and a contract check requires the two to agree within 10 %.
+- **Published result moves.** The V1a reduced 2-DOF pair goes from
+  λ = −0.794 ± 3.948j (ω_n 4.03 rad/s, ζ 0.197) to **λ = −1.233 ± 5.205j (ω_n 5.35 rad/s,
+  ζ 0.231)**. The qualitative conclusion is unchanged and slightly strengthened: the mode
+  is damped, and now stays damped across the whole declared band.
+- The residual uncertainty is the idealisation itself — `equipment_layout` represents every
+  part as an oriented cuboid, which captures the spanwise mass stations but not the
+  distribution inside each shell. That is carried as a declared ±15 % band and, unlike its
+  predecessor, is **actually propagated**: the old `IZ_BAND` appeared exactly once in the
+  repository, its own definition, and `yaw_modes()` had no inertia parameter at all, so the
+  band was unpropagatable by construction.
+
+---
+
+**C39 — The published neutral point was a hand-copied literal quoted from an unconverged
+mesh.**
+
+- `balance_cg.py` declared `NP_VLM = -75.8e-3` and `NP_WL = -72.9e-3` as constants, with
+  `CG_TARGET = NP_VLM − STATIC_MARGIN·MAC` built on top. The CG target propagates to the
+  3-D equipment layout, the yaw model, the battery solve and the drawing set. **Nothing
+  re-derived it.** A change to span, area, taper or sweep moved the real neutral point and
+  left the literal untouched — the project's most repeated correction (failure mode #3,
+  C6) written into the source of its most consequential number.
+- `calculations/aero_contract.py` now derives and caches the neutral point, and the
+  published values are retained only as **regression anchors with an explicit ±0.5 mm
+  tolerance**. Re-derivation reproduces both: VLM −75.79 mm, Weissinger-L −72.90 mm.
+- The published pair was quoted at VLM 40×6 and Weissinger ny=100 while the cross-check ran
+  at 24×4 and ny=60, and `elevon_sizing` used 80×6. Measured convergence: the VLM neutral
+  point runs −76.895 mm (12×3) → −75.482 mm (120×14), Richardson limit ≈ −75.43 mm; the
+  Weissinger value runs −73.966 mm (ny=20) → −72.718 mm (ny=300), limit ≈ −72.65 mm. So the
+  published figures carried ≈ 0.36 mm and ≈ 0.25 mm of **undeclared discretisation error**,
+  quoted to 0.1 mm on top of a 2.9 mm method spread — false precision, failure mode #2.
+  `VLM_NY`, `VLM_NX` and `WEISSINGER_NY` are now canonical, and a convergence assertion
+  bounds the mesh error at 0.4 mm instead of leaving it unmeasured.
+- `docs/09-release-v0.2.md` stated **−75.9 mm** on line 66 and **−75.8 mm** on lines 44 and
+  110. The drift had already reached the documents. Corrected to the released value.
+- Numerical effect of the change: the CG target moves by **0.017 mm** and the reference
+  battery station by **0.04 mm**, against a ±5 mm CG tolerance. Nothing physical moved;
+  what moved is that it is now re-derived on every run.
+
+---
+
 **C38 — The documentation CI could not run, so no gate was actually enforcing anything.**
 
 - `npm ci` failed on every job: `wiki/package-lock.json` was missing the optional

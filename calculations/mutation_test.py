@@ -159,9 +159,16 @@ MUTATIONS = (
         _set_attr("design_config", "ELEVON_HINGE_XC", 0.65),
     ),
     Mutation(
-        "controls: servo torque conversion reverts to project gravity",
-        "kgf is defined by standard gravity, not by the project's G0.",
-        _scale_attr("servo_torque", "TORQUE_SAFETY_FACTOR", 0.5),
+        "controls: elevon span fractions desynchronised across modules",
+        "The elevon geometry is consumed by servo_torque, elevon_sizing and "
+        "equipment_layout; they must not be allowed to disagree.",
+        _set_attr("servo_torque", "ETA_IN", 0.30),
+    ),
+    Mutation(
+        "controls: the servo torque safety factor is dropped",
+        "A missing factor makes the margin look better, which is exactly the "
+        "direction a check must still catch.",
+        _set_attr("servo_torque", "TORQUE_SAFETY_FACTOR", 1.0),
     ),
     Mutation(
         "drag: the induced term is folded into a single Oswald factor",

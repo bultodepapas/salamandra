@@ -31,7 +31,23 @@ from design_config import (
 
 ELEVON_CHORD_FRAC = ELEVON_CHORD_FRACTION
 ETA_IN, ETA_OUT = ELEVON_ETA_IN, ELEVON_ETA_OUT
-CH_RANGE = (0.01, 0.05)       # hinge-moment coefficient [E]
+# Hinge-moment coefficient.  Ch = Ch_alpha*alpha + Ch_delta*delta, so a bare
+# range means nothing without the (alpha, delta) it belongs to.  The band below
+# is declared against an explicit deflection budget so it can be checked against
+# what the control modules actually command, instead of floating free.
+#
+#   DELTA_TRIM_DEG      cruise trim from elevon_sizing.pitch_result (Ncrit 10-12)
+#   DELTA_MANOEUVRE_DEG additional deflection credited at the manoeuvre corner
+#   DELTA_SIZING_DEG    the total the Ch band is declared to cover
+#
+# The sizing case remains the 180 km/h structural speed at full authority: that
+# combination is deliberately conservative, and the check below states the
+# margin between the commanded and the covered deflection instead of leaving it
+# unexamined.
+DELTA_TRIM_DEG = 0.6          # +/- cruise trim envelope [D], I-27/ADR-0045
+DELTA_MANOEUVRE_DEG = 9.4     # manoeuvre allowance on top of trim [E]
+DELTA_SIZING_DEG = DELTA_TRIM_DEG + DELTA_MANOEUVRE_DEG
+CH_RANGE = (0.01, 0.05)       # hinge-moment coefficient at DELTA_SIZING_DEG [E]
 N_SERVOS_PER_ELEVON = 1
 HORN_RADIUS_RATIO = 1.0       # servo horn / control horn [E], CAD upper bound
 LINKAGE_EFFICIENCY = 0.80     # joints, horn alignment and compliance [E]
@@ -110,6 +126,11 @@ def main():
           f"area={area*1e4:.0f} cm2")
     print(f"  Structural sizing speed={speed*3.6:.0f} km/h; one servo/elevon; "
           f"horn ratio={HORN_RADIUS_RATIO:.2f}")
+    print(f"  Ch band {CH_RANGE[0]:.2f}-{CH_RANGE[1]:.2f} [E] is declared at "
+          f"{DELTA_SIZING_DEG:.1f} deg deflection "
+          f"(trim envelope +/-{DELTA_TRIM_DEG:.1f} deg [D] plus "
+          f"{DELTA_MANOEUVRE_DEG:.1f} deg manoeuvre allowance [E]); "
+          "measured Ch_alpha/Ch_delta remain an E-series acceptance item.")
 
     print("\n  Aerodynamic hinge moment and ideal demand per servo")
     for ch in CH_RANGE:
@@ -150,6 +171,13 @@ def main():
             rel_tol=1e-12),
         "the released linkage puts the whole hinge moment on one servo":
             N_SERVOS_PER_ELEVON == 1 and isclose(HORN_RADIUS_RATIO, 1.0),
+        # Ties the declared Ch band to the deflection the control modules
+        # actually command: the sizing deflection must cover the trim envelope
+        # with margin, or the Ch band is being applied outside its stated case.
+        "the Ch band covers the commanded trim deflection with margin":
+            DELTA_SIZING_DEG >= 5.0 * DELTA_TRIM_DEG,
+        "the declared sizing deflection is a full-authority case":
+            5.0 <= DELTA_SIZING_DEG <= 20.0,
         "MG90S exceeds the unfactored 180 km/h demand":
             MG90S_TORQUE_KGFCM / worst_ideal >= 1.8,
         "Article #1 Corona passes factored 180 km/h demand by at least 1.5x":

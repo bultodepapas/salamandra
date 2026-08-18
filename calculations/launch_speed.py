@@ -11,7 +11,7 @@ The FIRST revision of this script demanded
 k_safe = 1.20 at the RELEASE INSTANT and concluded "infeasible". That was too
 strict on two counts, corrected here:
 
-  (1) The release requirement is V_suelta >= V_stall with the elevon-up launch
+  (1) The release requirement is V_release >= V_stall with the elevon-up launch
       attitude — NOT k x V_stall at the release instant. The margin is built
       by the motor acceleration in the first 0.3-0.5 s after release
       (T/W ~ 1.0 -> a ~ 10 m/s2: from 13 to 15.3 m/s in 0.23 s).
@@ -29,8 +29,8 @@ launch 1850 and over-head techniques). If the configuration class launches at
 MODEL:
   m dV/dt   = T - 0.5 rho V^2 S CD_launch - m g sin(gamma), RK4; T is
                piecewise constant within the idle/delay/launch phases
-  V_suelta  = propagated speed after the powered throw gesture
-  gate      = V_suelta >= V_stall                 (release requirement)
+  V_release  = propagated speed after the powered throw gesture
+  gate      = V_release >= V_stall                 (release requirement)
   t_margin  = time after release to reach k=1.2 x V_stall, retaining idle
                during nav_fw_launch_motor_delay = 0.2 s
   torque-roll check: T/W at launch <= 1.5 [I] (community risk threshold)
@@ -103,13 +103,17 @@ GAMMA_LAUNCH_DEG = 0.0            # declared launch path angle [E]
 GAMMA_LAUNCH_BAND_DEG = (-10.0, 0.0, +10.0)   # descend / level / climb [E]
 
 
-def acceleration(speed, thrust, mass, cd=CD_LAUNCH, gamma_deg=None):
+def acceleration(speed, thrust, mass, cd=None, gamma_deg=None):
     """Along-path acceleration [m/s2]: thrust, quadratic drag and gravity.
 
         m dV/dt = T - 0.5 rho V^2 S CD - m g sin(gamma)
 
-    ``gamma_deg=None`` uses the declared launch path angle.
+    ``cd=None`` and ``gamma_deg=None`` resolve the declared launch values at
+    call time.  Neither is a default argument: a default is evaluated once at
+    definition time, so a banded quantity frozen there cannot be swept.
     """
+    if cd is None:
+        cd = CD_LAUNCH
     if gamma_deg is None:
         gamma_deg = GAMMA_LAUNCH_DEG
     if speed < 0.0 or thrust < 0.0 or mass <= 0.0 or cd < 0.0:
@@ -118,9 +122,11 @@ def acceleration(speed, thrust, mass, cd=CD_LAUNCH, gamma_deg=None):
     return (thrust - drag) / mass - G0 * np.sin(np.radians(gamma_deg))
 
 
-def propagate_speed(speed, thrust, mass, duration, cd=CD_LAUNCH, dt=0.001,
+def propagate_speed(speed, thrust, mass, duration, cd=None, dt=0.001,
                     gamma_deg=None):
     """Integrate the along-path equation with fourth-order Runge-Kutta."""
+    if cd is None:
+        cd = CD_LAUNCH
     if duration < 0.0 or dt <= 0.0:
         raise ValueError("duration must be non-negative and dt positive")
     steps = max(1, int(np.ceil(duration / dt)))
@@ -164,7 +170,7 @@ def main():
           f"~{MOJITO_STALL*3.6:.0f} km/h reported, HAND-LAUNCHED in service")
     print("   -> Salamandra stall is LOWER: strictly easier launch case")
 
-    print("\n2. RELEASE GATE (V_suelta >= V_stall)")
+    print("\n2. RELEASE GATE (V_release >= V_stall)")
     vh_r, vh_lo, vh_hi = V_HAND
     t_r = T_GESTURE[0]
     t_idle_r = IDLE_FRAC[0] * T_W[0] * AUW[1] * G0
@@ -175,7 +181,7 @@ def main():
                             (vh_hi, t_idle_hi, T_GESTURE[2], "firm throw, high idle")]:
         v_rel = propagate_speed(vh, ti, AUW[1], tg)
         k_rel = v_rel / vs
-        print(f"   {tag:30s}: V_suelta = {v_rel:4.1f} m/s "
+        print(f"   {tag:30s}: V_release = {v_rel:4.1f} m/s "
               f"({v_rel*3.6:5.1f} km/h) -> k = {k_rel:4.2f} x V_stall "
               f"({'PASS' if v_rel >= vs else 'FAIL'} gate)")
 
@@ -186,7 +192,7 @@ def main():
                             (vh_hi, t_idle_hi, T_GESTURE[2], "firm throw")]:
         v_rel = propagate_speed(vh, ti, AUW[1], tg)
         t_tot = time_to_speed(v_rel, K_REF * vs, ti, t_launch, AUW[1])
-        print(f"   {tag:14s}: V_suelta {v_rel:4.1f} m/s -> k={K_REF:.2f} at "
+        print(f"   {tag:14s}: V_release {v_rel:4.1f} m/s -> k={K_REF:.2f} at "
               f"{t_tot:4.2f} s after release (0.2 s delay + spinup)")
 
     print(f"\n4. TORQUE-ROLL CHECK (community threshold T/W <= {T_W_MAX} [I])")
@@ -201,11 +207,11 @@ def main():
     v_typ = propagate_speed(vh_r, t_idle_r, AUW[1], t_r)
     v_firm = propagate_speed(vh_hi, t_idle_hi, AUW[1], T_GESTURE[2])
     ok_typ = v_typ >= vs
-    print(f"   Typical throw: V_suelta {v_typ:.1f} m/s ({v_typ*3.6:.1f} km/h) "
+    print(f"   Typical throw: V_release {v_typ:.1f} m/s ({v_typ*3.6:.1f} km/h) "
           f"vs V_stall {vs*3.6:.1f} km/h -> "
           f"{'PASSES the gate' if ok_typ else 'below stall'}; k=1.20 reached "
           f"in {time_to_speed(v_typ, K_REF*vs, t_idle_r, t_launch, AUW[1]):.2f} s")
-    print(f"   Firm throw: V_suelta {v_firm:.1f} m/s ({v_firm*3.6:.1f} km/h) "
+    print(f"   Firm throw: V_release {v_firm:.1f} m/s ({v_firm*3.6:.1f} km/h) "
           f"-> k = {v_firm/vs:.2f} at release")
     print("   => HAND LAUNCH IS FEASIBLE with a firm throw (V_hand >= 10 "
           "m/s) + high idle (nav_fw_launch_idle_thr 1350-1450) + launch "

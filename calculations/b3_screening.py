@@ -42,6 +42,7 @@ import subprocess
 import time
 
 from design_config import (
+    ROOT_TC,
     ARTICLE_V1_MASS_KG,
     CRUISE_SPEED_KMH,
     lift_coefficient,
@@ -348,7 +349,8 @@ def main():
         ("mh60-9", "mh60.dat", 0.09,
          "MH60 scaled to 9 % with camber preserved (tip diagnostic)"),
         ("mh60-12", "mh60.dat", 0.12, "MH60 scaled to 12 %"),
-        ("mh60-135", "mh60.dat", 0.135, "MH60 scaled to 13.5 % (root variant)"),
+        ("mh60-135", "mh60.dat", ROOT_TC,
+         "MH60 scaled to the released root t/c (root variant)"),
     ]
     cases = []
     for tag, fname, target, label in candidates:

@@ -141,6 +141,29 @@ standing.**
 python3 calculations/vlm_ala_volante.py    # includes the contrast case
 ```
 
+**A physical quantity is declared once.** A module may *compute* it or *import* it; it may
+never *declare* one that another module also declares. `design_config.py` owns the chosen
+inputs, `aero_contract.py` the derived aerodynamics, `drag_model.py` the polar. Enforced by
+`python3 calculations/contract_lint.py` — see C39/C42.
+
+**Ask what result would make a check fail.** A check that compares two literals, or reduces
+algebraically to an identity, verifies nothing. `python3 calculations/mutation_test.py`
+seeds deliberate defects and requires each to turn a check red; a surviving mutation is a
+hole in the verification, not a pass — see C43.
+
+**Never bind a module constant as a default argument.** Defaults are evaluated once at
+definition time, so a sensitivity sweep written the obvious way silently returns the
+unmutated answer. Use a `None` sentinel resolved in the body.
+
+Before publishing a change to the numbers:
+
+```bash
+python3 calculations/verify_calculations.py   # contracts + every deterministic script
+python3 calculations/contract_lint.py
+python3 calculations/mutation_test.py
+python3 calculations/generate_blueprints.py --check
+```
+
 ---
 
 ## Known failure modes

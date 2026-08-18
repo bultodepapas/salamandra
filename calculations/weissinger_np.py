@@ -17,6 +17,13 @@ the C2 cross-check ("two methods that disagree = error in one").
 
 Conventions (same as the VLM): x backward, y starboard, z up; lambda_c4
 negative = forward sweep; all output [D].
+
+VALIDITY ENVELOPE AND KNOWN OMISSIONS.  Like `vlm_ala_volante.py` this is a
+linear, inviscid, rigid, incompressible lifting model with no section camber or
+thickness: it is used only for the neutral point and the lift-curve slope, as a
+STRUCTURALLY DIFFERENT second opinion on those two numbers (correction C2).  Its
+2.9 mm neutral-point spread against the panel VLM is a real modelling
+uncertainty and is carried as such in `aero_contract.py`, not averaged away.
 """
 import argparse
 import math

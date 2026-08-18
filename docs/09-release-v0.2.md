@@ -63,7 +63,7 @@ self-consistent balance and a literature-anchored divergence trend. **−15°** 
 least-negative candidate that closes the declared favourable-polar trim cap; −12° needs
 1.54° equivalent reflex and is rejected.
 
-The selected case gives VLM/Weissinger neutral points −75.9/−72.9 mm, 0.638 peak
+The selected case gives VLM/Weissinger neutral points −75.8/−72.9 mm, 0.638 peak
 section Cl at the 1.620 kg O1 design target, a −373.1 mm full-trade pack station and an
 estimated 15 % relative divergence-speed improvement over −20°.
 

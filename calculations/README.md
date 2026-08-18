@@ -16,8 +16,8 @@ estimated input. Validation cases must pass before a modification is trusted.
 
 | Tool | Version | Used for | Where to get it |
 |---|---|---|---|
-| Python | 3.11 (Windows) | All harnesses below | python.org (any ≥ 3.10 works) |
-| numpy | 1.2x | VLM, Weissinger-L, screening harness | `pip install numpy` |
+| Python | ≥ 3.10 | All harnesses below | python.org |
+| numpy | ≥ 1.24, < 3.0 | VLM, Weissinger-L, screening harness | `pip install -r calculations/requirements.txt` |
 | **XFOIL** | **6.99** (official MIT Windows console build) | Airfoil polar generation | <https://web.mit.edu/drela/Public/web/xfoil/> → `XFOIL6.99.zip` (GPL; the source ships in the zip too) |
 | PowerShell 7 / cmd | Windows | Batch driving (see the Fortran stdin note below) | Built into Windows |
 
@@ -37,10 +37,14 @@ Data sources consumed (all `[M]`):
 
 | File | What it does | Feeds | Depends on |
 |---|---|---|---|
+| `aero_contract.py` | **Derived aerodynamic contract** — re-derives and caches the neutral point, lift-curve slope and CG target from the planform, keeping the published values as regression anchors with a declared tolerance. Replaces the hand-copied `NP_VLM` literal (C39) | Balance, packaging, drawings, yaw | numpy |
+| `drag_model.py` | **Shared drag polar** — viscous and induced terms returned separately per ADR-0009, with a declared launch-configuration transfer and band (C42) | `yaw_stability`, `launch_speed` | stdlib only |
+| `contract_lint.py` | **Single-declaration lint** — fails when a physical quantity is declared in two modules, when a bare literal duplicates a contract value, or when a banded constant is frozen as a default argument | Whole system, CI | stdlib only |
+| `mutation_test.py` | **Proof that the suite can fail** — seeds 19 deliberate defects (sign flips, dropped normalisations, desynchronised copies) and requires each to turn at least one contract check red (C43) | Whole system, CI | stdlib only |
 | `design_config.py` | **Canonical numerical design contract** — planform, atmosphere, mission/stall/speed points, load factor and released mass targets; validates geometry and shared invariants | Guide, every coupled script | stdlib only |
 | `generate_blueprints.py` | **Metric SVG drawing generator** — emits and validates the A3 general-arrangement, equipment mass-skeleton and half-wing sheets from the canonical planform, 3D equipment ledger, calculated balance solution and released airfoil sections; visually distinguishes provisional geometry | `geometry/drawings/`, I-25, wiki drawing guide, CAD review | numpy through `balance_cg.py`; `equipment_layout.py` |
 | `drawing_index.py` | **Drawing publication contract** — one registry of sheet number, purpose, sheet scale, authority and reviewer note; writes `geometry/drawings/manifest.json` and the generated drawing blocks in the repository README and drawing index, and fails when any of them is stale | `README.md`, `geometry/drawings/`, wiki drawing page | stdlib only |
-| `verify_calculations.py` | **Cross-module verification** — proves geometry, mass, battery, CG, stall, power, propulsion, speed-role, airfoil, stability, control and yaw contracts agree; `--all-scripts` executes every deterministic local CLI | Whole calculation system, I-23 | numpy |
+| `verify_calculations.py` | **Cross-module verification** — proves geometry, mass, battery, CG, stall, power, propulsion, speed-role, airfoil, stability, control and yaw contracts agree; runs every deterministic local CLI by default (`--fast` skips them); each contract group is exception-isolated | Whole calculation system, I-23 | numpy |
 | `sweep_trade.py` | **Coupled sweep selection** — full VLM + Weissinger NP, trim/twist/reflex, section-Cl margin, self-consistent balance/packaging and NASA TP-1685 divergence trend for −20…−10° candidates | I-21, ADR-0040 | numpy |
 | `vlm_ala_volante.py` | Panel vortex lattice for the forward-swept wing (taper + twist). NP, CL_α, load distribution, Cm0-per-degree twist yield | I-07, G8, guide §4.3 | numpy |
 | `weissinger_np.py` | **C2: independent NP check** — Weissinger-L swept lifting line (bound vortex on the c/4 line, control points at 3/4 chord). Structurally different formulation from the panel VLM | I-07, C2, G8 | numpy |
@@ -72,13 +76,25 @@ Data sources consumed (all `[M]`):
 Run the system contract first:
 
 ```bash
-python3 verify_calculations.py
-python3 verify_calculations.py --all-scripts  # deterministic local suite
+python3 -m pip install -r requirements.txt
+
+python3 verify_calculations.py           # contracts + every deterministic script (~35 s)
+python3 verify_calculations.py --fast    # interface contracts only
+python3 contract_lint.py                 # one declaration per physical quantity
+python3 mutation_test.py                 # prove the contract suite can actually fail
 ```
 
-The first command checks cross-module equality in a few seconds. The second also runs
-all deterministic local CLIs with per-script timeouts. XFOIL and network workflows
-remain explicit external gates and are listed, never silently skipped.
+The default run checks cross-module equality **and** executes every deterministic local
+CLI, so each module's own validation case is actually exercised; `--fast` restricts it to
+the interface contracts. Every contract group is evaluated in isolation: a group that
+raises is reported as a failed check carrying the exception text, never as an aborted run
+with no diagnosis. XFOIL and network workflows remain explicit external gates and are
+listed, never silently skipped.
+
+`contract_lint.py` and `mutation_test.py` are the two guards on the verification itself.
+The lint catches a desynchronised quantity **before** it can produce a wrong number; the
+mutation test measures whether the contract suite would notice **after**. Both run in CI
+(`.github/workflows/calculations.yml`) alongside the drawing gate.
 
 ### 0.1 Metric SVG drawing set (I-25)
 
@@ -103,9 +119,21 @@ python3 weissinger_np.py        # independent method, includes the same validati
 ```
 
 Published ADR-0040 result (`[D]`): VLM **x_NP = −75.8 mm** (25.72 % MAC) vs
-Weissinger-L **−72.9 mm** (27.0 % MAC) — **2.9 mm agreement**. Both validations must
-reproduce: straight AR 6 wing → NP at 25.00 % MAC; CL_α within ~7 % of the Helmbold
-formula (the classical 1-D/2-D difference).
+Weissinger-L **−72.9 mm** (27.0 % MAC) — **2.9 mm method spread**, at the canonical
+meshes (`VLM_NY`×`VLM_NX` = 40×6, `WEISSINGER_NY` = 100) declared in `design_config.py`.
+
+Both numbers are **derived on every run** by `aero_contract.py` and compared against those
+published anchors with a ±0.5 mm tolerance; they are no longer literals (C39). The mesh
+error at the canonical resolution is bounded at 0.4 mm by an explicit convergence
+assertion, and the 2.9 mm method spread is carried as a declared modelling uncertainty —
+it is 16 % of the 18.0 mm static margin and 58 % of the ±5 mm CG band, so it is not
+averaged away.
+
+```bash
+python3 aero_contract.py        # the derivation and its anchors
+python3 vlm_ala_volante.py      # in-house method + exact linear-model identities
+python3 weissinger_np.py        # independent method (C2)
+```
 
 ### 2. Corrected B3 diagnostic screening (I-15 §6 and §8)
 

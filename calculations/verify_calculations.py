@@ -57,6 +57,7 @@ LOCAL_SCRIPTS = (
     "equipment_catalog.py",
     "drag_model.py",
     "aero_contract.py",
+    "contract_lint.py",
     "generate_blueprints.py",
     "battery_pack_layout.py",
     "mass_budget.py",
@@ -81,6 +82,9 @@ LOCAL_SCRIPTS = (
     "divergence.py",
 )
 
+# `mutation_test.py` deliberately stays OUT of this list: it runs the contract
+# suite once per seeded defect, so nesting it here would re-enter the harness
+# recursively.  CI runs it as its own step, right after this one.
 EXTERNAL_WORKFLOWS = (
     "airfoil_reflex_trade.py (XFOIL)",
     "b3_screening.py (XFOIL)",
@@ -414,6 +418,26 @@ def check_stability(add):
 
 def check_controls(add):
     add(
+        "controls: the released torque factors are the declared ones",
+        close(servo_torque.TORQUE_SAFETY_FACTOR, 1.50)
+        and close(servo_torque.LINKAGE_EFFICIENCY, 0.80)
+        and servo_torque.N_SERVOS_PER_ELEVON == 1,
+        f"SF={servo_torque.TORQUE_SAFETY_FACTOR:.2f}, "
+        f"eta={servo_torque.LINKAGE_EFFICIENCY:.2f}",
+    )
+    add(
+        "power: the released O1 energy objective is the declared one",
+        close(design_config.O1_ENERGY_LIMIT_WH_PER_KM, 1.15)
+        and close(design_config.electrical_power_limit_w(), 109.25),
+        f"{design_config.O1_ENERGY_LIMIT_WH_PER_KM:.2f} Wh/km -> "
+        f"{design_config.electrical_power_limit_w():.2f} W",
+    )
+    add(
+        "aerodynamics: the released CLmax is the I-07 value pending E2",
+        close(design_config.CL_MAX_WING, 0.589),
+        f"CLmax={design_config.CL_MAX_WING:.4f} [D], pending E2",
+    )
+    add(
         "controls: SI torque conversion and factored Corona margin pass",
         10.19 < servo_torque.nm_to_kgf_cm(1.0) < 10.20
         and servo_torque.CORONA_TORQUE_KGFCM
@@ -434,6 +458,15 @@ def check_controls(add):
         ),
         f"span={selected_surface['span_m']*1000:.1f} mm; "
         f"servo y={equipment_layout.SERVO_STATION_MM:.2f} mm",
+    )
+    add(
+        "controls: the hinge-moment band covers the commanded trim deflection",
+        abs(selected_pitch["trim_n12_deg"]) <= servo_torque.DELTA_TRIM_DEG
+        and abs(selected_pitch["trim_n10_deg"]) <= servo_torque.DELTA_TRIM_DEG
+        and servo_torque.DELTA_SIZING_DEG
+        > abs(selected_pitch["trim_n12_deg"]),
+        f"commanded trim <= {servo_torque.DELTA_TRIM_DEG:.1f} deg; Ch band "
+        f"declared at {servo_torque.DELTA_SIZING_DEG:.1f} deg",
     )
     add(
         "controls: selected surface closes trim and retains roll authority",

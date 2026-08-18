@@ -8,6 +8,25 @@ Savart system.
 
 Conventions: x aft, y starboard, z up; negative quarter-chord sweep means
 forward sweep; positive epsilon means wash-in.
+
+VALIDITY ENVELOPE AND KNOWN OMISSIONS.  This is a flat-plate lifting-surface
+model.  It is valid for small angles, attached incompressible flow and a rigid
+wing, and it is used only for quantities that survive those assumptions:
+lift-curve slope, neutral point, spanwise load shape and the pitch yield of
+twist and control deflection.
+
+It deliberately does NOT model:
+  * section camber or thickness — the section moment Cm0 comes from XFOIL and
+    is added separately (see `elevon_authority.py`), never from this model;
+  * viscosity, separation or any stall behaviour — there is no CLmax here;
+  * aeroelastic deformation — `divergence.py` owns that;
+  * compressibility, which is irrelevant at these speeds.
+
+Discretisation: half-cosine spanwise spacing clustered at both tips; UNIFORM
+chordwise spacing with the bound vortex at the panel quarter chord and the
+control point at three quarters.  Trailing legs are truncated at 1e4 span units.
+The canonical mesh and its measured convergence bound live in `design_config`
+and `aero_contract`.
 """
 import numpy as np
 from design_config import SWEEP_C4_DEG, TAPER, B, S
@@ -23,9 +42,9 @@ def geom(b, S, taper, sweep_c4_deg, tip_twist_deg, ny=40, nx=6):
     tanL = np.tan(np.radians(sweep_c4_deg))
     half = b / 2.0
 
-    # estaciones de envergadura (coseno: mas denso en punta y raiz)
+    # spanwise stations (cosine: denser at the tip and the root)
     th = np.linspace(0, np.pi, ny + 1)
-    ys = -half * np.cos(th)          # de -half a +half
+    ys = -half * np.cos(th)          # from -half to +half
 
     panels, cps, norms, dys, xs_c4, chords, twists = [], [], [], [], [], [], []
 
@@ -36,16 +55,16 @@ def geom(b, S, taper, sweep_c4_deg, tip_twist_deg, ny=40, nx=6):
         c = cr * (1.0 - (1.0 - taper) * eta)
         x_c4 = abs(ym) * tanL
         x_le = x_c4 - c / 4.0
-        eps = np.radians(tip_twist_deg) * eta      # lineal desde la raiz
+        eps = np.radians(tip_twist_deg) * eta      # linear from the root
 
         for i in range(nx):
             xa = x_le + c * i / nx
             xb = x_le + c * (i + 1) / nx
             dc = (xb - xa)
-            # vortice ligado a 1/4 del panel, punto de control a 3/4
+            # bound vortex at panel 1/4 chord, control point at 3/4
             xv = xa + 0.25 * dc
             xc = xa + 0.75 * dc
-            # extremos del vortice ligado, siguiendo la flecha local
+            # bound-vortex endpoints, following the local sweep
             c1 = cr * (1.0 - (1.0 - taper) * abs(y1) / half)
             c2 = cr * (1.0 - (1.0 - taper) * abs(y2) / half)
             xv1 = abs(y1) * tanL - c1 / 4.0 + c1 * (i + 0.25) / nx
@@ -150,16 +169,16 @@ def solve(g, alpha_deg, U=1.0):
             A[:, j] = horseshoe_many(g['cps'], a, b_)[:, 2]
         g['_influence_matrix'] = A
     alpha = np.radians(alpha_deg)
-    rhs = -U * (alpha + g['eps'])                # condicion de contorno linealizada
+    rhs = -U * (alpha + g['eps'])                # linearised boundary condition
     gamma = np.linalg.solve(A, rhs)
 
     rho = 1.0
-    dL = rho * U * gamma * g['dy']               # Kutta-Joukowski por panel
+    dL = rho * U * gamma * g['dy']               # Kutta-Joukowski per panel
     L = dL.sum()
-    M = -(dL * g['xv']).sum()                    # morro arriba positivo
+    M = -(dL * g['xv']).sum()                    # nose-up positive
     q = 0.5 * rho * U ** 2
     CL = L / (q * g['S'])
-    Cm = M / (q * g['S'] * g['cbar'])      # adimensionalizado con la CMA
+    Cm = M / (q * g['S'] * g['cbar'])      # normalised by the MAC (see C17)
     return CL, Cm, dL, gamma
 
 
@@ -177,7 +196,7 @@ def analiza(b, S, taper, sweep, twist, ny=40, nx=6, verbose=True):
 
     CLa = (CL2 - CL1) / np.radians(4.0)
     dCm_dCL = (Cm2 - Cm1) / (CL2 - CL1)
-    x_np = -dCm_dCL * cbar                       # respecto a c/4 de raiz
+    x_np = -dCm_dCL * cbar                       # relative to the root c/4
 
     if verbose:
         print(f"  cr={g['cr']*1000:.0f} mm  ct={g['cr']*taper*1000:.0f} mm  "

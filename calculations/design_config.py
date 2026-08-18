@@ -27,6 +27,14 @@ REPO_ROOT = CALCULATIONS_DIR.parent
 AIRFOIL_DIR = REPO_ROOT / "geometry" / "airfoils"
 DRAWINGS_DIR = REPO_ROOT / "geometry" / "drawings"
 
+# NOTE ON DEFAULT ARGUMENTS.  Functions below take ``None`` sentinels and
+# resolve the module constant inside the body, never ``area=S`` in the
+# signature.  A default argument is evaluated ONCE at definition time, so a
+# constant bound there cannot be overridden by reassigning the module
+# attribute: a sensitivity sweep written the obvious way silently produced the
+# unmutated answer, and two seeded defects survived the whole contract suite
+# for exactly this reason.
+#
 # ---------------------------------------------------------------------------
 # Numeric-stack contract.  Checked here so an unsupported environment produces
 # one named, actionable error instead of an AttributeError raised deep inside
@@ -199,17 +207,19 @@ def thickness_ratio(y):
     return ROOT_TC + (TIP_TC - ROOT_TC) * eta
 
 
-def x_c4(y, sweep_deg=SWEEP_C4_DEG):
+def x_c4(y, sweep_deg=None):
+    if sweep_deg is None:
+        sweep_deg = SWEEP_C4_DEG
     if abs(y) > HALF_SPAN + 1e-12:
         raise ValueError(f"span station {y!r} m is outside +/-{HALF_SPAN} m")
     return abs(y) * tan(radians(sweep_deg))
 
 
-def x_le(y, sweep_deg=SWEEP_C4_DEG):
+def x_le(y, sweep_deg=None):
     return x_c4(y, sweep_deg) - chord(y) / 4.0
 
 
-def x_te(y, sweep_deg=SWEEP_C4_DEG):
+def x_te(y, sweep_deg=None):
     return x_c4(y, sweep_deg) + 3.0 * chord(y) / 4.0
 
 
@@ -239,8 +249,10 @@ def taper_integrals(y_inner, y_outer, chord_fraction=1.0):
     return area, second
 
 
-def planform_centroid(sweep_deg=SWEEP_C4_DEG):
+def planform_centroid(sweep_deg=None):
     """Exact area-centroid x station of the trapezoidal planform."""
+    if sweep_deg is None:
+        sweep_deg = SWEEP_C4_DEG
     return Y_MAC * tan(radians(sweep_deg)) + MAC / 4.0
 
 
@@ -255,51 +267,65 @@ def speed_mps(speed_kmh):
     return speed_kmh / 3.6
 
 
-def dynamic_pressure(speed, rho=RHO_SL):
+def dynamic_pressure(speed, rho=None):
     """Dynamic pressure [Pa] from speed [m/s] and density [kg/m3]."""
+    if rho is None:
+        rho = RHO_SL
     if speed <= 0.0 or rho <= 0.0:
         raise ValueError("speed and density must be positive")
     return 0.5 * rho * speed**2
 
 
-def lift_coefficient(mass_kg, speed, area=S, rho=RHO_SL):
+def lift_coefficient(mass_kg, speed, area=None, rho=None):
     """Level-flight lift coefficient for SI inputs."""
+    if area is None:
+        area = S
     if mass_kg <= 0.0 or area <= 0.0:
         raise ValueError("mass and area must be positive")
     return mass_kg * G0 / (dynamic_pressure(speed, rho) * area)
 
 
-def stall_speed(mass_kg, cl_max=CL_MAX_WING, area=S, rho=RHO_SL):
+def stall_speed(mass_kg, cl_max=None, area=None, rho=None):
     """Stall speed [m/s] for SI inputs."""
+    cl_max = CL_MAX_WING if cl_max is None else cl_max
+    area = S if area is None else area
+    rho = RHO_SL if rho is None else rho
     if mass_kg <= 0.0 or cl_max <= 0.0 or area <= 0.0 or rho <= 0.0:
         raise ValueError("mass, CLmax, area and density must be positive")
     return (2.0 * mass_kg * G0 / (rho * area * cl_max)) ** 0.5
 
 
-def mass_at_stall_speed(speed, cl_max=CL_MAX_WING, area=S, rho=RHO_SL):
+def mass_at_stall_speed(speed, cl_max=None, area=None, rho=None):
     """Maximum mass [kg] corresponding to a specified stall speed [m/s]."""
+    cl_max = CL_MAX_WING if cl_max is None else cl_max
+    area = S if area is None else area
+    rho = RHO_SL if rho is None else rho
     if speed <= 0.0 or cl_max <= 0.0 or area <= 0.0 or rho <= 0.0:
         raise ValueError("speed, CLmax, area and density must be positive")
     return dynamic_pressure(speed, rho) * area * cl_max / G0
 
 
-def wing_loading_g_dm2(mass_kg, area=S):
+def wing_loading_g_dm2(mass_kg, area=None):
     """Wing loading [g/dm2]."""
+    if area is None:
+        area = S
     if mass_kg <= 0.0 or area <= 0.0:
         raise ValueError("mass and area must be positive")
     return mass_kg * 1000.0 / (area * 100.0)
 
 
-def electrical_power_limit_w(
-        speed_kmh=CRUISE_SPEED_KMH,
-        energy_wh_per_km=O1_ENERGY_LIMIT_WH_PER_KM):
+def electrical_power_limit_w(speed_kmh=None, energy_wh_per_km=None):
     """Total battery-power limit [W] implied by a Wh/km objective."""
+    if speed_kmh is None:
+        speed_kmh = CRUISE_SPEED_KMH
+    if energy_wh_per_km is None:
+        energy_wh_per_km = O1_ENERGY_LIMIT_WH_PER_KM
     if speed_kmh <= 0.0 or energy_wh_per_km <= 0.0:
         raise ValueError("speed and specific energy must be positive")
     return speed_kmh * energy_wh_per_km
 
 
-def stations(sweep_deg=SWEEP_C4_DEG):
+def stations(sweep_deg=None):
     """Rows: y, chord, t/c, thickness, x_LE, x_c/4, x_TE [SI units]."""
     return tuple(
         (y, chord(y), thickness_ratio(y), chord(y) * thickness_ratio(y),

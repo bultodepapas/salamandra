@@ -59,6 +59,14 @@ jobs:
         working-directory: calculations
         run: python verify_calculations.py
 
+      - name: One declaration per physical quantity (contract lint)
+        working-directory: calculations
+        run: python contract_lint.py
+
+      - name: Prove the contract suite can fail (mutation test)
+        working-directory: calculations
+        run: python mutation_test.py
+
       - name: Drawing set and its published blocks are current
         run: |
           python calculations/generate_blueprints.py --check
