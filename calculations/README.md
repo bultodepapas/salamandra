@@ -38,6 +38,7 @@ Data sources consumed (all `[M]`):
 | File | What it does | Feeds | Depends on |
 |---|---|---|---|
 | `design_config.py` | **Canonical numerical design contract** — planform, atmosphere, mission/stall/speed points, load factor and released mass targets; validates geometry and shared invariants | Guide, every coupled script | stdlib only |
+| `generate_blueprints.py` | **Metric SVG drawing generator** — emits and validates the A3 general-arrangement and half-wing sheets from the canonical planform, calculated balance solution and released y195 section; visually distinguishes provisional geometry | `geometry/drawings/`, I-25, wiki drawing guide, CAD review | numpy through `balance_cg.py` |
 | `verify_calculations.py` | **Cross-module verification** — proves geometry, mass, battery, CG, stall, power, propulsion, speed-role, airfoil, stability, control and yaw contracts agree; `--all-scripts` executes every deterministic local CLI | Whole calculation system, I-23 | numpy |
 | `sweep_trade.py` | **Coupled sweep selection** — full VLM + Weissinger NP, trim/twist/reflex, section-Cl margin, self-consistent balance/packaging and NASA TP-1685 divergence trend for −20…−10° candidates | I-21, ADR-0040 | numpy |
 | `vlm_ala_volante.py` | Panel vortex lattice for the forward-swept wing (taper + twist). NP, CL_α, load distribution, Cm0-per-degree twist yield | I-07, G8, guide §4.3 | numpy |
@@ -74,6 +75,18 @@ python3 verify_calculations.py --all-scripts  # deterministic local suite
 The first command checks cross-module equality in a few seconds. The second also runs
 all deterministic local CLIs with per-script timeouts. XFOIL and network workflows
 remain explicit external gates and are listed, never silently skipped.
+
+### 0.1 Metric SVG drawing set (I-25)
+
+```bash
+python3 generate_blueprints.py --check
+```
+
+This regenerates `geometry/drawings/SLM-GA-001-general-arrangement.svg` and
+`SLM-WNG-001-half-wing-layout.svg`. Both files are A3 metric technical sketches and are
+explicitly marked **not for manufacture**. Print at actual size only; responsive web
+display is not a scale reference. The visual semantics and open limitations are recorded
+in `geometry/drawings/README.md`.
 
 ### 1. Neutral point (I-07, and C2 cross-check — guide §3)
 

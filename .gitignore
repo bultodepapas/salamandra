@@ -28,6 +28,7 @@ wiki/node_modules/
 wiki/dist/
 wiki/.astro/
 wiki/src/content/docs/
+wiki/public/drawings/
 
 # System
 .DS_Store

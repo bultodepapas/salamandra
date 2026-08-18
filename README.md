@@ -178,7 +178,7 @@ configuration contributed to the platform.
 | [`gaps/`](gaps/) | Register of what we do **not** know and how it gets closed |
 | [`tests/`](tests/) | Experimental program and data |
 | [`calculations/`](calculations/) | Analysis scripts, with validation cases — **full reproduction guide in its README** |
-| `geometry/` `stl/` `cad/` | Community 3D parts and outputs; `geometry/airfoils/` holds the screening coordinate files with provenance |
+| `geometry/` `stl/` `cad/` | Community 3D parts and outputs; `geometry/airfoils/` holds controlled section coordinates and `geometry/drawings/` holds generated A3 SVG design-review sheets |
 | [`wiki/`](wiki/) | **The served documentation site** (Astro Starlight): onboarding guide, auto-generated indexes, search. Deployed to GitHub Pages via `.github/workflows/docs.yml` |
 
 **Start with:** [`docs/00-objectives-and-requirements.md`](docs/00-objectives-and-requirements.md) → [`decisions/README.md`](decisions/README.md) → [`gaps/README.md`](gaps/README.md)

@@ -30,6 +30,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-22](I-22-high-roi-v0.3-audit.md) | **High-ROI v0.3 audit: airfoil, propulsion and mass/CG** | ✅ **Executed — corrected by I-23/C29; physical gates retained** | ADR-0041…0043, guide v0.19, release v0.3.0 |
 | [I-23](I-23-calculation-system-integration-audit.md) | **Calculation-system integration and physics audit** | ✅ **Executed — contracts and C29–C32 corrected; V1 mass gate reopened** | Guide v0.19, ADR-0042/0043, OP-06/12/13/23/24/28/29 |
 | [I-24](I-24-flight-load-envelope.md) | **Article #1 manoeuvre and regulatory-reference gust envelope** | 🔄 **Partial — limit/ultimate semantics and positive V-n branch closed; dynamic gust/CLmin open** | ADR-0044, guide v0.21, release v0.4.0, F4/S1–S2, G11/E9 |
+| [I-25](I-25-svg-technical-drawing-workflow.md) | **Reproducible SVG technical-drawing workflow** | ✅ **Executed — two A3 design-review sheets; manufacturing authority remains open** | `generate_blueprints.py`, `geometry/drawings/`, wiki drawing guide, future CAD ICDs |
 
 ## Source quality
 

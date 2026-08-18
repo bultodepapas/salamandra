@@ -47,7 +47,7 @@ npm run lint         # lint committed wiki Markdown and MDX
 | A canonical `.md` (an ADR, a research thread, gaps, tests, a `docs/` file) | Nothing — build regenerates. `npm run dev` to preview |
 | Onboarding content (the wiki's own pages) | Edit `wiki/content/` (home, 404, guide pages) — this is committed source |
 | Site structure / nav / theme | `wiki/astro.config.mjs`, `wiki/src/styles/custom.css` |
-| Hero or diagram assets | `wiki/src/assets/` for imported assets; `wiki/public/` only for stable public files such as the favicon and `robots.txt` |
+| Hero or diagram assets | `wiki/src/assets/` for imported assets; canonical technical drawings live in `geometry/drawings/` and are copied to the generated `wiki/public/drawings/`; other stable public files remain in `wiki/public/` |
 | Deployment identity (repo name) | `wiki/base.mjs` (single source of truth) |
 
 ## Authoring guide pages

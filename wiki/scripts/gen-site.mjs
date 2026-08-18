@@ -18,6 +18,7 @@ import {
   readdirSync,
   existsSync,
   statSync,
+  copyFileSync,
 } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -230,6 +231,7 @@ const CURRENT_RELEASE_PAGE = destToUrl(CURRENT_RELEASE_DEST)
   .slice(BASE.length)
   .replace(/\/+$/, '');
 const metadataTokens = new Map([
+  ['BASE', BASE],
   ['GUIDE_VERSION', GUIDE_VERSION],
   ['RELEASE_TAG', CURRENT_RELEASE.tag],
   ['CURRENT_RELEASE_URL', destToUrl(CURRENT_RELEASE_DEST)],
@@ -699,6 +701,7 @@ function genLlmsTxt() {
       ['Getting started', 'guide/01-getting-started', 'The shortest path from zero to a working model'],
       ['How to read this repository', 'guide/02-how-to-read', 'Folder map and traceability flow'],
       ['Architecture', 'guide/03-architecture', 'How research, decisions, gaps, tests and calculations feed each other'],
+      ['Drawings and SVG workflow', 'guide/06-drawings', 'Generated A3 design-review sheets and their authority boundary'],
       ['Glossary', 'guide/04-glossary', 'Confidence tags, identifiers, signs and key terms'],
       ['Contributing', 'guide/05-contributing', 'Order of value of contributions and the workflow'],
     ]),
@@ -736,6 +739,24 @@ function genLlmsTxt() {
   console.log('[gen-site] regenerated llms.txt per the llmstxt.org spec.');
 }
 
+function copyDrawings() {
+  const source = path.join(ROOT, 'geometry', 'drawings');
+  const destination = path.join(WIKI, 'public', 'drawings');
+  if (!existsSync(source)) {
+    throw new Error('canonical geometry/drawings directory is missing');
+  }
+  const drawings = readdirSync(source).filter((name) => name.endsWith('.svg')).sort();
+  if (!drawings.length) {
+    throw new Error('canonical geometry/drawings directory contains no SVG sheets');
+  }
+  rmSync(destination, { recursive: true, force: true });
+  mkdirSync(destination, { recursive: true });
+  for (const drawing of drawings) {
+    copyFileSync(path.join(source, drawing), path.join(destination, drawing));
+  }
+  console.log(`[gen-site] copied ${drawings.length} canonical SVG drawing(s).`);
+}
+
 // ---------------------------------------------------------------------------
 
 rmSync(OUT, { recursive: true, force: true });
@@ -749,6 +770,7 @@ genSalamandraIndex();
 genReferenceIndex();
 genCalculationsIndex();
 genPlatformIndex();
+copyDrawings();
 genLlmsTxt();
 
 const count = (p) =>

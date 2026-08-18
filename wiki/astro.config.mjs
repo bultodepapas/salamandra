@@ -50,6 +50,7 @@ export default defineConfig({
             { label: 'Getting started', link: '/guide/01-getting-started/' },
             { label: 'How to read the record', link: '/guide/02-how-to-read/' },
             { label: 'Engineering architecture', link: '/guide/03-architecture/' },
+            { label: 'Drawings & SVG workflow', link: '/guide/06-drawings/' },
             { label: 'Glossary & notation', link: '/guide/04-glossary/' },
             { label: 'Contributing', link: '/guide/05-contributing/' },
           ],

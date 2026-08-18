@@ -42,6 +42,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 LOCAL_SCRIPTS = (
     "design_config.py",
+    "generate_blueprints.py",
     "battery_pack_layout.py",
     "mass_budget.py",
     "balance_cg.py",
