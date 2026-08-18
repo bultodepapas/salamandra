@@ -4,6 +4,39 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.32] — 2026-08-17
+
+**Flight-load envelope correction — manoeuvre, ultimate and gust loads are now
+separate, calculated quantities.**
+
+- **C33, load-factor semantics:** the old `+6/−3, later +9, gust-dominated` line mixed
+  three different load definitions. Article #1 now uses provisional **+6/−3 g
+  manoeuvre limit loads** and their 1.5× **+9/−4.5 g ultimate structural loads**. +9 g
+  is not a future flight target.
+- **C34, section versus wing maximum lift:** controlling documents called 0.65 a wing
+  `CLmax` while the connected stall chain correctly uses 0.589. I-07 defines 0.65 as
+  the local section `clmax` screen and 0.589 as the 3-D wing design `CLmax`; the
+  specification and Phase-1 criteria now preserve that distinction.
+- **Positive V-n branch:** the connected CLEAN/V1 masses and released CLmax give
+  **VA = 109.0/110.4 km/h**. At the 105 km/h initial limit, positive manoeuvre is
+  stall-limited to **5.57/5.42 g**. The negative aerodynamic branch remains open
+  because no defensible CLmin exists.
+- **Regulatory-reference gust screen:** the legacy Part 23 equation is implemented in
+  SI and independently checked against its published imperial form. At 105 km/h the
+  CLEAN screen gives **+12.94/−10.94 g**, but implies CL 1.37 > CLmax 0.589; it is
+  explicitly a nonlinear/dynamic-model mismatch flag, not an adopted structural load.
+  The inverse −3 g sensitivity is 5.10 m/s CLEAN / 5.19 m/s V1 equivalent vertical
+  gust. G11/E9 retain the physical closure.
+- **Connected implementation:** new `flight_envelope.py`, I-24, ADR-0044 and OP-31;
+  `design_config.py` owns negative limit and ultimate factor; the verifier now runs 20
+  deterministic CLIs and checks the flight-envelope contracts.
+- **Test-document correction:** E8 now carries the already-corrected C31 predictions
+  (CLEAN divergence τ ≈ 0.16 s; V1 decay ≈ 1.3 s), replacing stale 0.7/1.5 s values.
+- Design Guide **v0.20**, justification/open points **v0.15**. No planform, airfoil,
+  mass, material, CAD dimension, 105 km/h initial limit or 160 km/h V_NE changed.
+
+---
+
 ## [1.31] — 2026-08-17
 
 **Calculation-system integration audit — one numerical design contract, corrected

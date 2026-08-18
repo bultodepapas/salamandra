@@ -1,6 +1,6 @@
 # Master plan — roadmap to the first prototype
 
-**Revision 1.0** · 28 July 2026 · Phase 1 in progress
+**Revision 1.1** · 17 August 2026 · Phase 1 in progress
 
 This document **does not replace** [`03-phase-1-plan.md`](03-phase-1-plan.md), which remains the operational detail of Phase 1. This document is the orchestration layer: **it sequences phases 1→6 of the status table in the [README](../README.md) up to the first physical article flying**, points out which gap (`gaps/README.md`) and which ADR blocks each segment, and fixes where CAD modeling (Fusion 360) enters.
 
@@ -93,8 +93,8 @@ This is line D of `03-phase-1-plan.md` carried to closure. Only the sequence is 
 
 | # | Task | Closes | Depends on |
 |---|---|---|---|
-| S1 | Fix n_max/n_min with a declared gust basis (today `[E]`, gust-dominated — docs/00 §3.1) | Precondition of everything else | — |
-| S2 | V-n diagram with V_NE 160 km/h (article #1) | Load envelope | S1 |
+| S1 | **Partial:** +6/−3 fixed as provisional manoeuvre limits and +9/−4.5 as ultimate loads. Close the Salamandra-specific dynamic gust basis; the legacy Part 23 result is a screen, not an adopted load. | Precondition of everything else; G11 | I-24/ADR-0044; E9/S3 |
+| S2 | **Partial:** positive V-n branch computed (VA 109.0 CLEAN / 110.4 V1 km/h). Add the negative aerodynamic branch after a validated negative-polar analysis/test supplies CLmin; combine it with the dynamic gust envelope. | Load envelope | S1, B3 extension, E9 |
 | S3 | Verify the real GJ/EI of the section (D-box + center cell + hinge) against ADR-0002/0015 | G4 | S1, F1 geometry, **Fusion 360** for section geometry (§8) |
 | S4 | Sweep factor for divergence on the real EI/GJ ratio, not generic literature | **G6** — declared weakest link | S3 |
 | S5 | Verify elevon authority across the whole envelope, including gust and extreme CG | **C6 — never done before**, see `03-phase-1-plan.md` | S2, F2 CG |
@@ -176,7 +176,7 @@ The server is a third-party Beta project, not Autodesk. If it is abandoned or br
 - [ ] **F1** — complete checklist of `03-phase-1-plan.md §4`
 - [ ] **F2** — Article #1 6S1P R-CG and 1583.5 g CLEAN verified; close the C32 V1 gap from the 1626.5 g lower model to ≤1620.4 g, then verify CAD and scale masses
 - [ ] **F3** — D3/D4 completed, matching table published
-- [ ] **F4** — n_max/n_min fixed, GJ/EI verified on the real section, elevon authority confirmed (S5), G6 sweep factor computed on the real section
+- [ ] **F4** — manoeuvre/ultimate semantics and positive V-n branch fixed; dynamic gust basis and negative CLmin branch closed, GJ/EI verified on the real section, elevon authority confirmed (S5), G6 sweep factor computed on the real section
 - [ ] **F5** — instrumentation chain operational and validated on an existing platform (D2), G9 resolved
 - [ ] **F6** — article #1 assembled, balanced, first stabilized flight with valid blackbox data
 

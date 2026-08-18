@@ -36,6 +36,8 @@ STRUCTURAL_DESIGN_SPEED_KMH = 180.0
 O1_ENERGY_LIMIT_WH_PER_KM = 1.15
 REFERENCE_BEC_EFFICIENCY = 0.90   # battery-to-avionics rail efficiency [E]
 POSITIVE_LIMIT_LOAD_FACTOR = 6.0
+NEGATIVE_LIMIT_LOAD_FACTOR = -3.0
+ULTIMATE_SAFETY_FACTOR = 1.5
 PETG_DENSITY_KG_M3 = 1270.0    # 1.27 g/cm3, project material contract [M]/[E]
 
 # Aerodynamic and mass contract used by coupled performance calculations.
@@ -186,6 +188,11 @@ def validate_geometry():
             electrical_power_limit_w(), 109.25, abs_tol=1e-12),
         "reference BEC efficiency is physical":
             0.0 < REFERENCE_BEC_EFFICIENCY <= 1.0,
+        "limit load factors have the declared signs":
+            POSITIVE_LIMIT_LOAD_FACTOR > 1.0
+            and NEGATIVE_LIMIT_LOAD_FACTOR < 0.0,
+        "ultimate structural safety factor is 1.5": isclose(
+            ULTIMATE_SAFETY_FACTOR, 1.5, abs_tol=1e-12),
         "V1 allocation mass is clean plus fin cap": isclose(
             ARTICLE_V1_ALLOCATION_MASS_KG,
             ARTICLE_CLEAN_MASS_KG + V1_FIN_MASS_CAP_KG,

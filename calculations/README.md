@@ -41,6 +41,7 @@ Data sources consumed (all `[M]`):
 | `vlm_ala_volante.py` | Panel vortex lattice for the forward-swept wing (taper + twist). NP, CL_α, load distribution, Cm0-per-degree twist yield | I-07, G8, guide §4.3 | numpy |
 | `weissinger_np.py` | **C2: independent NP check** — Weissinger-L swept lifting line (bound vortex on the c/4 line, control points at 3/4 chord). Structurally different formulation from the panel VLM | I-07, C2, G8 | numpy |
 | `ventana_torsion.py` | Twist required for trim vs tip-stall margin (torsion window) | I-07, G2 | numpy |
+| `flight_envelope.py` | **I-24/C33: manoeuvre and gust-load envelope** — computes the positive V-n branch and VA for CLEAN/V1, separates +6/−3 limit from +9/−4.5 ultimate loads, unit-checks the legacy Part 23 gust equation and exposes the unresolved nonlinear/dynamic gust case | I-24, ADR-0044, guide §11.2, F4/S1–S2, G11 | numpy |
 | `calibra_xfoil_e387.py` | XFOIL Ncrit-grid calibration against the measured E387 (C) polar (UIUC, vol. 3) | I-06, G2 | XFOIL |
 | `b3_screening.py` | **B3: corrected diagnostic screening** — changes thickness about the mean camber line, keys cached polars to geometry/settings, uses the 120k/250k/500k envelope and fits cm0 only on the pre-stall branch | B3, I-15, correction audit | numpy + XFOIL |
 | `airfoil_reflex_trade.py` | **Salamandra r1 profile generator** — screens coupled root/tip reflex at the actual local Reynolds numbers, integrates section moment with c² weights, verifies trim, and writes every CAD station coordinate file | ADR-0041, guide §5, OP-02/03 | numpy + XFOIL |
@@ -174,6 +175,29 @@ shared CLmax 0.589; the **1.62022 kg allocation target** requires CL 0.58894 and
 With 3.0° wash-in the computed peak local cl is 0.641 versus the 0.65 section limit,
 while the r1 profile leaves 0.42° equivalent trim demand at SM 8 %. Validation treats
 the C32 aircraft-level stall miss as an explicit open F2 gate, not as a software error.
+
+### 5.1 Flight-load envelope (I-24 / ADR-0044)
+
+```bash
+python3 flight_envelope.py
+```
+
+Uses the released VLM `CL_alpha = 4.2712/rad`, shared masses, `CLmax` and speed roles.
+The positive manoeuvre intersections are **VA = 109.0 km/h CLEAN / 110.4 km/h V1**;
+at the 105 km/h initial limit the stall boundary permits 5.57/5.42 g. It corrects C33:
+**+6/−3 are provisional manoeuvre limit loads and +9/−4.5 are their 1.5× ultimate
+structural cases** — +9 is not a later flight target.
+At the V1 lower mass these are +95.7/−47.9 N limit and +143.6/−71.8 N ultimate
+whole-aircraft normal resultants; a proof fixture must reproduce the span load rather
+than apply either value at one point.
+
+The independent legacy Part 23 gust screen gives +12.94/−10.94 g for CLEAN at
+105 km/h, but its implied positive `CL = 1.37` exceeds the released `CLmax = 0.589`.
+That result is deliberately reported as a nonlinear/stall flag, not adopted as a design
+load. The inverse sensitivity at 105 km/h is 6.38 m/s to +6 and **5.10 m/s to −3**;
+these are equivalent vertical-gust inputs, not forecast surface wind. A complete
+negative branch awaits a validated negative-polar `CLmin`; dynamic gust closure is
+G11/E9.
 
 ### 6. XFOIL calibration (I-06)
 

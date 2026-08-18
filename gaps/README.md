@@ -16,6 +16,7 @@ It is as important as the decision register: the project rule is that **no `[E]`
 | **G8** | Neutral point and static margin | Blocks Phase 1 | 🔄 **Partial** — NP = 26.7 % MAC `[D]` by in-house VLM, **cross-checked by an independent Weissinger-L (28.0 % MAC, 3 mm agreement — I-15 §6.3)**; central-body effect still unquantified | I-07, I-15, C2 (body model) |
 | **G9** | Altitude-loop coupling with pitch (*porpoising*) | **Threatens the validity of E7** | ⬜ Open | PID adjustment before testing |
 | **G10** | **Directional stability Cnβ** — finless baseline estimated negative (FSW + nose boom); the fin/no-fin choice is an assumption, not a measured decision | The finless config is FC-dependent in yaw; the fin costs ≈ +10 % energy `[E]` | 🔄 **Bounded by calculation (I-20 `[D]`, `[E]` bands)** — finless −0.0006…−0.0015/deg; fin tiers V1a/V1b restore stability | **E-flight yaw test** (perturbation, Dutch-roll decay) + CAD side-area check (OP-21) |
+| **G11** | **Dynamic gust loads and negative lift boundary** — rigid Part 23 transfer leaves the linear/stall domain; printed-aircraft CLmin is unknown | Blocks a complete V-n/gust envelope and traceable sizing of shell/attachments | 🔄 **Partial:** I-24 closes +6/−3 manoeuvre limit vs +9/−4.5 ultimate semantics and the positive V-n branch; gust screen is not an adopted load | Nonlinear unsteady gust model after S3 mass/stiffness data; validated B3 negative-polar extension/section evidence for CLmin; E9 blackbox `n_z(V)` correlation |
 
 ---
 
@@ -73,6 +74,18 @@ against a second physical model. **G2 is closed for CAD, not for flight acceptan
 The Peregrine documentation reports altitude oscillation in INAV's RTH / Cruise / Loiter modes, with published corrective adjustments (Z position P from 30 to 15, pitch-throttle ratio from 10 to 5, level pitch from 0 to 3°).
 
 **E7 depends on stabilized flight in Cruise.** If the aircraft oscillates, the trim deflection against q is noise.
+
+### G11 — gust envelope
+
+At 105 km/h, the legacy rigid-aircraft method predicts CLEAN +12.94/−10.94 g, but
+the positive branch implies CL ≈ 1.37 versus the released CLmax 0.589. It therefore
+flags missing nonlinear/unsteady physics rather than supplying a usable structural
+load. The inverse linear sensitivity reaches the current negative limit at an equivalent
+vertical gust of 5.10 m/s (5.19 m/s V1). These values are not surface-weather limits.
+
+Closure requires the Article #1 mass distribution and S3 stiffness, a dynamic model
+including plunge/flexibility/spanwise gust and unsteady stall, plus E9 blackbox
+correlation. See I-24 and ADR-0044.
 
 ---
 

@@ -25,6 +25,7 @@ import battery_pack_layout
 import design_config
 import divergence
 import elevon_authority
+import flight_envelope
 import fpv_power_budget
 import inav_fc_match
 import launch_speed
@@ -49,6 +50,7 @@ LOCAL_SCRIPTS = (
     "sweep_trade.py",
     "elevon_authority.py",
     "ventana_torsion.py",
+    "flight_envelope.py",
     "servo_torque.py",
     "inav_fc_match.py",
     "fpv_power_budget.py",
@@ -106,6 +108,11 @@ def contract_checks():
         v1["vs"] > design_config.STALL_SPEED_LIMIT_KMH,
         f"{v1['vs']:.4f} km/h; allocation/F2 closure open",
     )
+
+    cla = flight_envelope.project_lift_curve_slope()
+    envelope_checks = flight_envelope.validation_checks(cla)
+    for name, passed in envelope_checks.items():
+        add(f"flight envelope: {name}", passed, f"CL_alpha={cla:.4f}/rad")
 
     pack_mass = battery_pack_layout.pack_mass_g("6S1P", "P42A") / 1000.0
     layout = balance_cg.solve_reference_layout()

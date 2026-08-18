@@ -54,6 +54,7 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | [0041](ADR-0041-salamandra-r1-airfoil-family.md) | Salamandra r1 coupled root/tip airfoil family | ✅ | Medium `[D]` | Yes, before tooling |
 | [0042](ADR-0042-cruise-propulsion-equilibrium.md) | Bound cruise propulsion by total power; close equilibrium with E2 drag | ✅ | Medium `[D]`/`[E]` | Yes |
 | [0043](ADR-0043-article-1-mass-allocation.md) | Article #1 mass allocation; CLEAN closes 45 km/h, V1 reopened by C32 | 🔄 | Medium `[M]`/`[D]`/`[E]` | Yes |
+| [0044](ADR-0044-flight-load-envelope.md) | Separate +6/−3 manoeuvre limits, +9/−4.5 ultimate loads and gust screening | 🔄 | Medium `[D]`/`[E]` | Yes |
 
 ### Superseded or cancelled
 

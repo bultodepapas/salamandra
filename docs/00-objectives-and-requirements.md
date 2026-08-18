@@ -1,6 +1,6 @@
 # Objectives and requirements — Phase 0 specification
 
-**Revision 1.3** · 17 August 2026 · **Phase 0 closed**
+**Revision 1.4** · 17 August 2026 · **Phase 0 closed**
 Defines **what is built and why**. No geometry line precedes this document.
 
 This is an **open, community-driven, modular 3D-printed FPV aircraft platform**. The core
@@ -88,11 +88,19 @@ These are the objectives that define the *platform*, as opposed to the reference
 | Cruise speed | 90–105 km/h | Decided |
 | Design V_NE | 180 km/h | Decided |
 | **V_NE article #1** | **160 km/h** | Conservative until E7 |
-| n_max / n_min | +6 / −3, later +9 | `[E]`, gust-dominated |
+| Manoeuvre limit loads | **+6 / −3 g** | Provisional `[E]`; ADR-0044/I-24 |
+| Structural ultimate loads | **+9 / −4.5 g** | Limit × 1.5 `[D]`; not flight targets (C33) |
+| Gust basis | **Open — legacy Part 23 screen is not adopted as a design load** | G11/E9; nonlinear dynamic response required |
 | **Stall speed** | **≤ 45 km/h** | See correction C16 |
-| Required C_Lmax | ≥ 0.65 | `[D]` |
+| Wing `CLmax` design value | **0.589** | I-07 `[D]`; closes 45 km/h only at the V1 allocation mass |
+| Local section `clmax` screen | **≥ 0.65** | I-07/I-15; not the aircraft `CLmax` (C34) |
 
-> **Correction C16.** The original requirement was ≤ 40 km/h, derived with AUW 1350 g (4S1P, 48 g/dm²). When the AUW rose to 1620 g (6S1P, 57 g/dm²) **the calculation was not re-done**. With C_Lmax 0.65 the real stall speed is **42.7 km/h**; reaching 40 would require C_Lmax 0.74, outside the realistic range (0.55–0.70, Ananda et al.).
+> **Corrections C16/C34.** The original requirement was ≤ 40 km/h, derived with AUW
+> 1350 g (4S1P, 48 g/dm²). When AUW rose to 1620 g the calculation was not re-done.
+> C16 relaxed the requirement to 45 km/h but then used the local-section `clmax = 0.65`
+> as if it were whole-wing `CLmax`. I-07 supplies the correct distinction: local section
+> screen **0.65**, released wing design value **0.589**. The latter gives 45.0 km/h at
+> the V1 allocation mass; the current 1626.5 g V1 lower model gives 45.1 km/h and fails.
 >
 > **Relaxed to ≤ 45 km/h**, justified by precedent: the Peregrine at 52 g/dm² and the Mojito at ~60 are hand-launched.
 

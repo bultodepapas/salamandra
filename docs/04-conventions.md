@@ -50,7 +50,11 @@
 
 - **Sweep:** negative forward. This project uses Λc/4 = **−15°** (ADR-0040).
 - **Twist:** positive wash-in (tip at higher incidence). This project uses wash-in.
-- **Load factor:** positive upward.
+- **Load factor:** positive upward. A **limit load** is the maximum structural-design
+  load expected in operation; an **ultimate load** is limit × 1.5. For Article #1,
+  +6/−3 g are provisional manoeuvre limits and +9/−4.5 g are their ultimate structural
+  counterparts (ADR-0044). Gust loads are a separate envelope, not another name for the
+  manoeuvre limits.
 
 ## Units
 

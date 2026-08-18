@@ -1,7 +1,7 @@
 # Salamandra — Design Guide: Open Points and Evolution
 
-**Version 0.14** · 17 August 2026 · **v0.3.0 release companion** to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.19)
+**Version 0.15** · 17 August 2026 · **v0.3.0 release companion** to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.20)
 
 This document lists everything in the Design Guide that is **not yet fixed**: assumptions
 that need verification, values that will change when the corresponding research closes,
@@ -73,6 +73,7 @@ value stands.
 | **OP-28** | **Printed-part mass fractions and material variants (docs/06)** | Article #1 binding PETG shell cap **550 g**; hybrid boom correctly fixed outside material scaling. AERO WINGS saves 162.6 g but released-r1 conservative **Vdiv = 91.6 km/h**, below 95 km/h cruise: **not cleared for flight**. | CAD mass properties; measured AERO E/G; new structural concept if pursued | F2 P1/P2; F4 S3/S4/S7 |
 | **OP-29** | **Absolute divergence margin (docs/07 rev. 4, G6)** | At −15° with released r1 root: nominal **327.2 km/h** (1.36× PASS), conservative unmeasured **129.6 km/h** (0.54× FAIL), AERO **91.6 km/h**. GXY-plane case 180.0; GXY+gyroid+1.1 mm wall 207, still below 240. Initial **Vlimit remains 105 km/h**; **150** only after S3 validates GXY. | Real GJ, elastic axis, printed GXY and E7 Southwell | F4 S3/S4; I-21; E7 |
 | **OP-30** | **Elastic-axis location** | xEA/c bracket **0.30…0.45 `[E]`**, nominal 0.35. The old x/c = 0.353 enclosed-area centroid is a geometry diagnostic, **not a shear centre**. | Representative-section no-twist load test or validated shell FE model including wall stiffness and cells | S3 before raising Vlimit; E7 correlation |
+| **OP-31** | **Dynamic gust envelope and negative CLmin** | C33/I-24 closes terminology and the positive manoeuvre branch: +6/−3 g limit, +9/−4.5 ultimate, VA 109.0/110.4 km/h CLEAN/V1. The legacy rigid gust result exceeds the linear/stall domain and is retained only as a screen; inverse −3 threshold at 105 km/h is 5.10/5.19 m/s. | Nonlinear unsteady model with plunge/flexibility/spanwise gust plus validated negative-polar `CLmin` and measured `n_z(V)` | G11; B3 negative-polar extension/E9; F4/S1–S3 |
 
 ---
 
@@ -108,6 +109,7 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.15 | 2026-08-17 | Guide v0.20/I-24 propagated: C33 separates manoeuvre limit from ultimate load, adds positive V-n/VA results and OP-31 for the dynamic gust and negative-CL closure; C34 distinguishes local section `clmax` from wing `CLmax`. No false gust load or CAD change is adopted. |
 | 0.14 | 2026-08-17 | Guide v0.19/I-23 propagated: C29–C32 correct power, servo, yaw and complete-fin mass chains; OP-24 reopens V1 because its 1626.5 g lower model exceeds the 1620.2 g allocation target. |
 | 0.13 | 2026-08-17 | **Released with v0.3.0 / guide v0.18.** OP-02/03 close computationally on Salamandra r1; OP-12/13 use the aircraft-equilibrium propeller point; OP-23 closes Article #1 at 6S1P; OP-24 becomes a measured acceptance gate against the 1583.5/1620.2 g allocation. |
 | 0.12 | 2026-08-17 | **Released with v0.2.0 / guide v0.17.** No engineering closure was invented for release: OP-02 airfoil/trim, OP-24 mass, OP-29 divergence and OP-30 elastic-axis measurement remain explicit gates. |

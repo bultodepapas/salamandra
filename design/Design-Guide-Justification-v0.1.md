@@ -1,7 +1,7 @@
 # Salamandra — Design Guide: Justification
 
-**Version 0.14** · 17 August 2026 · **v0.3.0 release companion** to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.19)
+**Version 0.15** · 17 August 2026 · **v0.3.0 release companion** to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.20)
 
 This document records **why** every value in the Design Guide is what it is: the source,
 the confidence tag, and — where the repository has no datum — the assumption and its
@@ -185,7 +185,7 @@ its mandatory spar; F2 must close this gap and verify the real complete-aircraft
 | Value | Basis | Tag |
 |---|---|---|
 | Coupled trim criterion | Root/tip c²-integrated profile moment + 3.0° wash-in must trim at SM 8 % with neutral elevon within ±0.6°. This replaces the over-constrained single-section Cm0 ≥ +0.008 target | ADR-0041 `[D]` |
-| C_Lmax ≥ 0.65 | Stall ≤ 45 km/h requirement (docs/00, C16); measured band 0.55–0.70 for low-Re reflexed/flat sections (I-01, Ananda et al.) | `[M]` |
+| Wing `CLmax = 0.589`; local section `clmax ≥ 0.65` | I-07 maps the local section ceiling through the non-elliptic 3-D load distribution to the lower wing-level value used by stall/mass calculations. C34 corrects the former ambiguous global `CLmax ≥ 0.65` wording | `[D]`/`[M]` |
 | t/c 13.5 % / 9 % | See §2; ADR-0027 | `[M]`/`[D]` |
 | Salamandra r1 family | MH60 mean line, thickness changed about that mean line to 13.5/9 %, then +1.0°/+0.5° geometric reflex aft x/c 0.72. Real-Re endpoint polars and coordinate checks are in I-15 §8; intermediate station files make the spanwise family deterministic | ADR-0041 `[D]` |
 | E205 as tip data point | **Discarded on its polar (I-15 §6.2).** Flight-proven at Re 1.5–3×10⁵ on two in-service FPV aircraft (I-09), but the XFOIL screening (Ncrit 10–12, Re 3–5×10⁵) gives cm0 ≈ −0.07 — fails R-AIRFOIL by ≈ 0.08; ≈ 22° wash-in would be needed. In-service evidence does not imply Cm0 (tailed planes trim it) — confirmed numerically | `[M]`/`[D]` |
@@ -214,6 +214,21 @@ parameter remain exposed so E2 can update them without rebuilding the planform.
 | Balance tabs, hatch lock, nose retention | CORE integration details adopted from the Flightory practice (I-09): underside balance tabs for CG verification, spring-loaded bay hatch lock, threaded inserts + reinforcement collar for the nose pod. Proven patterns, PROVISIONAL in the guide (§6.7, §8) | `[M]` |
 | **Filament dowel pins in the glued joints (ADR-0039)** | 2 × Ø1.75 mm filament per segment joint at x/c 0.40/0.60 (solid collar Ø8×4): alignment during glue cure (primary, `[I]`) + shear redundancy vs the +6 g demand (FS ≈ 11 y=347 / 24 y=498 `[D]`, `filament_dowel_pins.py`); 2.6 g, zero cost. Does NOT replace the carbon Ø6 couple pin (stiffness, `joint_pin_trade.py`) | `[D]`/`[E]` |
 | **Straight channels vs dihedral kinks (guide §5.2, Q2)** | Each segment is printed flat and the carbon tube runs in a **straight bore Ø12.4–12.6**; at the dihedral kinks (max 1.07° at y = 195) the tube deviates ≤ 0.19 mm across the joint face — inside the 0.2–0.3 mm radial clearance (`boom_flexion.py` §6 `[D]`, 13 validations ALL PASS); even forced, the elastic bend is σ ≈ 34 MPa vs ~1600 MPa CFRP — no bending needed, no plastic set. Pin channel Ø6.3–6.5 by the same rationale | `[D]` |
+
+### 5.1 Flight-load envelope
+
+| Value | Basis | Tag |
+|---|---|---|
+| Manoeuvre limit **+6/−3 g** | Retained as the provisional operational manoeuvre requirement. Positive V-n uses the released `CLmax` and shared Article #1 masses; the negative aerodynamic branch remains open because `CLmin` is unavailable | ADR-0044/I-24 `[E]`/`[D]` |
+| Structural ultimate **+9/−4.5 g** | Current EASA CS-23 structural method: ultimate = limit × 1.5. C33 corrects the former phrase `later +9`; +9 is a strength case, not a manoeuvre target | `[D]` |
+| VA **109.0 CLEAN / 110.4 V1 km/h** | `Vs sqrt(6)` using 44.48/45.08 km/h connected stall speeds. At V_limit 105, positive stall boundaries are 5.57/5.42 g | `[D]` |
+| Legacy gust reference at 105 km/h | The Part 23 equation gives CLEAN +12.94/−10.94 g, but implies positive `CL = 1.37 > CLmax 0.589`; treated only as a nonlinear/dynamic-model mismatch flag. Inverse −3 threshold is 5.10 m/s CLEAN / 5.19 V1 | `[D]` screen, not an adopted load |
+
+The source transfer is deliberately limited. CS-23/CS-VLA methods provide traceability,
+but this is not a certification claim for a 1.6 kg RC UAV. NASA's ultralight-gust work
+shows that aircraft near Salamandra's 5.6 kg/m² wing loading follow gust motion strongly;
+rigid quasi-steady acceleration and internal-load scaling need a dynamic model. G11/E9
+therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 
 ## 6. Mass budget
 

@@ -62,7 +62,7 @@ Solved by **calibration**, not by search.
 | # | Task | Method |
 |---|---|---|
 | **B1** | **Calibrate XFOIL against measured data** | **Partial — [I-06](../research/I-06-reflexed-airfoils.md).** E387 (C) shows there is no single Ncrit; validate the 10–12 band against a second E387 model |
-| B2 | Screening criteria | t/c 13.5/9 % · C_Lmax ≥ 0.65 · coupled SM 8 % trim within ±0.6° neutral elevon · L/D at cruise CL |
+| B2 | Screening criteria | t/c 13.5/9 % · local section `clmax ≥ 0.65` (wing design `CLmax = 0.589`, C34) · coupled SM 8 % trim within ±0.6° neutral elevon · L/D at cruise CL |
 | B3 | Screen/design candidates with calibrated N_crit | **Executed computationally:** Salamandra r1 root/tip family (ADR-0041); E2 remains the measured closer |
 | B4 | Publish polars with their calibration | `[D]` output, declare it |
 

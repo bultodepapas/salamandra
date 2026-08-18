@@ -3,26 +3,29 @@
 **Date:** 2026-08-17 · **Tag:** `v0.3.0` · **Status:** RELEASED
 
 **Controlling specification:**
-[Salamandra Design Guide v0.19](../design/Salamandra-Design-Guide-v0.1.md)
+[Salamandra Design Guide v0.20](../design/Salamandra-Design-Guide-v0.1.md)
 
 Release v0.3.0 addresses three highest-return design uncertainties left by v0.2.0:
 the CAD airfoil family, the propulsion power boundary and the Article #1 mass/stall
 allocation. Each correction is backed by a reproducible calculation and propagated
 through the Design Guide, justification, open-points register, ADRs and research log.
 
-> **Post-release correction C29–C32 (17 August 2026):** the original v0.3 propulsion
+> **Post-release corrections C29–C34 (17 August 2026):** the original v0.3 propulsion
 > row assigned the full O1 battery budget to the motor and called the resulting
-> propeller point an aircraft equilibrium without an aircraft drag input. Guide v0.19
+> propeller point an aircraft equilibrium without an aircraft drag input. Guide v0.20
 > reserves avionics/FPV/BEC power and publishes a power/drag boundary instead. The same
 > audit corrects a factor-1000 servo-torque unit label and the dimensionalization of yaw
 > damping. C32 also finds that the old 36.72 g V1 fin row omitted its mandatory 5.70 g
 > aluminium spar: the connected V1 lower model is 1626.5 g / 45.1 km/h, so F2 mass
-> closure is reopened. The corrected values below supersede the tagged narrative.
+> closure is reopened. C33 then separates the provisional +6/−3 manoeuvre limits from
+> their +9/−4.5 ultimate structural cases and opens the nonlinear dynamic-gust gate G11;
+> C34 separates local section `clmax = 0.65` from wing design `CLmax = 0.589`.
+> The corrected values below supersede the tagged narrative.
 
 This is a **design release**, not a flight-qualified aircraft. The r1 sections still
 require E2 physical polar/stall acceptance, the mass allocation requires F2 CAD and
 scale verification, and the initial 105 km/h limit remains until S3/E7 close the
-printed-wing torsion and elastic-axis uncertainty.
+printed-wing torsion/elastic-axis uncertainty and G11/E9 close dynamic gust response.
 
 ---
 
@@ -30,12 +33,12 @@ printed-wing torsion and elastic-axis uncertainty.
 
 The released document hierarchy is:
 
-1. **Design Guide v0.19** controls CAD geometry, interfaces, materials, stations and
+1. **Design Guide v0.20** controls CAD geometry, interfaces, materials, stations and
    acceptance limits.
 2. `calculations/design_config.py` controls planform numbers; the generated Salamandra
    r1 DAT files control profile coordinates.
-3. ADR-0041…0043 record the three v0.3 decisions and their review conditions.
-4. I-15 §8, I-22 and I-23 record the correction evidence; the open-points register records
+3. ADR-0041…0044 record the v0.3 decisions and post-release load-envelope correction.
+4. I-15 §8, I-22…I-24 record the correction evidence; the open-points register records
    the remaining physical gates.
 
 Do not average conflicting values. Do not combine the v0.2 provisional profile,
@@ -150,18 +153,21 @@ station coordinates while making those updates.
 
 | Artifact | Release role |
 |---|---|
-| [`design/Salamandra-Design-Guide-v0.1.md`](../design/Salamandra-Design-Guide-v0.1.md) | **v0.19 controlling CAD specification** |
-| [`design/Design-Guide-Justification-v0.1.md`](../design/Design-Guide-Justification-v0.1.md) | v0.14 evidence and derivations |
-| [`design/Design-Guide-Open-Points-v0.1.md`](../design/Design-Guide-Open-Points-v0.1.md) | v0.14 remaining gates and triggers |
+| [`design/Salamandra-Design-Guide-v0.1.md`](../design/Salamandra-Design-Guide-v0.1.md) | **v0.20 controlling CAD specification** |
+| [`design/Design-Guide-Justification-v0.1.md`](../design/Design-Guide-Justification-v0.1.md) | v0.15 evidence and derivations |
+| [`design/Design-Guide-Open-Points-v0.1.md`](../design/Design-Guide-Open-Points-v0.1.md) | v0.15 remaining gates and triggers |
 | [`decisions/ADR-0041-salamandra-r1-airfoil-family.md`](../decisions/ADR-0041-salamandra-r1-airfoil-family.md) | Profile-family decision |
 | [`decisions/ADR-0042-cruise-propulsion-equilibrium.md`](../decisions/ADR-0042-cruise-propulsion-equilibrium.md) | Propulsion operating-point decision |
 | [`decisions/ADR-0043-article-1-mass-allocation.md`](../decisions/ADR-0043-article-1-mass-allocation.md) | Mass/stall/CG allocation |
+| [`decisions/ADR-0044-flight-load-envelope.md`](../decisions/ADR-0044-flight-load-envelope.md) | Manoeuvre-limit, ultimate-load and gust-screening decision |
 | [`research/I-22-high-roi-v0.3-audit.md`](../research/I-22-high-roi-v0.3-audit.md) | Ranked audit and correction evidence |
 | [`research/I-23-calculation-system-integration-audit.md`](../research/I-23-calculation-system-integration-audit.md) | Cross-module audit, corrections C29–C32 and verification contracts |
+| [`research/I-24-flight-load-envelope.md`](../research/I-24-flight-load-envelope.md) | Positive V-n branch, ultimate-load correction and gust-screening evidence |
 | [`calculations/airfoil_reflex_trade.py`](../calculations/airfoil_reflex_trade.py) | r1 generator and XFOIL envelope |
 | [`calculations/propulsion_match.py`](../calculations/propulsion_match.py) | Propeller O1 boundary and optional E2-drag equilibrium solve |
 | [`calculations/mass_budget.py`](../calculations/mass_budget.py) | Binding allocation and options |
 | [`calculations/verify_calculations.py`](../calculations/verify_calculations.py) | Cross-module consistency and deterministic-suite runner |
+| [`calculations/flight_envelope.py`](../calculations/flight_envelope.py) | Manoeuvre and gust-reference envelope with validation |
 | `geometry/airfoils/README.md` | Released CAD coordinate family and provenance |
 
 ## 6. Reproduction and release verification

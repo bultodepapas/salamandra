@@ -1,12 +1,12 @@
 # Salamandra — Design Guide
 
-**Version 0.19** · 17 August 2026 · Status: **RELEASED — v0.3.0 CAD baseline,
-post-release calculation correction.**
+**Version 0.20** · 17 August 2026 · Status: **RELEASED — v0.3.0 CAD baseline,
+post-release load-envelope correction.**
 Planform, airfoil coordinates, twist, propulsion reference and mass allocation are
 controlling. Values still flagged `PROVISIONAL` (principally the CORE outer shape and
 unmeasured structural properties) retain an explicit trigger in the open-points register.
 
-> **AUTHORITATIVE RELEASE DOCUMENT:** this guide v0.19 is the controlling CAD
+> **AUTHORITATIVE RELEASE DOCUMENT:** this guide v0.20 is the controlling CAD
 > specification for release `v0.3.0`. It supersedes the v0.2.0 airfoil, propulsion and
 > mass allocations as well as the complete v0.1.0 planform and
 > balance baseline. Do not reuse or mix v0.1.0 wing sketches, panel solids, CORE wing
@@ -40,12 +40,12 @@ version live in `design/prompts/` (the site generator intentionally excludes the
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.19 |
+| Version | 0.20 |
 | Date | 2026-08-17 |
 | Release | **v0.3.0 — airfoil, propulsion and mass allocation; C32 reopens V1** |
-| Status | **RELEASED**; supersedes v0.2.0 airfoil/propulsion/mass values; E2, D2 and F2 remain measured acceptance gates |
+| Status | **RELEASED**; supersedes v0.2.0 airfoil/propulsion/mass values; E2, D2, F2, S3 and G11 remain physical acceptance gates |
 | Reference configuration | **Cruise — Article #1** |
-| Inputs | ADR-0001…ADR-0043, I-01…I-23, docs/00, docs/02…docs/07, docs/10 |
+| Inputs | ADR-0001…ADR-0044, I-01…I-24, docs/00, docs/02…docs/07, docs/10 |
 | Intended reader | CAD designer (Fusion 360 or equivalent) |
 
 **How this guide evolves.** The design is expected to change as Phase 1 closes (airfoil
@@ -149,7 +149,7 @@ exists yet; it will be updated by the open point listed.
 | Stall speed | **≤45 km/h required**; **44.5 CLEAN / 45.1 V1 lower model** | ADR-0043/C32; §11 |
 | V_NE (article #1) | **160 km/h** (design 180) | docs/00 |
 | **V_limit (first flights)** | **105 km/h retained conservatively**; released-r1 recalculation gives 0.85 × 129.6 = 110.2 km/h, but no envelope expansion is authorized without S3. **150 km/h** if S3 confirms the G_XY model. | docs/07 rev. 4, §11 |
-| Load factors | +6 / −3 (later +9), gust-dominated | docs/00 |
+| Load factors | **Manoeuvre limit +6/−3 g; structural ultimate +9/−4.5 g**. Gust envelope remains open; do not use +9 as a flight target. | ADR-0044/I-24 `[D]`/`[E]` |
 | Skin / infill | 0.9 mm (2 perimeters) / gyroid 5 % | ADR-0028 |
 | Panel carbon | Bending tube Ø12×1.0 + anti-rotation pin Ø6 | PROVISIONAL (ADR-0015), §6.3 |
 | **Battery boom (prototype)** | Aluminium tube **Ø8 / int Ø6** + printed cradle, ≈ **37.4 g**, two-support arrangement | ADR-0040/0043, §6.7, §8 |
@@ -262,7 +262,7 @@ parameters, but a designer must use the r1 coordinates for this release.
 |---|---|---|
 | t/c root / tip | **13.5 % / 9 %** (linear) | ADR-0027 |
 | Coupled trim | Root/tip c²-integrated profile moment + 3.0° wash-in shall trim at SM 8 % with neutral elevon within **±0.6°** | ADR-0041; replaces the obsolete single-section Cm0 target |
-| C_Lmax (section) | **≥ 0.65** | docs/00, Ananda et al. `[M]` |
+| Local section `clmax` screen | **≥ 0.65**; wing design `CLmax = 0.589` | I-07/I-15, C34 `[M]`/`[D]` |
 | Reynolds range | **Re(MAC) ≈ 3–5×10⁵**; root up to ≈ 5.2×10⁵ at cruise, ≈ 2.5×10⁵ at stall | I-01 |
 | Family | Reflexed low-Re flying-wing airfoils | B3 (docs/03) |
 | **Stall character** | **Gentle, root-first; no tip stall before the root** — a criterion of the designed section, not a hope: the thickness-separation evidence shows thick sections can transition local → massive separation | I-02, I-15/A5 |
@@ -593,15 +593,45 @@ The designer has full freedom for the CORE outer shape within the constraints of
 | Endurance | 60 min at minimum-power speed | docs/00 |
 | Cruise speed | 90–105 km/h; design point **95 km/h** | docs/00 |
 | V_NE article #1 | **160 km/h** (design V_NE 180) | docs/00 |
-| **V_limit (first test flights)** | **105 km/h retained** below the recalculated 110 km/h clearance; **150 km/h** if S3 confirms the G_XY-plane model (0.85 × 180.0, rounded down) | docs/07 rev. 4, §11.3 |
+| **V_limit (first test flights)** | **105 km/h retained** below the recalculated 110 km/h clearance; **150 km/h** if S3 confirms the G_XY-plane model (0.85 × 180.0, rounded down) | docs/07 rev. 4, §11.4 |
 | Stall speed | **≤ 45 km/h** | docs/00 (C16) |
-| Required C_Lmax | ≥ 0.65 | docs/00 |
-| n_max / n_min | +6 / −3 (later +9) | docs/00 |
+| Wing `CLmax` design value | **0.589** | I-07 `[D]`; used by the mass/stall and V-n calculations |
+| Local section `clmax` screen | **≥ 0.65** | I-07/I-15; do not substitute it for wing `CLmax` (C34) |
+| Manoeuvre limit loads | **+6 / −3 g** (provisional) | ADR-0044/I-24 `[E]` |
+| Structural ultimate loads | **+9 / −4.5 g** (= limit × 1.5); not flight-command limits | ADR-0044/I-24 `[D]` |
+| Gust envelope | **OPEN:** legacy Part 23 result is a non-linear screening flag, not an adopted design load | G11/E9; §11.2 |
 | Launch | Hand launch, autolaunch via acceleration detection | docs/00 |
 | Battery config | **Article #1: 6S1P 21700 only**; 4S and 2P are separate platform variants with their own motor/carrier verification | ADR-0042 |
 | Divergence criterion | V_div ≥ 1.5 × V_NE (= 240 km/h) | docs/00 |
 
-### 11.2 Stall margin and mass acceptance (ADR-0043)
+### 11.2 Manoeuvre, ultimate and gust loads (ADR-0044 / I-24)
+
+> **C33 — the former `later +9` wording was ambiguous and is withdrawn.** Article #1
+> uses provisional **manoeuvre limit loads +6/−3 g**. The structure must carry limit
+> load without detrimental permanent deformation and the corresponding **ultimate
+> +9/−4.5 g** cases without failure; a component analysed at limit load therefore needs
+> at least 1.5 margin to its applicable failure value before any additional printed-
+> process factor. The +9 g value is not an authorized manoeuvre or envelope-expansion
+> target.
+>
+> The calculated positive V-n branch gives **VA = 109.0 km/h CLEAN / 110.4 km/h V1**.
+> At the 105 km/h initial speed limit, the CLmax boundary is **+5.57/+5.42 g**: positive
+> manoeuvre is stall-limited before +6 g. The negative aerodynamic branch is not drawn
+> because the project has no defensible `CLmin`; a validated negative-polar analysis or
+> section test must provide it. The normal E2 glide polar does not.
+> At the V1 lower mass, the symmetric whole-aircraft resultants are **+95.7/−47.9 N at
+> limit** and **+143.6/−71.8 N at ultimate**. They are distributed VLM loads, not forces
+> to apply at one point in a bench test.
+>
+> A unit-checked legacy Part 23 reference screen (15.24 m/s at 105 km/h) gives CLEAN
+> **+12.94/−10.94 g**, but the positive result implies `CL = 1.37`, well above the
+> released `CLmax = 0.589`. It is outside the linear model and is **not an adopted
+> structural load**. Its inverse sensitivity at 105 km/h is **6.38 m/s to +6 g and
+> 5.10 m/s to −3 g** (CLEAN; V1 6.49/5.19). These are equivalent vertical-gust inputs,
+> not forecast surface-wind gusts. A nonlinear dynamic model and E9 `n_z(V)` data close
+> G11. Until then: calm-air test programme, V_limit 105 km/h, no envelope expansion.
+
+### 11.3 Stall margin and mass acceptance (ADR-0043)
 
 > CLEAN is **1583.5 g → 44.5 km/h**. The ADR-0043 V1 allocation target is
 > **1620.2 g → 45.0 km/h**, but C32's complete-fin lower model gives
@@ -613,7 +643,7 @@ The designer has full freedom for the CORE outer shape within the constraints of
 > measured `CLmax` that supports a re-derivation.
 > LW-PLA is not an allowed mass lever under the current divergence model.
 
-### 11.3 Divergence and V_limit (docs/07 rev. 4, `divergence.py` — G6)
+### 11.4 Divergence and V_limit (docs/07 rev. 4, `divergence.py` — G6)
 
 > V_div vs the **240 km/h criterion** at Λc/4 = −15° using the released r1 root:
 > nominal **327.2 km/h (1.36× — PASS)**; **conservative unmeasured end 129.6 km/h
@@ -625,7 +655,7 @@ The designer has full freedom for the CORE outer shape within the constraints of
 > **105 km/h** initially; **150 km/h** only after S3 confirms G_XY. S3 elastic-axis/GJ
 > measurement and E7 Southwell expansion remain mandatory. Full analysis: docs/07; OP-29.
 
-### 11.4 Launch envelope (I-14 rev. 4 executed — `launch_speed.py` `[D]`)
+### 11.5 Launch envelope (I-14 rev. 4 executed — `launch_speed.py` `[D]`)
 
 > **Hand launch FEASIBLE.** Release gate: **V_suelta ≥ V_stall** (44.5 km/h CLEAN,
 > 45.1 km/h at the 1626.5 g V1 lower model) with
@@ -687,8 +717,8 @@ out of scope for this version.
 
 | Set | Documents |
 |---|---|
-| Decisions | ADR-0001…ADR-0043 ([`decisions/`](../decisions/)) |
-| Research | I-01…I-23 ([`research/`](../research/)); **calculation integration audit: I-23**; **v0.3 audit: I-22**; **airfoil: I-15 §8**; **sweep/elastic-axis: I-21**; **directional stability: I-20** |
+| Decisions | ADR-0001…ADR-0044 ([`decisions/`](../decisions/)) |
+| Research | I-01…I-24 ([`research/`](../research/)); **load envelope: I-24**; **calculation integration audit: I-23**; **v0.3 audit: I-22**; **airfoil: I-15 §8**; **sweep/elastic-axis: I-21**; **directional stability: I-20** |
 | Specification | [`docs/00-objectives-and-requirements.md`](../docs/00-objectives-and-requirements.md) |
 | Measured data | [`docs/02-measured-references.md`](../docs/02-measured-references.md) |
 | Plans | [`docs/03-phase-1-plan.md`](../docs/03-phase-1-plan.md), [`docs/05-master-plan.md`](../docs/05-master-plan.md) |
@@ -704,6 +734,7 @@ out of scope for this version.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.20 | 2026-08-17 | **Load-envelope corrections (C33–C34, I-24, ADR-0044).** Separates +6/−3 manoeuvre limit from +9/−4.5 ultimate structural loads; computes the positive V-n branch (VA 109.0/110.4 km/h CLEAN/V1); adds the unit-checked regulatory-reference gust screen and explicitly rejects its nonlinear result as an adopted design load. C34 distinguishes local section `clmax ≥ 0.65` from wing design `CLmax = 0.589`. G11/E9 retain dynamic gust and CLmin closure. No geometry or speed limit changed. |
 | 0.19 | 2026-08-17 | **Post-release calculation-system correction (C29–C32, I-23).** Unified shared inputs and added `verify_calculations.py`; corrected O1 total-power boundary, servo units/margin and dimensional yaw modes; divergence now uses r1, launch includes drag and boom uses exact static load superposition. C32 found the mandatory 5.70 g V1 spar missing from the mass chain: the 1620.2 g allocation remains the target, while the connected lower model is 1626.5 g / 45.1 km/h and F2 is reopened. No planform, airfoil-coordinate or CLEAN CG change. |
 | 0.18 | 2026-08-17 | **Released in v0.3.0.** Salamandra r1 coordinate family and +3.0° twist fixed for CAD (ADR-0041); original APC 8×8 O1 calculation published (its equilibrium interpretation and hotel-load omission are superseded by v0.19/C29); 6S1P-only Article #1 and the 1583.5/1620.2 g CLEAN/V1 mass allocation adopted (ADR-0043). |
 | 0.17 | 2026-08-17 | **Released in tag v0.2.0 as the controlling CAD specification.** Added an explicit authority hierarchy and breaking migration table; prohibited mixing v0.1.0 wing/CORE/cradle geometry with the −15° baseline; corrected the summary twist statement so the adverse 1.9° reflex case remains an open B3 gate. Release notes: [`docs/09-release-v0.2.md`](../docs/09-release-v0.2.md). |

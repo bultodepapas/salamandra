@@ -8,6 +8,7 @@
 | **E5** | FFT of blackbox gyro traces | G4, G7 | Null | ⬜ |
 | **E7** | **Southwell in flight** | **G6** | Low | ⬜ |
 | **E8** | **Yaw perturbation / Dutch-roll decay (I-20)** | **G10** — closes the directional-stability gap | Low | ⬜ |
+| **E9** | **Normal-load / gust correlation (I-24)** | **G11** — validates the low-amplitude load model; does not proof-test +6 g | Low | ⬜ |
 
 ## Withdrawn
 
@@ -67,12 +68,35 @@ Closes **G10** (directional stability) with `[M]` data. Defined in
 1. Stabilized flight at cruise (95 km/h), both variants (CLEAN and V1, ADR-0038)
 2. Aileron-impulse perturbation (rudder-kick analog — no rudder surface), then hands-off
 3. Blackbox gyro traces → yaw-subsidence time constant / Dutch-roll decay per variant
-4. Compare against the I-20 prediction (CLEAN: divergence τ ≈ 0.7 s; V1: damped
-   subsidence τ ≈ 1.5 s `[E]`) — the calculation is bounded, the flight decides
+4. Compare against the corrected I-20/C31 prediction (CLEAN: unstable mode
+   τ ≈ **0.16 s**; V1: damped pair decay τ ≈ **1.3 s** `[E]`) — the calculation is
+   bounded, the flight decides
 
 **This test also validates the claim that the fin is worth its drag** (ADR-0038): if the
 CLEAN build shows acceptable yaw behavior, the V1 fin can be demoted to a
 convenience-only variant.
+
+## E9 — normal-load / gust correlation
+
+Closes the measured part of **G11** without attempting a dangerous in-flight proof load.
+The reduction method and reference equation are defined in
+[I-24](../research/I-24-flight-load-envelope.md).
+
+1. Calibrate the IMU normal axis against gravity in static orientations; record aircraft
+   mass/configuration and synchronize pitot, IMU, attitude and blackbox time bases.
+2. In calm conditions, fly stabilized segments at 65, 80, 95 and at most 105 km/h.
+   Use ordinary shallow turns and small pitch inputs only; do not deliberately exceed
+   2 g during this correlation test.
+3. Reduce body acceleration to aircraft normal load `n_z`, separate control-commanded
+   events from atmospheric events, and compare low-amplitude gust increments with the
+   I-24 slope `Delta n / U_de` at each pitot speed.
+4. Report positive and negative events separately, with speed, mass, configuration,
+   turbulence context and uncertainty. If uncommanded load approaches the provisional
+   +6/−3 limits, terminate the programme and lower the speed ceiling.
+
+E9 validates only the small-disturbance part of the model. It does not establish CLmin,
+dynamic-stall loads, ultimate strength or permission to expand V_limit; those require
+section evidence, the S3 structural model and ground proof testing.
 
 ---
 

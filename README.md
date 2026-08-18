@@ -9,7 +9,7 @@ forward-swept flying wing, but that is only the first design. The repository is 
 grow into a whole family of airframes, parts, adapters and experiments — contributed by
 the community.
 
-**Revision 1.15** · 17 August 2026 · **Release v0.3.0 · Phase 1 in progress**
+**Revision 1.16** · 17 August 2026 · **Release v0.3.0 · Phase 1 in progress**
 
 > 📖 **Read this project as a website:** <https://bultodepapas.github.io/salmandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
@@ -90,7 +90,7 @@ The aircraft is designed as a **modular platform**:
 
 This is the first, reference design on the platform, named **Salamandra**. Its current
 specification for the designer is the
-[**Salamandra Design Guide v0.19**](design/Salamandra-Design-Guide-v0.1.md), with the
+[**Salamandra Design Guide v0.20**](design/Salamandra-Design-Guide-v0.1.md), with the
 justification in [`design/`](design/). The baseline is a PETG forward-swept flying wing,
 **modular and configurable**: a standard center module and interchangeable wing panels.
 Efficient FPV cruise flight, with electronics chosen by the builder.
@@ -98,8 +98,8 @@ Efficient FPV cruise flight, with electronics chosen by the builder.
 **📦 Current release — `v0.3.0`: airfoil, propulsion and mass allocation.** The Design
 Guide is the authoritative entry point. This release supplies the Salamandra r1 CAD
 coordinate family and a binding 6S1P mass/CG allocation. Post-release calculation
-audit C29–C32 corrects the propulsion boundary, servo units, yaw modes and the omitted
-V1 fin-spar mass. Read the
+audit C29–C34 corrects the propulsion boundary, servo units, yaw modes, omitted V1
+fin-spar mass, manoeuvre/ultimate-load distinction and section/wing CLmax terminology. Read the
 [**v0.3.0 release notes**](docs/10-release-v0.3.md)
 before continuing v0.2.0 CAD. Historical v0.1.0/v0.2.0 notes remain audit records.
 The wiki renders the package at
@@ -171,7 +171,7 @@ configuration contributed to the platform.
 
 | Folder | What it contains |
 |---|---|
-| [`design/`](design/) | **Salamandra Design Guide v0.19** — the authoritative v0.3.0 CAD specification plus C29–C32 corrections, its justification, and the open points |
+| [`design/`](design/) | **Salamandra Design Guide v0.20** — the authoritative v0.3.0 CAD specification plus C29–C34 corrections, its justification, and the open points |
 | [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |
@@ -215,8 +215,9 @@ This is the project's central rule. Every quantitative claim carries a tag:
 | 6 — Manufacturing and release | ⬜ |
 
 **Current physical gates:** E2 measured r1 polar/stall acceptance, F2 CAD/weighed mass,
-and OP-29 measured torsional stiffness/elastic axis before the speed envelope can expand
-beyond 105 km/h. Airfoil coordinate generation is no longer a CAD blocker.
+OP-29 measured torsional stiffness/elastic axis and G11 dynamic gust closure before the
+speed envelope can expand beyond 105 km/h. Airfoil coordinate generation is no longer a
+CAD blocker.
 
 Phase-1 status (2026-08-17):
 
@@ -244,6 +245,12 @@ Phase-1 status (2026-08-17):
   the released r1 profile. Nominal Vdiv is 327.2 km/h, but the conservative unmeasured
   case is **129.6 km/h**; initial **Vlimit = 105 km/h**. S3 GJ,
   GXY and elastic-axis measurements plus E7 Southwell expansion are mandatory.
+- **C33/G11 — load meanings fixed; dynamic gust remains open.** +6/−3 g are
+  provisional manoeuvre limit loads; +9/−4.5 g are the corresponding 1.5× ultimate
+  structural cases, not flight targets. The positive V-n branch gives VA **109.0 km/h
+  CLEAN / 110.4 km/h V1**. A unit-checked regulatory-reference gust transfer leaves the
+  linear CL range, so it is a screening flag rather than an adopted design load
+  ([I-24](research/I-24-flight-load-envelope.md), [ADR-0044](decisions/ADR-0044-flight-load-envelope.md)).
 - **G10 (directional stability) — bounded by calculation (I-20, ADR-0038).** The
   finless baseline is estimated **directionally unstable** (Cnβ −0.0006…−0.0014/deg
   `[E]`, FSW + nose boom); the platform now publishes two configurations:
