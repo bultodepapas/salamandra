@@ -86,6 +86,13 @@ Before proposing anything, read in this order:
 
 **`decisions/` and `research/` are separated on purpose.** An ADR says *what was decided*; a research thread says *what we know and how*. One piece of research feeds several decisions and one decision rests on several pieces of research. Merging them forces duplication or loss of traceability.
 
+**Drawing workflow:** `geometry/drawings/` holds *generated* A3 SVG sheets. Rerun
+`python3 calculations/generate_blueprints.py` after any upstream change: the same run
+republishes `geometry/drawings/manifest.json`, the drawing gallery in `README.md` and the
+index table in `geometry/drawings/README.md`, and the wiki renders that manifest at build
+time. Text between `BEGIN GENERATED: drawing-index` markers is machine-written — edit
+`calculations/drawing_index.py` instead. `--check` fails on a stale sheet or block and runs in CI.
+
 **Wiki workflow:** `wiki/` is an Astro Starlight site. The generator (`node wiki/scripts/gen-site.mjs`, wired to `predev`/`prebuild`) reads the canonical folders above and emits `wiki/src/content/docs/` (gitignored) with auto-generated index tables and rewritten internal links. After changing any canonical `.md`, run `npm run gen` in `wiki/` (or just build) so the served indexes stay in sync. Content committed under `wiki/content/` is the only wiki-only source of truth.
 
 ---

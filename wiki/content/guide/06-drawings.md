@@ -10,35 +10,12 @@ provisional. These are **technical sketches, not manufacturing drawings**.
 
 ## Current drawing set
 
-### General arrangement · SLM-GA-001
+The sheets below are published from `geometry/drawings/manifest.json`, which
+`calculations/generate_blueprints.py` rewrites in the same run that renders the drawings.
+Regenerating the set updates this page, the repository README and the drawing index
+together; nothing here is maintained by hand.
 
-[![A3 general-arrangement drawing of the Salamandra Article #1 planform, balance datums and provisional equipment.]({{BASE}}drawings/SLM-GA-001-general-arrangement.svg)]({{BASE}}drawings/SLM-GA-001-general-arrangement.svg)
-
-Use this sheet to review the whole-aircraft relationship: 1,300 mm controlled planform,
-modular stations, quarter-chord sweep, CG/NP, nose-boom battery station and rear-pusher
-envelope. A continuous curved fuselage OML now connects the battery fairing, CORE and
-rear pod so the aircraft reads as one body. Its required stations are sourced, but its
-Bézier transitions remain `[I]`, amber and provisional until OP-21/F2 freezes native CAD.
-
-### Side elevations · SLM-GA-002
-
-[![A3 side-elevation comparison of the Salamandra CLEAN finless baseline and V1a fixed-fin variant.]({{BASE}}drawings/SLM-GA-002-side-elevations.svg)]({{BASE}}drawings/SLM-GA-002-side-elevations.svg)
-
-Use this sheet to compare the two published directional configurations without changing
-the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is
-finless; **SALAMANDRA-V1a** adds a passive fixed centreline fin. Neither configuration has
-a movable rudder. The released root airfoil and calculated V1a fin dimensions are
-traceable, while the side OML, vertical equipment placement, propeller-clearance keel and
-fin/pod installation remain `[I]`. The drawing also flags the open 105 mm fin-root versus
-x = +295 mm pod-extension interface for native CAD resolution.
-
-### Right half-wing · SLM-WNG-001
-
-[![A3 right-half-wing drawing showing printed segments, cells, spar, pin, elevon, airfoil section and polyhedral inset.]({{BASE}}drawings/SLM-WNG-001-half-wing-layout.svg)]({{BASE}}drawings/SLM-WNG-001-half-wing-layout.svg)
-
-Use this sheet to review PANEL segmentation and interfaces. It shows the exact y195
-Salamandra r1 coordinate section, but the spar/channel, servo zones, D-box web and
-polyhedral construction retain their provisional status.
+{{DRAWINGS}}
 
 ## Read the linework before the colour
 

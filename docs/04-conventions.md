@@ -18,11 +18,20 @@
 | `ADR-XXXX` | Design decision | `decisions/` |
 | `I-XX` | Research thread | `research/` |
 | `GX` | Data gap | `gaps/` |
-| `EX` | Test | `tests/` |
+| `EX` | Test — written **unpadded**, `E1`…`E9` | `tests/` |
+| `E0X` | Controlled equipment item reference — written **zero-padded**, `E01`…`E21` | `calculations/generate_blueprints.py`, sheet `SLM-EQP-001` |
 | `OX` | Objective | `docs/00-...` |
 | `R-XXX` | Derived requirement | `docs/00-...` |
 | `CX` | Recorded correction | `CHANGELOG.md` |
 | `FX` | Project phase | `docs/` |
+
+**The `E` prefix carries two registers.** A test is `E1`…`E9`; an equipment item balloon on
+the mass-skeleton sheet is `E01`…`E21`, always zero-padded, and its numbers are frozen
+against renumbering (E02/E03 stay retired rather than being reused). Write the padding as
+specified: `wiki/scripts/check-refs.mjs` resolves an `E` reference against both registers
+and fails on one that exists in neither. The padding is what keeps them apart, so a test
+register that ever reaches ten must be renumbered or re-prefixed before `E10` is used,
+because `E10` is already the flight controller.
 
 ## Symbols
 

@@ -48,6 +48,7 @@ npm run lint         # lint committed wiki Markdown and MDX
 | Onboarding content (the wiki's own pages) | Edit `wiki/content/` (home, 404, guide pages) — this is committed source |
 | Site structure / nav / theme | `wiki/astro.config.mjs`, `wiki/src/styles/custom.css` |
 | Hero or diagram assets | `wiki/src/assets/` for imported assets; canonical technical drawings live in `geometry/drawings/` and are copied to the generated `wiki/public/drawings/`; other stable public files remain in `wiki/public/` |
+| A generated SVG drawing | Nothing here — rerun `python3 calculations/generate_blueprints.py`. The build copies the sheets, verifies each SHA-256 against `geometry/drawings/manifest.json` and expands `{{DRAWINGS}}` in the drawing guide page from it |
 | Deployment identity (repo name) | `wiki/base.mjs` (single source of truth) |
 
 ## Authoring guide pages

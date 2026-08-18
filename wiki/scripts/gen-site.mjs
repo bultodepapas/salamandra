@@ -20,6 +20,7 @@ import {
   statSync,
   copyFileSync,
 } from 'node:fs';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BASE, REPO, SITE } from '../base.mjs';
@@ -212,6 +213,50 @@ add('CLAUDE.md', 'platform/ai-context.md');
 add('LICENSE-docs.md', 'platform/license-docs.md');
 
 // ---------------------------------------------------------------------------
+// generated SVG drawing set
+//
+// geometry/drawings/manifest.json is written by calculations/drawing_index.py
+// from the same run that renders the sheets. The wiki never re-describes a
+// drawing: it publishes what the manifest says, so a regenerated drawing set
+// updates the served page with no manual edit.
+
+const DRAWINGS_SRC = path.join(ROOT, 'geometry', 'drawings');
+const DRAWING_MANIFEST = path.join(DRAWINGS_SRC, 'manifest.json');
+
+function readDrawingManifest() {
+  if (!existsSync(DRAWING_MANIFEST)) {
+    throw new Error(
+      'geometry/drawings/manifest.json is missing; run python3 calculations/generate_blueprints.py',
+    );
+  }
+  const manifest = JSON.parse(readFileSync(DRAWING_MANIFEST, 'utf8'));
+  if (manifest.schema !== 1) {
+    throw new Error(`unsupported drawing manifest schema ${manifest.schema}`);
+  }
+  if (!Array.isArray(manifest.sheets) || !manifest.sheets.length) {
+    throw new Error('drawing manifest declares no sheets');
+  }
+  return manifest;
+}
+
+const drawingManifest = readDrawingManifest();
+const drawingUrl = (file) => `${BASE}drawings/${file}`;
+
+function renderDrawingGallery() {
+  return drawingManifest.sheets
+    .map((sheet) => {
+      const url = drawingUrl(sheet.file);
+      return (
+        `### ${sheet.number} · ${sheet.heading}\n\n` +
+        `[![${sheet.description}](${url})](${url})\n\n` +
+        `${sheet.note}\n\n` +
+        `**Sheet** ${sheet.scale} · **Authority** ${sheet.authority}.`
+      );
+    })
+    .join('\n\n');
+}
+
+// ---------------------------------------------------------------------------
 // URL resolution
 
 const destToUrl = (dest) => {
@@ -239,6 +284,7 @@ const metadataTokens = new Map([
   ['ADR_FILE_COUNT', String(ADR_FILE_COUNT)],
   ['RESEARCH_FILE_COUNT', String(RESEARCH_FILE_COUNT)],
   ['SCRIPT_FILE_COUNT', String(SCRIPT_FILE_COUNT)],
+  ['DRAWINGS', renderDrawingGallery()],
 ]);
 
 function expandTokens(md) {
@@ -302,6 +348,17 @@ function rewriteLinks(md, siteDir) {
     if (norm.startsWith('./')) norm = norm.slice(2);
 
     const lookup = (key) => pagePaths.get(key) || urlMap.get(key) || folderMap.get(key);
+
+    // canonical drawings are served from the copied public/drawings/ folder
+    if (/^geometry\/drawings\/[^/]+\.svg$/.test(norm)) {
+      return '](' + drawingUrl(path.posix.basename(norm)) + anchor + ')';
+    }
+
+    // other canonical geometry files (drawing contract, airfoil coordinates) are
+    // not served pages: link them to the repository so traceability survives.
+    if (/^geometry\//.test(norm)) {
+      return '](' + `https://github.com/${REPO}/blob/main/${norm}` + anchor + ')';
+    }
 
     if (base.endsWith('.py')) {
       if (norm.startsWith('calculations/')) {
@@ -740,7 +797,7 @@ function genLlmsTxt() {
 }
 
 function copyDrawings() {
-  const source = path.join(ROOT, 'geometry', 'drawings');
+  const source = DRAWINGS_SRC;
   const destination = path.join(WIKI, 'public', 'drawings');
   if (!existsSync(source)) {
     throw new Error('canonical geometry/drawings directory is missing');
@@ -749,12 +806,32 @@ function copyDrawings() {
   if (!drawings.length) {
     throw new Error('canonical geometry/drawings directory contains no SVG sheets');
   }
+  // Publication gate: the served sheets must be exactly the sheets the manifest
+  // describes, byte for byte. A stale manifest fails the build instead of
+  // shipping a page that describes a drawing nobody can see.
+  const declared = drawingManifest.sheets.map((sheet) => sheet.file).sort();
+  if (declared.join('|') !== drawings.join('|')) {
+    throw new Error(
+      `drawing manifest lists [${declared}] but geometry/drawings holds [${drawings}]; ` +
+        'run python3 calculations/generate_blueprints.py',
+    );
+  }
+  for (const sheet of drawingManifest.sheets) {
+    const bytes = readFileSync(path.join(source, sheet.file));
+    const digest = createHash('sha256').update(bytes).digest('hex');
+    if (digest !== sheet.sha256) {
+      throw new Error(
+        `${sheet.file} does not match its manifest digest; ` +
+          'run python3 calculations/generate_blueprints.py',
+      );
+    }
+  }
   rmSync(destination, { recursive: true, force: true });
   mkdirSync(destination, { recursive: true });
   for (const drawing of drawings) {
     copyFileSync(path.join(source, drawing), path.join(destination, drawing));
   }
-  console.log(`[gen-site] copied ${drawings.length} canonical SVG drawing(s).`);
+  console.log(`[gen-site] copied ${drawings.length} manifest-verified SVG drawing(s).`);
 }
 
 // ---------------------------------------------------------------------------

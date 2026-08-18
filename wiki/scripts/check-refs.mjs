@@ -3,8 +3,10 @@
 // Two guarantees:
 //  1. Every inline markdown link in the repo that targets a local `.md` file
 //     must resolve to a real file. Broken traceability links are errors.
-//  2. Every bare mention of a record identifier (`ADR-XXXX`, `I-XX`, `GX`, `EX`)
-//     must resolve to an existing record. Unknown identifiers fail in strict mode.
+//  2. Every bare mention of a record identifier (`ADR-XXXX`, `I-XX`, `GX`, `EX`,
+//     `E0X`) must resolve to an existing record. Unknown identifiers fail in
+//     strict mode. `E` is two registers: unpadded tests and zero-padded
+//     equipment item references.
 //
 // Exit code 1 when there are broken links, so CI can gate on it.
 //
@@ -50,6 +52,15 @@ const tableIds = (rel, re) => {
 };
 const G_IDS = tableIds('gaps/README.md', /\*\*G(\d{1,2})\*\*/g);
 const E_IDS = tableIds('tests/README.md', /\*\*E(\d{1,2})\*\*/g);
+
+// The `E` prefix carries two registers (docs/04-conventions.md): tests are
+// written unpadded (E1...E9, tests/README.md) and controlled equipment item
+// balloons are written zero-padded (E01...E21). The equipment register is read
+// from its canonical source, the mass-skeleton reference map, so an equipment
+// reference that does not exist still fails.
+// Retired numbers (E02/E03) count as known: they are deliberately never reused,
+// so text that explains the retirement must not be reported as a broken record.
+const EQUIPMENT_IDS = tableIds('calculations/generate_blueprints.py', /"E(\d{2})"/g);
 
 // historical records that are intentionally fileless (kept for the record):
 // superseded ADR numbers (decisions/README "Superseded or cancelled") and
@@ -114,7 +125,9 @@ for (const rel of files) {
     if (!G_IDS.has(m[1])) warnings.push(`unknown G${m[1]} in ${rel}`);
   }
   for (const m of md.matchAll(/\bE(\d{1,2})\b/g)) {
-    if (!E_IDS.has(m[1])) warnings.push(`unknown E${m[1]} in ${rel}`);
+    // padded -> equipment item, unpadded -> test; unknown in both is an error
+    const known = m[1].length === 2 ? EQUIPMENT_IDS.has(m[1]) : E_IDS.has(m[1]);
+    if (!known) warnings.push(`unknown E${m[1]} in ${rel}`);
   }
 }
 
@@ -122,7 +135,8 @@ for (const rel of files) {
 
 console.log(`[check-refs] scanned ${files.length} markdown files.`);
 console.log(
-  `[check-refs] known records: ${ADR_IDS.size} ADR, ${I_IDS.size} I, ${G_IDS.size} G, ${E_IDS.size} E.`,
+  `[check-refs] known records: ${ADR_IDS.size} ADR, ${I_IDS.size} I, ${G_IDS.size} G, ` +
+    `${E_IDS.size} E tests, ${EQUIPMENT_IDS.size} E equipment items.`,
 );
 
 if (warnings.length) {

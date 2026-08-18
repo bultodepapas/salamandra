@@ -39,6 +39,7 @@ Data sources consumed (all `[M]`):
 |---|---|---|---|
 | `design_config.py` | **Canonical numerical design contract** — planform, atmosphere, mission/stall/speed points, load factor and released mass targets; validates geometry and shared invariants | Guide, every coupled script | stdlib only |
 | `generate_blueprints.py` | **Metric SVG drawing generator** — emits and validates the A3 general-arrangement, equipment mass-skeleton and half-wing sheets from the canonical planform, 3D equipment ledger, calculated balance solution and released airfoil sections; visually distinguishes provisional geometry | `geometry/drawings/`, I-25, wiki drawing guide, CAD review | numpy through `balance_cg.py`; `equipment_layout.py` |
+| `drawing_index.py` | **Drawing publication contract** — one registry of sheet number, purpose, sheet scale, authority and reviewer note; writes `geometry/drawings/manifest.json` and the generated drawing blocks in the repository README and drawing index, and fails when any of them is stale | `README.md`, `geometry/drawings/`, wiki drawing page | stdlib only |
 | `verify_calculations.py` | **Cross-module verification** — proves geometry, mass, battery, CG, stall, power, propulsion, speed-role, airfoil, stability, control and yaw contracts agree; `--all-scripts` executes every deterministic local CLI | Whole calculation system, I-23 | numpy |
 | `sweep_trade.py` | **Coupled sweep selection** — full VLM + Weissinger NP, trim/twist/reflex, section-Cl margin, self-consistent balance/packaging and NASA TP-1685 divergence trend for −20…−10° candidates | I-21, ADR-0040 | numpy |
 | `vlm_ala_volante.py` | Panel vortex lattice for the forward-swept wing (taper + twist). NP, CL_α, load distribution, Cm0-per-degree twist yield | I-07, G8, guide §4.3 | numpy |
@@ -84,6 +85,8 @@ remain explicit external gates and are listed, never silently skipped.
 ```bash
 python3 generate_blueprints.py --check
 ```
+
+Running it without `--check` writes the sheets **and republishes** `geometry/drawings/manifest.json`, the repository README drawing gallery and the drawing index table through `drawing_index.py`; the wiki renders the same manifest at build time. `--check` fails when a sheet or any published block is stale, and it is the gate CI runs. Use `python3 drawing_index.py` when only the published text changed, since it needs no numerical stack.
 
 This checks the generated A3 metric drawing set, including
 `SLM-EQP-001-equipment-mass-skeleton.svg`: the equipment-only top/side projection and

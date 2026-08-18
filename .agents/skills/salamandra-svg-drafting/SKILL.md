@@ -49,6 +49,11 @@ manufacturing authority.
   [`references/oml-continuity.md`](references/oml-continuity.md) before editing.
 - Scope drawing-specific styles to the affected sheet or element. After regeneration,
   confirm that unrelated canonical drawings remain unchanged.
+- A new sheet is not finished until it is published: add its `SheetSpec` (number, file,
+  heading, purpose, sheet scale, authority, reviewer note) to `calculations/drawing_index.py`.
+  The generator refuses to pass while a rendered sheet has no entry, and the manifest it
+  writes is what the README gallery, the drawing index table and the wiki page render.
+  Never hand-edit inside a `BEGIN GENERATED: drawing-index` block.
 
 ## Verify and review
 

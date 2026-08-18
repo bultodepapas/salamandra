@@ -11,6 +11,11 @@ Run from any directory::
     python calculations/generate_blueprints.py
     python calculations/generate_blueprints.py --check
 
+Writing also republishes ``geometry/drawings/manifest.json`` and the generated
+drawing blocks in ``README.md`` and ``geometry/drawings/README.md`` through
+``drawing_index.py``; ``--check`` fails when any of them is stale.  The wiki
+reads the same manifest at build time.
+
 The SVG viewport is 420 x 297 and the physical size is 420 mm x 297 mm.  Thus
 one SVG user unit is one millimetre on the A3 sheet when printed at 100 %.
 """
@@ -25,6 +30,7 @@ from itertools import pairwise
 from math import sqrt
 from pathlib import Path
 
+import drawing_index
 import equipment_layout
 from balance_cg import CG_TARGET, NP_VLM, NP_WL, solve_reference_layout
 from design_config import (
@@ -117,9 +123,14 @@ MASS_SKELETON_COMPONENT_IDS = (
     "avionics_installation_reserve",
 )
 
-# E-numbers are controlled item references, not row numbers. E02/E03 were the
-# removed inboard servos; retaining the original downstream references prevents
-# the two-servo decision from silently renumbering the motor, avionics and O4 items.
+# E-numbers are controlled item references, not row numbers. Retiring a number
+# instead of reusing it prevents a removed item from silently renumbering the
+# motor, avionics and O4 references downstream.
+RETIRED_MASS_SKELETON_REFERENCES = (
+    "E02",  # inboard left servo, removed by the two-servo decision (ADR-0026)
+    "E03",  # inboard right servo, removed by the two-servo decision (ADR-0026)
+)
+
 MASS_SKELETON_REFERENCE_BY_ID = {
     "battery_6s1p": "E01",
     "servo_left_406": "E04",
@@ -1828,6 +1839,10 @@ def validate_contract() -> dict[str, bool]:
     )
     checks = {
         "canonical geometry validation passes": all(validate_geometry().values()),
+        "retired equipment references are not reused": not (
+            set(RETIRED_MASS_SKELETON_REFERENCES)
+            & set(MASS_SKELETON_REFERENCE_BY_ID.values())
+        ),
         "drawing half-span matches design contract": abs(CONTRACT.segment_joints_m[-1] - HALF_SPAN) < 1e-12,
         "equipment top scale fits the complete 1300 mm span in 200 mm": abs(
             2.0 * HALF_SPAN * 1000.0 / CONTRACT.equipment_top_scale - 200.0
@@ -2076,6 +2091,13 @@ def main() -> None:
         write_drawings(outputs)
 
     checks = validate_contract()
+    # The sheets are only half of the artifact: README, drawing index and wiki
+    # manifest are republished from the same run so no published surface can
+    # silently describe an older drawing set.
+    checks["drawing set: published sheets match the drawing index"] = {
+        output.path.name for output in outputs
+    } == {spec.filename for spec in drawing_index.SHEETS}
+    checks.update(drawing_index.sync(write=not args.check))
     for output in outputs:
         checks[f"{output.path.name}: generated file is current"] = (
             output.path.exists()

@@ -6,6 +6,50 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ## [Unreleased] — 2026-08-18
 
+**C38 — The documentation CI could not run, so no gate was actually enforcing anything.**
+
+- `npm ci` failed on every job: `wiki/package-lock.json` was missing the optional
+  `@emnapi/core` and `@emnapi/runtime` entries its dependency tree resolves, so the install
+  aborted before any check ran. The lock file is regenerated and `npm ci` reproduces the
+  tree from it.
+- `check-refs --strict` failed on 17 references to `E01`, `E18` and `E19`. None was wrong:
+  the `E` prefix carries **two** registers and the checker only knew one. Tests are written
+  unpadded (`E1`…`E9`, `tests/README.md`); controlled equipment item balloons are written
+  zero-padded (`E01`…`E21`) and live in the mass-skeleton reference map that feeds
+  `SLM-EQP-001`. Both registers are now read from their canonical sources, retired numbers
+  included, and the convention is recorded in `docs/04-conventions.md`.
+- Retired equipment numbers became data instead of a comment
+  (`RETIRED_MASS_SKELETON_REFERENCES`), and the drawing contract now checks that a retired
+  number is never reused. `E10` is the flight controller, so a test register reaching ten
+  must be re-prefixed rather than colliding.
+- No geometry, number or confidence tag changed. What changed is that the gates in
+  `.github/workflows/docs.yml` — referential integrity, markdown lint, strict site
+  generation, built-link check and the new drawing gate — now run instead of failing at
+  install time.
+
+---
+
+**C37 — The published drawing set had drifted from the generated one.**
+
+- The generator wrote four A3 sheets, but the wiki drawing page described only three:
+  `SLM-EQP-001` (equipment mass skeleton) was rendered, copied to the site and never
+  listed. The repository README embedded no drawing at all and only mentioned the folder.
+  Every sheet description — purpose, scale and authority tag — was maintained by hand in
+  two places, so nothing detected the omission.
+- Fixed at the source rather than in the text: `calculations/drawing_index.py` now holds
+  one registry of sheet number, purpose, sheet scale, authority and reviewer note, and
+  writes `geometry/drawings/manifest.json` (title and description read back from the
+  rendered SVG, plus byte size and SHA-256) in the same run that renders the drawings.
+- `README.md` and `geometry/drawings/README.md` carry generated blocks published from that
+  manifest; the wiki expands the same manifest at build time and refuses to build when a
+  served sheet does not match its recorded digest. The README now embeds all four sheets
+  as SVG, so zoom does not degrade them.
+- `python3 calculations/generate_blueprints.py --check` fails on a stale sheet, manifest or
+  published block, and now runs in CI on any change under `calculations/` or `geometry/`.
+  No geometry, number or confidence tag changed: this is a traceability correction.
+
+---
+
 **C36 — Article #1 elevon geometry selected from a span/chord/tip trade.**
 
 - New I-27/ADR-0045 and `elevon_sizing.py` compare retained, shorter, tip-extended

@@ -42,6 +42,24 @@
       }
     },
     {
+      "label": "Drawings: publish index only",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/calculations/drawing_index.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "clear": true,
+        "panel": "dedicated",
+        "reveal": "always"
+      }
+    },
+    {
       "label": "Drawings: verify all calculations",
       "type": "process",
       "command": "python",

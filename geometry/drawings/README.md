@@ -7,12 +7,22 @@ open.
 
 ## Current sheets
 
-| Drawing | Purpose | Scale | Authority |
+<!-- BEGIN GENERATED: drawing-index · calculations/drawing_index.py · do not edit by hand -->
+
+| Drawing | Purpose | Sheet | Authority |
 |---|---|---:|---|
-| [`SLM-GA-001-general-arrangement.svg`](SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and continuous provisional fuselage/equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]` |
-| [`SLM-GA-002-side-elevations.svg`](SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
-| [`SLM-EQP-001-equipment-mass-skeleton.svg`](SLM-EQP-001-equipment-mass-skeleton.svg) | Top and side mass skeleton: component envelopes, true mass centres, x/y/z schedule, CLEAN CG and V1 battery-stop overlay. The top view includes the controlled exterior wing planform as spatial context but no wing construction, fuselage or OML. | A3 · top 1:6.5 / side 1:4 | Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority |
-| [`SLM-WNG-001-half-wing-layout.svg`](SLM-WNG-001-half-wing-layout.svg) | Right half-wing: printed segments, cells, spar/pin, ADR-0045 elevon/fixed-root bridge, exact y195 profile and polyhedral inset | A3 · plan 1:2 | Planform/profile/elevon bounds `[D]`; structure/polyhedral `[E]`/`[I]` |
+| [`SLM-GA-001`](SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and continuous provisional fuselage/equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]` |
+| [`SLM-GA-002`](SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
+| [`SLM-EQP-001`](SLM-EQP-001-equipment-mass-skeleton.svg) | Top and side mass skeleton: component envelopes, true mass centres, x/y/z schedule, CLEAN CG and V1 battery-stop overlay. The top view includes the controlled exterior wing planform as spatial context but no wing construction, fuselage or OML. | A3 · top 1:6.5 / side 1:4 | Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority |
+| [`SLM-WNG-001`](SLM-WNG-001-half-wing-layout.svg) | Right half-wing: printed segments, cells, spar/pin, ADR-0045 elevon/fixed-root bridge, exact y195 profile and polyhedral inset | A3 · plan 1:2 | Planform/profile/elevon bounds `[D]`; structure/polyhedral `[E]`/`[I]` |
+
+<!-- END GENERATED: drawing-index -->
+
+The table, the repository README gallery, the wiki drawing page and
+[`manifest.json`](manifest.json) are all published by
+[`calculations/drawing_index.py`](../../calculations/drawing_index.py) from one sheet
+registry. Do not hand-edit anything between the generated markers: it is overwritten on the
+next run and `--check` fails while it disagrees.
 
 All sheets state **DRAFT — NOT FOR MANUFACTURE**. Amber dashed geometry is provisional
 and must not be reverse-engineered into a released part. The black/blue planform is
