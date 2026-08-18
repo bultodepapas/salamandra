@@ -20,6 +20,18 @@ envelope. A continuous curved fuselage OML now connects the battery fairing, COR
 rear pod so the aircraft reads as one body. Its required stations are sourced, but its
 Bézier transitions remain `[I]`, amber and provisional until OP-21/F2 freezes native CAD.
 
+### Side elevations · SLM-GA-002
+
+[![A3 side-elevation comparison of the Salamandra CLEAN finless baseline and V1a fixed-fin variant.]({{BASE}}drawings/SLM-GA-002-side-elevations.svg)]({{BASE}}drawings/SLM-GA-002-side-elevations.svg)
+
+Use this sheet to compare the two published directional configurations without changing
+the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is
+finless; **SALAMANDRA-V1a** adds a passive fixed centreline fin. Neither configuration has
+a movable rudder. The released root airfoil and calculated V1a fin dimensions are
+traceable, while the side OML, vertical equipment placement, propeller-clearance keel and
+fin/pod installation remain `[I]`. The drawing also flags the open 105 mm fin-root versus
+x = +295 mm pod-extension interface for native CAD resolution.
+
 ### Right half-wing · SLM-WNG-001
 
 [![A3 right-half-wing drawing showing printed segments, cells, spar, pin, elevon, airfoil section and polyhedral inset.]({{BASE}}drawings/SLM-WNG-001-half-wing-layout.svg)]({{BASE}}drawings/SLM-WNG-001-half-wing-layout.svg)
@@ -57,10 +69,11 @@ absence of external or active content. In VS Code, the same operations are avail
 `Drawings: regenerate`, `Drawings: verify`, and `Drawings: verify all calculations` under
 **Tasks: Run Task**.
 
-The script imports the canonical planform, calculated balance solution and released y195
-airfoil coordinates. It then checks the shared geometry, segment lengths, elevon span,
-NP agreement, static margin, A3 metric viewport, XML structure, accessible description,
-drawing identifiers and manufacturing warning.
+The script imports the canonical planform, calculated balance solution, released root/y195
+airfoil coordinates and calculated V1a fin geometry. It then checks the shared geometry,
+segment lengths, elevon span, fin and propeller-clearance contracts, NP agreement, static
+margin, A3 metric viewport, XML structure, accessible description, drawing identifiers and
+manufacturing warning.
 
 For a scale check, print the standalone SVG on A3 at **100 % / actual size**. Do not use
 “fit to page”. Browser and wiki display sizes are responsive and therefore not physical

@@ -22,6 +22,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from html import escape
 from itertools import pairwise
+from math import sqrt
 from pathlib import Path
 
 from balance_cg import CG_TARGET, NP_VLM, NP_WL, solve_reference_layout
@@ -40,6 +41,7 @@ from design_config import (
     x_le,
     x_te,
 )
+from yaw_stability import fin_area_for_target, fin_geometry
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "geometry" / "drawings"
@@ -67,7 +69,9 @@ class DrawingContract:
     forward_support_m: float = -0.459
     tube_core_insertion_m: float = 0.050
     cradle_length_m: float = 0.201
+    cradle_inner_length_m: float = 0.155
     cradle_inner_width_m: float = 0.066
+    cradle_inner_height_m: float = 0.024
     cradle_wall_m: float = 0.0012
     camera_station_m: float = -0.393
     motor_body_forward_m: float = 0.195
@@ -75,6 +79,12 @@ class DrawingContract:
     prop_plane_m: float = 0.235
     prop_diameter_m: float = 0.2032
     rear_pod_end_m: float = 0.265
+    rear_pod_lower_prop_m: float = -0.1116
+    rear_pod_v1_end_m: float = 0.295
+    motor_diameter_m: float = 0.028
+    fin_ac_m: float = 0.285
+    fin_aspect_ratio: float = 3.0
+    fin_root_thickness_m: float = 0.003
 
 
 CONTRACT = DrawingContract()
@@ -265,6 +275,12 @@ def plan_point(x_m: float, y_m: float, origin_x: float, origin_y: float,
                scale: float) -> tuple[float, float]:
     """Map aircraft x/y to sheet x/y; aircraft forward is up on the sheet."""
     return origin_x + y_m * 1000.0 / scale, origin_y + x_m * 1000.0 / scale
+
+
+def side_point(x_m: float, z_m: float, origin_x: float, origin_y: float,
+               scale: float) -> tuple[float, float]:
+    """Map aircraft x/z to sheet x/y; aft is right and positive z is up."""
+    return origin_x + x_m * 1000.0 / scale, origin_y - z_m * 1000.0 / scale
 
 
 def half_band(y0: float, y1: float, origin_x: float, origin_y: float,
@@ -595,6 +611,401 @@ def draw_general_arrangement() -> SvgSheet:
     return sheet
 
 
+def draw_side_elevations() -> SvgSheet:
+    """Draw the shared side OML and the CLEAN/V1a directional variants."""
+    scale = 4.0
+    origin_x = 175.0
+    layout = solve_reference_layout()
+    cradle_fwd = layout["bay_fwd"]
+    cradle_aft = cradle_fwd + CONTRACT.cradle_length_m
+    pack_station = layout["pack_station"]
+    pack_fwd = pack_station - CONTRACT.cradle_inner_length_m / 2.0
+    pack_aft = pack_station + CONTRACT.cradle_inner_length_m / 2.0
+    pack_z_min = 0.004
+    pack_z_max = pack_z_min + CONTRACT.cradle_inner_height_m
+
+    root_section = load_airfoil(
+        ROOT / "geometry" / "airfoils" / "salamandra-root-r1.dat"
+    )
+    fin_area = fin_area_for_target(0.0005)
+    fin_span = sqrt(fin_area * CONTRACT.fin_aspect_ratio)
+    fin_root_chord, fin_tip_chord, fin_centroid_z = fin_geometry(
+        fin_area, fin_span
+    )
+    # Place the provisional trapezoid so its quarter-chord at the area-centroid
+    # height is x=+285 mm.  A vertical TE gives a buildable, swept-LE concept and
+    # exposes the minimum aft carrier length instead of floating the fin in space.
+    centroid_fraction = fin_centroid_z / fin_span
+    centroid_chord = (
+        fin_root_chord
+        + (fin_tip_chord - fin_root_chord) * centroid_fraction
+    )
+    fin_te = CONTRACT.fin_ac_m + 0.75 * centroid_chord
+    fin_root_le = fin_te - fin_root_chord
+    fin_tip_le = fin_te - fin_tip_chord
+    fin_root_z = 0.014  # Carrier/fin vertical interface remains an OP-21 CAD choice [I].
+
+    sheet = SvgSheet(
+        "Salamandra CLEAN and V1a side elevations",
+        "Metric A3 side-elevation draft comparing the common root airfoil, battery boom, continuous provisional fuselage OML and local propeller-clearance skid for SALAMANDRA-CLEAN with the V1a fixed centreline-fin variant. The V1a fin is passive and has no movable rudder.",
+        "SLM-GA-002",
+    )
+    title_block(
+        sheet,
+        "SIDE ELEVATIONS · CLEAN / V1a",
+        "SLM-GA-002",
+        "1:4",
+        "SOURCE: GUIDE §§4.4/6.7/9.2 · ADR-0038 · I-16/I-20",
+    )
+    def draw_variant(origin_y: float, *, with_fin: bool) -> None:
+        def point(x_m: float, z_m: float) -> str:
+            x_svg, y_svg = side_point(x_m, z_m, origin_x, origin_y, scale)
+            return f"{fmt(x_svg)} {fmt(y_svg)}"
+
+        def curve(
+            control_1: tuple[float, float],
+            control_2: tuple[float, float],
+            end: tuple[float, float],
+        ) -> str:
+            return (
+                f"C {point(*control_1)} {point(*control_2)} "
+                f"{point(*end)}"
+            )
+
+        body_path = " ".join([
+            f"M {point(cradle_fwd, 0.0)}",
+            curve(
+                (cradle_fwd + 0.005, 0.016),
+                (cradle_fwd + 0.014, 0.032),
+                (cradle_fwd + 0.030, 0.032),
+            ),
+            curve(
+                (cradle_fwd + 0.075, 0.032),
+                (cradle_aft - 0.035, 0.032),
+                (cradle_aft, 0.029),
+            ),
+            curve(
+                (cradle_aft + 0.050, 0.025),
+                (CONTRACT.nose_support_m - 0.040, 0.012),
+                (CONTRACT.nose_support_m, 0.012),
+            ),
+            curve((-0.105, 0.016), (-0.080, 0.019), (-0.060, 0.020)),
+            curve((-0.020, 0.026), (0.085, 0.030), (0.160, 0.026)),
+            curve((0.195, 0.024), (0.235, 0.022), (0.255, 0.019)),
+            curve((0.265, 0.016), (0.270, 0.006), (0.265, 0.0)),
+            curve((0.270, -0.008), (0.265, -0.015), (0.255, -0.017)),
+            curve((0.230, -0.022), (0.195, -0.027), (0.160, -0.030)),
+            curve((0.085, -0.032), (0.000, -0.030), (-0.060, -0.018)),
+            curve(
+                (-0.090, -0.012),
+                (CONTRACT.nose_support_m - 0.025, -0.010),
+                (CONTRACT.nose_support_m, -0.010),
+            ),
+            curve(
+                (CONTRACT.nose_support_m - 0.050, -0.008),
+                (cradle_aft + 0.045, -0.006),
+                (cradle_aft, -0.006),
+            ),
+            curve(
+                (cradle_aft - 0.040, -0.006),
+                (cradle_fwd + 0.040, -0.006),
+                (cradle_fwd, 0.0),
+            ),
+            "Z",
+        ])
+        sheet.path(
+            body_path,
+            "provisional-fill",
+            style=(
+                "fill:#f4c46a;fill-opacity:.22;stroke:#985b00;stroke-width:.62;"
+                "stroke-dasharray:3.4 1.6;stroke-linejoin:round"
+            ),
+        )
+
+        # The released root airfoil remains distinct from the provisional OML.
+        section_points = [
+            side_point(
+                x_le(0.0) + x_fraction * ROOT_CHORD,
+                z_fraction * ROOT_CHORD,
+                origin_x,
+                origin_y,
+                scale,
+            )
+            for x_fraction, z_fraction in root_section
+        ]
+        sheet.polyline(section_points, "controlled-fill", close=True)
+        sheet.polyline(section_points, "outline", close=True)
+        sheet.path(body_path, "provisional-line", style="stroke-width:.62;fill:none")
+
+        # Internal packaging: Ø8 boom, 155 x 24 mm cradle envelope and Ø28 motor.
+        boom_top_left = side_point(cradle_fwd, 0.004, origin_x, origin_y, scale)
+        boom_bottom_right = side_point(
+            CONTRACT.nose_support_m + CONTRACT.tube_core_insertion_m,
+            -0.004,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        sheet.rect(
+            boom_top_left[0],
+            boom_top_left[1],
+            boom_bottom_right[0] - boom_top_left[0],
+            boom_bottom_right[1] - boom_top_left[1],
+            "provisional-line",
+            rx=0.8,
+        )
+        pack_top_left = side_point(pack_fwd, pack_z_max, origin_x, origin_y, scale)
+        pack_bottom_right = side_point(pack_aft, pack_z_min, origin_x, origin_y, scale)
+        sheet.rect(
+            pack_top_left[0],
+            pack_top_left[1],
+            pack_bottom_right[0] - pack_top_left[0],
+            pack_bottom_right[1] - pack_top_left[1],
+            "provisional-line",
+            rx=1.0,
+        )
+        motor_top_left = side_point(
+            CONTRACT.motor_body_forward_m,
+            CONTRACT.motor_diameter_m / 2.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        motor_bottom_right = side_point(
+            CONTRACT.motor_mount_m,
+            -CONTRACT.motor_diameter_m / 2.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        sheet.rect(
+            motor_top_left[0],
+            motor_top_left[1],
+            motor_bottom_right[0] - motor_top_left[0],
+            motor_bottom_right[1] - motor_top_left[1],
+            "provisional-line",
+            rx=1.0,
+        )
+
+        prop_top = side_point(
+            CONTRACT.prop_plane_m,
+            CONTRACT.prop_diameter_m / 2.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        prop_bottom = side_point(
+            CONTRACT.prop_plane_m,
+            -CONTRACT.prop_diameter_m / 2.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        sheet.line(*prop_top, *prop_bottom, "provisional-line")
+        sheet.circle(
+            *side_point(CONTRACT.prop_plane_m, 0.0, origin_x, origin_y, scale),
+            1.3,
+            "provisional-line",
+        )
+
+        # C26 is a local landing-skid/propeller-guard datum, not a 112 mm-deep
+        # fuselage.  Keep the strut forward of the prop plane and meet the
+        # ground datum only below the 101.6 mm prop radius.
+        skid_path = " ".join([
+            f"M {point(0.205, -0.025)}",
+            curve(
+                (0.214, -0.050),
+                (0.226, -0.092),
+                (CONTRACT.prop_plane_m, CONTRACT.rear_pod_lower_prop_m),
+            ),
+        ])
+        sheet.path(
+            skid_path,
+            "provisional-line",
+            style="fill:none;stroke-width:1.05;stroke-linecap:round",
+        )
+        sheet.line(
+            *side_point(CONTRACT.prop_plane_m - 0.006,
+                        CONTRACT.rear_pod_lower_prop_m, origin_x, origin_y, scale),
+            *side_point(CONTRACT.prop_plane_m + 0.020,
+                        CONTRACT.rear_pod_lower_prop_m, origin_x, origin_y, scale),
+            "provisional-line",
+            stroke_dasharray="none",
+        )
+
+        carrier_end = fin_te if with_fin else CONTRACT.rear_pod_end_m
+        sheet.line(
+            *side_point(cradle_fwd - 0.015, 0.0, origin_x, origin_y, scale),
+            *side_point(carrier_end + 0.015, 0.0, origin_x, origin_y, scale),
+            "centre",
+        )
+        sheet.line(
+            *side_point(0.0, 0.045, origin_x, origin_y, scale),
+            *side_point(0.0, -0.125, origin_x, origin_y, scale),
+            "station",
+        )
+
+        if with_fin:
+            carrier_start = CONTRACT.prop_plane_m + 0.009
+            carrier_path = " ".join([
+                f"M {point(carrier_start, fin_root_z)}",
+                f"L {point(fin_te, fin_root_z)}",
+                curve(
+                    (fin_te + 0.006, 0.010),
+                    (fin_te + 0.006, -0.010),
+                    (fin_te, -fin_root_z),
+                ),
+                f"L {point(carrier_start, -fin_root_z)}",
+                "Z",
+            ])
+            sheet.path(
+                carrier_path,
+                "provisional-fill",
+                style=(
+                    "fill:#f4c46a;fill-opacity:.22;stroke:#985b00;"
+                    "stroke-width:.55;stroke-dasharray:3.4 1.6;stroke-linejoin:round"
+                ),
+            )
+            fin_points = [
+                side_point(fin_root_le, fin_root_z, origin_x, origin_y, scale),
+                side_point(fin_tip_le, fin_root_z + fin_span, origin_x, origin_y, scale),
+                side_point(
+                    fin_tip_le + fin_tip_chord,
+                    fin_root_z + fin_span,
+                    origin_x,
+                    origin_y,
+                    scale,
+                ),
+                side_point(
+                    fin_root_le + fin_root_chord,
+                    fin_root_z,
+                    origin_x,
+                    origin_y,
+                    scale,
+                ),
+            ]
+            sheet.polyline(fin_points, "provisional-fill", close=True)
+            sheet.line(fin_points[0][0], fin_points[0][1], fin_points[1][0],
+                       fin_points[1][1], "provisional-line", stroke_dasharray="none")
+            fin_ac = side_point(
+                CONTRACT.fin_ac_m,
+                fin_root_z + fin_centroid_z,
+                origin_x,
+                origin_y,
+                scale,
+            )
+            sheet.circle(*fin_ac, 1.4, "derived")
+            sheet.line(fin_ac[0] - 2.2, fin_ac[1], fin_ac[0] + 2.2, fin_ac[1], "derived")
+            sheet.line(fin_ac[0], fin_ac[1] - 2.2, fin_ac[0], fin_ac[1] + 2.2, "derived")
+            fin_top_y = side_point(
+                fin_tip_le,
+                fin_root_z + fin_span,
+                origin_x,
+                origin_y,
+                scale,
+            )[1]
+            fin_root_y = side_point(
+                fin_root_le,
+                fin_root_z,
+                origin_x,
+                origin_y,
+                scale,
+            )[1]
+            sheet.vertical_dimension(
+                286,
+                fin_top_y,
+                fin_root_y,
+                fin_points[1][0],
+                fin_points[0][0],
+                f"b_v {fin_span*1000:.0f} [D]",
+            )
+            sheet.leader(*fin_ac, 300, 140, "FIN AC x +285 [D]/[E]")
+
+        camera = side_point(
+            CONTRACT.camera_station_m, 0.018, origin_x, origin_y, scale
+        )
+        sheet.circle(*camera, 1.2, "provisional-line")
+        sheet.line(
+            *side_point(CONTRACT.camera_station_m, 0.036, origin_x, origin_y, scale),
+            *side_point(CONTRACT.camera_station_m, -0.012, origin_x, origin_y, scale),
+            "station",
+        )
+
+    draw_variant(73.0, with_fin=False)
+    draw_variant(185.0, with_fin=True)
+
+    sheet.text(20, 23, "A · SALAMANDRA-CLEAN", "sheet-subtitle")
+    sheet.text(20, 28, "FINLESS · O1 EFFICIENCY BASELINE · YAW RISK [E]", "micro")
+    sheet.text(20, 126, "B · SALAMANDRA-V1a", "sheet-subtitle")
+    sheet.text(20, 131, "FIXED CENTRELINE FIN · NO MOVABLE RUDDER", "micro")
+    sheet.line(51, 38, 32, 38, "medium", marker_end="url(#arrow-end)")
+    sheet.text(54, 39, "FORWARD", "label")
+
+    sheet.leader(
+        *side_point(pack_station, pack_z_max, origin_x, 73.0, scale),
+        108,
+        49,
+        "6S1P ENVELOPE 155 × 24 [D]/[E]",
+        True,
+        "end",
+    )
+    sheet.leader(
+        *side_point(-0.165, 0.012, origin_x, 73.0, scale),
+        138,
+        43,
+        "SIDE OML [I]",
+        True,
+        "end",
+    )
+    sheet.leader(
+        *side_point(CONTRACT.prop_plane_m, CONTRACT.prop_diameter_m / 2.0,
+                    origin_x, 73.0, scale),
+        292,
+        55,
+        "APC 8×8 · Ø203 · x +235 [D]/[I]",
+        True,
+    )
+    sheet.leader(
+        *side_point(CONTRACT.prop_plane_m, CONTRACT.rear_pod_lower_prop_m,
+                    origin_x, 185.0, scale),
+        298,
+        225,
+        "LOCAL SKID z −111.6 · PROP CLEARANCE 10 [I]",
+        True,
+    )
+    sheet.leader(
+        *side_point(fin_te, 0.0, origin_x, 185.0, scale),
+        300,
+        198,
+        f"V1a CARRIER TO x +{fin_te*1000:.0f} [D]/[I]",
+        True,
+    )
+    sheet.leader(
+        *side_point(fin_root_le + 0.62 * fin_root_chord,
+                    fin_root_z + 0.55 * fin_span, origin_x, 185.0, scale),
+        300,
+        153,
+        "V1a FIXED FIN · NO HINGE / SERVO",
+        True,
+    )
+    sheet.horizontal_dimension(
+        side_point(x_le(0.0), 0.0, origin_x, 73.0, scale)[0],
+        side_point(x_te(0.0), 0.0, origin_x, 73.0, scale)[0],
+        108.0,
+        73.0,
+        73.0,
+        f"ROOT {ROOT_CHORD*1000:.1f} [D]",
+    )
+    provenance_legend(sheet, 303, 24)
+    sheet.multiline(18, 235, [
+        "DATUM: root c/4 x = 0; motor axis z = 0; positive z up.",
+        "Shared [D]/[E]: root r1, Ø8 boom/socket, pack envelope, Ø28 motor and V1a fin sizing.",
+        "Side OML, equipment vertical placement, local skid and V1a carrier interface remain [I].",
+        f"CAD OPEN: fin AC placement requires carrier to x +{fin_te*1000:.0f}; the guide's x +295 concept is insufficient.",
+    ], "micro", 3.4)
+    return sheet
+
+
 def polyhedral_z(y_m: float) -> float:
     """Piecewise-flat provisional dihedral schedule from Design Guide section 3."""
     if not 0.0 <= y_m <= HALF_SPAN:
@@ -786,6 +1197,9 @@ def validate_contract() -> dict[str, bool]:
         (b - a) * 1000.0
         for a, b in zip((0.0,) + CONTRACT.segment_joints_m[:-1], CONTRACT.segment_joints_m)
     ]
+    fin_area = fin_area_for_target(0.0005)
+    fin_span = sqrt(fin_area * CONTRACT.fin_aspect_ratio)
+    fin_root_chord, fin_tip_chord, _ = fin_geometry(fin_area, fin_span)
     return {
         "canonical geometry validation passes": all(validate_geometry().values()),
         "drawing half-span matches design contract": abs(CONTRACT.segment_joints_m[-1] - HALF_SPAN) < 1e-12,
@@ -805,6 +1219,23 @@ def validate_contract() -> dict[str, bool]:
         "released y195 airfoil coordinates are available": len(load_airfoil(
             ROOT / "geometry" / "airfoils" / "salamandra-r1-y195.dat"
         )) >= 20,
+        "released root airfoil coordinates are available": len(load_airfoil(
+            ROOT / "geometry" / "airfoils" / "salamandra-root-r1.dat"
+        )) >= 20,
+        "V1a fin geometry reproduces I-20": (
+            abs(fin_area * 100.0 - 2.13) < 0.01
+            and abs(fin_span * 1000.0 - 253.0) < 1.0
+            and abs(fin_root_chord * 1000.0 - 105.0) < 1.0
+            and abs(fin_tip_chord * 1000.0 - 63.0) < 1.0
+        ),
+        "propeller skid datum preserves 10 mm ground clearance": abs(
+            -CONTRACT.rear_pod_lower_prop_m
+            - CONTRACT.prop_diameter_m / 2.0
+            - 0.010
+        ) < 1e-12,
+        "side cradle envelope contains the declared 24 mm height": (
+            CONTRACT.cradle_inner_height_m >= 0.024
+        ),
     }
 
 
@@ -878,6 +1309,7 @@ def build_drawings() -> tuple[DrawingOutput, ...]:
     """Render every drawing in memory without mutating the workspace."""
     drawings = (
         ("SLM-GA-001-general-arrangement.svg", "SLM-GA-001", draw_general_arrangement()),
+        ("SLM-GA-002-side-elevations.svg", "SLM-GA-002", draw_side_elevations()),
         ("SLM-WNG-001-half-wing-layout.svg", "SLM-WNG-001", draw_half_wing_layout()),
     )
     return tuple(

@@ -38,5 +38,6 @@ mechanically boxy in a technical sketch.
 - Regenerate all sheets and compare their diffs. If a new style belongs to one drawing,
   keep it element-local or sheet-local so shared CSS does not modify unrelated artifacts.
 
-Report the result as a **plan-view OML concept**, not as a complete fuselage or manufacturing
-surface, until the required CAD and physical gates are closed.
+Report the result as a **view-specific OML concept** (plan, side, or section), not as a
+complete fuselage or manufacturing surface. Do not infer geometry along an unshown axis;
+keep the required CAD and physical gates open until they are actually closed.
