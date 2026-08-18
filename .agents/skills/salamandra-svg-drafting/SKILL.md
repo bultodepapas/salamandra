@@ -26,14 +26,25 @@ manufacturing authority.
   `viewBox="0 0 420 297"`.
 - Derive coordinates from `design_config.py`, analysis results, or released coordinate
   files. Do not trace screenshots or conceptual illustrations.
+- Prefer established aerospace/drafting symbols over invented icons. Use the conventional
+  alternating black/white quartered circle for CG; keep component mass-centre dots and
+  neutral-point targets visually distinct from it.
 - Make meaning survive monochrome printing: line type, weight, label, and status must
   remain sufficient without colour.
+- Keep visual encodings orthogonal. Colour may identify system function, but line type and
+  explicit status must identify authority/maturity. Define any project palette in the
+  sheet legend and `geometry/drawings/README.md`; never imply that it is an external
+  standard unless a cited standard actually defines it.
 - Use real text, unique IDs, same-document references, `<title>`, `<desc>`, provenance
   metadata, drawing number, revision, scale, and an explicit authority warning.
 - Keep provisional geometry amber, dashed, and text-labelled. Do not imply tolerance or
   precision that the evidence does not support.
 - Separate the outer mould line (OML), internal equipment envelopes, and structural
   interfaces into distinct visual layers; do not substitute one for another.
+- Give every physical component its own reference and schedule row. When repeated items
+  encode a design decision—dual actuation, redundancy, symmetry—state the count, location,
+  and rationale on the sheet or in its controlling document instead of leaving the reader
+  to infer that the duplication is accidental.
 - For fuselage, pod, or fairing silhouette work, read
   [`references/oml-continuity.md`](references/oml-continuity.md) before editing.
 - Scope drawing-specific styles to the affected sheet or element. After regeneration,
@@ -57,7 +68,10 @@ remain valid.
 
 Then open each standalone SVG in a browser and apply
 [`references/review-checklist.md`](references/review-checklist.md). Inspect the full A3
-sheet and dense regions at higher zoom. A successful XML check is not visual acceptance.
+sheet and dense regions at higher zoom. Where labels have stable IDs, use DOM bounding
+boxes to check label-to-label and label-to-text collisions, then inspect leader crossings
+visually. Review colour and grayscale. Perform this review after the final regeneration;
+a successful XML check or an earlier screenshot is not visual acceptance.
 
 For changes to geometry or status, also run:
 

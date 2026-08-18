@@ -77,6 +77,23 @@ is a visual review gate, not a source of geometry.
 | Long-short line | Centreline |
 | Short dashed grey line | hidden feature or station/cut boundary |
 | Amber dashed line/fill | provisional geometry awaiting CAD or physical closure |
+| Quartered black/white circle | Calculated centre of gravity (conventional CG symbol) |
+
+On `SLM-EQP-001`, envelope **fill colour identifies system function** while outline
+style continues to identify maturity. A solid system-colour outline is measured or
+controlled; an amber dashed outline remains estimated, reserved or otherwise open.
+Labels and line styles preserve the meaning in monochrome.
+
+| Equipment fill | System |
+|---|---|
+| Violet | Stored energy / battery |
+| Red | Propulsion train |
+| Amber | Electrical power conversion/distribution |
+| Blue | Flight control and avionics |
+| Teal | Navigation and air-data sensors |
+| Green | Control actuators |
+| Magenta | FPV and RF equipment |
+| Grey | Unresolved installation reserve |
 
 The files use `width="420mm"`, `height="297mm"` and `viewBox="0 0 420 297"`.
 Consequently one SVG user unit maps to one millimetre on an A3 sheet when printed at

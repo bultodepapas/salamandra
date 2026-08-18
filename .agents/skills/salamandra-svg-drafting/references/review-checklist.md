@@ -7,6 +7,12 @@
   agree with the current design contract.
 - Controlled, evidence-backed, and provisional geometry are distinguishable without
   colour.
+- Established symbols are used where available: CG is a quartered black/white circle;
+  component mass centres and neutral points cannot be mistaken for it.
+- Colour, when used, identifies a declared system/function category; authority and
+  maturity remain encoded independently by line type and explicit labels.
+- Repeated equipment has an explicit physical rationale, count and location rather than
+  appearing as unexplained duplication.
 - Every provisional feature is dashed and explicitly labelled.
 - No feature can reasonably be mistaken for a manufacturing tolerance, cutting path, or
   released interface.
@@ -31,12 +37,16 @@
 - The entire sheet fits the A3 frame and title block.
 - No text, dimension, leader, arrowhead, or callout is clipped or unintentionally
   overlapped.
+- Stable-ID labels pass a DOM bounding-box collision check against other labels and sheet
+  text; intentional leader crossings are still reviewed by eye.
 - Text remains readable at whole-sheet view and at the stated print scale.
 - Line-weight hierarchy is evident; dashed patterns survive normal zoom and printing.
 - Forward direction, handedness, sweep, station order, CG/NP relationship, and local
   coordinate conventions are visually plausible.
 - Dense regions are inspected separately at higher zoom.
 - The sheet is checked in monochrome or grayscale as well as colour.
+- The visually reviewed render comes from the final generated file, after style scoping
+  and sibling-diff corrections.
 - The OML reads as one closed silhouette without disconnected islands, self-intersections,
   accidental flat spots, or visible tangent kinks.
 - Internal equipment and structural interfaces remain identifiable inside the OML instead

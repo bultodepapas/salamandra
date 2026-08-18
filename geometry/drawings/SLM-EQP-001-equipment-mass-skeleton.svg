@@ -94,205 +94,219 @@
 <text x="247" y="32" class="label" text-anchor="start">FORWARD · −x</text>
 <rect x="23.49" y="128.787" width="47.196" height="16.425" rx="1" class="hidden" id="battery-travel-top" style="fill:none;stroke:#146e9b;stroke-width:.32;stroke-dasharray:5 1 1 1"/>
 <rect x="216.49" y="66.225" width="47.196" height="5.65" rx="1" class="hidden" id="battery-travel-side" style="fill:none;stroke:#146e9b;stroke-width:.32;stroke-dasharray:5 1 1 1"/>
-<rect x="30.78" y="128.787" width="38.25" height="16.425" rx="0.7" class="provisional-fill" id="equipment-top-battery_6s1p"/>
+<rect x="30.78" y="128.787" width="38.25" height="16.425" rx="0.7" class="provisional-fill" id="equipment-top-battery_6s1p" style="fill:#e9e0f5;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="49.905" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-battery_6s1p"/>
 <rect x="46.405" y="134.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-battery_6s1p" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="49.905" y="137.82" class="micro" text-anchor="middle">E01</text>
-<rect x="223.78" y="66.225" width="38.25" height="5.65" rx="0.7" class="provisional-fill" id="equipment-side-battery_6s1p"/>
+<rect x="223.78" y="66.225" width="38.25" height="5.65" rx="0.7" class="provisional-fill" id="equipment-side-battery_6s1p" style="fill:#e9e0f5;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="242.905" cy="69.05" r="0.55" class="datum-dot" id="mass-centre-side-battery_6s1p"/>
 <line x1="242.905" y1="69.05" x2="242.905" y2="77.05" class="leader"/>
 <rect x="239.405" y="74.6" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-battery_6s1p" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="242.905" y="77.87" class="micro" text-anchor="middle">E01</text>
-<rect x="145.012" y="85.175" width="5.625" height="6.15" rx="0.7" class="provisional-fill" id="equipment-top-servo_left_195"/>
+<rect x="145.012" y="85.175" width="5.625" height="6.15" rx="0.7" class="provisional-fill" id="equipment-top-servo_left_195" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="147.824" cy="88.25" r="0.55" class="datum-dot" id="mass-centre-top-servo_left_195"/>
 <rect x="144.324" y="85.8" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-servo_left_195" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="147.824" y="89.07" class="micro" text-anchor="middle">E02</text>
-<rect x="338.012" y="71.133" width="5.625" height="2.875" rx="0.7" class="provisional-fill" id="equipment-side-servo_left_195"/>
+<rect x="338.012" y="71.133" width="5.625" height="2.875" rx="0.7" class="provisional-fill" id="equipment-side-servo_left_195" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="340.824" cy="72.571" r="0.55" class="datum-dot" id="mass-centre-side-servo_left_195"/>
 <line x1="340.824" y1="72.571" x2="344.824" y2="48.571" class="leader"/>
 <rect x="339.874" y="46.121" width="9.9" height="4.9" rx="2" class="medium" id="mass-reference-side-servo_left_195" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="344.824" y="49.391" class="micro" text-anchor="middle">E02/03</text>
-<rect x="145.012" y="182.675" width="5.625" height="6.15" rx="0.7" class="provisional-fill" id="equipment-top-servo_right_195"/>
+<rect x="145.012" y="182.675" width="5.625" height="6.15" rx="0.7" class="provisional-fill" id="equipment-top-servo_right_195" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="147.824" cy="185.75" r="0.55" class="datum-dot" id="mass-centre-top-servo_right_195"/>
 <rect x="144.324" y="183.3" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-servo_right_195" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="147.824" y="186.57" class="micro" text-anchor="middle">E03</text>
-<rect x="123.022" y="36.425" width="5.625" height="6.15" rx="0.7" class="provisional-fill" id="equipment-top-servo_left_390"/>
+<rect x="123.022" y="36.425" width="5.625" height="6.15" rx="0.7" class="provisional-fill" id="equipment-top-servo_left_390" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="125.834" cy="39.5" r="0.55" class="datum-dot" id="mass-centre-top-servo_left_390"/>
 <rect x="122.334" y="37.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-servo_left_390" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="125.834" y="40.32" class="micro" text-anchor="middle">E04</text>
-<rect x="316.022" y="70.97" width="5.625" height="2.875" rx="0.7" class="provisional-fill" id="equipment-side-servo_left_390"/>
+<rect x="316.022" y="70.97" width="5.625" height="2.875" rx="0.7" class="provisional-fill" id="equipment-side-servo_left_390" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="318.834" cy="72.407" r="0.55" class="datum-dot" id="mass-centre-side-servo_left_390"/>
 <line x1="318.834" y1="72.407" x2="307.834" y2="57.407" class="leader"/>
 <rect x="302.884" y="54.957" width="9.9" height="4.9" rx="2" class="medium" id="mass-reference-side-servo_left_390" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="307.834" y="58.227" class="micro" text-anchor="middle">E04/05</text>
-<rect x="123.022" y="231.425" width="5.625" height="6.15" rx="0.7" class="provisional-fill" id="equipment-top-servo_right_390"/>
+<rect x="123.022" y="231.425" width="5.625" height="6.15" rx="0.7" class="provisional-fill" id="equipment-top-servo_right_390" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="125.834" cy="234.5" r="0.55" class="datum-dot" id="mass-centre-top-servo_right_390"/>
 <rect x="122.334" y="232.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-servo_right_390" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="125.834" y="235.32" class="micro" text-anchor="middle">E05</text>
-<rect x="185.75" y="133.5" width="8.75" height="7" rx="0.7" class="provisional-fill" id="equipment-top-motor"/>
+<rect x="185.75" y="133.5" width="8.75" height="7" rx="0.7" class="provisional-fill" id="equipment-top-motor" style="fill:#f6d8d1;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="190.125" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-motor"/>
 <line x1="190.125" y1="137" x2="186.125" y2="130" class="leader"/>
 <rect x="182.625" y="127.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-motor" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="186.125" y="130.82" class="micro" text-anchor="middle">E06</text>
-<rect x="378.75" y="69.5" width="8.75" height="7" rx="0.7" class="provisional-fill" id="equipment-side-motor"/>
+<rect x="378.75" y="69.5" width="8.75" height="7" rx="0.7" class="provisional-fill" id="equipment-side-motor" style="fill:#f6d8d1;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="383.125" cy="73" r="0.55" class="datum-dot" id="mass-centre-side-motor"/>
 <line x1="383.125" y1="73" x2="375.125" y2="80" class="leader"/>
 <rect x="371.625" y="77.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-motor" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="375.125" y="80.82" class="micro" text-anchor="middle">E06</text>
-<rect x="193.5" y="134.5" width="3" height="5" rx="0.7" class="provisional-fill" id="equipment-top-prop_adapter"/>
+<rect x="193.5" y="134.5" width="3" height="5" rx="0.7" class="provisional-fill" id="equipment-top-prop_adapter" style="fill:#f6d8d1;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="195" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-prop_adapter"/>
 <line x1="195" y1="137" x2="198.5" y2="144" class="leader"/>
 <rect x="195" y="141.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-prop_adapter" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="198.5" y="144.82" class="micro" text-anchor="middle">E07</text>
-<rect x="386.5" y="70.5" width="3" height="5" rx="0.7" class="provisional-fill" id="equipment-side-prop_adapter"/>
+<rect x="386.5" y="70.5" width="3" height="5" rx="0.7" class="provisional-fill" id="equipment-side-prop_adapter" style="fill:#f6d8d1;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="388" cy="73" r="0.55" class="datum-dot" id="mass-centre-side-prop_adapter"/>
 <line x1="388" y1="73" x2="388" y2="65" class="leader"/>
 <rect x="384.5" y="62.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-prop_adapter" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="388" y="65.82" class="micro" text-anchor="middle">E07</text>
-<rect x="194.475" y="111.6" width="2.55" height="50.8" rx="0.7" class="derived" id="equipment-top-propeller" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="194.475" y="111.6" width="2.55" height="50.8" rx="0.7" class="derived" id="equipment-top-propeller" style="fill:#f6d8d1;fill-opacity:.72;stroke:#c44b34;stroke-width:.48"/>
 <circle cx="195.75" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-propeller"/>
 <line x1="195.75" y1="137" x2="200.75" y2="132" class="leader"/>
 <rect x="197.25" y="129.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-propeller" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="200.75" y="132.82" class="micro" text-anchor="middle">E08</text>
-<rect x="387.475" y="47.6" width="2.55" height="50.8" rx="0.7" class="derived" id="equipment-side-propeller" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="387.475" y="47.6" width="2.55" height="50.8" rx="0.7" class="derived" id="equipment-side-propeller" style="fill:#f6d8d1;fill-opacity:.72;stroke:#c44b34;stroke-width:.48"/>
 <circle cx="388.75" cy="73" r="0.55" class="datum-dot" id="mass-centre-side-propeller"/>
 <line x1="388.75" y1="73" x2="396.75" y2="73" class="leader"/>
 <rect x="393.25" y="70.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-propeller" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="396.75" y="73.82" class="micro" text-anchor="middle">E08</text>
-<rect x="144.5" y="121.25" width="15" height="7.5" rx="0.7" class="provisional-fill" id="equipment-top-esc"/>
+<rect x="144.5" y="121.25" width="15" height="7.5" rx="0.7" class="provisional-fill" id="equipment-top-esc" style="fill:#f7e3bd;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="152" cy="125" r="0.55" class="datum-dot" id="mass-centre-top-esc"/>
 <rect x="148.5" y="122.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-esc" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="152" y="125.82" class="micro" text-anchor="middle">E09</text>
-<rect x="337.5" y="73.125" width="15" height="3.75" rx="0.7" class="provisional-fill" id="equipment-side-esc"/>
+<rect x="337.5" y="73.125" width="15" height="3.75" rx="0.7" class="provisional-fill" id="equipment-side-esc" style="fill:#f7e3bd;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="345" cy="75" r="0.55" class="datum-dot" id="mass-centre-side-esc"/>
 <line x1="345" y1="75" x2="327.5" y2="88.5" class="leader"/>
 <rect x="324" y="86.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-esc" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="327.5" y="89.32" class="micro" text-anchor="middle">E09</text>
-<rect x="108.988" y="132.438" width="9.125" height="9.125" rx="0.7" class="derived" id="equipment-top-fc" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="108.988" y="132.438" width="9.125" height="9.125" rx="0.7" class="derived" id="equipment-top-fc" style="fill:#d9eaf5;fill-opacity:.72;stroke:#246aa0;stroke-width:.48"/>
 <circle cx="113.551" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-fc"/>
 <line x1="113.551" y1="137" x2="105.551" y2="129" class="leader"/>
 <rect x="102.051" y="126.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-fc" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="105.551" y="129.82" class="micro" text-anchor="middle">E10</text>
-<rect x="301.988" y="70.875" width="9.125" height="1.75" rx="0.7" class="derived" id="equipment-side-fc" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="301.988" y="70.875" width="9.125" height="1.75" rx="0.7" class="derived" id="equipment-side-fc" style="fill:#d9eaf5;fill-opacity:.72;stroke:#246aa0;stroke-width:.48"/>
 <circle cx="306.551" cy="71.75" r="0.55" class="datum-dot" id="mass-centre-side-fc"/>
 <line x1="306.551" y1="71.75" x2="294.551" y2="47.75" class="leader"/>
 <rect x="291.051" y="45.3" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-fc" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="294.551" y="48.57" class="micro" text-anchor="middle">E10</text>
-<rect x="134.938" y="132.438" width="9.125" height="9.125" rx="0.7" class="derived" id="equipment-top-pdb" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="134.938" y="132.438" width="9.125" height="9.125" rx="0.7" class="derived" id="equipment-top-pdb" style="fill:#f7e3bd;fill-opacity:.72;stroke:#c47a11;stroke-width:.48"/>
 <circle cx="139.5" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-pdb"/>
 <line x1="139.5" y1="137" x2="146.5" y2="144" class="leader"/>
 <rect x="143" y="141.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-pdb" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="146.5" y="144.82" class="micro" text-anchor="middle">E11</text>
-<rect x="327.938" y="73.375" width="9.125" height="1.25" rx="0.7" class="derived" id="equipment-side-pdb" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="327.938" y="73.375" width="9.125" height="1.25" rx="0.7" class="derived" id="equipment-side-pdb" style="fill:#f7e3bd;fill-opacity:.72;stroke:#c47a11;stroke-width:.48"/>
 <circle cx="332.5" cy="74" r="0.55" class="datum-dot" id="mass-centre-side-pdb"/>
 <line x1="332.5" y1="74" x2="317.5" y2="80.5" class="leader"/>
 <rect x="314" y="78.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-pdb" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="317.5" y="81.32" class="micro" text-anchor="middle">E11</text>
-<rect x="107" y="172" width="5" height="5" rx="0.7" class="derived" id="equipment-top-gps_mag" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="107" y="172" width="5" height="5" rx="0.7" class="derived" id="equipment-top-gps_mag" style="fill:#d6eeea;fill-opacity:.72;stroke:#177c73;stroke-width:.48"/>
 <circle cx="109.5" cy="174.5" r="0.55" class="datum-dot" id="mass-centre-top-gps_mag"/>
 <rect x="106" y="172.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-gps_mag" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="109.5" y="175.32" class="micro" text-anchor="middle">E12</text>
-<rect x="300" y="68.95" width="5" height="3.1" rx="0.7" class="derived" id="equipment-side-gps_mag" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="300" y="68.95" width="5" height="3.1" rx="0.7" class="derived" id="equipment-side-gps_mag" style="fill:#d6eeea;fill-opacity:.72;stroke:#177c73;stroke-width:.48"/>
 <circle cx="302.5" cy="70.5" r="0.55" class="datum-dot" id="mass-centre-side-gps_mag"/>
 <line x1="302.5" y1="70.5" x2="289.5" y2="80.5" class="leader"/>
 <rect x="286" y="78.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-gps_mag" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="289.5" y="81.32" class="micro" text-anchor="middle">E12</text>
-<rect x="137" y="124.5" width="2.5" height="2.5" rx="0.7" class="derived" id="equipment-top-receiver" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="137" y="124.5" width="2.5" height="2.5" rx="0.7" class="derived" id="equipment-top-receiver" style="fill:#d9eaf5;fill-opacity:.72;stroke:#246aa0;stroke-width:.48"/>
 <circle cx="138.25" cy="125.75" r="0.55" class="datum-dot" id="mass-centre-top-receiver"/>
 <line x1="138.25" y1="125.75" x2="134.25" y2="118.75" class="leader"/>
 <rect x="130.75" y="116.3" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-receiver" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="134.25" y="119.57" class="micro" text-anchor="middle">E13</text>
-<rect x="330" y="71.875" width="2.5" height="0.75" rx="0.7" class="derived" id="equipment-side-receiver" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="330" y="71.875" width="2.5" height="0.75" rx="0.7" class="derived" id="equipment-side-receiver" style="fill:#d9eaf5;fill-opacity:.72;stroke:#246aa0;stroke-width:.48"/>
 <circle cx="331.25" cy="72.25" r="0.55" class="datum-dot" id="mass-centre-side-receiver"/>
 <line x1="331.25" y1="72.25" x2="323.25" y2="57.25" class="leader"/>
 <rect x="319.75" y="54.8" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-receiver" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="323.25" y="58.07" class="micro" text-anchor="middle">E13</text>
-<rect x="122" y="109" width="20" height="1" rx="0.7" class="provisional-fill" id="equipment-top-receiver_antenna"/>
+<rect x="122" y="109" width="20" height="1" rx="0.7" class="provisional-fill" id="equipment-top-receiver_antenna" style="fill:#f0ddec;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="132" cy="109.5" r="0.55" class="datum-dot" id="mass-centre-top-receiver_antenna"/>
 <line x1="132" y1="109.5" x2="132" y2="101.5" class="leader"/>
 <rect x="128.5" y="99.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-receiver_antenna" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="132" y="102.32" class="micro" text-anchor="middle">E14</text>
-<rect x="315" y="71.25" width="20" height="1" rx="0.7" class="provisional-fill" id="equipment-side-receiver_antenna"/>
+<rect x="315" y="71.25" width="20" height="1" rx="0.7" class="provisional-fill" id="equipment-side-receiver_antenna" style="fill:#f0ddec;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="325" cy="71.75" r="0.55" class="datum-dot" id="mass-centre-side-receiver_antenna"/>
 <line x1="325" y1="71.75" x2="315.5" y2="48.75" class="leader"/>
 <rect x="312" y="46.3" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-receiver_antenna" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="315.5" y="49.57" class="micro" text-anchor="middle">E14</text>
-<rect x="120.75" y="134.5" width="7.5" height="5" rx="0.7" class="derived" id="equipment-top-pitot_sensor" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="120.75" y="134.5" width="7.5" height="5" rx="0.7" class="derived" id="equipment-top-pitot_sensor" style="fill:#d6eeea;fill-opacity:.72;stroke:#177c73;stroke-width:.48"/>
 <circle cx="124.5" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-pitot_sensor"/>
 <line x1="124.5" y1="137" x2="119.5" y2="144" class="leader"/>
 <rect x="116" y="141.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-pitot_sensor" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="119.5" y="144.82" class="micro" text-anchor="middle">E15</text>
-<rect x="313.75" y="74.25" width="7.5" height="2.5" rx="0.7" class="derived" id="equipment-side-pitot_sensor" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="313.75" y="74.25" width="7.5" height="2.5" rx="0.7" class="derived" id="equipment-side-pitot_sensor" style="fill:#d6eeea;fill-opacity:.72;stroke:#177c73;stroke-width:.48"/>
 <circle cx="317.5" cy="75.5" r="0.55" class="datum-dot" id="mass-centre-side-pitot_sensor"/>
 <line x1="317.5" y1="75.5" x2="303.5" y2="85.5" class="leader"/>
 <rect x="300" y="83.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-pitot_sensor" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="303.5" y="86.32" class="micro" text-anchor="middle">E15</text>
-<rect x="73.561" y="168.5" width="90" height="2" rx="0.7" class="provisional-fill" id="equipment-top-pitot_probe_tube"/>
+<rect x="73.561" y="168.5" width="90" height="2" rx="0.7" class="provisional-fill" id="equipment-top-pitot_probe_tube" style="fill:#d6eeea;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="118.561" cy="169.5" r="0.55" class="datum-dot" id="mass-centre-top-pitot_probe_tube"/>
 <rect x="115.061" y="167.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-pitot_probe_tube" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="118.561" y="170.32" class="micro" text-anchor="middle">E16</text>
-<rect x="266.561" y="72" width="90" height="2" rx="0.7" class="provisional-fill" id="equipment-side-pitot_probe_tube"/>
+<rect x="266.561" y="72" width="90" height="2" rx="0.7" class="provisional-fill" id="equipment-side-pitot_probe_tube" style="fill:#d6eeea;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="311.561" cy="73" r="0.55" class="datum-dot" id="mass-centre-side-pitot_probe_tube"/>
 <line x1="311.561" y1="73" x2="294.561" y2="57.5" class="leader"/>
 <rect x="291.061" y="55.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-pitot_probe_tube" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="294.561" y="58.32" class="micro" text-anchor="middle">E16</text>
-<rect x="142.625" y="142.625" width="3.75" height="3.75" rx="0.7" class="provisional-fill" id="equipment-top-buzzer"/>
+<rect x="142.625" y="142.625" width="3.75" height="3.75" rx="0.7" class="provisional-fill" id="equipment-top-buzzer" style="fill:#d9eaf5;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="144.5" cy="144.5" r="0.55" class="datum-dot" id="mass-centre-top-buzzer"/>
 <line x1="144.5" y1="144.5" x2="150.5" y2="137.5" class="leader"/>
 <rect x="147" y="135.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-buzzer" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="150.5" y="138.32" class="micro" text-anchor="middle">E17</text>
-<rect x="335.625" y="70.5" width="3.75" height="2.5" rx="0.7" class="provisional-fill" id="equipment-side-buzzer"/>
+<rect x="335.625" y="70.5" width="3.75" height="2.5" rx="0.7" class="provisional-fill" id="equipment-side-buzzer" style="fill:#d9eaf5;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="337.5" cy="71.75" r="0.55" class="datum-dot" id="mass-centre-side-buzzer"/>
 <line x1="337.5" y1="71.75" x2="342.5" y2="80.25" class="leader"/>
 <rect x="339" y="77.8" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-buzzer" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="342.5" y="81.07" class="micro" text-anchor="middle">E17</text>
-<rect x="22.438" y="135.455" width="4.125" height="3.09" rx="0.7" class="derived" id="equipment-top-o4_camera" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="22.438" y="135.455" width="4.125" height="3.09" rx="0.7" class="derived" id="equipment-top-o4_camera" style="fill:#f0ddec;fill-opacity:.72;stroke:#9a4f87;stroke-width:.48"/>
 <circle cx="24.5" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-o4_camera"/>
 <rect x="21" y="134.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-o4_camera" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="24.5" y="137.82" class="micro" text-anchor="middle">E18</text>
-<rect x="215.438" y="72.57" width="4.125" height="3.36" rx="0.7" class="derived" id="equipment-side-o4_camera" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="215.438" y="72.57" width="4.125" height="3.36" rx="0.7" class="derived" id="equipment-side-o4_camera" style="fill:#f0ddec;fill-opacity:.72;stroke:#9a4f87;stroke-width:.48"/>
 <circle cx="217.5" cy="74.25" r="0.55" class="datum-dot" id="mass-centre-side-o4_camera"/>
 <line x1="217.5" y1="74.25" x2="215.5" y2="82.25" class="leader"/>
 <rect x="212" y="79.8" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-o4_camera" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="215.5" y="83.07" class="micro" text-anchor="middle">E18</text>
-<rect x="28.75" y="133.25" width="7.5" height="7.5" rx="0.7" class="derived" id="equipment-top-o4_vtx" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="28.75" y="133.25" width="7.5" height="7.5" rx="0.7" class="derived" id="equipment-top-o4_vtx" style="fill:#f0ddec;fill-opacity:.72;stroke:#9a4f87;stroke-width:.48"/>
 <circle cx="32.5" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-o4_vtx"/>
 <rect x="29" y="134.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-o4_vtx" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="32.5" y="137.82" class="micro" text-anchor="middle">E19</text>
-<rect x="221.75" y="64.375" width="7.5" height="1.5" rx="0.7" class="derived" id="equipment-side-o4_vtx" style="fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"/>
+<rect x="221.75" y="64.375" width="7.5" height="1.5" rx="0.7" class="derived" id="equipment-side-o4_vtx" style="fill:#f0ddec;fill-opacity:.72;stroke:#9a4f87;stroke-width:.48"/>
 <circle cx="225.5" cy="65.125" r="0.55" class="datum-dot" id="mass-centre-side-o4_vtx"/>
 <line x1="225.5" y1="65.125" x2="225.5" y2="57.125" class="leader"/>
 <rect x="222" y="54.675" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-o4_vtx" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="225.5" y="57.945" class="micro" text-anchor="middle">E19</text>
-<rect x="37" y="116.375" width="20" height="1.25" rx="0.7" class="provisional-fill" id="equipment-top-o4_antenna"/>
+<rect x="37" y="116.375" width="20" height="1.25" rx="0.7" class="provisional-fill" id="equipment-top-o4_antenna" style="fill:#f0ddec;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="47" cy="117" r="0.55" class="datum-dot" id="mass-centre-top-o4_antenna"/>
 <rect x="43.5" y="114.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-o4_antenna" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="47" y="117.82" class="micro" text-anchor="middle">E20</text>
-<rect x="230" y="66.125" width="20" height="1.25" rx="0.7" class="provisional-fill" id="equipment-side-o4_antenna"/>
+<rect x="230" y="66.125" width="20" height="1.25" rx="0.7" class="provisional-fill" id="equipment-side-o4_antenna" style="fill:#f0ddec;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="240" cy="66.75" r="0.55" class="datum-dot" id="mass-centre-side-o4_antenna"/>
 <line x1="240" y1="66.75" x2="245" y2="55.75" class="leader"/>
 <rect x="241.5" y="53.3" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-o4_antenna" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="245" y="56.57" class="micro" text-anchor="middle">E20</text>
-<rect x="112" y="127" width="45" height="20" rx="0.7" class="provisional-fill" id="equipment-top-avionics_installation_reserve"/>
+<rect x="112" y="127" width="45" height="20" rx="0.7" class="provisional-fill" id="equipment-top-avionics_installation_reserve" style="fill:#e4e7e9;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="134.5" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-avionics_installation_reserve"/>
 <line x1="134.5" y1="137" x2="154.5" y2="148" class="leader"/>
 <rect x="151" y="145.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-avionics_installation_reserve" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="154.5" y="148.82" class="micro" text-anchor="middle">E21</text>
-<rect x="305" y="69.875" width="45" height="6.25" rx="0.7" class="provisional-fill" id="equipment-side-avionics_installation_reserve"/>
+<rect x="305" y="69.875" width="45" height="6.25" rx="0.7" class="provisional-fill" id="equipment-side-avionics_installation_reserve" style="fill:#e4e7e9;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="327.5" cy="73" r="0.55" class="datum-dot" id="mass-centre-side-avionics_installation_reserve"/>
 <line x1="327.5" y1="73" x2="331.5" y2="48.5" class="leader"/>
 <rect x="328" y="46.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-avionics_installation_reserve" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="331.5" y="49.32" class="micro" text-anchor="middle">E21</text>
 <rect x="23.49" y="128.787" width="38.25" height="16.425" rx="1" class="provisional-line" id="v1-battery-stop-top" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
 <rect x="216.49" y="66.225" width="38.25" height="5.65" rx="1" class="provisional-line" id="v1-battery-stop-side" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
-<path d="M 113.551 133.81 l -3 5.4 h 6 z" class="derived-fill" id="clean-cg-top"/>
-<path d="M 306.551 68.655 l -3 5.4 h 6 z" class="derived-fill" id="clean-cg-side"/>
 <line x1="113.551" y1="137.01" x2="97" y2="112" class="leader"/>
 <circle cx="113.551" cy="137.01" r="0.65" class="datum-dot"/>
 <text x="98.5" y="111.2" class="note" text-anchor="start">CLEAN CG (-93.8, +0.0) [D]</text>
 <line x1="306.551" y1="71.855" x2="291" y2="43" class="leader"/>
 <circle cx="306.551" cy="71.855" r="0.65" class="datum-dot"/>
 <text x="289.5" y="42.2" class="note" text-anchor="end">CG z +4.6 [D]</text>
+<g id="clean-cg-top" role="img" aria-label="Calculated centre of gravity"> <title>Calculated centre of gravity</title>
+<circle cx="113.551" cy="137.01" r="2.7" class="medium" style="fill:#fffdf8;stroke:none"/>
+<path d="M 113.551 137.01 L 113.551 134.31 A 2.7 2.7 0 0 0 110.851 137.01 Z" class="thin" style="fill:#111820;stroke:none"/>
+<path d="M 113.551 137.01 L 113.551 139.71 A 2.7 2.7 0 0 0 116.251 137.01 Z" class="thin" style="fill:#111820;stroke:none"/>
+<line x1="110.851" y1="137.01" x2="116.251" y2="137.01" class="thin" style="fill:none;stroke:#111820;stroke-width:.28"/>
+<line x1="113.551" y1="134.31" x2="113.551" y2="139.71" class="thin" style="fill:none;stroke:#111820;stroke-width:.28"/>
+<circle cx="113.551" cy="137.01" r="2.7" class="medium" style="fill:none;stroke:#111820;stroke-width:.52"/>
+</g>
+<g id="clean-cg-side" role="img" aria-label="Calculated centre of gravity"> <title>Calculated centre of gravity</title>
+<circle cx="306.551" cy="71.855" r="2.7" class="medium" style="fill:#fffdf8;stroke:none"/>
+<path d="M 306.551 71.855 L 306.551 69.155 A 2.7 2.7 0 0 0 303.851 71.855 Z" class="thin" style="fill:#111820;stroke:none"/>
+<path d="M 306.551 71.855 L 306.551 74.555 A 2.7 2.7 0 0 0 309.251 71.855 Z" class="thin" style="fill:#111820;stroke:none"/>
+<line x1="303.851" y1="71.855" x2="309.251" y2="71.855" class="thin" style="fill:none;stroke:#111820;stroke-width:.28"/>
+<line x1="306.551" y1="69.155" x2="306.551" y2="74.555" class="thin" style="fill:none;stroke:#111820;stroke-width:.28"/>
+<circle cx="306.551" cy="71.855" r="2.7" class="medium" style="fill:none;stroke:#111820;stroke-width:.52"/>
+</g>
 <line x1="42.615" y1="137" x2="42.615" y2="242" class="extension"/>
 <line x1="51.561" y1="137" x2="51.561" y2="242" class="extension"/>
 <line x1="42.615" y1="242" x2="51.561" y2="242" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
@@ -309,147 +323,147 @@
 <text x="374" y="124" class="micro" text-anchor="end">z</text>
 <text x="405" y="124" class="micro" text-anchor="end">STATUS</text>
 <line x1="214" y1="126" x2="406" y2="126" class="thin"/>
-<text x="215" y="130" class="mono" text-anchor="start">E01</text>
+<text x="215" y="130" class="mono" text-anchor="start" style="fill:#6f4aa8;font-weight:700">E01</text>
 <text x="228" y="130" class="micro" text-anchor="start">battery_6s1p</text>
 <text x="314" y="130" class="mono" text-anchor="end">445.00</text>
 <text x="334" y="130" class="mono" text-anchor="end">-348.4</text>
 <text x="354" y="130" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="130" class="mono" text-anchor="end">+15.8</text>
 <text x="405" y="130" class="micro" text-anchor="end">[D]/[E]</text>
-<text x="215" y="134.05" class="mono" text-anchor="start">E02</text>
+<text x="215" y="134.05" class="mono" text-anchor="start" style="fill:#4f7f32;font-weight:700">E02</text>
 <text x="228" y="134.05" class="micro" text-anchor="start">servo_left_195</text>
 <text x="314" y="134.05" class="mono" text-anchor="end">12.50</text>
 <text x="334" y="134.05" class="mono" text-anchor="end">+43.3</text>
 <text x="354" y="134.05" class="mono" text-anchor="end">-195.0</text>
 <text x="374" y="134.05" class="mono" text-anchor="end">+1.7</text>
 <text x="405" y="134.05" class="micro" text-anchor="end">[D]/[E]</text>
-<text x="215" y="138.1" class="mono" text-anchor="start">E03</text>
+<text x="215" y="138.1" class="mono" text-anchor="start" style="fill:#4f7f32;font-weight:700">E03</text>
 <text x="228" y="138.1" class="micro" text-anchor="start">servo_right_195</text>
 <text x="314" y="138.1" class="mono" text-anchor="end">12.50</text>
 <text x="334" y="138.1" class="mono" text-anchor="end">+43.3</text>
 <text x="354" y="138.1" class="mono" text-anchor="end">+195.0</text>
 <text x="374" y="138.1" class="mono" text-anchor="end">+1.7</text>
 <text x="405" y="138.1" class="micro" text-anchor="end">[D]/[E]</text>
-<text x="215" y="142.15" class="mono" text-anchor="start">E04</text>
+<text x="215" y="142.15" class="mono" text-anchor="start" style="fill:#4f7f32;font-weight:700">E04</text>
 <text x="228" y="142.15" class="micro" text-anchor="start">servo_left_390</text>
 <text x="314" y="142.15" class="mono" text-anchor="end">12.50</text>
 <text x="334" y="142.15" class="mono" text-anchor="end">-44.7</text>
 <text x="354" y="142.15" class="mono" text-anchor="end">-390.0</text>
 <text x="374" y="142.15" class="mono" text-anchor="end">+2.4</text>
 <text x="405" y="142.15" class="micro" text-anchor="end">[D]/[E]</text>
-<text x="215" y="146.2" class="mono" text-anchor="start">E05</text>
+<text x="215" y="146.2" class="mono" text-anchor="start" style="fill:#4f7f32;font-weight:700">E05</text>
 <text x="228" y="146.2" class="micro" text-anchor="start">servo_right_390</text>
 <text x="314" y="146.2" class="mono" text-anchor="end">12.50</text>
 <text x="334" y="146.2" class="mono" text-anchor="end">-44.7</text>
 <text x="354" y="146.2" class="mono" text-anchor="end">+390.0</text>
 <text x="374" y="146.2" class="mono" text-anchor="end">+2.4</text>
 <text x="405" y="146.2" class="micro" text-anchor="end">[D]/[E]</text>
-<text x="215" y="150.25" class="mono" text-anchor="start">E06</text>
+<text x="215" y="150.25" class="mono" text-anchor="start" style="fill:#c44b34;font-weight:700">E06</text>
 <text x="228" y="150.25" class="micro" text-anchor="start">motor</text>
 <text x="314" y="150.25" class="mono" text-anchor="end">170.00</text>
 <text x="334" y="150.25" class="mono" text-anchor="end">+212.5</text>
 <text x="354" y="150.25" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="150.25" class="mono" text-anchor="end">+0.0</text>
 <text x="405" y="150.25" class="micro" text-anchor="end">[E]</text>
-<text x="215" y="154.3" class="mono" text-anchor="start">E07</text>
+<text x="215" y="154.3" class="mono" text-anchor="start" style="fill:#c44b34;font-weight:700">E07</text>
 <text x="228" y="154.3" class="micro" text-anchor="start">prop_adapter</text>
 <text x="314" y="154.3" class="mono" text-anchor="end">10.00</text>
 <text x="334" y="154.3" class="mono" text-anchor="end">+232.0</text>
 <text x="354" y="154.3" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="154.3" class="mono" text-anchor="end">+0.0</text>
 <text x="405" y="154.3" class="micro" text-anchor="end">[E]</text>
-<text x="215" y="158.35" class="mono" text-anchor="start">E08</text>
+<text x="215" y="158.35" class="mono" text-anchor="start" style="fill:#c44b34;font-weight:700">E08</text>
 <text x="228" y="158.35" class="micro" text-anchor="start">propeller</text>
 <text x="314" y="158.35" class="mono" text-anchor="end">15.00</text>
 <text x="334" y="158.35" class="mono" text-anchor="end">+235.0</text>
 <text x="354" y="158.35" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="158.35" class="mono" text-anchor="end">+0.0</text>
 <text x="405" y="158.35" class="micro" text-anchor="end">[M]</text>
-<text x="215" y="162.4" class="mono" text-anchor="start">E09</text>
+<text x="215" y="162.4" class="mono" text-anchor="start" style="fill:#c47a11;font-weight:700">E09</text>
 <text x="228" y="162.4" class="micro" text-anchor="start">esc</text>
 <text x="314" y="162.4" class="mono" text-anchor="end">35.00</text>
 <text x="334" y="162.4" class="mono" text-anchor="end">+60.0</text>
 <text x="354" y="162.4" class="mono" text-anchor="end">-48.0</text>
 <text x="374" y="162.4" class="mono" text-anchor="end">-8.0</text>
 <text x="405" y="162.4" class="micro" text-anchor="end">[E]</text>
-<text x="215" y="166.45" class="mono" text-anchor="start">E10</text>
+<text x="215" y="166.45" class="mono" text-anchor="start" style="fill:#246aa0;font-weight:700">E10</text>
 <text x="228" y="166.45" class="micro" text-anchor="start">fc</text>
 <text x="314" y="166.45" class="mono" text-anchor="end">8.90</text>
 <text x="334" y="166.45" class="mono" text-anchor="end">-93.8</text>
 <text x="354" y="166.45" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="166.45" class="mono" text-anchor="end">+5.0</text>
 <text x="405" y="166.45" class="micro" text-anchor="end">[M]</text>
-<text x="215" y="170.5" class="mono" text-anchor="start">E11</text>
+<text x="215" y="170.5" class="mono" text-anchor="start" style="fill:#c47a11;font-weight:700">E11</text>
 <text x="228" y="170.5" class="micro" text-anchor="start">pdb</text>
 <text x="314" y="170.5" class="mono" text-anchor="end">11.40</text>
 <text x="334" y="170.5" class="mono" text-anchor="end">+10.0</text>
 <text x="354" y="170.5" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="170.5" class="mono" text-anchor="end">-4.0</text>
 <text x="405" y="170.5" class="micro" text-anchor="end">[M]</text>
-<text x="215" y="174.55" class="mono" text-anchor="start">E12</text>
+<text x="215" y="174.55" class="mono" text-anchor="start" style="fill:#177c73;font-weight:700">E12</text>
 <text x="228" y="174.55" class="micro" text-anchor="start">gps_mag</text>
 <text x="314" y="174.55" class="mono" text-anchor="end">8.00</text>
 <text x="334" y="174.55" class="mono" text-anchor="end">-110.0</text>
 <text x="354" y="174.55" class="mono" text-anchor="end">+150.0</text>
 <text x="374" y="174.55" class="mono" text-anchor="end">+10.0</text>
 <text x="405" y="174.55" class="micro" text-anchor="end">[M]</text>
-<text x="215" y="178.6" class="mono" text-anchor="start">E13</text>
+<text x="215" y="178.6" class="mono" text-anchor="start" style="fill:#246aa0;font-weight:700">E13</text>
 <text x="228" y="178.6" class="micro" text-anchor="start">receiver</text>
 <text x="314" y="178.6" class="mono" text-anchor="end">0.42</text>
 <text x="334" y="178.6" class="mono" text-anchor="end">+5.0</text>
 <text x="354" y="178.6" class="mono" text-anchor="end">-45.0</text>
 <text x="374" y="178.6" class="mono" text-anchor="end">+3.0</text>
 <text x="405" y="178.6" class="micro" text-anchor="end">[M]</text>
-<text x="215" y="182.65" class="mono" text-anchor="start">E14</text>
+<text x="215" y="182.65" class="mono" text-anchor="start" style="fill:#9a4f87;font-weight:700">E14</text>
 <text x="228" y="182.65" class="micro" text-anchor="start">receiver_antenna</text>
 <text x="314" y="182.65" class="mono" text-anchor="end">0.80</text>
 <text x="334" y="182.65" class="mono" text-anchor="end">-20.0</text>
 <text x="354" y="182.65" class="mono" text-anchor="end">-110.0</text>
 <text x="374" y="182.65" class="mono" text-anchor="end">+5.0</text>
 <text x="405" y="182.65" class="micro" text-anchor="end">[E]</text>
-<text x="215" y="186.7" class="mono" text-anchor="start">E15</text>
+<text x="215" y="186.7" class="mono" text-anchor="start" style="fill:#177c73;font-weight:700">E15</text>
 <text x="228" y="186.7" class="micro" text-anchor="start">pitot_sensor</text>
 <text x="314" y="186.7" class="mono" text-anchor="end">3.50</text>
 <text x="334" y="186.7" class="mono" text-anchor="end">-50.0</text>
 <text x="354" y="186.7" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="186.7" class="mono" text-anchor="end">-10.0</text>
 <text x="405" y="186.7" class="micro" text-anchor="end">[M]</text>
-<text x="215" y="190.75" class="mono" text-anchor="start">E16</text>
+<text x="215" y="190.75" class="mono" text-anchor="start" style="fill:#177c73;font-weight:700">E16</text>
 <text x="228" y="190.75" class="micro" text-anchor="start">pitot_probe_tube</text>
 <text x="314" y="190.75" class="mono" text-anchor="end">5.00</text>
 <text x="334" y="190.75" class="mono" text-anchor="end">-73.8</text>
 <text x="354" y="190.75" class="mono" text-anchor="end">+130.0</text>
 <text x="374" y="190.75" class="mono" text-anchor="end">+0.0</text>
 <text x="405" y="190.75" class="micro" text-anchor="end">[E]</text>
-<text x="215" y="194.8" class="mono" text-anchor="start">E17</text>
+<text x="215" y="194.8" class="mono" text-anchor="start" style="fill:#246aa0;font-weight:700">E17</text>
 <text x="228" y="194.8" class="micro" text-anchor="start">buzzer</text>
 <text x="314" y="194.8" class="mono" text-anchor="end">2.00</text>
 <text x="334" y="194.8" class="mono" text-anchor="end">+30.0</text>
 <text x="354" y="194.8" class="mono" text-anchor="end">+30.0</text>
 <text x="374" y="194.8" class="mono" text-anchor="end">+5.0</text>
 <text x="405" y="194.8" class="micro" text-anchor="end">[E]</text>
-<text x="215" y="198.85" class="mono" text-anchor="start">E18</text>
+<text x="215" y="198.85" class="mono" text-anchor="start" style="fill:#9a4f87;font-weight:700">E18</text>
 <text x="228" y="198.85" class="micro" text-anchor="start">o4_camera</text>
 <text x="314" y="198.85" class="mono" text-anchor="end">3.10</text>
 <text x="334" y="198.85" class="mono" text-anchor="end">-450.0</text>
 <text x="354" y="198.85" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="198.85" class="mono" text-anchor="end">-5.0</text>
 <text x="405" y="198.85" class="micro" text-anchor="end">[D]</text>
-<text x="215" y="202.9" class="mono" text-anchor="start">E19</text>
+<text x="215" y="202.9" class="mono" text-anchor="start" style="fill:#9a4f87;font-weight:700">E19</text>
 <text x="228" y="202.9" class="micro" text-anchor="start">o4_vtx</text>
 <text x="314" y="202.9" class="mono" text-anchor="end">5.10</text>
 <text x="334" y="202.9" class="mono" text-anchor="end">-418.0</text>
 <text x="354" y="202.9" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="202.9" class="mono" text-anchor="end">+31.5</text>
 <text x="405" y="202.9" class="micro" text-anchor="end">[M]</text>
-<text x="215" y="206.95" class="mono" text-anchor="start">E20</text>
+<text x="215" y="206.95" class="mono" text-anchor="start" style="fill:#9a4f87;font-weight:700">E20</text>
 <text x="228" y="206.95" class="micro" text-anchor="start">o4_antenna</text>
 <text x="314" y="206.95" class="mono" text-anchor="end">0.75</text>
 <text x="334" y="206.95" class="mono" text-anchor="end">-360.0</text>
 <text x="354" y="206.95" class="mono" text-anchor="end">-80.0</text>
 <text x="374" y="206.95" class="mono" text-anchor="end">+25.0</text>
 <text x="405" y="206.95" class="micro" text-anchor="end">[M] U</text>
-<text x="215" y="211" class="mono" text-anchor="start">E21</text>
+<text x="215" y="211" class="mono" text-anchor="start" style="fill:#626b73;font-weight:700">E21</text>
 <text x="228" y="211" class="micro" text-anchor="start">avionics_installation_reserve</text>
 <text x="314" y="211" class="mono" text-anchor="end">72.88</text>
 <text x="334" y="211" class="mono" text-anchor="end">-10.0</text>
@@ -461,6 +475,8 @@
 <tspan x="214" dy="0">SHOWN EQUIPMENT: 846.85 g · CLEAN INSTALLED: 1584.25 g</tspan>
 <tspan x="214" dy="4.1">NOT SHOWN: structure, elevons/balances and hardware = 737.40 g</tspan>
 <tspan x="214" dy="4.1">BATTERY: CLEAN x -348.38; V1 required -384.54, placed -377.54 mm.</tspan>
+<tspan x="214" dy="4.1">SERVOS: 2 PER ELEVON AT y=195/390 mm · DUAL ACTUATION PER ADR-0026.</tspan>
+<tspan x="214" dy="4.1">COLOUR = SYSTEM FUNCTION · SOLID = MEASURED/CONTROLLED · AMBER DASH = OPEN.</tspan>
 <tspan x="214" dy="4.1">R = unresolved reserve · U = outside released budget · dimensions are envelopes.</tspan>
 <tspan x="214" dy="4.1">NO FUSELAGE, WING SKIN, FAIRING OR MANUFACTURING SURFACE IS DEFINED HERE.</tspan>
 </text>
@@ -468,4 +484,21 @@
 <text x="227" y="104" class="micro" text-anchor="start">CONTROLLED / DERIVED</text>
 <line x1="214" y1="108" x2="224" y2="108" class="provisional-line"/>
 <text x="227" y="109" class="micro" text-anchor="start">PROVISIONAL · CAD GATE F2</text>
+<text x="282" y="99.5" class="micro" text-anchor="start">SYSTEM COLOUR (FILL)</text>
+<rect x="282" y="100.5" width="3.3" height="3.3" rx="0.35" class="medium" style="fill:#e9e0f5;stroke:#6f4aa8;stroke-width:.4"/>
+<text x="286.5" y="103" class="micro" text-anchor="start">ENERGY</text>
+<rect x="313" y="100.5" width="3.3" height="3.3" rx="0.35" class="medium" style="fill:#f6d8d1;stroke:#c44b34;stroke-width:.4"/>
+<text x="317.5" y="103" class="micro" text-anchor="start">PROPULSION</text>
+<rect x="344" y="100.5" width="3.3" height="3.3" rx="0.35" class="medium" style="fill:#f7e3bd;stroke:#c47a11;stroke-width:.4"/>
+<text x="348.5" y="103" class="micro" text-anchor="start">POWER</text>
+<rect x="375" y="100.5" width="3.3" height="3.3" rx="0.35" class="medium" style="fill:#d9eaf5;stroke:#246aa0;stroke-width:.4"/>
+<text x="379.5" y="103" class="micro" text-anchor="start">FLIGHT CTRL</text>
+<rect x="282" y="105.5" width="3.3" height="3.3" rx="0.35" class="medium" style="fill:#d6eeea;stroke:#177c73;stroke-width:.4"/>
+<text x="286.5" y="108" class="micro" text-anchor="start">SENSORS</text>
+<rect x="313" y="105.5" width="3.3" height="3.3" rx="0.35" class="medium" style="fill:#dfeccf;stroke:#4f7f32;stroke-width:.4"/>
+<text x="317.5" y="108" class="micro" text-anchor="start">ACTUATORS</text>
+<rect x="344" y="105.5" width="3.3" height="3.3" rx="0.35" class="medium" style="fill:#f0ddec;stroke:#9a4f87;stroke-width:.4"/>
+<text x="348.5" y="108" class="micro" text-anchor="start">FPV / RF</text>
+<rect x="375" y="105.5" width="3.3" height="3.3" rx="0.35" class="medium" style="fill:#e4e7e9;stroke:#626b73;stroke-width:.4"/>
+<text x="379.5" y="108" class="micro" text-anchor="start">RESERVE</text>
 </svg>

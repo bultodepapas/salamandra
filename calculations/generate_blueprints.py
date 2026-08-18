@@ -171,6 +171,61 @@ class SvgSheet:
             f"<circle {attrs(cx=fmt(cx), cy=fmt(cy), r=fmt(radius), class_=css, **extra)}/>"
         )
 
+    def cg_symbol(self, cx: float, cy: float, radius: float,
+                  identifier: str) -> None:
+        """Draw the conventional quartered centre-of-gravity target."""
+        top = cy - radius
+        bottom = cy + radius
+        left = cx - radius
+        right = cx + radius
+        self.raw(
+            f'<g {attrs(id=identifier, role="img", aria_label="Calculated centre of gravity")}> '
+            "<title>Calculated centre of gravity</title>"
+        )
+        self.circle(
+            cx,
+            cy,
+            radius,
+            "medium",
+            style="fill:#fffdf8;stroke:none",
+        )
+        self.path(
+            f"M {fmt(cx)} {fmt(cy)} L {fmt(cx)} {fmt(top)} "
+            f"A {fmt(radius)} {fmt(radius)} 0 0 0 {fmt(left)} {fmt(cy)} Z",
+            "thin",
+            style="fill:#111820;stroke:none",
+        )
+        self.path(
+            f"M {fmt(cx)} {fmt(cy)} L {fmt(cx)} {fmt(bottom)} "
+            f"A {fmt(radius)} {fmt(radius)} 0 0 0 {fmt(right)} {fmt(cy)} Z",
+            "thin",
+            style="fill:#111820;stroke:none",
+        )
+        self.line(
+            left,
+            cy,
+            right,
+            cy,
+            "thin",
+            style="fill:none;stroke:#111820;stroke-width:.28",
+        )
+        self.line(
+            cx,
+            top,
+            cx,
+            bottom,
+            "thin",
+            style="fill:none;stroke:#111820;stroke-width:.28",
+        )
+        self.circle(
+            cx,
+            cy,
+            radius,
+            "medium",
+            style="fill:none;stroke:#111820;stroke-width:.52",
+        )
+        self.raw("</g>")
+
     def polyline(self, points: list[tuple[float, float]], css: str = "thin",
                  close: bool = False, **extra: object) -> None:
         value = " ".join(f"{fmt(x)},{fmt(y)}" for x, y in points)
@@ -579,12 +634,13 @@ def draw_general_arrangement() -> SvgSheet:
     ):
         sx, sy = plan_point(station, 0.0, ox, oy, scale)
         if css == "derived-fill":
-            sheet.path(f"M {fmt(sx)} {fmt(sy-2.3)} l -2.2 4 h 4 z", css)
+            sheet.leader(sx, sy, sx + x_shift, sy - 8.5, label)
+            sheet.cg_symbol(sx, sy, 2.3, "cg-target-general-arrangement")
         else:
             sheet.circle(sx, sy, 1.8, css)
             sheet.line(sx - 2.7, sy, sx + 2.7, sy, css)
             sheet.line(sx, sy - 2.7, sx, sy + 2.7, css)
-        sheet.leader(sx, sy, sx + x_shift, sy - 8.5, label)
+            sheet.leader(sx, sy, sx + x_shift, sy - 8.5, label)
 
     camera = plan_point(CONTRACT.camera_station_m, 0.0, ox, oy, scale)
     sheet.circle(*camera, 1.7, "provisional-line")
@@ -1049,6 +1105,34 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         component.identifier: f"E{index:02d}"
         for index, component in enumerate(components, start=1)
     }
+    equipment_group_by_category = {
+        "energy": "energy",
+        "propulsion": "propulsion",
+        "power": "power",
+        "avionics": "flight_control",
+        "sensor": "sensors",
+        "actuator": "actuators",
+        "fpv": "fpv_rf",
+        "rf": "fpv_rf",
+        "reserve": "reserve",
+    }
+    equipment_palette = {
+        # label, strong outline/text colour, light envelope fill
+        "energy": ("ENERGY", "#6f4aa8", "#e9e0f5"),
+        "propulsion": ("PROPULSION", "#c44b34", "#f6d8d1"),
+        "power": ("POWER", "#c47a11", "#f7e3bd"),
+        "flight_control": ("FLIGHT CTRL", "#246aa0", "#d9eaf5"),
+        "sensors": ("SENSORS", "#177c73", "#d6eeea"),
+        "actuators": ("ACTUATORS", "#4f7f32", "#dfeccf"),
+        "fpv_rf": ("FPV / RF", "#9a4f87", "#f0ddec"),
+        "reserve": ("RESERVE", "#626b73", "#e4e7e9"),
+    }
+
+    def component_palette(
+        component: equipment_layout.Component3D,
+    ) -> tuple[str, str, str]:
+        group = equipment_group_by_category[component.category]
+        return equipment_palette[group]
 
     def top_point(x_mm: float, y_mm: float) -> tuple[float, float]:
         return (
@@ -1223,8 +1307,10 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         style="fill:none;stroke:#146e9b;stroke-width:.32;stroke-dasharray:5 1 1 1",
     )
 
-    # Component envelopes are status-coded.  Any estimated input remains
-    # amber/dashed; measured envelopes are solid blue.  E## is the mass centre.
+    # Fill colour identifies system function.  Maturity remains independent:
+    # estimated/open envelopes keep an amber dashed outline, while measured or
+    # controlled envelopes use a solid outline in the system colour.  E## is
+    # the component mass centre, so the convention survives monochrome output.
     for component in components:
         provisional = (
             "[E]" in component.authority
@@ -1233,8 +1319,11 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
             or not component.budgeted
         )
         css = "provisional-fill" if provisional else "derived"
-        style = None if provisional else (
-            "fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"
+        _, system_colour, system_fill = component_palette(component)
+        outline_colour = "#a86000" if provisional else system_colour
+        style = (
+            f"fill:{system_fill};fill-opacity:.72;stroke:{outline_colour};"
+            "stroke-width:.48"
         )
         top_rect = top_box(component)
         side_rect = side_box(component)
@@ -1297,12 +1386,6 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
     clean_cg = clean.cg_mm()
     top_cg = top_point(clean_cg[0], clean_cg[1])
     side_cg = side_mass_point(clean_cg[0], clean_cg[2])
-    for prefix, point in (("top", top_cg), ("side", side_cg)):
-        sheet.path(
-            f"M {fmt(point[0])} {fmt(point[1]-3.2)} l -3 5.4 h 6 z",
-            "derived-fill",
-            id=f"clean-cg-{prefix}",
-        )
     sheet.leader(
         *top_cg,
         97,
@@ -1316,6 +1399,8 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         f"CG z {clean_cg[2]:+.1f} [D]",
         anchor="end",
     )
+    for prefix, point in (("top", top_cg), ("side", side_cg)):
+        sheet.cg_symbol(*point, 2.7, f"clean-cg-{prefix}")
 
     battery_min_x = top_point(battery.bounds.minimum_mm[0], 0.0)[0]
     battery_max_x = top_point(battery.bounds.maximum_mm[0], 0.0)[0]
@@ -1356,7 +1441,14 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
             status += " R"
         if not component.budgeted:
             status += " U"
-        sheet.text(215, row_y, reference, "mono")
+        _, system_colour, _ = component_palette(component)
+        sheet.text(
+            215,
+            row_y,
+            reference,
+            "mono",
+            style=f"fill:{system_colour};font-weight:700",
+        )
         sheet.text(228, row_y, component.identifier, "micro")
         sheet.text(314, row_y, f"{component.mass_g:.2f}", "mono", "end")
         sheet.text(334, row_y, f"{component.position_mm[0]:+.1f}", "mono", "end")
@@ -1372,10 +1464,38 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         f"SHOWN EQUIPMENT: {shown_mass:.2f} g · CLEAN INSTALLED: {clean.mass_g():.2f} g",
         f"NOT SHOWN: structure, elevons/balances and hardware = {excluded_mass:.2f} g",
         f"BATTERY: CLEAN x {clean_battery_x:+.2f}; V1 required {v1_battery_x:+.2f}, placed {v1_battery.position_mm[0]:+.2f} mm.",
+        "SERVOS: 2 PER ELEVON AT y=195/390 mm · DUAL ACTUATION PER ADR-0026.",
+        "COLOUR = SYSTEM FUNCTION · SOLID = MEASURED/CONTROLLED · AMBER DASH = OPEN.",
         "R = unresolved reserve · U = outside released budget · dimensions are envelopes.",
         "NO FUSELAGE, WING SKIN, FAIRING OR MANUFACTURING SURFACE IS DEFINED HERE.",
     ], "micro", 4.1)
     provenance_legend(sheet, 214, 103)
+    sheet.text(282, 99.5, "SYSTEM COLOUR (FILL)", "micro")
+    palette_order = (
+        "energy",
+        "propulsion",
+        "power",
+        "flight_control",
+        "sensors",
+        "actuators",
+        "fpv_rf",
+        "reserve",
+    )
+    for index, group in enumerate(palette_order):
+        row, column = divmod(index, 4)
+        x = 282.0 + column * 31.0
+        y = 103.0 + row * 5.0
+        label, system_colour, system_fill = equipment_palette[group]
+        sheet.rect(
+            x,
+            y - 2.5,
+            3.3,
+            3.3,
+            "medium",
+            rx=0.35,
+            style=f"fill:{system_fill};stroke:{system_colour};stroke-width:.4",
+        )
+        sheet.text(x + 4.5, y, label, "micro")
     return sheet
 
 
@@ -1587,7 +1707,7 @@ def validate_contract() -> dict[str, bool]:
     equipment_battery = equipment_clean.component(
         equipment_layout.PRIMARY_CG_ADJUSTER
     )
-    return {
+    checks = {
         "canonical geometry validation passes": all(validate_geometry().values()),
         "drawing half-span matches design contract": abs(CONTRACT.segment_joints_m[-1] - HALF_SPAN) < 1e-12,
         "CORE join is at 30 percent half-span": abs(CONTRACT.core_half_span_m / HALF_SPAN - 0.30) < 1e-12,
@@ -1663,6 +1783,7 @@ def validate_contract() -> dict[str, bool]:
             equipment_v1_required_x < equipment_battery.bounds.minimum_mm[0]
         ),
     }
+    return checks
 
 
 def validate_svg(source: str, filename: str, drawing_number: str) -> dict[str, bool]:
@@ -1692,7 +1813,7 @@ def validate_svg(source: str, filename: str, drawing_number: str) -> dict[str, b
     title_element = root.find("svg:title", namespace)
     description_element = root.find("svg:desc", namespace)
     metadata = root.find("svg:metadata", namespace)
-    return {
+    checks = {
         f"{filename}: XML parses": root.tag.endswith("svg"),
         f"{filename}: physical A3 size": root.attrib.get("width") == "420mm" and root.attrib.get("height") == "297mm",
         f"{filename}: metric viewBox": root.attrib.get("viewBox") == "0 0 420 297",
@@ -1729,6 +1850,42 @@ def validate_svg(source: str, filename: str, drawing_number: str) -> dict[str, b
         f"{filename}: manufacture warning present": "NOT FOR MANUFACTURE" in labels or "NOT A CUTTING" in labels,
         f"{filename}: provisional style present": "PROVISIONAL" in labels,
     }
+    if drawing_number == "SLM-GA-001":
+        cg_group = next(
+            (element for element in elements if element.attrib.get("id") == "cg-target-general-arrangement"),
+            None,
+        )
+        checks[f"{filename}: conventional quartered CG symbol present"] = (
+            cg_group is not None
+            and sum(child.tag.endswith("path") for child in cg_group) == 2
+        )
+    if drawing_number == "SLM-EQP-001":
+        cg_groups = {
+            element.attrib.get("id"): element
+            for element in elements
+            if element.attrib.get("id") in {"clean-cg-top", "clean-cg-side"}
+        }
+        checks[f"{filename}: top and side use quartered CG symbols"] = (
+            len(cg_groups) == 2
+            and all(
+                sum(child.tag.endswith("path") for child in group) == 2
+                for group in cg_groups.values()
+            )
+        )
+        checks[f"{filename}: functional colour legend is complete"] = all(
+            label in labels
+            for label in (
+                "ENERGY",
+                "PROPULSION",
+                "POWER",
+                "FLIGHT CTRL",
+                "SENSORS",
+                "ACTUATORS",
+                "FPV / RF",
+                "RESERVE",
+            )
+        )
+    return checks
 
 
 def build_drawings() -> tuple[DrawingOutput, ...]:
