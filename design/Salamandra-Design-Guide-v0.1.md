@@ -1,21 +1,23 @@
 # Salamandra — Design Guide
 
-**Version 0.22** · 18 August 2026 · Status: **WORKING — post-v0.4.0 Article #1
-elevon-geometry baseline.**
+**Version 0.23** · 18 August 2026 · Status: **RELEASED in v0.5.0 — Article #1
+elevon geometry and the connected design contract.**
 Planform, airfoil coordinates, twist, propulsion reference and mass allocation are
 controlling. Values still flagged `PROVISIONAL` (principally the CORE outer shape and
 unmeasured structural properties) retain an explicit trigger in the open-points register.
 
-> **AUTHORITATIVE WORKING DOCUMENT:** this guide v0.22 controls current Article #1 CAD
-> work and supersedes v0.21 only for the ADR-0045 control-surface, servo-station, mass
-> and connected-balance changes. Release `v0.4.0` remains the immutable v0.21 snapshot.
+> **AUTHORITATIVE RELEASED DOCUMENT:** this guide v0.23 is the controlling specification
+> of release `v0.5.0`. It supersedes v0.21 for the ADR-0045 control-surface,
+> servo-station, mass and connected-balance changes, and adds the ADR-0046
+> single-declaration contract under which every shared quantity is re-derived from one
+> owner. Release `v0.4.0` remains the immutable v0.21 audit snapshot.
 > This guide retains the v0.4.0 load basis and supersedes the v0.3.0 load
 > terminology while retaining its airfoil, propulsion, mass, planform and interface
 > geometry. It also supersedes the v0.2.0 airfoil, propulsion and
 > mass allocations as well as the complete v0.1.0 planform and
 > balance baseline. Do not reuse or mix v0.1.0 wing sketches, panel solids, CORE wing
 > interfaces or battery-cradle coordinates with this release. See §1.1 and
-> [`docs/11-release-v0.4.md`](../docs/11-release-v0.4.md).
+> [`docs/13-release-v0.5.md`](../docs/13-release-v0.5.md).
 
 This document is the working specification handed to the **CAD designer**. It defines the
 reference configuration (Cruise, Article #1) of the Salamandra modular 3D-printed FPV
@@ -44,12 +46,12 @@ version live in `design/prompts/` (the site generator intentionally excludes the
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.22 |
+| Version | 0.23 |
 | Date | 2026-08-18 |
-| Release | **Unreleased working baseline after v0.4.0** |
-| Status | **WORKING**; ADR-0045 elevon geometry is in force for CAD, while E2, E5, F2, G7, S3 and G11 remain physical acceptance gates |
+| Release | **Released in v0.5.0** — [`docs/13-release-v0.5.md`](../docs/13-release-v0.5.md) |
+| Status | **RELEASED**; ADR-0045 elevon geometry and ADR-0046 declaration contract are in force for CAD, while E2, E5, F2, G7, S3, G10 and G11 remain physical acceptance gates |
 | Reference configuration | **Cruise — Article #1** |
-| Inputs | ADR-0001…ADR-0045, I-01…I-27, docs/00, docs/02…docs/07, docs/10…docs/11 |
+| Inputs | ADR-0001…ADR-0046, I-01…I-27, docs/00, docs/02…docs/07, docs/10…docs/13 |
 | Intended reader | CAD designer (Fusion 360 or equivalent) |
 
 **How this guide evolves.** The design is expected to change as Phase 1 closes (airfoil
@@ -111,10 +113,10 @@ No planform coordinate, airfoil coordinate, twist, material, component mass, CG 
 propulsion boundary or speed limit changes in this migration. Existing v0.3 CAD remains
 geometrically current, but structural substantiation must use the v0.4 load definitions.
 
-The v0.4.0 → v0.22 working migration changes the Article #1 control surface and its
-connected mass/balance values:
+The v0.4.0 → v0.23 migration changes the Article #1 control surface and its connected
+mass/balance values:
 
-| Driver | v0.4.0 release | v0.22 working value |
+| Driver | v0.4.0 release | v0.23 released value |
 |---|---:|---:|
 | Elevon span | y 195…585; 390 mm | **y 227.5…585; 357.5 mm** |
 | Fixed PANEL-root trailing edge | none after joint | **32.5 mm bridge, y 195…227.5** |
@@ -126,6 +128,14 @@ connected mass/balance values:
 
 Existing 390 mm elevon solids, hinge strips, pockets, balance values and servo stations
 are obsolete for Article #1. Release v0.4.0 remains a historical audit snapshot.
+
+Release v0.5.0 additionally adopts [ADR-0046](../decisions/ADR-0046-single-declaration-contract.md):
+every shared quantity in this guide is now re-derived from a single owner
+(`design_config.py` for chosen inputs, `aero_contract.py` for derived aerodynamics,
+`drag_model.py` for the polar) rather than copied. The only published value this moved is
+the V1a yaw mode, ω_n 4.03 → **5.35 rad/s**, ζ 0.197 → **0.231** (C40). The neutral point
+is unchanged at **−75.79 mm / 25.72 % MAC** and is now an anchor with a ±0.5 mm tolerance
+rather than the source of the value.
 
 ---
 
@@ -261,7 +271,7 @@ FC change).
 | Vertical stabilizer | **None** | **Fixed centreline fin** (passive) |
 | Role | O1 efficiency build (≤ 1.15 Wh/km) | **Recommended test build, conditional on F2 mass closure** |
 | Cnβ total | **−0.0006…−0.0014 /deg — negative** (statically unstable yaw `[E]`) | **−0.00005…+0.00095 /deg, nominal +0.0005 (V1a)**; V1b +0.00049…+0.00141 `[D]` on `[E]` bands (I-20) |
-| Yaw mode | Corrected 2-DOF eigenvalues +6.25/−7.13 s⁻¹; divergence τ ≈ **0.16 s** `[E]` | Damped reduced β-r pair −0.796 ± 3.947i s⁻¹; decay τ ≈ **1.3 s** `[E]`; not a full Dutch-roll identification |
+| Yaw mode | Corrected 2-DOF eigenvalues **+8.247/−9.456 s⁻¹**; divergence τ ≈ **0.12 s** `[E]` | Damped reduced β-r pair **−1.233 ± 5.205i s⁻¹**; ω_n 5.35 rad/s, ζ 0.231, decay τ ≈ **0.8 s** `[E]`; damped across the whole ±15 % `I_zz` band; not a full Dutch-roll identification |
 | Fin geometry (V1a) | — | S_v = **2.13 dm²**; trapezoid **b_v ≈ 253 mm, c_r ≈ 105, c_t ≈ 63 mm**, AR_v ≈ 3.0; swept tip; root t ≥ **3.0 mm solid** (σ 29.9 MPa, FS 1.67 at V_NE without spar credit); fin AC ≈ **x = +285 mm** (l_v = 379 mm from CG −93.8); rear-pod extension ≈ 30 mm |
 | **Fin section** | — | **Symmetric biconvex plate**: local thickness t_v(y) = **3.0 mm root → 1.5 mm tip**, linear; LE radius ≈ 1.5 mm; TE ≈ 0.8 mm; no camber. Ø3 mm Al spar in a Ø3.2 LE channel, root to tip (EI ×1.60 at the 3 mm root; no strength credit). Mount: 105 mm × 3 mm slot + 1× Ø1.75 mm filament dowel + 1× M2 screw (ADR-0038). |
 | Fin mass | — | Allocation target **≤36.72 g**, but C32 lower model is **37.31 g shell/mount + 5.70 g spar = 43.01 g**. The **6.29 g gap is open**; weigh the complete assembly. |
@@ -752,14 +762,15 @@ out of scope for this version.
 | Set | Documents |
 |---|---|
 | Decisions | ADR-0001…ADR-0044 ([`decisions/`](../decisions/)) |
-| Research | I-01…I-24 ([`research/`](../research/)); **load envelope: I-24**; **calculation integration audit: I-23**; **v0.3 audit: I-22**; **airfoil: I-15 §8**; **sweep/elastic-axis: I-21**; **directional stability: I-20** |
+| Research | I-01…I-27 ([`research/`](../research/)); **elevon trade: I-27**; **drawing workflow: I-25**; **load envelope: I-24**; **calculation integration audit: I-23**; **v0.3 audit: I-22**; **airfoil: I-15 §8**; **sweep/elastic-axis: I-21**; **directional stability: I-20** |
 | Specification | [`docs/00-objectives-and-requirements.md`](../docs/00-objectives-and-requirements.md) |
 | Measured data | [`docs/02-measured-references.md`](../docs/02-measured-references.md) |
 | Plans | [`docs/03-phase-1-plan.md`](../docs/03-phase-1-plan.md), [`docs/05-master-plan.md`](../docs/05-master-plan.md) |
 | Conventions | [`docs/04-conventions.md`](../docs/04-conventions.md) |
 | Material variants | [`docs/06-material-mass-variants.md`](../docs/06-material-mass-variants.md) (`mass_budget.py`) |
 | Divergence | [`docs/07-divergence-margin.md`](../docs/07-divergence-margin.md) (`divergence.py`) |
-| Current release | [`docs/11-release-v0.4.md`](../docs/11-release-v0.4.md) |
+| Current release | [`docs/13-release-v0.5.md`](../docs/13-release-v0.5.md) |
+| Calculation audit | [`docs/12-calculation-system-audit-and-remediation.md`](../docs/12-calculation-system-audit-and-remediation.md) |
 
 > ✅ **All ADRs cited in this guide have published files** (OP-22 closed 2026-08-06).
 
@@ -769,6 +780,7 @@ out of scope for this version.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.23 | 2026-08-18 | **Released in v0.5.0.** Promotes the ADR-0045 elevon geometry to released status and adopts [ADR-0046](../decisions/ADR-0046-single-declaration-contract.md): every shared quantity is re-derived from one owner (`design_config.py` inputs, `aero_contract.py` derived aerodynamics, `drag_model.py` polar), enforced by `contract_lint.py` and proven falsifiable by 19 seeded defects in `mutation_test.py`. Corrections C39–C43. The only published value that moves is the V1a yaw mode, ω_n 4.03 → **5.35 rad/s**, ζ 0.197 → **0.231**; the neutral point stays at −75.79 mm / 25.72 % MAC and becomes a ±0.5 mm anchor. The four generated A3 drawing sheets join the released package. No planform, airfoil, twist, material, mass, CG, propulsion or speed-limit change. Release notes: [`docs/13-release-v0.5.md`](../docs/13-release-v0.5.md). |
 | 0.22 | 2026-08-18 | **Post-v0.4.0 Article #1 elevon decision (I-27/ADR-0045).** Shortens each 0.28 c surface from y 195…585 to **227.5…585 mm**, creates a 32.5 mm fixed PANEL-root trailing-edge bridge, retains the 65 mm fixed tip and moves the single servo to **y ±406.25 mm**. The connected model retains 94.5 % of the former roll derivative, closes Ncrit-12 trim at +0.50°, reduces the hinge proxy 11.7 % and updates balance/CLEAN/V1 masses to 54 g / 1553.25 g / 1596.26 g. V1 exact battery station is 2.72 mm outside current travel but CG remains in band; F2/E2/E5/G7 stay open. No flap mode or flutter credit is released. |
 | 0.21 | 2026-08-17 | **Released in v0.4.0.** Packages the C33–C34/I-24/ADR-0044 flight-load correction as the controlling baseline: +6/−3 g manoeuvre limit, +9/−4.5 g ultimate, positive V-n/VA results, section-versus-wing `clmax`/`CLmax`, and an explicit non-adoption of the legacy rigid gust screen. Existing v0.3 CAD geometry remains current; G11/E9 and the negative `CLmin` branch remain open. Release notes: [`docs/11-release-v0.4.md`](../docs/11-release-v0.4.md). |
 | 0.20 | 2026-08-17 | **Load-envelope corrections (C33–C34, I-24, ADR-0044).** Separates +6/−3 manoeuvre limit from +9/−4.5 ultimate structural loads; computes the positive V-n branch (VA 109.0/110.4 km/h CLEAN/V1); adds the unit-checked regulatory-reference gust screen and explicitly rejects its nonlinear result as an adopted design load. C34 distinguishes local section `clmax ≥ 0.65` from wing design `CLmax = 0.589`. G11/E9 retain dynamic gust and CLmin closure. No geometry or speed limit changed. |

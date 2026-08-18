@@ -99,7 +99,7 @@ setting (T/W ≈ 1.0). The margin is not at the release instant — it is built 
 motor acceleration in the first 0.4 s. Corroborated by the configuration-class anchor
 `[M]` (Mojito 1800 g / ~60 km/h reported stall, hand-launched). The V1 fin (ADR-0038)
 remains recommended for the test programme (directional stability in the first
-  seconds; corrected finless yaw divergence τ ≈ 0.16 s, C31).
+  seconds; corrected finless yaw divergence τ ≈ 0.12 s, C31/C44).
 
 **Levers (unchanged, now for comfort not feasibility):** (a) mass reduction to the
 OP-24 low end; (b) CL_max raise via the designed airfoil (R-AIRFOIL, OP-02) — lowers

@@ -1,14 +1,14 @@
 # Salamandra — Design Guide: Open Points and Evolution
 
-**Version 0.17** · 18 August 2026 · **post-v0.4.0 working companion** to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.22)
+**Version 0.18** · 18 August 2026 · **released with v0.5.0**, companion to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.23)
 
 This document lists everything in the Design Guide that is **not yet fixed**: assumptions
 that need verification, values that will change when the corresponding research closes,
 and the revision process. It is the "what to watch" map for the designer and for Phase 1.
 
-Every open point names the trigger that resolves it. Until a trigger fires, the current
-v0.22 working value stands; v0.4.0 remains the historical release snapshot.
+Every open point names the trigger that resolves it. Until a trigger fires, the released
+v0.23 value stands; v0.4.0 remains the historical release snapshot.
 
 ---
 
@@ -109,6 +109,7 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.18 | 2026-08-18 | **Released with v0.5.0 / guide v0.23.** The open-gate state is unchanged by the release: the ADR-0046 declaration contract, the C39–C43 corrections and the drawing set are traceability and verification work, not new evidence. OP-06 elevon geometry is now released rather than working; G7 flutter remains open **without** the withdrawn `sqrt(2)` two-servo stiffness credit; G10 yaw is republished at the single-source inertia (ω_n 5.35 rad/s, ζ 0.231) and stays damped across the whole declared band; E2, F2, S3, G6, G11, D2/E3 and OP-21 are untouched. |
 | 0.17 | 2026-08-18 | Guide v0.22/I-27/ADR-0045 propagated: OP-06 adopts the 35–90 % elevon as the working CAD baseline while retaining E2/E5/G7; OP-01/16 expose the 2.72 mm V1 battery-station shortfall; OP-24 credits only the 6 g balance reduction. No flap mode, final throw or flutter closure is claimed. |
 | 0.16 | 2026-08-17 | **Released with v0.4.0 / guide v0.21.** The open-gate state is intentionally unchanged: OP-31/G11/E9 still require dynamic gust and negative-`CLmin` evidence, while F2, E2 and S3 retain the mass, aerodynamic and structural physical acceptance work. |
 | 0.15 | 2026-08-17 | Guide v0.20/I-24 propagated: C33 separates manoeuvre limit from ultimate load, adds positive V-n/VA results and OP-31 for the dynamic gust and negative-CL closure; C34 distinguishes local section `clmax` from wing `CLmax`. No false gust load or CAD change is adopted. |

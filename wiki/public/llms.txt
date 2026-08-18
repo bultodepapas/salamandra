@@ -16,7 +16,7 @@
 ## Design
 
 - [Salamandra design](https://bultodepapas.github.io/salmandra/salamandra/): The forward-swept flying wing reference design
-- [Design guide v0.22](https://bultodepapas.github.io/salmandra/salamandra/design-guide/): The v0.4.0 controlling CAD and engineering specification
+- [Design guide v0.23](https://bultodepapas.github.io/salmandra/salamandra/design-guide/): The v0.5.0 controlling CAD and engineering specification
 - [Design guide justification](https://bultodepapas.github.io/salmandra/salamandra/design-guide-justification/): Why every number is what it is
 - [Open points](https://bultodepapas.github.io/salmandra/salamandra/design-guide-open-points/): What still constrains the design
 
@@ -29,13 +29,13 @@
 - [Calculations](https://bultodepapas.github.io/salmandra/calculations/): Validated, rerunnable analysis scripts
 - [Reproduction guide](https://bultodepapas.github.io/salmandra/calculations/reproduction-guide/): Commands and validation discipline
 - [Objectives and requirements](https://bultodepapas.github.io/salmandra/reference/00-objectives-and-requirements/): The Phase-0 specification
-- [Current release v0.4.0](https://bultodepapas.github.io/salmandra/reference/11-release-v04/): Authority, migration rules, released values and remaining gates
+- [Current release v0.5.0](https://bultodepapas.github.io/salmandra/reference/13-release-v05/): Authority, migration rules, released values and remaining gates
 - [Phase-1 plan](https://bultodepapas.github.io/salmandra/reference/03-phase-1-plan/): Geometry and stability work plan
 
 ## Platform
 
 - [Project readme](https://bultodepapas.github.io/salmandra/platform/readme/): Status and full navigation
-- [Changelog](https://bultodepapas.github.io/salmandra/platform/changelog/): Correction record through C43
+- [Changelog](https://bultodepapas.github.io/salmandra/platform/changelog/): Correction record through C44
 - [Contributing](https://bultodepapas.github.io/salmandra/platform/contributing/): Full contribution guide
 
 ## Optional

@@ -4,7 +4,65 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
-## [Unreleased] — 2026-08-18
+## [1.34] — 2026-08-18
+
+**Release v0.5.0 — verification integrity and the connected design contract.**
+
+- Design Guide **v0.23**, justification/open points **v0.18** and
+  [`docs/13-release-v0.5.md`](docs/13-release-v0.5.md) are the released record.
+- The audit in [`docs/12`](docs/12-calculation-system-audit-and-remediation.md) measured,
+  by executing the code, that v0.4.0's "connected" baseline was partly nominal: twelve
+  quantities declared twice, a hand-copied neutral point, a factor-1.76 yaw-inertia
+  contradiction, checks that could not turn red and a CI that aborted at install time.
+  C35–C43 close that programme (WP1–WP5 complete; WP6 structural/physics items remain).
+  **C44**, found while cutting the release, is the same failure mode surviving in prose:
+  four documents still quoted the pre-C40 yaw modes, including the E8 acceptance
+  criterion.
+- **[ADR-0046](decisions/ADR-0046-single-declaration-contract.md)** makes the rule
+  executable: `design_config.py` owns chosen inputs, `aero_contract.py` derived
+  aerodynamics, `drag_model.py` the polar; `contract_lint.py` fails a second declaration
+  and `mutation_test.py` proves the suite can fail.
+- **ADR-0045 elevon geometry is released**: 357.5 mm surfaces at y 227.5…585.0 mm, two
+  servos at y ±406.25 mm, 32.5 mm fixed PANEL-root bridge. Existing 390 mm elevon solids,
+  hinge strips, pockets and balance values are obsolete for Article #1.
+- The four generated A3 drawing sheets become part of the released package, published
+  from one manifest with a SHA-256 per sheet.
+- Verification at release: **112 cross-module contracts, 28 deterministic CLIs, 19/19
+  seeded defects caught**, drawing set current, strict wiki generation, reference check
+  and production build passing, `git diff --check` clean. Full suite 36.5 s.
+- **Engineering delta from guide v0.22:** one published result moves — the V1a yaw mode,
+  ω_n 4.03 → 5.35 rad/s, ζ 0.197 → 0.231 (C40). Nothing else physical changes: no
+  planform, airfoil, twist, material, mass, CG station, propulsion boundary, 105 km/h
+  operational cap or 160 km/h article `V_NE`.
+
+---
+
+### Corrections in this release
+
+**C44 — C40 corrected the yaw inertia but did not re-derive the documents that quoted the
+old modes.**
+
+- C40 replaced the `[E]` 0.28 kg·m² yaw inertia with the `[D]` 0.1587 kg·m² derived from
+  the 3-D mass model, and republished the V1a mode from `yaw_stability.py`. **Four
+  documents kept the pre-C40 eigenvalues**: I-20 §5.1/§5.5, the Design Guide stability
+  table, the justification row, and — worst — the **E8 acceptance criterion** in
+  `tests/README.md`, which is the number a flight test would have been compared against.
+- Corrected to the live values: finless worst-case 2-DOF λ = **+8.247/−9.456 s⁻¹**,
+  divergence τ **0.16 → 0.12 s**; V1a pair λ = **−1.233 ± 5.205i s⁻¹**, decay
+  τ **1.3 → 0.8 s** (ω_n 5.35 rad/s, ζ 0.231), damped across the whole ±15 % inertia band.
+  I-20's finless `Cnβ` band is also restated at the live −0.00055 … −0.00141 /deg and
+  `Cnr` at −0.083 /rad.
+- This is **failure mode #3 in the middle of the release that exists to close it**. The
+  lesson is specific and worth stating: `contract_lint.py` and `mutation_test.py` guard
+  the *code*; nothing guards a number that has been transcribed into prose. Narrative
+  quotations of computed results remain a manual re-derivation obligation, and C44 is the
+  evidence that the obligation is real.
+- I-23 and `docs/12` retain the old figures **deliberately** — they are historical audit
+  records of the state at the time they were written, not live specifications.
+- No decision changes. The qualitative conclusion of I-20 is unchanged and slightly
+  strengthened: CLEAN diverges faster than previously published, V1a damps faster.
+
+---
 
 **C43 — Three verification checks could not fail, and the suite was never run by CI.**
 

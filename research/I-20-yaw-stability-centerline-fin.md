@@ -100,13 +100,13 @@ alternative (on the wing, ahead of the prop) needs ≈ 1.7× the area for the sa
 
 | Term | Value (/deg) |
 |---|---|
-| Body (k 0.40 … 0.96, S_fs 0.040 m²) | **−0.00056 … −0.00135** |
+| Body (k 0.40 … 0.96, S_fs 0.040 m²) | **−0.00055 … −0.00131** |
 | Wing, FSW (band) | −0.00010 … 0.00000 |
-| **Total, no fin** | **−0.00056 … −0.00145** — negative across the whole band |
-| Worst-case yaw mode | Corrected 2-DOF λ ≈ +6.25/−7.13 s⁻¹ → **divergence τ ≈ 0.16 s** `[E]` |
+| **Total, no fin** | **−0.00055 … −0.00141** — negative across the whole band |
+| Worst-case yaw mode | Corrected 2-DOF λ ≈ **+8.247/−9.456 s⁻¹** → **divergence τ ≈ 0.12 s** `[E]` (C44: re-derived at the single-source `I_zz` 0.1587 kg·m²; was 0.16 s at the retired 0.28 kg·m² estimate) |
 
 The finless Salamandra is **directionally unstable in the classical sense**. The
-corrected 0.16 s divergence is too fast to claim that bank-to-turn stabilization will
+corrected 0.12 s divergence is too fast to claim that bank-to-turn stabilization will
 recover it, especially because there is no physical yaw effector or restoring moment.
 Finless flight therefore requires its own E8 build-up evidence; it is not the first-test
 configuration. This is exactly why the Mojito — the closest in-service FSW + nose +
@@ -153,9 +153,13 @@ rudder is not justified in this analysis.** The Mojito agrees `[M]`.
 
 ## 5.5 Yaw damping
 
-Cnr: wing −0.032 → with V1a fin **−0.084 /rad (doubled)**. With the corrected C31
-dimensionalization, CLEAN gives +6.25/−7.13 s⁻¹ and V1a gives the damped reduced pair
-−0.796 ± 3.947i s⁻¹ (decay τ ≈ 1.3 s) `[E]`. The fin converts a divergence into a
+Cnr: wing −0.032 → with V1a fin **−0.083 /rad (doubled)**. With the corrected C31
+dimensionalization **and the C40 single-source inertia** (`I_zz` = 0.1587 kg·m² `[D]`
+from the 3-D mass model, not the retired 0.28 kg·m² `[E]`), CLEAN gives
+**+8.247/−9.456 s⁻¹** and V1a gives the damped reduced pair
+**−1.233 ± 5.205i s⁻¹** (ω_n 5.35 rad/s, ζ 0.231, decay τ ≈ **0.8 s**) `[E]`. The mode
+stays damped across the whole declared ±15 % inertia band
+(ω_n 4.99…5.80 rad/s, ζ 0.221…0.243). The fin converts a divergence into a
 damped lateral-directional oscillation in this reduced model.
 
 # 6. Recommendation (engineering)

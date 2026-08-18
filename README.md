@@ -17,7 +17,7 @@ forward-swept flying wing, but that is only the first design. The repository is 
 grow into a whole family of airframes, parts, adapters and experiments — contributed by
 the community.
 
-**Revision 1.17** · 17 August 2026 · **Release v0.4.0 · Phase 1 in progress**
+**Revision 1.18** · 18 August 2026 · **Release v0.5.0 · Phase 1 in progress**
 
 > 📖 **Read this project as a website:** <https://bultodepapas.github.io/salmandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
@@ -166,21 +166,25 @@ The aircraft is designed as a **modular platform**:
 
 This is the first, reference design on the platform, named **Salamandra**. Its current
 specification for the designer is the
-[**Salamandra Design Guide v0.22**](design/Salamandra-Design-Guide-v0.1.md), with the
+[**Salamandra Design Guide v0.23**](design/Salamandra-Design-Guide-v0.1.md), with the
 justification in [`design/`](design/). The baseline is a PETG forward-swept flying wing,
 **modular and configurable**: a standard center module and interchangeable wing panels.
 Efficient FPV cruise flight, with electronics chosen by the builder.
 
-**📦 Current release — `v0.4.0`: Article #1 flight-load envelope.** The Design Guide
-is the authoritative entry point. This release promotes C29–C34 into one controlled
-baseline and fixes the structural meaning of the load cases: +6/−3 g are provisional
-manoeuvre limits, while +9/−4.5 g are their ultimate structural cases. It also publishes
-the positive V-n branch and keeps the nonlinear dynamic-gust response explicitly open.
-Read the [**v0.4.0 release notes**](docs/11-release-v0.4.md) before structural sizing.
-Historical v0.1.0–v0.3.0 notes remain audit records.
-The repository now carries a post-release working change: I-27/ADR-0045 shortens the
-Article #1 elevons to 35–90 % half-span. Guide v0.22 controls current CAD work; v0.4.0
-remains the immutable release snapshot.
+**📦 Current release — `v0.5.0`: verification integrity and the connected design
+contract.** The Design Guide is the authoritative entry point. A measured audit of the 33
+calculation modules ([`docs/12`](docs/12-calculation-system-audit-and-remediation.md))
+found that v0.4.0's "connected" baseline was partly nominal — twelve quantities declared
+twice, a hand-copied neutral point, a factor-1.76 yaw-inertia contradiction, checks that
+could not turn red, and a CI that aborted at install time. This release closes that class:
+[ADR-0046](decisions/ADR-0046-single-declaration-contract.md) gives every shared quantity
+one owner, `contract_lint.py` fails a second declaration, and `mutation_test.py` seeds 19
+deliberate defects that must each turn a check red. It also releases the ADR-0045 elevon
+geometry (357.5 mm surfaces, two servos) and the four generated A3 drawing sheets.
+**One published number moves** — the V1a yaw mode, ω_n 4.03 → 5.35 rad/s. Read the
+[**v0.5.0 release notes**](docs/13-release-v0.5.md) before CAD or structural work;
+existing 390 mm elevon solids are obsolete. Historical v0.1.0–v0.4.0 notes remain audit
+records.
 The wiki renders the package at
 <https://bultodepapas.github.io/salmandra/>.
 
@@ -251,7 +255,7 @@ configuration contributed to the platform.
 
 | Folder | What it contains |
 |---|---|
-| [`design/`](design/) | **Salamandra Design Guide v0.22** — current post-v0.4.0 working CAD specification, its justification and open points; v0.21 remains the v0.4.0 release snapshot |
+| [`design/`](design/) | **Salamandra Design Guide v0.23** — the v0.5.0 controlling CAD specification, its justification and open points; v0.21 remains the v0.4.0 release snapshot |
 | [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |

@@ -1,9 +1,22 @@
 # 12 — Calculation system: audit and remediation plan
 
-**Status:** proposed · **Scope:** the 29 Python modules in `calculations/` and the CI that
-guards them · **Audit date:** 2026-08-18 · **Auditor role:** senior engineering review
-(numerics, physics, software contract) · **Confidence of findings:** every claim below is
-`[M]` — measured by executing the code in this repository — unless tagged otherwise.
+**Status:** **executed through WP5, released in v0.5.0** (WP6 open) · **Scope:** the
+Python modules in `calculations/` and the CI that guards them · **Audit date:**
+2026-08-18 · **Auditor role:** senior engineering review (numerics, physics, software
+contract) · **Confidence of findings:** every claim below is `[M]` — measured by executing
+the code in this repository — unless tagged otherwise.
+
+> **Remediation status (2026-08-18, release v0.5.0).** WP1–WP5 have landed and are
+> recorded as corrections **C39–C43** in the [CHANGELOG](../CHANGELOG.md); the
+> architectural rule they enforce is
+> [ADR-0046](../decisions/ADR-0046-single-declaration-contract.md). Measured at the
+> release commit: 112 cross-module contracts and 28 deterministic CLIs pass, the contract
+> lint reports no quantity declared twice, **19/19 seeded defects are caught**, the full
+> suite runs in 36.5 s (WP5 gate: < 60 s) and `divergence.py` in 1.7 s (WP5.2 target:
+> < 2 s, from 33 s). **WP6 — dead-code triage, module decomposition, `pytest` beneath the
+> printed tables, single source language, `C_h` coupling and solver validity envelopes —
+> remains open.** The findings below are preserved verbatim as the audit record; do not
+> read them as the current state of the code.
 
 ---
 

@@ -1,7 +1,7 @@
 # Salamandra — Design Guide: Justification
 
-**Version 0.17** · 18 August 2026 · **post-v0.4.0 working companion** to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.22)
+**Version 0.18** · 18 August 2026 · **released with v0.5.0**, companion to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.23)
 
 This document records **why** every value in the Design Guide is what it is: the source,
 the confidence tag, and — where the repository has no datum — the assumption and its
@@ -314,7 +314,7 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 | Value | Basis | Tag |
 |---|---|---|
 | Finless Cnβ = **−0.0006…−0.0014/deg** | Updated body length 0.724 m gives −0.00055…−0.00132 plus FSW wing 0…−0.0001. Negative across the band | `[D]`/`[E]` |
-| Finless yaw divergence τ ≈ 0.16 s (worst); V1a −0.796 ± 3.947i s⁻¹ | Corrected 2-DOF (β, r) dimensionalization includes the mandatory `1/(2V)` conversion for Cnr/Cyr. V1a is a damped reduced β-r oscillation with ≈1.3 s decay; it is not a full Dutch-roll identification, which remains an E8 task. | `[E]` |
+| Finless yaw divergence τ ≈ 0.12 s (worst); V1a −1.233 ± 5.205i s⁻¹ | Corrected 2-DOF (β, r) dimensionalization includes the mandatory `1/(2V)` conversion for Cnr/Cyr (C31), evaluated at the single-source `I_zz` = 0.1587 kg·m² `[D]` from the 3-D mass model rather than the retired 0.28 kg·m² `[E]` estimate (C40/C44). V1a is a damped reduced β-r oscillation with ≈0.8 s decay (ω_n 5.35 rad/s, ζ 0.231), damped across the whole ±15 % inertia band; it is not a full Dutch-roll identification, which remains an E8 task. | `[E]` |
 | Fin CLα ≈ 0.050–0.060/deg | Helmbold-Diederich AR_v 3.0, Λ 12° × low-Re factor 0.85–1.00 (printed surface, Re 1.5–3e5) | `[D]`/`[E]` |
 | V1a S_v = **2.13 dm²** → Cnβ −0.00005…+0.00095 (nominal +0.0005) | Current l_v 0.379 m; 253/105/63 mm geometry. Marginal tier does not stay positive at the full uncertainty corner | `[D]`/`[E]` |
 | V1b S_v = **2.83 dm²** → +0.00049…+0.00141 (nominal +0.0010) | 291/121/73 mm; robust tier stays positive across the declared band | `[D]`/`[E]` |

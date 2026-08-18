@@ -68,9 +68,9 @@ Closes **G10** (directional stability) with `[M]` data. Defined in
 1. Stabilized flight at cruise (95 km/h), both variants (CLEAN and V1, ADR-0038)
 2. Aileron-impulse perturbation (rudder-kick analog — no rudder surface), then hands-off
 3. Blackbox gyro traces → yaw-subsidence time constant / Dutch-roll decay per variant
-4. Compare against the corrected I-20/C31 prediction (CLEAN: unstable mode
-   τ ≈ **0.16 s**; V1: damped pair decay τ ≈ **1.3 s** `[E]`) — the calculation is
-   bounded, the flight decides
+4. Compare against the corrected I-20/C31/C40 prediction (CLEAN: unstable mode
+   τ ≈ **0.12 s**; V1: damped pair decay τ ≈ **0.8 s**, ω_n 5.35 rad/s, ζ 0.231 `[E]`)
+   — the calculation is bounded, the flight decides
 
 **This test also validates the claim that the fin is worth its drag** (ADR-0038): if the
 CLEAN build shows acceptable yaw behavior, the V1 fin can be demoted to a
