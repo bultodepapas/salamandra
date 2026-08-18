@@ -5,7 +5,7 @@ The aerodynamic hinge moment is
 
     H = q * S_control * c_control * Ch.
 
-Two servos share each elevon. A 1:1 servo/control-horn radius ratio is the
+One servo actuates each elevon. A 1:1 servo/control-horn radius ratio is the
 conservative CAD contract until linkage geometry is frozen. The selection
 check includes 80 % linkage efficiency and a 1.5 torque safety factor.
 
@@ -27,7 +27,7 @@ from design_config import (
 ELEVON_CHORD_FRAC = 1.0 - 0.72
 ETA_IN, ETA_OUT = 0.30, 0.90
 CH_RANGE = (0.01, 0.05)       # hinge-moment coefficient [E]
-N_SERVOS_PER_ELEVON = 2
+N_SERVOS_PER_ELEVON = 1
 HORN_RADIUS_RATIO = 1.0       # servo horn / control horn [E], CAD upper bound
 LINKAGE_EFFICIENCY = 0.80     # joints, horn alignment and compliance [E]
 TORQUE_SAFETY_FACTOR = 1.50
@@ -89,7 +89,7 @@ def main():
     print("=" * 74)
     print(f"  Elevon mean chord={mean_chord*1000:.1f} mm, span={span*1000:.0f} mm, "
           f"area={area*1e4:.0f} cm2")
-    print(f"  Structural sizing speed={speed*3.6:.0f} km/h; two servos/elevon; "
+    print(f"  Structural sizing speed={speed*3.6:.0f} km/h; one servo/elevon; "
           f"horn ratio={HORN_RADIUS_RATIO:.2f}")
 
     print("\n  Aerodynamic hinge moment and ideal demand per servo")
@@ -118,13 +118,13 @@ def main():
         "one elevon area is 0.0220--0.0222 m2": 0.0220 < area < 0.0222,
         "worst hinge moment is 0.095--0.097 N*m":
             0.095 < hinge_moment(max(CH_RANGE), speed) < 0.097,
-        "dual actuation halves ideal servo torque": abs(
+        "single actuator carries the complete elevon hinge moment": abs(
             servo_torque_nm(max(CH_RANGE), speed)
-            - hinge_moment(max(CH_RANGE), speed) / 2.0) < 1e-12,
-        "MG90S retains at least 3.5x ideal margin":
-            MG90S_TORQUE_KGFCM / worst_ideal >= 3.5,
-        "Article #1 Corona passes factored demand by at least 2.5x":
-            CORONA_TORQUE_KGFCM / required >= 2.5,
+            - hinge_moment(max(CH_RANGE), speed)) < 1e-12,
+        "MG90S exceeds the unfactored 180 km/h demand":
+            MG90S_TORQUE_KGFCM / worst_ideal >= 1.8,
+        "Article #1 Corona passes factored 180 km/h demand by at least 1.3x":
+            CORONA_TORQUE_KGFCM / required >= 1.3,
     }
     print("\nVALIDATION")
     for name, passed in checks.items():

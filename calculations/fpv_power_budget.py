@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-FPV system power budget — DJI O4 / O4 Pro / O4 Lite (research/I-19).
+FPV system power budget — DJI O4 Air Unit / O4 Air Unit Pro (research/I-19).
 
 Power draw values are measured [M] (Oscar Liang, armed + recording unless noted):
-    O4 Pro (@9V):  1200mW 1.16 A | 700mW 1.05 | 400mW 0.98 | 200mW 0.92
+    O4 Air Unit Pro (@9V): 1200mW 1.16 A | 700mW 1.05 | 400mW 0.98 | 200mW 0.92
                    100mW 0.87 | 50mW 0.84 | 25mW 0.82 A | disarmed 0.33 A
-    O4 Lite (@5V): 700mW 1.2 A (6 W) | disarmed 0.6 A (3 W)
-The O4 (standard) shares the same transmission module as the O4 Pro, so its
-power draw is taken as identical [I]. Input ranges and weights are [M] (DJI).
+    O4 Air Unit (@5V): 700mW 1.2 A (6 W) | disarmed 0.6 A (3 W)
+The measured review called the lightweight product "O4 Lite"; DJI's official
+name is "DJI O4 Air Unit". Input ranges and bought-in dimensions are [M].
 
 Outputs [D]: per-level power and current at user-selected input voltage, BEC
 margin against the Matek 9V/2A and 5V/2A rails, and energy impact on the
@@ -17,6 +17,11 @@ import sys
 
 from battery_pack_layout import CELLS as PACK_CELL_SPECS
 from design_config import REFERENCE_BEC_EFFICIENCY, electrical_power_limit_w
+from equipment_catalog import (
+    DJI_O4_CAMERA,
+    DJI_O4_INSTALLED_MASS_G,
+    DJI_O4_TRANSMISSION_MODULE,
+)
 from inav_fc_match import avionics_power_budget
 
 # --- Salamandra FPV assumptions ---------------------------------------------
@@ -28,25 +33,32 @@ AVIONICS_W = avionics_power_budget()[2]
 
 # model : (measured voltage V, disarmed current A, {power_mW: current_A})
 UNITS = {
-    "O4 Pro": {"v": 9.0, "disarmed": 0.33, "draw": {
+    "O4 Air Unit Pro": {"v": 9.0, "disarmed": 0.33, "draw": {
         1200: 1.16, 700: 1.05, 400: 0.98, 200: 0.92,
         100: 0.87, 50: 0.84, 25: 0.82}},
-    "O4 (standard)": {"v": 9.0, "disarmed": 0.33, "draw": {
-        700: 1.05, 400: 0.98, 200: 0.92,
-        100: 0.87, 50: 0.84, 25: 0.82}},
-    "O4 Lite": {"v": 5.0, "disarmed": 0.60, "draw": {700: 1.2}},
+    "O4 Air Unit": {"v": 5.0, "disarmed": 0.60, "draw": {700: 1.2}},
 }
+
+ALIASES = {"O4 Lite": "O4 Air Unit"}
 
 # model : (input range V, weight g, VTX size, camera size, sensor)  [M]
 DIMS = {
-    "O4 Pro": ((7.4, 26.4), 33, "33.5x33.5x13", "25x23x20", "1/1.3 in"),
-    "O4 (standard)": ((7.4, 26.4), 32, "33.5x33.5x13", "25.55x20x23.30", "1/2 in"),
-    "O4 Lite": ((3.7, 13.2), 8.2, "30x30x6", "13.44x12.36x16.50", "1/2 in"),
+    "O4 Air Unit Pro": ((7.4, 26.4), 36.2, "33.5x33.5x13", "25.55x20x23.30", "1/1.3 in"),
+    "O4 Air Unit": (
+        (3.7, 13.2),
+        DJI_O4_INSTALLED_MASS_G,
+        "x".join(
+            f"{value:g}" for value in DJI_O4_TRANSMISSION_MODULE.envelope_mm
+        ),
+        "x".join(f"{value:g}" for value in DJI_O4_CAMERA.envelope_mm),
+        "1/2 in",
+    ),
 }
 
 
 def model_power(name, v_input=None):
     """Return list of (mW, W, I_at_input) at the given input voltage."""
+    name = ALIASES.get(name, name)
     u = UNITS[name]
     v = u["v"] if v_input is None else v_input
     v_min, v_max = DIMS[name][0]
@@ -62,7 +74,7 @@ def model_power(name, v_input=None):
     return v, rows
 
 
-def reference_hotel_load_w(fpv_name="O4 Lite", avionics_w=AVIONICS_W,
+def reference_hotel_load_w(fpv_name="O4 Air Unit", avionics_w=AVIONICS_W,
                            bec_efficiency=REFERENCE_BEC_EFFICIENCY):
     """Continuous non-propulsion battery input for a selected FPV unit [W]."""
     if avionics_w < 0.0 or not 0.0 < bec_efficiency <= 1.0:
@@ -74,13 +86,13 @@ def reference_hotel_load_w(fpv_name="O4 Lite", avionics_w=AVIONICS_W,
 
 def main():
     print("=" * 76)
-    print("FPV SYSTEM POWER BUDGET — DJI O4 / O4 Pro / O4 Lite")
+    print("FPV SYSTEM POWER BUDGET — DJI O4 AIR UNIT SERIES")
     print("=" * 76)
     for name, (vr, w, vt, cam, sen) in DIMS.items():
         print(f"\n{name}  [M]: weight {w} g | VTX {vt} mm | camera {cam} mm | "
               f"sensor {sen} | input {vr[0]}-{vr[1]} V")
-    print("\nMeasured draw anchors [M]: O4 Pro/Lite armed+recording. "
-          "O4 (standard) = same TX module as Pro [I].")
+    print("\nMeasured draw anchors [M]: O4 Air Unit Pro and lightweight "
+          "O4 Air Unit armed+recording.")
 
     default_v = 9.0
     if len(sys.argv) > 1:
@@ -106,8 +118,8 @@ def main():
         _, rows = model_power(name)
         max_mw, max_w, _ = max((r for r in rows if r[0]), key=lambda r: r[0])
         min_mw, min_w, _ = min((r for r in rows if r[0]), key=lambda r: r[0])
-        rail = "9V" if name != "O4 Lite" else "5V"
-        bec = BEC_9V if name != "O4 Lite" else BEC_5V
+        rail = "5V" if name == "O4 Air Unit" else "9V"
+        bec = BEC_5V if name == "O4 Air Unit" else BEC_9V
         util = max_w / (bec[0] * 5.0 if rail == "5V" else bec[0] * 9.0) * 100
         print(f"\n  {name}: power range {min_w:.1f} ... {max_w:.1f} W "
               f"(max {max_mw} mW, min {min_mw} mW)")
@@ -123,7 +135,7 @@ def main():
     print("\n" + "=" * 76)
     print("TOTAL ELECTRONICS BUDGET (avionics + FPV) [D]")
     print("=" * 76)
-    for name in ("O4 Pro", "O4 Lite"):
+    for name in ("O4 Air Unit Pro", "O4 Air Unit"):
         _, rows = model_power(name)
         max_w = max(r[1] for r in rows if r[0])
         tot = AVIONICS_W + max_w
@@ -137,8 +149,8 @@ def main():
               f"of the 6S1P P42A pack")
 
     checks = {
-        "O4 Lite reference battery hotel load is 14.04 W": abs(
-            reference_hotel_load_w() - 12.6375 / 0.90) < 1e-12,
+        "O4 Air Unit reference battery hotel load is 11.54 W": abs(
+            reference_hotel_load_w() - 10.3875 / 0.90) < 1e-12,
         "O1 battery-power ceiling is 109.25 W": abs(CRUISE_W - 109.25) < 1e-12,
         "Article #1 hotel load is below 15 percent of O1 power":
             reference_hotel_load_w() / CRUISE_W < 0.15,

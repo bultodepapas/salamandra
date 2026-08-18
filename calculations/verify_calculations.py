@@ -26,6 +26,7 @@ import battery_pack_layout
 import design_config
 import divergence
 import elevon_authority
+import equipment_catalog
 import equipment_layout
 import flight_envelope
 import fpv_power_budget
@@ -193,11 +194,11 @@ def contract_checks():
         f"distance={dist(equipment_clean.component('fc').position_mm, equipment_clean.cg_mm()):.2f} mm",
     )
     add(
-        "equipment mass risk: O4 antenna is explicit outside released budget",
+        "equipment mass: O4 antenna is budgeted inside the E19 VTX assembly",
         close(
             equipment_clean.mass_g()
             - equipment_clean.mass_g(budgeted_only=True),
-            equipment_layout.O4_ANTENNA_MASS_G,
+            0.0,
             1e-12,
         ),
         f"installed delta={equipment_clean.mass_g() - equipment_clean.mass_g(budgeted_only=True):+.2f} g",

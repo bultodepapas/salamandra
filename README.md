@@ -134,8 +134,8 @@ comes from the propulsion chain, which is where the data say the gap is.
 | Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** | [ADR-0028](decisions/ADR-0028-gyroid-infill.md) |
 | Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
 | Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
-| AUW (6S1P) | **1583.5 g CLEAN; V1 lower model 1626.5 g / 45.1 km/h** (1620.2 g allocation target open, C32) | [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md) |
-| Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; O1 boundary J 0.923 / 8443 rpm / drag ≤2.06 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
+| AUW (6S1P) | **1559.25 g CLEAN / 44.1 km/h; V1 lower model 1602.26 g / 44.7 km/h** | [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md) |
+| Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; two-servo O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
 | Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | V_NE article #1 | **160 km/h** (design 180) | — |
 | Initial V_limit | **105 km/h**; 150 only after GXY validation | [`docs/07`](docs/07-divergence-margin.md) |
@@ -232,15 +232,15 @@ Phase-1 status (2026-08-17):
   ([ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md)); E2 remains mandatory.
 - **ADR-0040/0043 — coupled planform, mass and balance resolved.** The −15° planform
   and target CG **−93.8 mm** remain. With Article #1 hardware and the 550 g PETG-shell
-  cap, CLEAN is **1583.5 g** and the 6S1P P42A pack balances at
-  **−359.6 mm** in a 327 mm two-support nose boom. Current stations and acceptance gates in the
+  cap and two-servo baseline, CLEAN is **1558.5 g** and the 6S1P P42A pack balances at
+  approximately **−355.1 mm** in a 327 mm two-support nose boom. Current stations and acceptance gates in the
   [guide §7.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
-- **C32 — V1 mass allocation reopened.** The former 36.72 g fin row omitted the
-  mandatory 5.7 g aluminium spar. The connected lower assembly model is **43.01 g**,
-  so V1 is **1626.5 g / 45.1 km/h**, 6.1 g above the exact stall mass limit. F2 must
-  save at least 6.3 g in CLEAN/fin CAD or measured E2 must justify a new CLmax.
+- **Two-servo correction closes the analytical V1 mass gap.** The complete fin remains
+  **43.01 g**, including its mandatory 5.7 g aluminium spar. With 25 g removed from
+  actuation, V1 is **1601.5 g / 44.7 km/h**, about 18.9 g below the exact 45 km/h
+  mass ceiling. CAD and scale mass verification remain mandatory.
 - **OP-29 (divergence) — operationally bounded, structurally open.** Revision 4 uses
   the released r1 profile. Nominal Vdiv is 327.2 km/h, but the conservative unmeasured
   case is **129.6 km/h**; initial **Vlimit = 105 km/h**. S3 GJ,

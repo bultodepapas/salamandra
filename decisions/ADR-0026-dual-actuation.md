@@ -1,27 +1,45 @@
-# ADR-0026 — No-freeplay linkage, dual actuation per elevon
+# ADR-0026 — No-freeplay linkage, one actuator per elevon
 
-**Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High · **Reversible:** Yes
+**Status:** ✅ Active · **Date:** 2026-08-18 · **Confidence:** Medium · **Reversible:** Yes
 **Research:** [I-18 — Servo catalog](../research/I-18-servo-catalog.md), [ADR-0025](ADR-0025-elevon-balancing.md)
 
 ## Context
 
-The elevon (0.28 c, hinge at 0.72 c, span y = 195…585 mm = 390 mm) is the only control
-surface, and its flutter mode is **inertial, not stiff** (ADR-0025). Freeplay in the
-linkage couples with the servo stiffness and can feed the flutter mode; a single
-actuation point on a 390 mm surface leaves the outer part elastically free.
+Each 0.28 c elevon spans y = 195…585 mm (390 mm). The former baseline used two
+actuators per elevon as an assumed flutter-stiffness margin even though the surface is
+below the project's approximate 400 mm rule of thumb. That assumption had no measured
+servo/linkage stiffness, elevon bending model or modal test. The claimed +41 % frequency
+change was only `sqrt(2)` after assuming that a second actuator doubled effective hinge
+stiffness.
+
+The corrected hinge-moment calculation gives 0.978 kgf·cm ideal demand for one complete
+elevon at 180 km/h. With a 1.5 torque factor and 0.80 linkage efficiency, one actuator
+requires 1.834 kgf·cm `[D]`/`[E]`. The Article #1 Corona DS-939MG provides 2.5 kgf·cm
+at 4.8 V `[M]`: 1.36× factored margin at 180 km/h and about 4.0× at the initial
+105 km/h limit `[D]`.
 
 ## Decision
 
-- **Zero-freeplay linkage**, digital servos (guide §7.5, §11).
-- **Dual actuation (2 points per elevon), 4 servos total** — retained even though
-  390 mm is below the ≈ 400 mm rule-of-thumb, as **flutter margin** (ADR-0025;
-  dual actuation doubles K_hinge → **+41 % ω_β** `[D]`).
+- **One digital metal-gear servo per elevon, two servos total.**
+- Nominal span station **y = ±390 mm**, the midpoint of each elevon `[D]`; chordwise
+  and vertical placement remain the section-fit/linkage solution `[D]`/`[E]`.
+- Zero-freeplay linkage, high holding stiffness and hinge-line mass balance remain mandatory.
+- Four-servo actuation may return only as a separately analysed variant after measured
+  stiffness, freeplay and modal evidence demonstrate a necessary benefit.
 
 ## Consequences
 
-- Servo rail current: avg 1.2–2.8 A, peaks 5–9 A on simultaneous reversal `[M]` (I-18 §5)
-  → FC Vx BEC ≥ 4.5 A avg + capacitance near the servos; dual-actuation balance must be
-  **current-measured** (two fighting servos draw ≈ 150 mA extra each, silent).
-- Servo class 12–15 g digital metal-gear (I-18) — 48–60 g in the mass budget; hinge
-  moment is NOT the binding constraint (≥ 3.7× margin, `servo_torque.py`).
-- The sub-400 mm dual-actuation need is to be confirmed (OP-06/C6).
+- Servo mass falls from 50.0 to **25.0 g**. CLEAN AUW becomes **1558.5 g** and the
+  current V1 lower model becomes **1601.5 g** `[D]`.
+- V1 remains about 18.9 g below the exact 45 km/h mass ceiling; CAD mass and measured
+  E2 `CLmax` remain release gates.
+- Two actuators remove inter-servo fighting on a shared surface and halve the linkage,
+  connector and actuator counts.
+- DS-939MG margin at 180 km/h is modest. Procurement must verify torque, backlash,
+  holding stiffness and current; expansion beyond 105 km/h still requires G7 testing.
+
+## Verification
+
+- `python calculations/servo_torque.py`
+- `python calculations/mass_budget.py --config all`
+- Static stiffness/freeplay bench test, E5 blackbox FFT and progressive envelope expansion.

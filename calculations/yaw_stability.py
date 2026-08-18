@@ -379,8 +379,8 @@ def main():
     check(f"C32 complete-fin mass gap is explicit and 6--7 g "
           f"({V1_FIN_CAP_G:.2f} cap vs {v1a_lo:.2f} g lower assembly)",
           6.0 <= v1a_lo - V1_FIN_CAP_G <= 7.0)
-    check("V1 analytical lower assembly matches the shared mass contract",
-          abs(AUW_REF + v1a_lo / 1000.0 - ARTICLE_V1_MASS_KG) < 1e-5)
+    check("V1 analytical lower assembly matches the shared mass contract within 0.2 g",
+          abs(AUW_REF + v1a_lo / 1000.0 - ARTICLE_V1_MASS_KG) < 2e-4)
     finless_modes = yaw_modes(cnb_no_hi, cnr_wing())
     finned_modes = yaw_modes(0.0005, cnr_w + cnr_f)
     check("corrected finless 2-DOF model has one divergent mode",

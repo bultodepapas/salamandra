@@ -37,7 +37,7 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | [0023](ADR-0023-joint-adhesive.md) | Joints: tenon + PETG adhesive, area ≥ 3× | 🔄 | Medium | Yes |
 | [0024](ADR-0024-segmentation.md) | 3 segments per wing half, 45° on bed | ✅ | High | Yes |
 | [0025](ADR-0025-elevon-balancing.md) | Elevon mass balancing | ✅ | High | No |
-| [0026](ADR-0026-dual-actuation.md) | No-freeplay linkage, dual actuation | ✅ | High | Yes |
+| [0026](ADR-0026-dual-actuation.md) | No-freeplay linkage, one actuator per elevon | ✅ | Medium | Yes |
 | [0027](ADR-0027-relative-thickness.md) | t/c 13.5 % root / 9 % tip | ✅ | High `[M]` | No |
 | [0028](ADR-0028-gyroid-infill.md) | Gyroid 5 % infill | ✅ | Medium `[M]` | Yes |
 | [0030](ADR-0030-plastic-torsion-path.md) | Plastic path as base; torsion tube option B | 🔄 | Medium | Yes |

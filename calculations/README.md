@@ -51,6 +51,7 @@ Data sources consumed (all `[M]`):
 | `propulsion_match.py` | **Propeller match and O1 drag boundary** — reserves avionics/FPV/BEC power, interpolates the UIUC APC E 8×8 curve, reports maximum allowable drag, and solves equilibrium only when `--drag-n` is supplied | ADR-0042/C29, guide §9, E2/D2/E3 | stdlib only |
 | `balance_cg.py` | **OP-01: mass/CG balance** — pack-station solver for the CG target; planform-centroid self-check; bay sizing for the nose boom; envelope checks (AUW, V_stall) | OP-01, justification §3.1–3.2 | numpy |
 | `equipment_layout.py` | **Three-dimensional equipment and mass-properties model** — one x/y/z station, oriented envelope, movement authority and uncertainty per physical component; derives total CG/inertia, fixed servo stations from the released r1 sections, cable/separation/collision gates and the battery-only CG solution for CLEAN/V1 | CAD packaging source, future SVG sheets, OP-01/P1/F1 | stdlib + released airfoil DAT files |
+| `equipment_catalog.py` | **Bought-in equipment catalog** — manufacturer body dimensions and masses separated from installation abstractions; controls DJI O4 E18/E19 and their 8.95 g installed-mass closure. The 0.75 g antenna is catalogued but lumped into E19, not drawn as a third rigid body. | I-19, `equipment_layout.py`, `mass_budget.py`, SLM-EQP-001 | stdlib |
 | `elevon_authority.py` | **Elevon control power** — ΔCm per degree of elevon deflection (step incidence over 30–90 % half-span) via the VLM; trim closure and control margin at SM 8 % | Guide §5.3/§6.1, C6 (partial) | numpy |
 | `battery_pack_layout.py` | **I-16: pack envelope** — enumerates every rectangular (n_x,n_y,n_z) layout of the 4S/6S 21700 pack, computes finished envelope (wrapper, nickel, leads) and fit-checks against the pack carrier (guide §8; the 200×70×32 bay is superseded by the cradle) | I-16, guide §8, OP-23 | stdlib only |
 | `inav_fc_match.py` | **I-17: FC compatibility** — cross-checks the popular INAV boards (Matek WING, SpeedyBee, Foxeer) against the Salamandra avionics requirements (≥5 PWM, ≥2 UART, ≥1 I2C, blackbox, current, baro, 6S voltage); footprint summary + power budget | I-17, guide §10, CORE avionics | stdlib only |
@@ -164,10 +165,12 @@ Self-validating: it imports the canonical planform, computes the shell and carbo
 stations, iterates boom mass/length with the pack solution, and solves all four P42A
 pack stations at target CG **−93.8 mm** (SM 8 %).
 
-Published Article #1 result (ADR-0043, `[D]`): CLEAN mass **1583.5 g**, 6S1P pack
-station **−359.6 mm**, allowable CG-band station −377.4…−341.9 mm, cradle
-approximately −460…−259 mm, and support span **327 mm**. Diagnostic stations for
-future modules are 4S1P −481.7 / 4S2P −296.0 / 6S2P −230.6 mm; they are not Article #1.
+Published aggregate result (ADR-0043, `[D]`): CLEAN mass **1559.25 g**, 6S1P pack
+station **−355.2 mm**, allowable CG-band station −372.7…−337.6 mm, cradle
+approximately −454.3…−256.0 mm, and support span **322.3 mm**. The component-level
+packaging model below supersedes the aggregate station with **−341.4 mm** after assigning
+individual x/y/z locations. Diagnostic aggregate stations for future modules are
+4S1P −475.1 / 4S2P −292.6 / 6S2P −228.3 mm; they are not Article #1.
 
 ### 3.1 Three-dimensional component layout and battery trim
 
@@ -191,12 +194,11 @@ Movement authority is intentionally asymmetric:
   fixed masses. They are never moved to force a CG result.
 - The FC reference centre is x = −93.797 mm, y = 0, directly at the longitudinal target;
   its three-dimensional distance from the solved CLEAN CG is 0.42 mm.
-- Servo locations are derived once, then fixed. The solver lays the 22.5 × 24.6 ×
-  11.5 mm DS-939MG body flat and moves it as far aft as the released r1 airfoil permits,
-  while retaining 1.5 mm to both external surfaces and a projected pushrod run of at
-  least 20 mm to the x/c = 0.72 hinge. Results per half-wing are y = 195 mm,
-  x/c = 0.6386, 20.0 mm rod; and y = 390 mm, x/c = 0.5455, 35.3 mm rod. The outboard
-  servo must sit farther forward because the section is thinner.
+- Servo locations are derived once, then fixed. The solver lays one 22.5 × 24.6 ×
+  11.5 mm DS-939MG body in each half-wing at y = 390 mm and moves it as far aft as
+  the released r1 airfoil permits while retaining 1.5 mm to both external surfaces.
+  The released result is x/c = 0.5455 with a 35.3 mm projected pushrod run to the
+  x/c = 0.72 hinge.
 - Low-mass avionics may be repositioned only inside their declared packaging bounds.
   The O4 camera/VTX stations are governed by the 50 mm coax and envelope clearance,
   not used as CG ballast.
@@ -204,18 +206,20 @@ Movement authority is intentionally asymmetric:
   equipment movement, the analytical solver recomputes only battery x; use
   `--hold-battery` solely to inspect an untrimmed candidate.
 
-Current candidate results `[D]`: CLEAN closes 1583.50 g at xCG = −93.797 mm with the
-battery at x = **−348.38 mm**. V1 adds the complete fixed-fin lower model; the exact
-target would require x = **−384.54 mm**, beyond the current −377.54 mm forward stop.
-At that stop V1 remains inside the released band at xCG = −91.88 mm. These values differ
+Current candidate results `[D]`: CLEAN closes **1559.25 g** at xCG = −93.797 mm with the
+battery at x = **−341.39 mm**. V1 adds the complete fixed-fin lower model; the exact
+target would require x = **−377.55 mm**, beyond the current −372.78 mm forward stop.
+At that stop V1 remains inside the released band at xCG = −92.47 mm. These values differ
 from the aggregate `balance_cg.py` station because individual masses now occupy their
 explicit spatial locations.
 
-Open CAD gates are not hidden: the maximum-dimension P42A pack has only 0.30 mm total
-lateral clearance in the 66 mm cradle, longitudinal one-sigma CG uncertainty is about
-7.7 mm versus a 5 mm half-band, 92.88 g remains unresolved reserve mass, and the O4
-antenna adds 0.75 g beyond the released budget. Therefore this layout guides CAD but is
-not yet a manufacturing release.
+The audited E01 cradle cross-section is **68 × 25 mm**, giving 2.30 mm total lateral
+and 2.40 mm total vertical clearance around the 153.0 × 65.7 × 22.6 mm maximum pack.
+The 0.75 g O4 antenna is included in the released mass budget and lumped into the
+E19 VTX assembly instead of being modelled as a third rigid body. Open CAD
+gates remain explicit: longitudinal one-sigma CG uncertainty is about 7.8 mm versus a
+5 mm half-band, V1 cannot reach the exact CG target at the current forward stop, and
+92.88 g remains unresolved reserve mass. This layout is not a manufacturing release.
 
 ### 4. Elevon authority (guide §5.3/§6.1)
 
@@ -303,9 +307,9 @@ python3 servo_torque.py
 ```
 
 Hinge moment of the 0.28 c elevon (390 mm span) at the 180 km/h structural design
-speed over Ch 0.01–0.05 `[E]`: **0.098–0.489 kgf·cm per servo** with dual actuation
+speed over Ch 0.01–0.05 `[E]`: **0.196–0.978 kgf·cm per servo** with one actuator per elevon
 and a 1:1 horn ratio. After 0.80 linkage efficiency and a 1.5 safety factor, the
-catalog requirement is **0.917 kgf·cm**. The MG90S 1.8 kgf·cm rating therefore has
+catalog requirement is **1.834 kgf·cm**. The MG90S 1.8 kgf·cm rating therefore has
 **3.68× ideal / 1.96× factored margin**. The former g·cm label was a factor-1000 unit
 error; C30 records the correction. A change to geometry, Ch, speed or linkage must
 reproduce the margin table.
@@ -322,8 +326,8 @@ the Salamandra avionics requirements (guide §11). Published result (I-17 §3):
 F411-WING/F411-WSE (no blackbox) and Foxeer F405 V2 (no current input). Also
 prints the footprint summary (I-17 §4.1): min 28×28×7, avg 45×34×12, max
 56×37×13 mm, recommended station cavity **64 × 45 × 21 mm**; and the power budget
-(I-17 §6): 5 V rail 300–555 mA, avionics **6.64 W on the regulated rails / 7.38 W
-from the battery** at 90 % BEC efficiency, or 8.1 % of a 6S1P P42A pack per hour.
+(I-17 §6): 5 V rail 300–555 mA, two-servo avionics **4.39 W on the regulated rails /
+4.88 W from the battery** at 90 % BEC efficiency, or 5.4 % of a 6S1P P42A pack per hour.
 A change to the requirement set, board specs or BEC efficiency
 must reproduce these lines.
 
@@ -333,11 +337,11 @@ must reproduce these lines.
 python3 fpv_power_budget.py [input_V]
 ```
 
-Per-level power of the DJI O4 / Pro / Lite from measured currents `[M]`.
-Published results (I-19 §5): O4 Pro 1200 mW = 10.4 W, O4 standard max 9.5 W
-(700 mW cap), O4 Lite 6.0 W; 9 V rail utilization ≤ 58 %. Including avionics gives
-**17.04 W rail / 18.93 W battery with O4 Pro**, and **12.64 W rail / 14.04 W battery
-with Article #1 O4 Lite**, at the shared 90 % BEC efficiency. The Pro case consumes
+Per-level power of the DJI O4 Air Unit and O4 Air Unit Pro from measured currents `[M]`.
+Published results (I-19 §5): O4 Pro 1200 mW = 10.4 W and Article #1 O4 Air Unit
+700 mW = 6.0 W; 9 V rail utilization ≤ 58 %. Including avionics gives
+**14.83 W rail / 16.48 W battery with O4 Pro**, and **10.39 W rail / 11.54 W battery
+with the Article #1 O4 Air Unit**, at the shared 90 % BEC efficiency. The Pro case consumes
 20.9 % of the 90.72 Wh pack per hour. A change to the current table or BEC assumptions
 must reproduce these values.
 
@@ -347,13 +351,13 @@ must reproduce these values.
 python3 propulsion_match.py
 ```
 
-Starts from the O1 total battery ceiling of 109.25 W and reserves **14.04 W** for
-Article #1 avionics, O4 Lite and BEC losses. Interpolation of the measured UIUC APC E
-8×8 curve at 95 km/h gives the motor boundary **J 0.923, 8,443 rpm, maximum allowable
-drag 2.06 N, ηprop 0.671, shaft power 80.9 W and motor+ESC input 95.21 W**. This is not
+Starts from the O1 total battery ceiling of 109.25 W and reserves **11.54 W** for
+Article #1 avionics, O4 Air Unit and BEC losses. Interpolation of the measured UIUC APC E
+8×8 curve at 95 km/h gives the motor boundary **J 0.918, 8,484 rpm, maximum allowable
+drag 2.12 N, ηprop 0.674, shaft power 83.1 W and motor+ESC input 97.71 W**. This is not
 a unique aircraft equilibrium: use `--drag-n <measured E2 drag>` to solve one. The
-boundary requires CD ≤ 0.01711 and CLEAN L/D ≥ 7.55. A 4S module needs approximately
-713 Kv; the propeller has 2.22× rpm margin. The former J 0.899 point omitted hotel load
+boundary requires CD ≤ 0.01765 and CLEAN L/D ≥ 7.21. A 4S module needs approximately
+717 Kv; the propeller has 2.21× rpm margin. The former J 0.899 point omitted hotel load
 and assumed thrust equals unknown aircraft drag; C29 supersedes it.
 
 ### 10. Directional stability and the fin variant (I-20)
@@ -410,16 +414,18 @@ validation cases must pass.
 python3 mass_budget.py --config all            # ALL PETG / AERO WINGS / AERO MAX / PLA+
 python3 mass_budget.py --config matrix         # per-part × material matrix
 python3 mass_budget.py --config aero_wings --battery 4S1P --fin
-python3 mass_budget.py --config all_petg --fc F765-WING --fpv O4-Lite
+python3 mass_budget.py --config all_petg --fc F765-WING --fpv O4-Air-Unit
 ```
 
 Data-driven weight budget with per-part material selection. The Article #1 default is
-6S1P P42A, SpeedyBee F405 WING + mandatory PDB, DJI O4 Lite, four Corona DS-939MG,
+6S1P P42A, SpeedyBee F405 WING + mandatory PDB, DJI O4 Air Unit including its
+separate antenna, two Corona DS-939MG servos,
 APC E 8×8 assembly and the coupled ADR-0043 boom. Published results (docs/06 §3):
-ALL PETG CLEAN **1583.5 g / 44.5 km/h**. C32 separates the obsolete 36.72 g
+ALL PETG CLEAN **1559.25 g / 44.1 km/h**. C32 separates the obsolete 36.72 g
 allocation target from the current V1a lower assembly model: 37.31 g PETG shell/mount
-+ 5.70 g mandatory aluminium spar = **43.01 g**, giving **1626.5 g / 45.1 km/h**.
-V1 therefore misses the exact 1620.4 g stall mass limit by about 6.1 g; F2 must save
++ 5.70 g mandatory aluminium spar = **43.01 g**, giving **1602.26 g / 44.8 km/h**
+with the two-servo baseline.
+V1 remains about 18.1 g below the exact 1620.4 g stall mass limit; F2 must still close
 at least 6.3 g against the allocation or E2 must re-derive CLmax. The AERO policies
 remain rejected by divergence. Validation retains v0.2 as a historical regression and
 checks both the allocation target and the explicit C32 failure.

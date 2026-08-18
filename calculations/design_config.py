@@ -43,7 +43,7 @@ PETG_DENSITY_KG_M3 = 1270.0    # 1.27 g/cm3, project material contract [M]/[E]
 # Aerodynamic and mass contract used by coupled performance calculations.
 CL_MAX_WING = 0.589           # I-07 wing value [D], pending E2
 STATIC_MARGIN = 0.08
-ARTICLE_CLEAN_MASS_KG = 1.5835
+ARTICLE_CLEAN_MASS_KG = 1.55925
 V1_FIN_MASS_CAP_KG = 0.03672          # allocation target retained by ADR-0043
 V1_FIN_SHELL_MOUNT_LOWER_KG = 0.03731 # current V1a analytical lower model [E]
 V1_FIN_SPAR_MASS_KG = 0.00570         # mandatory aluminium spar [D]/[E]
@@ -202,11 +202,11 @@ def validate_geometry():
             ARTICLE_CLEAN_MASS_KG + V1_FIN_SHELL_MOUNT_LOWER_KG
             + V1_FIN_SPAR_MASS_KG,
             abs_tol=1e-12),
-        "V1 allocation stall rounds to 45.0 km/h": isclose(
+        "two-servo V1 allocation stall rounds to 44.7 km/h": isclose(
             stall_speed(ARTICLE_V1_ALLOCATION_MASS_KG) * 3.6,
-            45.0, abs_tol=0.05),
-        "C32 analytical V1 currently exceeds the 45 km/h allocation":
-            stall_speed(ARTICLE_V1_MASS_KG) * 3.6 > STALL_SPEED_LIMIT_KMH,
+            44.7, abs_tol=0.05),
+        "two-servo analytical V1 remains below the 45 km/h ceiling":
+            stall_speed(ARTICLE_V1_MASS_KG) * 3.6 < STALL_SPEED_LIMIT_KMH,
     }
 
 

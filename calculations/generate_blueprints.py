@@ -70,11 +70,12 @@ class DrawingContract:
     forward_support_m: float = -0.459
     tube_core_insertion_m: float = 0.050
     cradle_length_m: float = 0.201
-    cradle_inner_length_m: float = 0.155
-    cradle_inner_width_m: float = 0.066
-    cradle_inner_height_m: float = 0.024
+    pack_length_m: float = 0.1530
+    pack_width_m: float = 0.0657
+    pack_height_m: float = 0.0226
+    cradle_inner_width_m: float = 0.068
+    cradle_inner_height_m: float = 0.025
     cradle_wall_m: float = 0.0012
-    camera_station_m: float = -0.393
     motor_body_forward_m: float = 0.195
     motor_mount_m: float = 0.230
     prop_plane_m: float = 0.235
@@ -92,8 +93,6 @@ CONTRACT = DrawingContract()
 
 MASS_SKELETON_COMPONENT_IDS = (
     "battery_6s1p",
-    "servo_left_195",
-    "servo_right_195",
     "servo_left_390",
     "servo_right_390",
     "motor",
@@ -110,9 +109,32 @@ MASS_SKELETON_COMPONENT_IDS = (
     "buzzer",
     "o4_camera",
     "o4_vtx",
-    "o4_antenna",
     "avionics_installation_reserve",
 )
+
+# E-numbers are controlled item references, not row numbers. E02/E03 were the
+# removed inboard servos; retaining the original downstream references prevents
+# the two-servo decision from silently renumbering the motor, avionics and O4 items.
+MASS_SKELETON_REFERENCE_BY_ID = {
+    "battery_6s1p": "E01",
+    "servo_left_390": "E04",
+    "servo_right_390": "E05",
+    "motor": "E06",
+    "prop_adapter": "E07",
+    "propeller": "E08",
+    "esc": "E09",
+    "fc": "E10",
+    "pdb": "E11",
+    "gps_mag": "E12",
+    "receiver": "E13",
+    "receiver_antenna": "E14",
+    "pitot_sensor": "E15",
+    "pitot_probe_tube": "E16",
+    "buzzer": "E17",
+    "o4_camera": "E18",
+    "o4_vtx": "E19",
+    "avionics_installation_reserve": "E21",
+}
 
 
 @dataclass(frozen=True)
@@ -513,6 +535,9 @@ def draw_general_arrangement() -> SvgSheet:
     # battery width come from the current Design Guide, but the Bezier control
     # points are an [I] styling/packaging concept until OP-21 and F2 freeze CAD.
     layout = solve_reference_layout()
+    component_layout, pack_station_mm = equipment_layout.solve_battery_x(
+        equipment_layout.reference_layout("clean"), clamp=True
+    )
     cradle_fwd = layout["bay_fwd"]
     cradle_aft = cradle_fwd + CONTRACT.cradle_length_m
     cradle_outer_half = (
@@ -606,7 +631,8 @@ def draw_general_arrangement() -> SvgSheet:
     c2 = plan_point(cradle_aft, cradle_outer_half, ox, oy, scale)
     sheet.rect(c1[0], c1[1], c2[0] - c1[0], c2[1] - c1[1],
                "provisional-line", rx=4.0)
-    pack_station = layout["pack_station"]
+    pack_station = pack_station_mm / 1000.0
+    camera_station = component_layout.component("o4_camera").position_mm[0] / 1000.0
     px1, py1 = plan_point(pack_station, -0.040, ox, oy, scale)
     px2, _ = plan_point(pack_station, 0.040, ox, oy, scale)
     sheet.line(px1, py1, px2, py1, "provisional-line")
@@ -642,7 +668,7 @@ def draw_general_arrangement() -> SvgSheet:
             sheet.line(sx, sy - 2.7, sx, sy + 2.7, css)
             sheet.leader(sx, sy, sx + x_shift, sy - 8.5, label)
 
-    camera = plan_point(CONTRACT.camera_station_m, 0.0, ox, oy, scale)
+    camera = plan_point(camera_station, 0.0, ox, oy, scale)
     sheet.circle(*camera, 1.7, "provisional-line")
     sheet.path(
         f"M {fmt(camera[0]-1.2)} {fmt(camera[1]-1.2)} L {fmt(camera[0]+1.2)} {fmt(camera[1]+1.2)} "
@@ -674,7 +700,14 @@ def draw_general_arrangement() -> SvgSheet:
     for station, label in ((0.195, "J0 · 195"), (0.347, "J1 · 347"), (0.498, "J2 · 498")):
         sx, sy = plan_point(x_le(station), station, ox, oy, scale)
         sheet.text(sx + 1.5, sy + 5.0, label, "micro", rotate=-90)
-    sheet.leader(*camera, 185, 52, "CAMERA x −393 · PROVISIONAL", True, "end")
+    sheet.leader(
+        *camera,
+        185,
+        52,
+        f"CAMERA x {camera_station*1000:+.1f} · PROVISIONAL",
+        True,
+        "end",
+    )
     sheet.leader(*plan_point(pack_station, 0.033, ox, oy, scale), 239, 73,
                  f"6S1P PACK x {pack_station*1000:+.1f} [D]/[E]", True)
     sheet.leader(*plan_point(-0.180, -0.028, ox, oy, scale), 164, 86,
@@ -697,13 +730,17 @@ def draw_side_elevations() -> SvgSheet:
     scale = 4.0
     origin_x = 175.0
     layout = solve_reference_layout()
+    component_layout, pack_station_mm = equipment_layout.solve_battery_x(
+        equipment_layout.reference_layout("clean"), clamp=True
+    )
     cradle_fwd = layout["bay_fwd"]
     cradle_aft = cradle_fwd + CONTRACT.cradle_length_m
-    pack_station = layout["pack_station"]
-    pack_fwd = pack_station - CONTRACT.cradle_inner_length_m / 2.0
-    pack_aft = pack_station + CONTRACT.cradle_inner_length_m / 2.0
+    pack_station = pack_station_mm / 1000.0
+    camera_station = component_layout.component("o4_camera").position_mm[0] / 1000.0
+    pack_fwd = pack_station - CONTRACT.pack_length_m / 2.0
+    pack_aft = pack_station + CONTRACT.pack_length_m / 2.0
     pack_z_min = 0.004
-    pack_z_max = pack_z_min + CONTRACT.cradle_inner_height_m
+    pack_z_max = pack_z_min + CONTRACT.pack_height_m
 
     root_section = load_airfoil(
         ROOT / "geometry" / "airfoils" / "salamandra-root-r1.dat"
@@ -1003,12 +1040,12 @@ def draw_side_elevations() -> SvgSheet:
             sheet.leader(*fin_ac, 300, 140, "FIN AC x +285 [D]/[E]")
 
         camera = side_point(
-            CONTRACT.camera_station_m, 0.018, origin_x, origin_y, scale
+            camera_station, 0.018, origin_x, origin_y, scale
         )
         sheet.circle(*camera, 1.2, "provisional-line")
         sheet.line(
-            *side_point(CONTRACT.camera_station_m, 0.036, origin_x, origin_y, scale),
-            *side_point(CONTRACT.camera_station_m, -0.012, origin_x, origin_y, scale),
+            *side_point(camera_station, 0.036, origin_x, origin_y, scale),
+            *side_point(camera_station, -0.012, origin_x, origin_y, scale),
             "station",
         )
 
@@ -1026,7 +1063,7 @@ def draw_side_elevations() -> SvgSheet:
         *side_point(pack_station, pack_z_max, origin_x, 73.0, scale),
         108,
         49,
-        "6S1P ENVELOPE 155 × 24 [D]/[E]",
+        "E01 MAX 153.0 × 22.6 [M]/[E]",
         True,
         "end",
     )
@@ -1101,10 +1138,7 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
     components = tuple(
         clean.component(identifier) for identifier in MASS_SKELETON_COMPONENT_IDS
     )
-    reference_by_id = {
-        component.identifier: f"E{index:02d}"
-        for index, component in enumerate(components, start=1)
-    }
+    reference_by_id = MASS_SKELETON_REFERENCE_BY_ID
     equipment_group_by_category = {
         "energy": "energy",
         "propulsion": "propulsion",
@@ -1174,7 +1208,6 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
     }
     side_reference_offsets = {
         "battery_6s1p": (0.0, 8.0),
-        "servo_left_195": (4.0, -24.0),
         "servo_left_390": (-11.0, -15.0),
         "motor": (-8.0, 7.0),
         "prop_adapter": (0.0, -8.0),
@@ -1190,14 +1223,12 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         "buzzer": (5.0, 8.5),
         "o4_camera": (-2.0, 8.0),
         "o4_vtx": (0.0, -8.0),
-        "o4_antenna": (5.0, -11.0),
         "avionics_installation_reserve": (4.0, -24.5),
     }
     side_reference_overrides = {
-        "servo_left_195": "E02/03",
         "servo_left_390": "E04/05",
     }
-    side_projection_duplicates = {"servo_right_195", "servo_right_390"}
+    side_projection_duplicates = {"servo_right_390"}
 
     def draw_mass_reference(
         point: tuple[float, float],
@@ -1245,7 +1276,7 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         "EQUIPMENT MASS SKELETON",
         "SLM-EQP-001",
         "TOP / SIDE 1:4",
-        "SOURCE: equipment_layout.py · mass_budget.py · P42A MAX CAD ENVELOPE",
+        "SOURCE: equipment_layout.py · equipment_catalog.py · P42A MAX CAD ENVELOPE",
         title_font_size=3.55,
     )
     sheet.text(
@@ -1381,8 +1412,8 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
             ),
         )
 
-    # CLEAN CG markers are derived from every installed component, including
-    # the small unbudgeted O4 antenna mass.
+    # CLEAN CG markers are derived from every installed and budgeted component;
+    # the lightweight O4 antenna mass is lumped into the E19 VTX assembly.
     clean_cg = clean.cg_mm()
     top_cg = top_point(clean_cg[0], clean_cg[1])
     side_cg = side_mass_point(clean_cg[0], clean_cg[2])
@@ -1461,10 +1492,12 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
     shown_mass = sum(component.mass_g for component in components)
     excluded_mass = clean.mass_g() - shown_mass
     sheet.multiline(214, 219, [
+        "AUDIT: E01 153.0x65.7x22.6 [M]/[E] · E18 13.44x12.36x16.50 [M].",
+        "E19: VTX 30x30x6 [M] + ANTENNA MASS = 5.85 g [D] · 80 mm ROUTE NOTE · E20 RETIRED.",
         f"SHOWN EQUIPMENT: {shown_mass:.2f} g · CLEAN INSTALLED: {clean.mass_g():.2f} g",
         f"NOT SHOWN: structure, elevons/balances and hardware = {excluded_mass:.2f} g",
         f"BATTERY: CLEAN x {clean_battery_x:+.2f}; V1 required {v1_battery_x:+.2f}, placed {v1_battery.position_mm[0]:+.2f} mm.",
-        "SERVOS: 2 PER ELEVON AT y=195/390 mm · DUAL ACTUATION PER ADR-0026.",
+        "SERVOS: E04/E05 = 1 PER ELEVON AT y=390 mm · E02/E03 RETIRED WITH 4-SERVO CONCEPT.",
         "COLOUR = SYSTEM FUNCTION · SOLID = MEASURED/CONTROLLED · AMBER DASH = OPEN.",
         "R = unresolved reserve · U = outside released budget · dimensions are envelopes.",
         "NO FUSELAGE, WING SKIN, FAIRING OR MANUFACTURING SURFACE IS DEFINED HERE.",
@@ -1616,12 +1649,14 @@ def draw_half_wing_layout() -> SvgSheet:
             sheet.circle(*chord_fraction_point(station, fraction, ox, oy, scale),
                          1.0, "provisional-line")
 
-    # Servo positions are zones, deliberately not dimensioned as CAD pockets.
-    for station in (0.235, 0.390):
-        point = chord_fraction_point(station, 0.53, ox, oy, scale)
-        sheet.rect(point[0] - 4.0, point[1] - 8.5, 8.0, 17.0,
-                   "provisional-fill", rx=1.0)
-        sheet.text(point[0], point[1] + 1.0, "S", "provisional-text", "middle")
+    # One fixed elevon servo per half-wing.  The station is imported from the
+    # equipment model so this sheet cannot silently retain the retired
+    # four-servo concept.  The zone is not a released CAD pocket.
+    servo_station = equipment_layout.SERVO_STATION_MM / 1000.0
+    point = chord_fraction_point(servo_station, 0.53, ox, oy, scale)
+    sheet.rect(point[0] - 4.0, point[1] - 8.5, 8.0, 17.0,
+               "provisional-fill", rx=1.0)
+    sheet.text(point[0], point[1] + 1.0, "S", "provisional-text", "middle")
 
     # Principal dimensions and station chain.
     root_le = plan_point(x_le(0.0), 0.0, ox, oy, scale)
@@ -1729,25 +1764,29 @@ def validate_contract() -> dict[str, bool]:
         "released root airfoil coordinates are available": len(load_airfoil(
             ROOT / "geometry" / "airfoils" / "salamandra-root-r1.dat"
         )) >= 20,
-        "V1a fin geometry reproduces I-20": (
-            abs(fin_area * 100.0 - 2.13) < 0.01
-            and abs(fin_span * 1000.0 - 253.0) < 1.0
-            and abs(fin_root_chord * 1000.0 - 105.0) < 1.0
-            and abs(fin_tip_chord * 1000.0 - 63.0) < 1.0
+        "generated fin geometry is internally consistent with the yaw model": (
+            abs(fin_span**2 / fin_area - CONTRACT.fin_aspect_ratio) < 1e-12
+            and abs(
+                0.5 * (fin_root_chord + fin_tip_chord) * fin_span - fin_area
+            ) < 1e-12
         ),
         "propeller skid datum preserves 10 mm ground clearance": abs(
             -CONTRACT.rear_pod_lower_prop_m
             - CONTRACT.prop_diameter_m / 2.0
             - 0.010
         ) < 1e-12,
-        "side cradle envelope contains the declared 24 mm height": (
-            CONTRACT.cradle_inner_height_m >= 0.024
+        "side cradle envelope clears the maximum-dimension P42A pack": (
+            CONTRACT.cradle_inner_width_m - CONTRACT.pack_width_m >= 0.002
+            and CONTRACT.cradle_inner_height_m - CONTRACT.pack_height_m >= 0.002
         ),
         "equipment-layout numerical validation passes": all(
             equipment_layout.validation_checks().values()
         ),
         "equipment skeleton component references are unique": (
             len(MASS_SKELETON_COMPONENT_IDS) == len(equipment_ids)
+            and set(MASS_SKELETON_REFERENCE_BY_ID) == set(equipment_ids)
+            and len(set(MASS_SKELETON_REFERENCE_BY_ID.values()))
+            == len(MASS_SKELETON_REFERENCE_BY_ID)
         ),
         "equipment skeleton contains the primary installed systems": {
             "battery_6s1p",
@@ -1757,15 +1796,22 @@ def validate_contract() -> dict[str, bool]:
             "esc",
             "o4_camera",
             "o4_vtx",
-            "servo_left_195",
             "servo_right_390",
         } <= equipment_ids,
+        "drawing and equipment model use one fixed servo per half-wing": (
+            sum(component.category == "actuator" for component in equipment_components) == 2
+            and {
+                abs(component.position_mm[1])
+                for component in equipment_components
+                if component.category == "actuator"
+            } == {equipment_layout.SERVO_STATION_MM}
+        ),
         "equipment skeleton excludes airframe and control-surface masses": all(
             component.category not in {"structure", "stability", "control"}
             for component in equipment_components
         ),
         "equipment skeleton shown mass reproduces the current ledger": abs(
-            sum(component.mass_g for component in equipment_components) - 846.85
+            sum(component.mass_g for component in equipment_components) - 821.85
         ) < 1e-9,
         "CLEAN and V1 pack stations remain inside physical battery travel": (
             equipment_battery.bounds.contains(

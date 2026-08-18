@@ -163,7 +163,7 @@ Dimensions are L×W×H mm. Mount = hole pattern. BEC = built-in regulators.
 ## 3. Compatibility vs the Salamandra requirements `[D]`
 
 Reproducible with `python3 calculations/inav_fc_match.py`. Requirements: ≥5 PWM
-(4 servos + 1 ESC), ≥2 UART (RX + GPS; 3 desired), ≥1 I2C (pitot + compass),
+(2 servos + 1 ESC), ≥2 UART (RX + GPS; 3 desired), ≥1 I2C (pitot + compass),
 blackbox mandatory, current sensor, barometer, input ≥25.2 V (6S).
 
 | Board | PWM | UART | I2C | BB | Current | Vmax | Meets all |
@@ -244,9 +244,9 @@ Computed budget: `python3 calculations/inav_fc_match.py`.
 | GPS M10 + compass | 25 | 60 | 5 V | `[M]` (BN-220 35 / BN-880 45 / M10 25 mA) |
 | Pitot MS4525 (I2C) | 5 | 15 | 5 V | `[E]` |
 | Buzzer (transient) | 20 | 30 | 5 V | `[E]` |
-| 4× servo 13–15 g digital — idle | 40 | 80 | Vx | `[E]` |
-| 4× servo — active/mixed | 600 | 1200 | Vx | `[E]` |
-| 4× servo — stall (brief) | 2800 | 4000 | Vx | `[E]` |
+| 2× servo 12.5 g digital — idle | 20 | 40 | Vx | `[E]`, scaled from the four-servo screening range |
+| 2× servo — active/mixed | 300 | 600 | Vx | `[E]`, scaled from the four-servo screening range |
+| 2× servo — stall (brief) | 1400 | 2000 | Vx | `[E]`, scaled from the four-servo screening range |
 
 Measured anchors `[M]`: F4-class FC ≈ 93 mA, FC ≈ 100 mA, 8ch RX ≈ 100 mA,
 GPS modules 25–45 mA. Modern F4 wing boards with OSD + SD + baro draw about
@@ -257,17 +257,18 @@ GPS modules 25–45 mA. Modern F4 wing boards with OSD + SD + baro draw about
 | Rail | Load | BEC available | Utilization |
 |---|---|---|---|
 | 5 V avionics (FC+RX+GPS+pitot+buzzer) | **300–555 mA** | 2 A (F405/F765 5V BEC) | 15–28 % |
-| Servo rail (4 servos active) | **600–1200 mA** | 5 A Vx (8 A F765) | 12–24 % |
-| Servo rail (4 servos stall, brief) | **2800–4000 mA** | 5 A Vx | ≤ 80 % |
+| Servo rail (2 servos active) | **300–600 mA** | 5 A Vx (8 A F765) | 6–12 % |
+| Servo rail (2 servos stall, brief) | **1400–2000 mA** | 5 A Vx | ≤ 40 % |
 
-- **Total avionics rail power = 6.64 W** (≈2.1 W 5 V rail + ≈4.5 W servos) `[D]`.
-- **Battery-side power = 7.38 W** at the shared 90 % BEC efficiency, or 6.75 % of
+- **Total avionics rail power = 4.3875 W** (2.1375 W 5 V rail + 2.25 W servos) `[D]`.
+- **Battery-side power = 4.875 W** at the shared 90 % BEC efficiency, or 4.46 % of
   O1's 109.25 W total battery-power ceiling `[D]`.
-- **Energy impact:** 1 h burns **≈7.38 Wh = 8.1 %** of a 6S1P P42A pack
+- **Energy impact:** 1 h burns **≈4.88 Wh = 5.4 %** of a 6S1P P42A pack
   (90.72 Wh, I-16 §6.1) `[D]`. Not negligible for the O1 efficiency
   claim, but small enough that the range equation is dominated by propulsion.
 - **BEC sizing conclusion:** the 2 A 5 V BEC and 5 A servo BEC of the F405/F765
-  class carry the full avionics + servo load with 3–4× margin `[D]`. The F411 class
+  class carry the full avionics load and retain at least 2.5× margin against the
+  estimated simultaneous two-servo stall transient `[D]`. The F411 class
   (Vx 3 A) also suffices for the servo load but fails on blackbox (see §3).
 
 ## 7. Observations (for the builder)
@@ -294,8 +295,8 @@ Self-validating: the printed matrix must show **YES** for the five
 F405/F722/F765/SpeedyBee entries and the stated MISS reasons for F411 (no
 blackbox) and Foxeer (no current input); the footprint summary must print
 **min 28×28×7 / avg 45×34×12 / max 56×37×13 mm / recommended 64×45×21 mm**; and
-the power budget must print **5 V rail 300–555 mA, avionics 6.64 W at the rails,
-7.38 W at the battery and 8.1 % of a 6S1P P42A pack per hour**. A change to the requirement
+the power budget must print **5 V rail 300–555 mA, avionics 4.39 W at the rails,
+4.88 W at the battery and 5.4 % of a 6S1P P42A pack per hour**. A change to the requirement
 set, board specs, or consumption values must reproduce these lines.
 
 ## 9. Popularity basis

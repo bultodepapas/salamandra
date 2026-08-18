@@ -23,16 +23,16 @@ properties in F2/P2 (OP-28); everything else is anchored to measured data.
 |---|---|---|
 | Materials (ρ, g/cm³) | PETG **1.27** · PLA 1.24 · PLA+ 1.24 · AERO PLA **0.68** (foamed, flow 0.60) | `[M]` (I-04) / `[E]` band 0.55–0.70 for AERO |
 | Printed parts | v0.2 raw estimate 600 g is retained as a regression input. Article #1 CLEAN applies a **550 g PETG CAD cap**: core 150 + wings 310 + tips 40 + elevons 50. C32 V1a adds 37.31 g shell/mount plus a fixed 5.70 g spar; the old 36.72 g complete allocation is not currently met | ADR-0043/C32 `[E]` |
-| Hybrid nose boom | 327 mm support span + 50 mm CORE insertion + printed cradle = **37.4 g** | `[D]`/`[E]` ADR-0043 / `balance_cg.py` |
+| Hybrid nose boom | Current ≈322 mm support span + 50 mm CORE insertion + printed cradle = **37.4 g** allocation | `[D]`/`[E]` ADR-0043 / `balance_cg.py` |
 | Material scaling | m_part(mat) = m_part(PETG) × ρ_mat/ρ_PETG (same geometry) | `[D]` |
 | Elevon balance mass | m_b = 1.2 × m_elevons (ADR-0025: 25 g, 24 mm offset, 20 mm horn → 30 g/elevon) | `[D]` |
 | Battery pack | n_cells × cell + 25 g packaging; P42A 70 g / 50E 68 g per cell | `[D]` (I-16, validated vs 445/433/305/297 g) |
 | FC | Article #1 SpeedyBee F405 WING = **20.3 g** (8.9 FC + mandatory 11.4 PDB/current board; wireless omitted). Avionics row = 110 + (20.3 − 17.4) = 112.9 g | I-17 `[M]`/`[D]` |
-| FPV | Article #1 **O4 Lite 8.2 g**; O4 32, O4 Pro 37 and legacy O3 39.4 remain options requiring a mass re-check | I-19 `[M]` |
-| Fixed rows | motor 170 `[E]` · ESC 35 `[E]` · 4× Corona servo 50 `[M]` · APC E 8×8 assembly 25 (15 blade `[M]` + 10 adapter `[E]`) · carbon 70 `[E]` · hardware 20 `[E]` | ADR-0043 |
+| FPV | Article #1 **DJI O4 Air Unit 8.95 g installed** = E18 camera 3.10 g + E19 VTX/attached-antenna assembly 5.85 g; the antenna is not a separate layout body. O4 Pro is 36.2 g installed. | I-19 `[M]`/`[D]` |
+| Fixed rows | motor 170 `[E]` · ESC 35 `[E]` · 2× Corona servo 25 `[M]` · APC E 8×8 assembly 25 (15 blade `[M]` + 10 adapter `[E]`) · carbon 70 `[E]` · hardware 20 `[E]` | ADR-0043 |
 | Stall speed | V_stall = √(2W/(ρ·S·CL_max)), CL_max = 0.589 (I-07), S = 0.282 m² | `[D]` |
 
-> **Reference mass:** 1583.5 g CLEAN uses the I-16 P42A pack (445 g), selected
+> **Reference mass:** 1559.25 g CLEAN uses the I-16 P42A pack (445 g), selected
 > Article #1 equipment and the coupled 37.4 g boom. The released 1685.2 g v0.2 case is
 > retained as an automated regression, not as the current build.
 
@@ -40,18 +40,18 @@ properties in F2/P2 (OP-28); everything else is anchored to measured data.
 
 | Config | AUW (g) | g/dm² | V_stall (km/h) | Printed (g) | Printed cost (€) `[E]` | Verdict |
 |---|---:|---:|---:|---:|---:|---|
-| **ALL PETG** (guide baseline) | **1583.5** | 56.2 | **44.5** | 550 | ≈ 11 | **Article #1 CLEAN; compliant** |
-| **AERO WINGS** (CORE+rest PETG) | **1420.9** | 50.4 | **42.1** | 387 | ≈ 12 | Mass passes; **divergence rejects it** |
-| **AERO MAX** (wings+tips+elevons AERO) | **1369.8** | 48.6 | **41.4** | 364 | ≈ 12 | Structure not cleared |
-| **PLA+** (all printed parts) | **1569.1** | 55.6 | **44.3** | 537 | ≈ 13 | ADR-0016 rejected material |
+| **ALL PETG** (guide baseline) | **1559.25** | 55.3 | **44.1** | 550 | ≈ 11 | **Article #1 CLEAN; compliant** |
+| **AERO WINGS** (CORE+rest PETG) | **1396.7** | 49.5 | **41.8** | 387 | ≈ 12 | Mass passes; **divergence rejects it** |
+| **AERO MAX** (wings+tips+elevons AERO) | **1345.5** | 47.7 | **41.0** | 364 | ≈ 12 | Structure not cleared |
+| **PLA+** (all printed parts) | **1544.8** | 54.8 | **43.9** | 537 | ≈ 13 | ADR-0016 rejected material |
 
 Example option combinations (all validated runs of `mass_budget.py`):
 
 | Scenario | AUW (g) | V_stall (km/h) |
 |---|---:|---:|
-| ALL PETG · Article #1 CLEAN | 1583.5 | 44.5 |
-| ALL PETG · V1 allocation target | 1620.2 | 45.0 |
-| **ALL PETG · V1 current lower model** | **1626.5** | **45.1 — FAIL** |
+| ALL PETG · Article #1 CLEAN | 1559.25 | 44.1 |
+| ALL PETG · V1 allocation target | 1595.97 | 44.7 |
+| **ALL PETG · V1 current lower model** | **1602.26** | **44.8 — analytical PASS** |
 
 Per-part × material matrix (mass, g, from the PETG base):
 
@@ -104,7 +104,7 @@ Per-part × material matrix (mass, g, from the PETG base):
 python3 calculations/mass_budget.py --config all          # the 4 policies
 python3 calculations/mass_budget.py --config matrix       # per-part × material
 python3 calculations/mass_budget.py --config aero_wings --battery 4S1P --fin
-python3 calculations/mass_budget.py --config all_petg --fc F765-WING --fpv O4-Lite
+python3 calculations/mass_budget.py --config all_petg --fc F765-WING --fpv O4-Air-Unit
 ```
 
 Validation preserves the v0.2 1685.2 g / 45.9 km/h regression and checks the new CLEAN

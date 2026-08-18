@@ -46,9 +46,27 @@ and 70.0–70.8 mm in length depending on brand and wrapper.
 | Cell energy (ref) | — | **≈ 18 Wh** (3.6 V × 5 Ah) | `[M]`/`[D]` |
 
 The wrapped cylinder (D × L = 21.3 × 70.3 mm) is the building block of the whole
-analysis.
+concept enumeration. It is **not** the fit-check envelope for E01.
 
-### 2.1 Reference cells compared — two starting points and an average
+### 2.1 E01 maximum-dimension CAD path
+
+Molicel's P42A v4 data sheet gives **21.7 mm maximum diameter, 70.2 mm maximum
+height and 70 g maximum mass** `[M]`. Because those maximum dimensions already
+describe the sleeved cell, the CAD path does not add the nominal per-cell wrapper
+a second time. For the released 2 × 3 × 1 layout:
+
+- raw cell block = `2 × 70.2` by `3 × 21.7` by `1 × 21.7`
+  = **140.4 × 65.1 × 21.7 mm** `[D]`;
+- pack allowances = 0.3 mm outer wrap per side, 0.3 mm nickel height and
+  12 mm lead projection `[E]`;
+- **E01 installed CAD envelope = 153.0 × 65.7 × 22.6 mm** `[D]` on `[M]/[E]`;
+- **E01 installed mass = 6 × 70 + 25 = 445 g** `[D]` on a 25 g hardware
+  allowance `[E]`.
+
+The older 153.2 × 64.5 × 22.2 mm result remains useful only as the nominal
+generic-21700 enumeration; it shall not control the P42A cradle fit.
+
+### 2.2 Reference cells compared — two starting points and an average
 
 Two good reference cells bracket the 21700 design space for this aircraft:
 **Molicel INR21700-P42A** (high-drain) and **Samsung INR21700-50E** (high-capacity).
@@ -295,7 +313,9 @@ Pack mass, energy, voltage and available current are computed per reference cell
 
 ## 9. Sources
 
-1. Molicel — *INR21700-P42A* product page / datasheet; 21.0 × 70.0 mm, 45 A, 4200 mAh. `[M]`
+1. Molicel — *INR21700-P42A* product page and v4 data sheet;
+   **21.7 mm maximum diameter, 70.2 mm maximum height, 70 g maximum mass**,
+   45 A and 4200 mAh. `[M]`
 2. Samsung SDI — *INR21700-50E* datasheet; 21.0 × 70.0 mm, 5000 mAh, 9.8 A continuous. `[M]`
 3. lygte-info.dk — *Molicel INR21700-P42A* and *Samsung INR21700-50E* test/review (cell identity, capacity, mass). `[M]`
 4. Guide `design/Salamandra-Design-Guide-v0.1.md` §9 (bay 190 × 70 × 32 mm, PROVISIONAL) and §10.1 (cruise ≈ 5 A, peak ≈ 20 A). `[D]`

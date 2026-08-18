@@ -4,6 +4,22 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [Unreleased] — 2026-08-18
+
+**C35 — Article #1 actuation simplified from four servos to two.**
+
+- ADR-0026 now specifies one midspan servo per 390 mm elevon. The former `sqrt(2)`
+  flutter-frequency credit assumed an unmeasured doubling of effective hinge stiffness
+  and is withdrawn pending G7 stiffness and modal evidence.
+- The corrected single-actuator demand is 0.978 kgf·cm ideal and 1.834 kgf·cm after
+  1.5 torque factor / 0.80 linkage efficiency. DS-939MG margin is 1.36× at 180 km/h
+  and approximately 4.0× at the initial 105 km/h limit.
+- Servo mass falls 50.0 → 25.0 g. CLEAN becomes 1558.5 g / 44.1 km/h; the complete
+  V1 lower model becomes 1601.5 g / 44.7 km/h and analytically passes C16 with about
+  18.9 g mass margin. F2 measured mass and G7 flutter verification remain open.
+
+---
+
 ## [1.33] — 2026-08-17
 
 **Release v0.4.0 — the connected calculation baseline and Article #1 flight-load

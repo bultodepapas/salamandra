@@ -45,7 +45,7 @@ O1_WH_PER_KM = O1_ENERGY_LIMIT_WH_PER_KM
 MOTOR_ESC_EFF = 0.85                # centre of declared 0.80--0.88 band [E]
 MOTOR_ESC_EFF_BAND = (0.80, 0.88)
 APC_MAX_RPM = 150_000.0 / 8.0       # Thin Electric rule [M]
-REFERENCE_HOTEL_LOAD_W = reference_hotel_load_w("O4 Lite")
+REFERENCE_HOTEL_LOAD_W = reference_hotel_load_w("O4 Air Unit")
 
 # J, CT, CP, eta -- UIUC APC E 8x8, 6418-rpm wind-tunnel run [M].
 UIUC_CURVE = (
@@ -195,7 +195,7 @@ def main():
         help="accepted E2 aircraft drag at 95 km/h; prints its true equilibrium")
     parser.add_argument(
         "--hotel-load-w", type=float, default=REFERENCE_HOTEL_LOAD_W,
-        help="continuous avionics plus FPV load (default: Article #1 O4 Lite)")
+        help="continuous avionics plus FPV load (default: Article #1 O4 Air Unit)")
     args = parser.parse_args()
 
     electrical_target = electrical_power_limit_w()
@@ -270,10 +270,10 @@ def main():
             - point.eta_prop * point.shaft_w) < 1e-9,
         "thrust solver reproduces the boundary point": abs(
             solve_thrust(point.thrust_n).rpm - point.rpm) < 0.1,
-        "Article #1 battery hotel load is 14.04 W": (
+        "Article #1 two-servo battery hotel load is 11.54 W": (
             args.hotel_load_w != REFERENCE_HOTEL_LOAD_W
             or abs(args.hotel_load_w
-                   - 12.6375 / REFERENCE_BEC_EFFICIENCY) < 1e-12),
+                   - 10.3875 / REFERENCE_BEC_EFFICIENCY) < 1e-12),
         "propeller has at least 1.5x RPM margin": APC_MAX_RPM / point.rpm >= 1.5,
         "6S 500--550 Kv has a plausible loaded rpm ratio":
             0.65 <= min(point.rpm / (22.2 * kv) for kv in (500, 550))

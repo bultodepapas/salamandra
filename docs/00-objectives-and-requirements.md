@@ -100,7 +100,8 @@ These are the objectives that define the *platform*, as opposed to the reference
 > C16 relaxed the requirement to 45 km/h but then used the local-section `clmax = 0.65`
 > as if it were whole-wing `CLmax`. I-07 supplies the correct distinction: local section
 > screen **0.65**, released wing design value **0.589**. The latter gives 45.0 km/h at
-> the V1 allocation mass; the current 1626.5 g V1 lower model gives 45.1 km/h and fails.
+> the V1 allocation mass. The two-servo 1601.5 g V1 lower model gives 44.7 km/h and
+> passes analytically; measured F2 mass remains mandatory.
 >
 > **Relaxed to ≤ 45 km/h**, justified by precedent: the Peregrine at 52 g/dm² and the Mojito at ~60 are hand-launched.
 
@@ -115,7 +116,7 @@ See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 
 | Pack | Cells | Energy | Mass | AUW | Wing loading |
 |---|---|---|---|---|---|
-| **6S1P P42A (Article #1)** | 6 | **90.7 Wh** | **445 g** | **1583.5 g CLEAN** | **56.2 g/dm²** |
+| **6S1P P42A (Article #1)** | 6 | **90.7 Wh** | **445 g** | **1558.5 g CLEAN** | **55.3 g/dm²** |
 
 > **R-CG:** the Article #1 carrier shall hold CG within ±5 mm with the 6S1P pack. The
 > current solution places it at x = −359.6 mm (band −377.4…−341.9). A 4S aircraft

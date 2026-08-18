@@ -17,7 +17,8 @@ Data model (all tagged, see docs/06-material-mass-variants.md):
   - FC: I-17 catalog [M] (8.4–26 g); the avionics row (110 g) absorbs any
     board around the I-17 survey average (17.4 g).  SpeedyBee mass includes
     the FC and mandatory PDB/current-sensor board, not the FC PCB alone.
-  - FPV: I-19 [M] (O4 32 / O4 Pro 37 / O4 Lite 8.2 / legacy O3 39.4 g).
+  - FPV: I-19 [M]/[D] (O4 Air Unit 8.95 g installed; its 0.75 g antenna is
+    lumped into the VTX assembly; O4 Pro 36.2 g; legacy O3 39.4 g).
   - Motor / ESC / prop adapter / carbon / hardware: guide §8.1 [E].  APC's
     published 8x8E blade mass and catalog servo masses are [M].
   - Elevon balance mass derived [D] from ADR-0025: m_b = 1.2 × m_elevons.
@@ -49,6 +50,7 @@ from design_config import (
     stall_speed,
     wing_loading_g_dm2,
 )
+from equipment_catalog import DJI_O4_INSTALLED_MASS_G
 
 # --------------------------------------------------------------------------
 # 1. MATERIALS (rho [M]/[E], E printed [M]/[E], cost [E])
@@ -99,8 +101,12 @@ FC = {  # [M] I-17 catalog; masses are the board alone
 }
 FC_AVG = 17.4                                 # [D] I-17 survey average (8 boards)
 
-FPV = {  # [M] I-19: unit + antennas
-    "O4": 32.0, "O4-Pro": 37.0, "O4-Lite": 8.2, "O3": 39.4,
+FPV = {  # [M]/[D] I-19: camera + transmission module + required antenna(s)
+    "O4-Air-Unit": DJI_O4_INSTALLED_MASS_G,
+    "O4-Lite": DJI_O4_INSTALLED_MASS_G,  # legacy project/market alias
+    "O4": DJI_O4_INSTALLED_MASS_G,       # backwards-compatible CLI alias
+    "O4-Pro": 36.2,                      # 32.0 g air unit + 2 x 2.1 g antennas [M]
+    "O3": 39.4,
 }
 PROPS = {
     "APC-E-8x8": 25.0,          # 15 g blade [M] + 10 g adapter/collet [E]
@@ -110,12 +116,13 @@ PROPS = {
 }
 MOTOR_REF = 170.0                             # [E] 28-class
 ESC_REF = 35.0                                # [E]
-SERVO_REF = 60.0                              # [E] 4 × 15 g (class 12-15, I-18)
+SERVO_REF = 30.0                              # [E] 2 × 15 g (one per elevon, ADR-0026)
 SERVOS = {
-    "class-15g": 60.0,                       # historical estimate [E]
-    "Corona-DS939MG": 50.0,                  # 4 x 12.5 g [M], I-18
-    "Hitec-HS5055MG": 38.0,                  # 4 x 9.5 g [M], I-18
-    "heavy": 76.0,                           # 4 x 19 g class [E]
+    "class-15g": 30.0,                       # 2 x 15 g [E]
+    "class-15g-v0.2": 60.0,                  # historical 4-servo regression only
+    "Corona-DS939MG": 25.0,                  # 2 x 12.5 g [M], I-18
+    "Hitec-HS5055MG": 19.0,                  # 2 x 9.5 g [M], I-18
+    "heavy": 38.0,                           # 2 x 19 g class [E]
 }
 CARBON_REF = 70.0                             # [E] tubes + pins
 HARDWARE_REF = 20.0                           # [E] screws, TPU, adhesive, dowels
@@ -161,7 +168,7 @@ def shell_base_mass(part, shell_cap):
 
 
 def build(policy, battery="6S1P", cell="P42A", fc="SpeedyBee-F405",
-          fpv="O4-Lite", prop="APC-E-8x8", fin=False, servo_heavy=False,
+          fpv="O4-Air-Unit", prop="APC-E-8x8", fin=False, servo_heavy=False,
           motor=MOTOR_REF, shell_cap=550.0, servo="Corona-DS939MG"):
     """Returns (rows, totals) for one configuration. rows: list of dicts."""
     mat = dict(POLICIES[policy])
@@ -204,12 +211,12 @@ def build(policy, battery="6S1P", cell="P42A", fc="SpeedyBee-F405",
         {"part": "servos",   "kind": "fixed",
              "m": SERVOS["heavy"] if servo_heavy else SERVOS[servo], "mat": "servos",
              "src": ("[M] I-18 catalog" if not servo_heavy
-                  else "[E] 4 x 19 g heavy class")},
+                  else "[E] 2 x 19 g heavy class")},
         {"part": "prop",     "kind": "fixed", "m": PROPS[prop],   "mat": f"prop {prop}",
              "src": ("[M] 15 g blade + [E] 10 g adapter" if prop == "APC-E-8x8"
                   else "[E] incl. adapter")},
         {"part": "fpv",      "kind": "fixed", "m": FPV[fpv],      "mat": f"FPV {fpv}",
-             "src": "[M] I-19"},
+             "src": "[M]/[D] I-19; installed system includes antenna(s)"},
         {"part": "hardware", "kind": "fixed", "m": HARDWARE_REF,  "mat": "fixed",
              "src": "[E] screws, TPU, adhesive, dowels"},
         {"part": "battery",  "kind": "fixed", "m": pack_mass(battery, cell),
@@ -247,7 +254,7 @@ def main():
     ap.add_argument("--cell", default="P42A", choices=CELLS)
     ap.add_argument("--fc", default="SpeedyBee-F405",
                     help="FC from I-17 catalog: " + ", ".join(FC))
-    ap.add_argument("--fpv", default="O4-Lite", choices=FPV)
+    ap.add_argument("--fpv", default="O4-Air-Unit", choices=FPV)
     ap.add_argument("--prop", default="APC-E-8x8", choices=PROPS)
     ap.add_argument("--motor", type=float, default=MOTOR_REF)
     ap.add_argument("--shell-cap", type=float, default=550.0,
@@ -326,7 +333,7 @@ def main():
 
     rows, tot = build("all_petg", "6S1P", "P42A", "FC_AVG", "O4-Pro",
                       "APC-E-8x8-v0.2", False, False, MOTOR_REF, 600.0,
-                      "class-15g")
+                       "class-15g-v0.2")
     check(f"Released v0.2 baseline = 1685 ± 2 g (got {tot['auw']:.1f})",
           abs(tot["auw"] - 1685.0) <= 2.0)
     check(f"Baseline V_stall = 45.9 ± 0.15 km/h (got {tot['vs']:.2f})",
@@ -337,6 +344,10 @@ def main():
                            ("4S1P", "P42A", 305.0), ("4S1P", "50E", 297.0)]:
         got = pack_mass(cfg, cell)
         check(f"Pack {cfg} {cell} = {exp:.0f} g (got {got:.0f})", abs(got - exp) <= 1)
+    check(
+        "DJI O4 Air Unit installed mass includes its 0.75 g antenna",
+        abs(FPV["O4-Air-Unit"] - 8.95) < 1e-12,
+    )
     check("Pure-AERO shell = 600×0.68/1.27 = 321.3 g "
           f"(got {scale(600.0,'AERO_PLA'):.1f})",
           abs(scale(600.0, "AERO_PLA") - 321.26) < 0.5)
@@ -357,15 +368,16 @@ def main():
     check(f"Article #1 V1 analytical lower model matches shared contract "
           f"(got {reference_v1['auw']:.2f} g)",
           abs(reference_v1["auw"] - ARTICLE_V1_MASS_KG * 1000.0) < 0.01)
-    check(f"ADR-0043 allocation target remains {ARTICLE_V1_ALLOCATION_MASS_KG*1000:.2f} g",
-          abs(ARTICLE_V1_ALLOCATION_MASS_KG * 1000.0 - 1620.22) < 0.01)
-    check(f"C32 analytical V1 exceeds exact {STALL_SPEED_LIMIT_KMH:.0f} km/h mass "
-          f"limit {stall_mass_limit_g:.1f} g by 6--7 g "
+    check(f"ADR-0043 two-servo allocation target is "
+          f"{ARTICLE_V1_ALLOCATION_MASS_KG*1000:.2f} g",
+          abs(ARTICLE_V1_ALLOCATION_MASS_KG * 1000.0 - 1595.97) < 0.01)
+    check(f"Two-servo V1 is at least 18 g below the exact "
+          f"{STALL_SPEED_LIMIT_KMH:.0f} km/h mass limit {stall_mass_limit_g:.1f} g "
           f"(got {reference_v1['auw']:.1f})",
-          6.0 <= reference_v1["auw"] - stall_mass_limit_g <= 7.0)
-    check(f"C32 analytical V1 V_stall exceeds {STALL_SPEED_LIMIT_KMH:.0f} km/h "
+          stall_mass_limit_g - reference_v1["auw"] >= 18.0)
+    check(f"Two-servo V1 V_stall is below {STALL_SPEED_LIMIT_KMH:.0f} km/h "
           f"(got {reference_v1['vs']:.2f})",
-          reference_v1["vs"] > STALL_SPEED_LIMIT_KMH)
+          reference_v1["vs"] < STALL_SPEED_LIMIT_KMH)
     _, ta = build("aero_wings", "6S1P", "P42A")
     check(f"AERO_WINGS 6S1P: V_stall <= {STALL_SPEED_LIMIT_KMH:.0f} km/h "
           f"(got {ta['vs']:.2f})", ta["vs"] <= STALL_SPEED_LIMIT_KMH)

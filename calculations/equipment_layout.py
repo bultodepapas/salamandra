@@ -26,6 +26,7 @@ from pathlib import Path
 import balance_cg
 import battery_pack_layout
 import design_config
+import equipment_catalog
 import mass_budget
 
 Vec3 = tuple[float, float, float]
@@ -44,14 +45,15 @@ PACK_6S1P_CAD_ENVELOPE_MM = battery_pack_layout.reference_pack_cad_envelope(
 
 TARGET_CG_MM = balance_cg.CG_TARGET * 1000.0
 CG_TOLERANCE_MM = balance_cg.R_CG * 1000.0
-CRADLE_INNER_WIDTH_MM = 66.0
+CRADLE_INNER_WIDTH_MM = 68.0
+CRADLE_INNER_HEIGHT_MM = 25.0
 MIN_INSTALL_CLEARANCE_MM = 2.0
-O4_COAX_LENGTH_MM = 50.0
+O4_COAX_LENGTH_MM = equipment_catalog.DJI_O4_COAX_LENGTH_MM
 GPS_POWER_SEPARATION_MM = 100.0
-O4_ANTENNA_MASS_G = 0.75
 PRIMARY_CG_ADJUSTER = "battery_6s1p"
 
 ELEVON_HINGE_XC = 0.72
+SERVO_STATION_MM = 390.0
 SERVO_BODY_SIZE_MM = (22.5, 24.6, 11.5)
 SERVO_SURFACE_CLEARANCE_MM = 1.5
 SERVO_MIN_PUSHROD_PROJECTION_MM = 20.0
@@ -620,6 +622,9 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
     solved = balance_cg.solve_reference_layout()
     bay_fwd_mm = solved["bay_fwd"] * 1000.0
     bay_aft_mm = solved["bay_aft"] * 1000.0
+    camera_station_mm = (
+        bay_fwd_mm + balance_cg.CAMERA_FROM_BAY_FWD * 1000.0
+    )
 
     core_x, _ = _strip_centroid(0.0, 0.195, 0.50)
     panel_x, panel_y = _strip_centroid(0.195, 0.585, 0.50)
@@ -743,7 +748,7 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
         _component(
             "battery_cradle", "Printed two-support battery cradle", "structure",
             balance_cg.CRADLE_MASS * 1000.0,
-            (balance_cg.CRADLE_LENGTH * 1000.0, 70.0, 30.0),
+            (balance_cg.CRADLE_LENGTH * 1000.0, 70.4, 30.0),
             (cradle_station_mm, 0.0, 12.0), "[E]",
             "ADR-0043 15 g allocation; CAD mass pending",
             mass_sigma_g=3.0, position_sigma_mm=(3.0, 1.0, 2.0),
@@ -753,7 +758,11 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
             "battery_6s1p", "6S1P Molicel P42A installed pack", "energy",
             masses["battery"], PACK_6S1P_CAD_ENVELOPE_MM,
             (solved["pack_station"] * 1000.0, 0.0, pack_z),
-            "[D]/[E]", "6 x 70 g max [M] + 25 g hardware [E]",
+            "[D]/[E]",
+            (
+                "Molicel P42A max 70.2 x 21.7 mm [M]; pack-level wrap, "
+                "nickel and leads [E]; 6 x 70 g max [M] + 25 g hardware [E]"
+            ),
             bounds=Bounds3D(
                 (pack_x_min, 0.0, pack_z),
                 (pack_x_max, 0.0, pack_z),
@@ -762,20 +771,20 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
         ),
     ]
 
+    servo_station_mm = SERVO_STATION_MM
     for side, sign in (("left", -1.0), ("right", 1.0)):
-        for station_mm in (195.0, 390.0):
-            placement = solve_servo_placement(station_mm)
+            placement = solve_servo_placement(servo_station_mm)
             position = (
                 placement.position_mm[0],
-                sign * station_mm,
+                sign * servo_station_mm,
                 placement.position_mm[2],
             )
-            identifier = f"servo_{side}_{int(station_mm)}"
+            identifier = f"servo_{side}_{int(servo_station_mm)}"
             components.append(_component(
                 identifier,
-                f"Corona DS-939MG {side} y={station_mm:.0f}",
+                f"Corona DS-939MG {side} y={servo_station_mm:.0f}",
                 "actuator",
-                masses["servos"] / 4.0,
+                masses["servos"] / 2.0,
                 SERVO_BODY_SIZE_MM,
                 position,
                 "[D]/[E]",
@@ -888,26 +897,28 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
             reserve=True, collidable=False,
         ),
         _component(
-            "o4_camera", "DJI O4 camera module", "fpv",
-            3.1, (16.5, 12.36, 13.44), (-450.0, 0.0, -5.0), "[D]",
-            "8.2 g system less 5.1 g VTX [M]",
+            "o4_camera", "DJI O4 Air Unit camera module", "fpv",
+            equipment_catalog.DJI_O4_CAMERA.mass_g,
+            equipment_catalog.DJI_O4_CAMERA.envelope_mm,
+            (camera_station_mm, 0.0, -5.0), "[D]",
+            (
+                "DJI LxWxH [M]; mass = 8.2 g air unit incl. camera "
+                "minus 5.1 g transmission module [D]"
+            ),
             bounds=Bounds3D((-459.0, -10.0, -10.0), (-385.0, 10.0, 10.0)),
             mass_sigma_g=0.3, position_sigma_mm=(5.0, 2.0, 2.0),
         ),
         _component(
-            "o4_vtx", "DJI O4 transmission module", "fpv",
-            5.1, (30.0, 30.0, 6.0), (-418.0, 0.0, 31.5), "[M]",
-            "DJI O4 product data; airflow required",
+            "o4_vtx", "DJI O4 Air Unit VTX + attached antenna", "fpv",
+            equipment_catalog.DJI_O4_TRANSMISSION_ASSEMBLY_MASS_G,
+            equipment_catalog.DJI_O4_TRANSMISSION_MODULE.envelope_mm,
+            (-418.0, 0.0, 31.5), "[M]",
+            (
+                "30 x 30 x 6 mm VTX body [M]; 0.75 g antenna mass lumped at "
+                "the VTX station [D]; 80 mm antenna route remains an assembly note"
+            ),
             bounds=Bounds3D((-430.0, -20.0, 29.0), (-330.0, 20.0, 40.0)),
-            mass_sigma_g=0.3, position_sigma_mm=(5.0, 3.0, 2.0),
-        ),
-        _component(
-            "o4_antenna", "DJI O4 antenna", "rf",
-            O4_ANTENNA_MASS_G, (80.0, 5.0, 5.0),
-            (-360.0, -80.0, 25.0), "[M]", "DJI O4 product data",
-            bounds=Bounds3D((-430.0, -180.0, -20.0), (-280.0, -45.0, 60.0)),
-            mass_sigma_g=0.1, position_sigma_mm=(20.0, 20.0, 10.0),
-            budgeted=False, collidable=False,
+            mass_sigma_g=0.4, position_sigma_mm=(5.0, 3.0, 2.0),
         ),
         _component(
             "hardware_reserve", "Screws, adhesive, dowels and misc. reserve",
@@ -1060,9 +1071,40 @@ def validation_checks() -> dict[str, bool]:
             design_config.ARTICLE_CLEAN_MASS_KG * 1000.0,
             abs_tol=1e-8,
         ),
-        "physical CLEAN delta is the omitted O4 antenna": isclose(
-            clean.mass_g() - clean.mass_g(budgeted_only=True),
-            O4_ANTENNA_MASS_G,
+        "installed and budgeted CLEAN masses include the O4 antenna": isclose(
+            clean.mass_g(), clean.mass_g(budgeted_only=True), abs_tol=1e-12
+        ),
+        "E01 uses the P42A maximum-dimension CAD envelope": (
+            all(
+                isclose(actual, expected, abs_tol=1e-9)
+                for actual, expected in zip(
+                    clean.component("battery_6s1p").size_mm,
+                    (153.0, 65.7, 22.6),
+                )
+            )
+        ),
+        "E18 camera and E19 VTX envelope reproduce the bought-in catalog": (
+            clean.component("o4_camera").size_mm
+            == equipment_catalog.DJI_O4_CAMERA.envelope_mm
+            and clean.component("o4_vtx").size_mm
+            == equipment_catalog.DJI_O4_TRANSMISSION_MODULE.envelope_mm
+            and isclose(
+                clean.component("o4_camera").mass_g,
+                equipment_catalog.DJI_O4_CAMERA.mass_g,
+                abs_tol=1e-12,
+            )
+            and isclose(
+                clean.component("o4_vtx").mass_g,
+                equipment_catalog.DJI_O4_TRANSMISSION_ASSEMBLY_MASS_G,
+                abs_tol=1e-12,
+            )
+        ),
+        "O4 two-body layout closes to the installed mass budget": isclose(
+            sum(
+                clean.component(identifier).mass_g
+                for identifier in ("o4_camera", "o4_vtx")
+            ),
+            mass_budget.FPV["O4-Air-Unit"],
             abs_tol=1e-12,
         ),
         "battery solve reaches the longitudinal-CG target": isclose(
@@ -1096,19 +1138,19 @@ def validation_checks() -> dict[str, bool]:
         "servo bodies retain the required airfoil-surface clearance": all(
             solve_servo_placement(station).minimum_surface_clearance_mm
             >= SERVO_SURFACE_CLEARANCE_MM - 1e-9
-            for station in (195.0, 390.0)
+            for station in (SERVO_STATION_MM,)
         ),
         "servo linkage retains the minimum projected pushrod run": all(
             solve_servo_placement(station).pushrod_projection_mm
             >= SERVO_MIN_PUSHROD_PROJECTION_MM - 1e-9
-            for station in (195.0, 390.0)
+            for station in (SERVO_STATION_MM,)
         ),
         "servo solution is the aft-most feasible station": all(
             not _servo_candidate_feasible(
                 station,
                 solve_servo_placement(station).x_fraction + 1e-4,
             )
-            for station in (195.0, 390.0)
+            for station in (SERVO_STATION_MM,)
         ),
         "FC reference station is the target CG": isclose(
             clean.component("fc").position_mm[0], TARGET_CG_MM, abs_tol=1e-12
@@ -1141,6 +1183,7 @@ def validation_checks() -> dict[str, bool]:
 
 def design_gates(layout: Layout3D) -> tuple[tuple[str, bool, str], ...]:
     lateral_clearance = CRADLE_INNER_WIDTH_MM - PACK_6S1P_CAD_ENVELOPE_MM[1]
+    vertical_clearance = CRADLE_INNER_HEIGHT_MM - PACK_6S1P_CAD_ENVELOPE_MM[2]
     reserve_mass = sum(
         component.mass_g for component in layout.components if component.reserve
     )
@@ -1150,7 +1193,7 @@ def design_gates(layout: Layout3D) -> tuple[tuple[str, bool, str], ...]:
     fc_distance = dist(layout.component("fc").position_mm, cg)
     battery = layout.component("battery_6s1p")
     servo_placements = tuple(
-        solve_servo_placement(station) for station in (195.0, 390.0)
+        solve_servo_placement(station) for station in (SERVO_STATION_MM,)
     )
     exact_battery_x = required_battery_x(layout)
     battery_reachable = (
@@ -1209,6 +1252,14 @@ def design_gates(layout: Layout3D) -> tuple[tuple[str, bool, str], ...]:
             (
                 f"clearance={lateral_clearance:.2f} mm total; "
                 f"cradle inner width {CRADLE_INNER_WIDTH_MM:.1f} mm"
+            ),
+        ),
+        (
+            "P42A vertical installation clearance >= 2 mm",
+            vertical_clearance >= MIN_INSTALL_CLEARANCE_MM,
+            (
+                f"clearance={vertical_clearance:.2f} mm total; "
+                f"cradle inner height {CRADLE_INNER_HEIGHT_MM:.1f} mm"
             ),
         ),
         (

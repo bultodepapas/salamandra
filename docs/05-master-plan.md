@@ -114,7 +114,7 @@ This is line D of `03-phase-1-plan.md` carried to closure. Only the sequence is 
 | Y2 | Pitot, blackbox, GPS/magnetometer installation out of the root current path (docs/00 §3.5) | D1 |
 | Y3 | INAV 9.1+ / ArduPlane configuration | — |
 | Y4 | **Resolve G9** (porpoising) — altitude/pitch PID adjustment before flying in automatic modes | Peregrine precedent (gaps/README) |
-| Y5 | No-freeplay elevon linkage, dual actuation (ADR-0026) | F4 (verified authority) |
+| Y5 | No-freeplay elevon linkage, one actuator per elevon (ADR-0026) | F4 (verified authority/modal response) |
 
 **Y4 is an explicit prerequisite of E7** (already declared in `tests/README.md`). It is not optional for the test program, although it does not prevent the first uninstrumented flight.
 
@@ -174,7 +174,7 @@ The server is a third-party Beta project, not Autodesk. If it is abandoned or br
 ## 9. Exit gates — consolidated checklist
 
 - [ ] **F1** — complete checklist of `03-phase-1-plan.md §4`
-- [ ] **F2** — Article #1 6S1P R-CG and 1583.5 g CLEAN verified; close the C32 V1 gap from the 1626.5 g lower model to ≤1620.4 g, then verify CAD and scale masses
+- [ ] **F2** — Article #1 6S1P R-CG and 1558.5 g CLEAN verified; confirm the analytical 1601.5 g V1 lower model remains ≤1620.4 g using CAD and scale masses
 - [ ] **F3** — D3/D4 completed, matching table published
 - [ ] **F4** — manoeuvre/ultimate semantics and positive V-n branch fixed; dynamic gust basis and negative CLmin branch closed, GJ/EI verified on the real section, elevon authority confirmed (S5), G6 sweep factor computed on the real section
 - [ ] **F5** — instrumentation chain operational and validated on an existing platform (D2), G9 resolved

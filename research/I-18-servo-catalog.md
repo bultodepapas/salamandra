@@ -1,6 +1,6 @@
 # I-18 — Servos for the elevons: popular models, technical data sheets
 
-**Status:** Open — reference catalog · **Feeds:** guide §5.3 (elevon control), §7.5 (actuation), ADR-0025 (mass balancing), ADR-0026 (dual actuation / no freeplay), CORE servo bays
+**Status:** Open — reference catalog · **Feeds:** guide §5.3 (elevon control), §7.5 (actuation), ADR-0025 (mass balancing), ADR-0026 (single actuation / no freeplay), PANEL servo bays
 
 > **Correction C30 (2026-08-17):** the former N·m conversion displayed kgf·cm
 > magnitudes with a g·cm label, a factor-1000 unit error, and then double-counted the
@@ -17,8 +17,9 @@
 
 ## 1. Scope and what the aircraft demands
 
-The reference aircraft (guide §5.3, §7.5) uses **4 digital servos** (2 per elevon,
-dual actuation) on **390 mm elevons** (30–90 % half-span, 0.28 c, hinge at 0.72 c).
+The reference aircraft now uses **2 digital servos** (one per elevon) on **390 mm
+elevons** (30–90 % half-span, 0.28 c, hinge at 0.72 c). ADR-0026 was corrected on
+2026-08-18 after the former dual-actuation flutter credit was found unverified.
 The constraints that matter for servo choice come from the ADRs:
 
 | Requirement | Source | Note |
@@ -26,7 +27,7 @@ The constraints that matter for servo choice come from the ADRs:
 | **Digital** | ADR-0025 | Digital required for high holding stiffness; "static torque matters less than stiffness" |
 | **Zero freeplay** in linkage | ADR-0026 | Freeplay is the #1 cause of limit-cycle flutter in models |
 | **High holding stiffness** | ADR-0025 | More important than static torque |
-| **Mass ≈ 15 g/servo** | guide §7.5 / justification | Budget is ~60 g total for 4 servos (`[E]`, class-typical) |
+| **Mass ≈ 15 g/servo** | guide §7.5 / justification | Budget is ~30 g total for 2 servos (`[E]`, class-typical) |
 | V_NE design 180 km/h | guide §4 | Hinge moment estimated at 180 km/h |
 
 The servo torque requirement (hinge moment) is quantified in `calculations/servo_torque.py` — see §2.
@@ -34,8 +35,8 @@ The servo torque requirement (hinge moment) is quantified in `calculations/servo
 ## 2. How much torque is actually needed (the hinge moment)
 
 Reproducible: `python3 calculations/servo_torque.py`. Hinge-moment model (common
-practice): `Mh = 0.5 · ρ · V² · S_control · c_control · Ch`, with **dual actuation**
-dividing the load per servo (ADR-0026). Geometry from the guide §5.3/§7.5; `Ch`
+practice): `Mh = 0.5 · ρ · V² · S_control · c_control · Ch`; with one actuator per
+elevon the complete hinge moment is carried by that servo (ADR-0026). Geometry from the guide §5.3/§7.5; `Ch`
 (elevon hinge-moment coefficient) taken over the practical range 0.01–0.05 `[E]`.
 
 | Quantity | Value | Basis |
@@ -45,13 +46,14 @@ dividing the load per servo (ADR-0026). Geometry from the guide §5.3/§7.5; `Ch
 | Control area S_control (each elevon) | ≈ 221 cm² | `[D]` |
 | Design speed V | 180 km/h (50 m/s) | `[D]` (guide design 180) |
 | **Hinge moment per elevon** | **19–96 mN·m** (Ch 0.01–0.05) | `[D]`+`[E]` |
-| **Per servo (÷ 2, dual actuation)** | **10–48 mN·m (0.10–0.49 kgf·cm)** | `[D]`+`[E]` |
+| **Per servo (one complete elevon)** | **19–96 mN·m (0.20–0.98 kgf·cm)** | `[D]`+`[E]` |
 
 > **Fact for the designer:** even the most modest catalog servo below
-> (MG90S ≈ 1.8 kgf·cm) has **3.7× ideal margin** on the worst per-servo
+> (MG90S ≈ 1.8 kgf·cm) has **1.84× ideal margin** on the worst per-servo
 > hinge-moment case. With a 1.5 safety factor and 80 % linkage efficiency, the
-> required catalog torque is 0.917 kgf·cm; the Article #1 Corona DS-939MG at
-> 2.5 kgf·cm has **2.7× factored margin**. **Static torque is not the binding
+> required catalog torque is 1.834 kgf·cm; the Article #1 Corona DS-939MG at
+> 2.5 kgf·cm has **1.36× factored margin at 180 km/h** and about 4.0× at the
+> initial 105 km/h limit. **Static torque passes but is no longer a large-margin item**;
 > constraint** — mass, holding stiffness, reliability, deadband and price dominate
 > the choice. This is exactly why ADR-0025 emphasises stiffness over torque.
 
@@ -140,10 +142,10 @@ wide (standard mini-servo width), so one pocket width fits all listed servos.
 
 ## 4. Comparison vs the aircraft constraints (factual)
 
-| Servo | Meets 15 g/servo? | Digital | ≥ 3× hinge-margin @ 180 km/h | Price class |
+| Servo | Meets 15 g/servo? | Digital | Meets 1.834 kgf·cm factored demand @ 180 km/h | Price class |
 |---|---|---|---|---|
 | TBS Mojito (reference) | no (19 g) | ✓ | ✓ (≥3.2×) | ~€20 |
-| TowerPro MG90S | ✓ (13.4 g) | ✓ | ✓ (≥3.7×) | US$2.5–5 |
+| TowerPro MG90S | ✓ (13.4 g) | ✓ | No at 4.8 V (1.8); yes nominally at 6 V (2.2) | US$2.5–5 |
 | Emax ES09MD | ✓ (13.5–14.8 g) | ✓ | ✓ | US$12.5–18 |
 | Corona DS-939MG | ✓ (12.5 g) | ✓ | ✓ | US$12.5 |
 | Hitec HS-5055MG | ✓ (9.5 g) | ✓ | 2.7–3.3× ideal, voltage-dependent | — |
@@ -249,7 +251,7 @@ de-facto class for elevons on 1.1–1.6 m printed FPV wings.
 The hinge-moment requirement is `[D]` (geometry) over an `[E]` range of `Ch`, with
 the model form independently corroborated `[M]` (§2.1). The current-draw figures
 in §5 are `[M]` (published oscilloscope/current-probe measurements). Mass budget
-(60 g / 4 servos) is `[E]` class-typical. Community/practice findings (S3, S7, S9,
+(30 g / 2 servos) is `[E]` class-typical. Community/practice findings (S3, S7, S9,
 S10) are `[I]` — forum consensus, not primary data. The single most valuable
 verification is **measuring a real servo** (mass, deadband, holding stiffness,
 actual stall torque and current draw at the FC's BEC voltage) with the batch the

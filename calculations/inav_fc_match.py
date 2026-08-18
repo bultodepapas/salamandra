@@ -6,7 +6,7 @@ Cross-checks each candidate FC (from research/I-17) against the avionics
 requirements of the Salamandra (guide §11 / docs/00 §3.5):
 
     - INAV 9.1+ firmware target exists
-    - >= 5 PWM/servo outputs  (4x digital servos + 1x ESC)
+    - >= 3 PWM/servo outputs  (2x digital servos + 1x ESC)
     - >= 2 UARTs (RX + GPS), 3 desired (telemetry/VTX)
     - >= 1 I2C (digital pitot MS4525 + compass)
     - blackbox (SD or flash) MANDATORY (E2/E7 instrumentation)
@@ -25,7 +25,7 @@ from design_config import REFERENCE_BEC_EFFICIENCY, electrical_power_limit_w
 # --- Salamandra avionics requirements (guide §11, docs/00 §3.5) ------------
 REQ = {
     "inav_target": "INAV 9.1+ target exists",
-    "pwm":         5,     # 4x servos + 1x ESC
+    "pwm":         3,     # 2x servos + 1x ESC
     "uart":        2,     # RX + GPS
     "uart_des":    3,     # + telemetry / VTX control
     "i2c":         1,     # digital pitot (MS4525) + compass
@@ -42,9 +42,9 @@ POWER_COMPONENTS = [
     ("GPS M10 + compass",                25,  60, "5V", "[M]"),
     ("Pitot MS4525 (I2C)",                5,  15, "5V", "[E]"),
     ("Buzzer (transient)",               20,  30, "5V", "[E]"),
-    ("4x servo 13-15 g digital (idle)",  40,  80, "Vx", "[E]"),
-    ("4x servo (active/mixed)",         600, 1200, "Vx", "[E]"),
-    ("4x servo (stall, brief)",        2800, 4000, "Vx", "[E]"),
+    ("2x servo 12.5 g digital (idle)",   20,  40, "Vx", "[E]"),
+    ("2x servo (active/mixed)",         300, 600, "Vx", "[E]"),
+    ("2x servo (stall, brief)",        1400, 2000, "Vx", "[E]"),
 ]
 
 
@@ -136,7 +136,7 @@ def main():
     print("INAV FC COMPATIBILITY — Salamandra avionics requirements")
     print("=" * 78)
     print("Requirements (guide §11 / docs/00 §3.5):")
-    print(f"  PWM outputs >= {REQ['pwm']} (4x servos + 1x ESC) | "
+    print(f"  PWM outputs >= {REQ['pwm']} (2x servos + 1x ESC) | "
           f"UARTs >= {REQ['uart']} (>= {REQ['uart_des']} desired) | "
           f"I2C >= {REQ['i2c']}")
     print("  blackbox MANDATORY | current sensor | barometer | "
@@ -265,7 +265,9 @@ def main():
           f"({pack_wh:.1f} Wh)")
 
     checks = {
-        "nominal avionics power is 6.64 W": abs(avionics_w - 6.6375) < 1e-9,
+        "two-servo nominal avionics power is 4.39 W": abs(
+            avionics_w - 4.3875
+        ) < 1e-9,
         "O1 total battery-power ceiling is shared": abs(cruise_w - 109.25) < 1e-9,
         "6S1P P42A nominal energy is 90.72 Wh": abs(pack_wh - 90.72) < 1e-9,
         "battery avionics power includes BEC loss":

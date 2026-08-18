@@ -28,7 +28,7 @@ value stands.
 | OP-03 | Twist ε | **CLOSED FOR CAD:** +3.0° printed wash-in; r1 needs −0.04°…+0.41° neutral elevon over Ncrit 10–12 at the V1 lower mass | E2 may refine the exposed parameter before production | ADR-0041 / E2 |
 | OP-04 | Dihedral Γ | 2.0° total, piecewise-polyhedral (kinks at y = 195/347/498; 0 / 1.07 / 1.53 / 2.0°) | Roll-stability verification; may be revised by the stability analysis | Phase 1 stability (C-series), first flights |
 | OP-05 | Neutral point | **25.72 % MAC / −75.8 mm** `[D]` (32×5 VLM); Weissinger-L **27.0 % / −72.9 mm**, 2.9 mm difference (I-21) | Central-body model and measured balance/flight NP | C2 body model; E-series |
-| OP-06 | Elevon span / travel | 195–585 mm (30–90 % half-span), ±20°, dual actuation retained. Hinge moment is non-binding; VLM gives +0.00256 Cm/° and 5° provides **12.2×** the limiting r1 trim residual. | Measured authority across the envelope; confirm dual-actuation need below 400 mm | E2 / I-10 |
+| OP-06 | Elevon span / travel | 195–585 mm (30–90 % half-span), ±20°, one midspan actuator per elevon. At 180 km/h DS-939MG factored torque margin is 1.36×; VLM gives +0.00256 Cm/° and 5° provides **12.2×** the limiting r1 trim residual. | Measured authority, servo stiffness/freeplay and G7 modal response across the envelope | E2 / E5 / I-10 |
 | OP-07 | Hinge line x/c | 0.72 | Fixed by structure (ADR-0002); keep unless section is redesigned | — |
 
 ### Structure and materials
@@ -58,7 +58,7 @@ value stands.
 | OP-18 | FC pitot input | SpeedyBee F405 WING (not MINI) must be verified. **I-17 catalog check (v0.5):** the F405-WING-V2 and SpeedyBee F405 WING meet the full requirement set (I2C for the MS4525 pitot included); H7A3-WING excluded (no INAV target) | Bench check before buying | D1 |
 | OP-19 | Cradle position (nose) | Forward support x ≈ **−459**, CORE support x ≈ −132, 327 mm span + 50 mm insertion; pack between supports | OP-01 final validation | F2 |
 | **OP-23** | **Battery variants** | **CLOSED for Article #1:** 6S1P only. O2 now means separate 4S/6S platform power modules; 4S needs ~713 Kv at the current boundary and a different carrier/CG solution; 2P needs another outer carrier. | Each future module must close its own propulsion, fit and CG chain | ADR-0042; future variant ADR |
-| **OP-24** | **Measured mass acceptance** | **CLEAN allocation closed; V1 reopened by C32:** CLEAN 1583.5 g / 44.5 km/h. V1 target remains ≤1620.2 g / 45.0 km/h, but the connected lower model is **1626.5 g / 45.1 km/h** because the 5.70 g spar was absent from the 36.72 g row. Current complete-fin lower model 43.01 g; compensation required ≥6.3 g. | CAD mass properties and complete-aircraft scale measurement; reduce CLEAN/fin mass or reject V1 >1620.4 g unless E2 re-derives CLmax | F2/P3; first complete assembly |
+| **OP-24** | **Measured mass acceptance** | Two-servo baseline: CLEAN **1558.5 g / 44.1 km/h**; V1 allocation 1595.2 g and connected lower model **1601.5 g / 44.7 km/h** including the complete 43.01 g fin. Analytical margin to the exact C16 ceiling is about 18.9 g. | CAD mass properties and complete-aircraft scale measurement; reject V1 >1620.4 g unless E2 re-derives CLmax | F2/P3; first complete assembly |
 | **OP-25** | **FPV system selection / integration** | DJI O4 series reference (I-19 `[M]`): camera in the nose boom (2× M2, 16 mm, O4 25.55×20×23.3 mm), VTX in the CORE with airflow (33.5×33.5×13, 20×20/25.5×25.5 M2), antennas ≥ 5 cm at 90°; power: Pro on the 9 V/2 A rail (≥13.5 W), Lite on 5 V. Including avionics and 90 % BEC: Pro **18.93 W battery / 20.9 % pack·h⁻¹**; Article #1 Lite **14.04 W / 15.5 % pack·h⁻¹**. **Legacy O3 Air Unit (I-19 §2.4 `[M]`)** fits the mounts (module 32.5×30.5×14.5, camera 21.2×20×19.5); camera hole spacing and measured current pending | Model choice (O4 vs Pro vs Lite; O3 legacy accepted with verifications), camera FOV/lens for the mission, CE legal power, real current measurement | D-series bench; O1 energy re-check |
 | **OP-26** | **Fin variant V1 verification (ADR-0038, I-20)** | V1a **2.13 dm²**, 253/105/63 mm; V1b **2.83 dm²**, 291/121/73 mm. Root **3.0 mm solid** gives FS 1.67 without spar credit; mode ≈7.9 Hz. Ø3 mm Al LE spar retained. C32 complete lower mass 43.01 g exceeds its 36.72 g allocation by 6.29 g. V1a lower uncertainty corner is slightly negative; V1b stays positive. | CAD side area, fin flutter/wake test, **mass reduction/compensation**, E8 yaw perturbation/full modal identification | F2/F4-S8; E8 |
 
@@ -83,7 +83,7 @@ value stands.
 - t/c 13.5 % / 9 % (ADR-0027 — one of the best-supported decisions)
 - Forward-swept configuration (ADR-0001); current Λ_c/4 = **−15°** per ADR-0040 and is reviewed only on its declared trim/NP/GJ triggers
 - Skin 0.9 mm / gyroid 5 % (ADR-0028), three-cell section (ADR-0002)
-- Elevon mass balancing (ADR-0025 — non-negotiable), dual actuation (ADR-0026)
+- Elevon mass balancing (ADR-0025 — non-negotiable), one actuator per elevon (ADR-0026)
 - Joint at 30 % half-span, R-JOINT ≥ 5×, R-NP (ADR-0032)
 - Confidence convention, traceability rules (docs/04)
 

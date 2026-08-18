@@ -45,11 +45,15 @@ CELLS = {
 AVG = tuple(sum(v) / 2 for v in zip(*CELLS.values()))  # (69.0, 4.6, 3.6, 27.4, 6.65, 16.56)
 HARDWARE = 25.0    # g, pack hardware (nickel, wires, XT60, wrap) [E]
 CELL_ALIASES = {"P42A": "Molicel P42A", "50E": "Samsung 50E"}
+P42A_DATASHEET_URL = (
+    "https://www.molicel.com/wp-content/uploads/INR21700P42A-V4-80092.pdf"
+)
 # Maximum sleeved cell envelope for CAD packaging.  This is deliberately
 # separate from the nominal generic-21700 model above: fit decisions must use
 # manufacturer maxima, while concept enumeration may retain nominal geometry.
 CELL_MAX_DIMENSIONS_MM = {
-    "Molicel P42A": (70.2, 21.7),  # (length, diameter) [M]
+    # Molicel P42A v4 product data sheet: height and diameter maxima [M].
+    "Molicel P42A": (70.2, 21.7),  # (length, diameter)
 }
 REFERENCE_LAYOUTS = {
     "4S1P": (2, 2, 1, "A"),

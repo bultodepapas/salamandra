@@ -36,7 +36,8 @@ A 25 g elevon with its CG ~24 mm behind the hinge → moment 0.60 g·m. With a 2
 ## Concurrent mandatory measures
 
 - **Zero freeplay in the linkage** (ADR-0026). Freeplay is a nonlinearity that triggers a limit cycle **below** the linear critical speed. It is the number-one cause of flutter in models.
-- **Dual actuation point** if the elevon exceeds ~400 mm: doubles K_hinge and raises ω_β by 41 %.
+- **One actuator at elevon midspan** for the 390 mm Article #1 surface (ADR-0026).
+  A second actuator receives no flutter credit without measured stiffness and modal evidence.
 - Digital servos with high holding stiffness. Static torque matters less than stiffness.
 
 ## Raised to non-negotiable

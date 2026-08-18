@@ -107,8 +107,6 @@
 <circle cx="220.5" cy="116.616" r="1" class="provisional-line"/>
 <circle cx="296" cy="72.663" r="1" class="provisional-line"/>
 <circle cx="296" cy="90.506" r="1" class="provisional-line"/>
-<rect x="160.5" y="119.189" width="8" height="17" rx="1" class="provisional-fill"/>
-<text x="164.5" y="128.689" class="provisional-text" text-anchor="middle">S</text>
 <rect x="238" y="93.595" width="8" height="17" rx="1" class="provisional-fill"/>
 <text x="242" y="103.095" class="provisional-text" text-anchor="middle">S</text>
 <line x1="47" y1="89.846" x2="47" y2="14.5" class="extension"/>

@@ -170,15 +170,15 @@ boom mass with its required length. At Λc/4 = −15°, xNP = −75.8 mm and xCG
 | Pack | Mass (g) | AUW (g) | Required station (mm) | ±5 mm CG band | One-layer cradle |
 |---|---:|---:|---:|---:|---|
 | 4S1P P42A | 305 | 1443 | −481.7 | −505.3…−458.0 | No: separate module |
-| **6S1P P42A** | **445** | **1583.5** | **−359.6** | **−377.4…−341.9** | **Yes** |
+| **6S1P P42A** | **445** | **1558.5** | **−355.1** | **−372.6…−337.6** | **Yes** |
 | 4S2P P42A | 585 | 1723 | −296.0 | −310.8…−281.3 | No: separate module |
 | 6S2P P42A | 865 | 2003 | −230.6 | −242.1…−219.0 | No: separate module |
 
 The manufactured cradle is 201 mm long at approximately −460…−259 mm and the forward
 support span from x ≈ −132 is 327 mm; the tube includes another 50 mm of CORE insertion.
-The coupled hybrid estimate is 37.4 g. ADR-0043 budgets 1583.5 g CLEAN and targeted
-1620.2 g V1. C32's connected V1 lower model is 1626.5 g because the old fin row omitted
-its mandatory spar; F2 must close this gap and verify the real complete-aircraft mass.
+The coupled hybrid estimate is 37.4 g. With two servos ADR-0043 budgets 1558.5 g CLEAN
+and 1595.2 g V1 allocation; the connected V1 lower model is 1601.5 g including the
+mandatory spar. Both analytically pass C16; F2 must verify complete-aircraft mass.
 
 ## 4. Airfoil
 
@@ -208,7 +208,7 @@ parameter remain exposed so E2 can update them without rebuilding the planform.
 | Elevon 0.28 c, hinge at 0.72 c | ADR-0002 (box boundary); elevon chord = 1 − 0.72 = 0.28 c | `[D]` |
 | Elevon span 30–90 % half-span | **Assumption, corrected (C23).** Covers most of the span (ADR-0002 "elevons occupy almost the whole span") while leaving the tip free of control-surface mass. v0.1 set the inner end at 20 % (y = 130), inside the CORE (0–195): it put a control surface on the shared, non-reprinted module with no servo and a hinge crossing the removable joint. The elevon is a **panel component**: y = 195 (panel root) → 585 (90 %), length 390 mm; the CORE trailing edge is fixed. To be verified for authority (C6) | `[I]` |
 | Elevon mass balance ~30 g/elevon | ADR-0025: 25 g elevon, 24 mm CG offset → 0.60 g·m; 20 mm horn → m_b ≈ 30 g. Mandatory (flutter is inertial, not stiff) | `[D]` |
-| Dual actuation, 4 servos | ADR-0026: dual actuation mandatory above ~400 mm; doubles K_hinge, +41 % ω_β. The 390 mm elevon (C23) is below the threshold; dual actuation is **retained as flutter margin** (elevon flutter is G7) pending C6 | `[D]` |
+| One actuator per elevon, 2 servos | ADR-0026 correction: the former +41 % claim assumed an unmeasured doubling of effective hinge stiffness. A single midspan DS-939MG carries the factored 180 km/h demand with 1.36× catalog margin and ≈4.0× at the initial 105 km/h limit. Flutter credit remains prohibited pending measured stiffness and G7 modal evidence | `[D]`/`[E]` |
 | TPU hinges | ADR-0035 (provisional); stiffness to be characterized (C7/S6) | `[I]` |
 | Mylar hinge alternative | Polyester tape hinges 25×30, glued in slots — flight-proven on 900–1340 mm printed FPV (I-09). Alternative if TPU results disappoint; K_hinge unknown for both, feeds OP-10 | `[M]` |
 | Balance tabs, hatch lock, nose retention | CORE integration details adopted from the Flightory practice (I-09): underside balance tabs for CG verification, spring-loaded bay hatch lock, threaded inserts + reinforcement collar for the nose pod. Proven patterns, PROVISIONAL in the guide (§6.7, §8) | `[M]` |
@@ -237,8 +237,8 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 | PETG shell **≤550 g** | Lower end of the established 550–650 g estimate is now a binding CAD acceptance cap: CORE 150 + wings 310 + tips 40 + elevons 50 | ADR-0043 `[E]` |
 | Battery **445 g** (6S1P P42A) | I-16 cell/pack model, 6×70 + 25 g packaging | `[D]` |
 | Boom structure **37.4 g** | 327 mm support span + 50 mm CORE insertion, Al Ø8/int6 + printed cradle. Corrected point-load superposition: 56 MPa, FS 4.96, δ 1.7 mm, 31.4 Hz | `[D]`/`[E]` |
-| Motor 170 / ESC 35 / servos 50 / avionics 112.9 / O4 Lite 8.2 / prop assembly 25 g | Motor/ESC remain class estimates; Corona servo, SpeedyBee FC+PDB, O4 Lite and APC blade use catalog masses; adapter remains `[E]` | ADR-0043 `[M]`/`[E]` |
-| Article #1 **1583.5 g CLEAN / 1626.5 g V1 lower model** | `mass_budget.py`; C32 connects 37.31 g fin shell/mount + 5.70 g mandatory spar. The 1620.2 g allocation target is 6.29 g below that assembly model and remains an F2 gate | ADR-0043/C32 `[D]`/`[E]` |
+| Motor 170 / ESC 35 / servos 25 / avionics 112.9 / O4 Lite 8.2 / prop assembly 25 g | Motor/ESC remain class estimates; 2× Corona servo, SpeedyBee FC+PDB, O4 Lite and APC blade use catalog masses; adapter remains `[E]` | ADR-0043 `[M]`/`[E]` |
+| Article #1 **1558.5 g CLEAN / 1601.5 g V1 lower model** | `mass_budget.py`; complete fin is 37.31 g shell/mount + 5.70 g mandatory spar. The two-servo V1 remains about 18.9 g below the exact C16 ceiling | ADR-0043 `[D]`/`[E]` |
 
 ## 7. Propulsion
 
@@ -258,10 +258,10 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 - Cruise CL at the V1 lower model: CL = 2W/(ρV²S) =
   2×15.96/(1.225×26.39²×0.282) = **0.1327**
 - Stall speed: V = √(2W/(ρ·S·CL_max)) with wing CL_max = 0.589 (I-07). The exact
-  45 km/h mass ceiling is **1620.4 g**. CLEAN is **1583.5 g → 44.5 km/h**. The
-  ADR-0043 V1 target **1620.2 g → 45.0 km/h** remains the allocation, but the C32
-  lower model is **1626.5 g → 45.1 km/h** and therefore fails by about 6.1 g. F2 must
-  compensate at least 6.3 g against the target; measured E2 CLmax still governs release.
+  45 km/h mass ceiling is **1620.4 g**. CLEAN is **1558.5 g → 44.1 km/h**. The
+  two-servo V1 allocation is **1595.2 g → 44.7 km/h** and the complete-fin lower model
+  is **1601.5 g → 44.7 km/h**, about 18.9 g below the ceiling. Measured mass and E2
+  CLmax still govern release.
 - Required CL_max (wing): 0.589 (I-07) vs section cl_max 0.65 `[M]`
 - Cruise electrical power: 1.15 Wh/km × 95 km/h ≈ **110 W**
 - **Divergence (docs/07 rev. 4, `divergence.py`):** the released r1 root gives nominal
@@ -308,7 +308,7 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 | Fin root t ≥ **3.0 mm** | V1a at VNE: F 40.7 N, h 116 mm, M 4.72 N·m; 2.5 mm gives FS 1.16, rejected; 3.0 mm gives **FS 1.67** without crediting the Al spar; mode ≈ 7.9 Hz | `[D]` |
 | Fin mass target **≤36.72 g**; lower model **43.01 g** | C32: the 37.31 g PETG shell/mount lower estimate excluded the mandatory 5.70 g spar. The complete-model gap is 6.29 g; F2 must reduce the assembly/CLEAN mass before V1 satisfies C16 | `[E]` |
 | ΔCD0 ≈ +0.0014 (V1a) → +9.8 % energy | Updated area; Wh/km ≈ 1.26 `[E]` | `[D]`/`[E]` |
-| V_stall V1a **45.1 km/h — FAIL** | 1626.5 g lower model versus exact C16 mass ceiling 1620.4 g; 45.0 km/h remains the 1620.2 g allocation target | ADR-0043/C32 `[D]` |
+| V_stall V1a **44.7 km/h — analytical PASS** | 1601.5 g lower model versus exact C16 mass ceiling 1620.4 g; measured F2 mass remains mandatory | ADR-0043 `[D]` |
 
 **Why two published configurations and not one:** the O1 efficiency target (≤ 1.15
 Wh/km) lives at the clean end of the drag budget — only SALAMANDRA-CLEAN can carry it;
