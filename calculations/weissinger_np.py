@@ -18,10 +18,11 @@ the C2 cross-check ("two methods that disagree = error in one").
 Conventions (same as the VLM): x backward, y starboard, z up; lambda_c4
 negative = forward sweep; all output [D].
 """
+import argparse
 import math
 
 import numpy as np
-from design_config import B, S, SWEEP_C4_DEG, TAPER
+from design_config import SWEEP_C4_DEG, TAPER, B, S
 
 
 def vortex_line(p, a, b_):
@@ -104,35 +105,61 @@ def weissinger(b, S, taper, sweep_c4_deg, ny=80):
     y_mac = (b / 6.0) * (1 + 2 * taper) / (1 + taper)
     x_le_mac = y_mac * tanL - cbar / 4.0
     pct = (x_np - x_le_mac) / cbar * 100
-    return dict(cr=cr, cbar=cbar, CLa=CLa, x_np=x_np, pct_mac=pct,
-                dCm_dCL=dCm_dCL)
+    return {"cr": cr, "cbar": cbar, "CLa": CLa, "x_np": x_np, "pct_mac": pct,
+                "dCm_dCL": dCm_dCL}
 
 
-if __name__ == "__main__":
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--full", action="store_true",
+        help="include the expensive ny=160/320 mesh-convergence points")
+    args = parser.parse_args()
     print("=" * 68)
     print("C2 — WEISSINGER-L independent NP check (all [D])")
     print("=" * 68)
 
     # 1) validation: straight rectangular wing, AR 6, S = 0.282 m2
-    b_val = math.sqrt(6.0 * 0.282)
-    r = weissinger(b_val, 0.282, 1.0, 0.0, ny=100)
+    b_val = math.sqrt(6.0 * S)
+    validation = weissinger(b_val, S, 1.0, 0.0, ny=100)
     teo = 2 * math.pi * 6.0 / (2 + math.sqrt(6.0 ** 2 + 4))
-    print(f"  VALIDATION: straight AR 6 -> CL_alpha = {r['CLa']:.3f} /rad "
-          f"(Helmbold {teo:.3f}, err {100*(r['CLa']-teo)/teo:+.1f} %)")
-    print(f"  VALIDATION: NP = {r['pct_mac']:.2f} % MAC (expect ~25 %)")
+    print(f"  VALIDATION: straight AR 6 -> CL_alpha = {validation['CLa']:.3f} /rad "
+          f"(Helmbold {teo:.3f}, err "
+          f"{100*(validation['CLa']-teo)/teo:+.1f} %)")
+    print(f"  VALIDATION: NP = {validation['pct_mac']:.2f} % MAC (expect ~25 %)")
 
     # 2) project wing
     SWEEP = SWEEP_C4_DEG
-    r = weissinger(B, S, TAPER, SWEEP, ny=100)
-    print(f"\n  PROJECT: b=1300, S=0.282, lambda=0.5, "
+    project = weissinger(B, S, TAPER, SWEEP, ny=100)
+    print(f"\n  PROJECT: b={B:.3f}, S={S:.3f}, lambda={TAPER:.2f}, "
           f"sweep c/4 = {SWEEP:+.0f} deg")
-    print(f"  CL_alpha  = {r['CLa']:.3f} /rad")
-    print(f"  x_NP      = {r['x_np']*1000:+.1f} mm (ref root c/4)")
-    print(f"  NP        = {r['pct_mac']:.2f} % MAC")
-    print(f"  VLM reference: x_NP = -75.8 mm, 25.72 % MAC (I-21/ADR-0040)")
+    print(f"  CL_alpha  = {project['CLa']:.3f} /rad")
+    print(f"  x_NP      = {project['x_np']*1000:+.1f} mm (ref root c/4)")
+    print(f"  NP        = {project['pct_mac']:.2f} % MAC")
+    print("  VLM reference: x_NP = -75.8 mm, 25.72 % MAC (I-21/ADR-0040)")
 
     # 3) mesh convergence
-    for ny in (40, 80, 160, 320):
+    meshes = (40, 80, 160, 320) if args.full else (40, 80, 100)
+    for ny in meshes:
         rr = weissinger(B, S, TAPER, SWEEP, ny=ny)
         print(f"  ny={ny:>4}: NP = {rr['pct_mac']:.2f} % MAC, "
               f"CLa = {rr['CLa']:.3f}")
+
+    checks = {
+        "straight-wing NP is within 0.2 percent MAC of 25 percent":
+            abs(validation["pct_mac"] - 25.0) < 0.2,
+        "straight-wing lift slope is within 8 percent of Helmbold":
+            abs(validation["CLa"] - teo) / teo < 0.08,
+        "project NP agrees with VLM reference within 5 mm":
+            abs(project["x_np"] - (-75.8e-3)) < 0.005,
+    }
+    print("\nVALIDATION CHECKS")
+    for name, passed in checks.items():
+        print(f"  [{'PASS' if passed else 'FAIL'}] {name}")
+    if not all(checks.values()):
+        raise SystemExit(1)
+    print("\nVALIDATION: ALL PASS")
+
+
+if __name__ == "__main__":
+    main()

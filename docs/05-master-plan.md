@@ -18,6 +18,9 @@ It sets no calendar dates. The repo has no `[M]` data on how long each task take
 
 **Working definition, revisable:** the first prototype is **article #1** already described in the README — **Cruise (1300 mm, 6S1P)** configuration — printed, assembled, balanced according to [ADR-0025](../decisions/ADR-0025-elevon-balancing.md), with avionics and **pitot installed** (a requirement of [O1](00-objectives-and-requirements.md)), able to fly in a stabilized way to run **E2, E3 and E7**. **Recommended build: SALAMANDRA-V1 (fixed centreline fin, ADR-0038/I-20)** — the fin doubles Cnr and removes the finless yaw divergence, giving cleaner test data; the finless CLEAN build remains the O1-efficiency configuration.
 
+The V1 recommendation is conditional on F2 closing the C32 mass gap; until then CLEAN
+is the only mass-compliant configuration.
+
 It is not "something that prints and flies once". It is the instrumented platform that **can generate the `[M]` data the project still lacks** (G2, G4, G6, G7 in `gaps/`). If it does not carry an operational pitot and blackbox, it does not count as the project's prototype — it counts as a mock-up.
 
 If this definition is not the one you had in mind, tell me and I adjust the rest of the plan.
@@ -97,7 +100,7 @@ This is line D of `03-phase-1-plan.md` carried to closure. Only the sequence is 
 | S5 | Verify elevon authority across the whole envelope, including gust and extreme CG | **C6 — never done before**, see `03-phase-1-plan.md` | S2, F2 CG |
 | S6 | TPU hinge stiffness (ω_β) | Enters the flutter analysis (G7) | S3 |
 | S7 | Flutter verification with Southwell if prior flight data exist, otherwise preliminary analysis | G7 | S3, S6 |
-| S8 | **V1 fin (ADR-0038):** strength at V_NE (root t ≥ 2.5 mm, FS 1.29 `[D]`), bending mode ≈ 9 Hz, wake buffeting from the pusher slipstream | OP-26; fin flutter/strength | S3, F2 CG |
+| S8 | **V1 fin (ADR-0038):** strength at V_NE (root t ≥ 3.0 mm, FS 1.67 `[D]`, no spar credit), bending mode ≈ 7.9 Hz, wake buffeting from the pusher slipstream | OP-26; fin flutter/strength | S3, F2 CG |
 
 ⚠️ **S5 is the task that corrects failure mode #1.** No final hinge is sized and no mass balancing is computed without having passed S5.
 
@@ -171,7 +174,7 @@ The server is a third-party Beta project, not Autodesk. If it is abandoned or br
 ## 9. Exit gates — consolidated checklist
 
 - [ ] **F1** — complete checklist of `03-phase-1-plan.md §4`
-- [ ] **F2** — Article #1 6S1P R-CG and the 1583.5/1620.2 g CLEAN/V1 allocations verified in CAD and on scales
+- [ ] **F2** — Article #1 6S1P R-CG and 1583.5 g CLEAN verified; close the C32 V1 gap from the 1626.5 g lower model to ≤1620.4 g, then verify CAD and scale masses
 - [ ] **F3** — D3/D4 completed, matching table published
 - [ ] **F4** — n_max/n_min fixed, GJ/EI verified on the real section, elevon authority confirmed (S5), G6 sweep factor computed on the real section
 - [ ] **F5** — instrumentation chain operational and validated on an existing platform (D2), G9 resolved

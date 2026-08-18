@@ -31,10 +31,10 @@ Sensitivity: a ±13 % in S produces ±13 % in aspect ratio and wing loading.
 
 ### G6 — sweep factor
 
-Revision 3 uses **0.55–0.85** at the selected −15° sweep, with its trend anchored to
+Revision 4 uses **0.55–0.85** at the selected −15° sweep, with its trend anchored to
 NASA TP-1685. The numerical transfer to this printed section remains `[E]`. Together
 with the unmeasured xEA/c = 0.30…0.45 bracket and GJ, it dominates the conservative
-128.8 km/h result (I-21, OP-29/30).
+129.6 km/h result (I-21/I-23, OP-29/30).
 
 ### G8 — neutral point and static margin
 
@@ -44,7 +44,7 @@ with the unmeasured xEA/c = 0.30…0.45 bracket and GJ, it dominates the conserv
 Target CG: **17.72 % MAC / −93.8 mm** for 8 % static margin.
 
 **Missing:** central-body model and measured flight NP. Elevon authority is calculated;
-Salamandra r1 closes the computed trim band with 3.0° twist and −0.06°…+0.39°
+Salamandra r1 closes the computed trim band with 3.0° twist and −0.04°…+0.41°
 neutral elevon. E2 must confirm the printed-airframe result.
 
 See [I-21](../research/I-21-sweep-trade-and-elastic-axis-correction.md).

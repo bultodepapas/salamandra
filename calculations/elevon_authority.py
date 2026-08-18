@@ -7,21 +7,31 @@ integrated with c^2 weights (0.6071/0.3929) before the VLM twist contribution
 is added.  Positive elevon angle is trailing-edge-up/reflex.
 """
 import numpy as np
+from design_config import (
+    ARTICLE_V1_MASS_KG,
+    CRUISE_SPEED_KMH,
+    STATIC_MARGIN,
+    SWEEP_C4_DEG,
+    TAPER,
+    B,
+    S,
+    lift_coefficient,
+    speed_mps,
+)
 from vlm_ala_volante import geom, solve
-from design_config import B, S, SWEEP_C4_DEG, TAPER
 
 SWEEP = SWEEP_C4_DEG
-ETA_IN, ETA_OUT = 0.30, 0.90          # tramo de elevon (30-90 % b/2)
-SM = 0.08
-CL_CRU = 0.132                        # ventana_torsion.py
-CM0_REQ = CL_CRU * SM                 # 0.01056
+ETA_IN, ETA_OUT = 0.30, 0.90
+SM = STATIC_MARGIN
+CL_CRU = lift_coefficient(ARTICLE_V1_MASS_KG, speed_mps(CRUISE_SPEED_KMH))
+CM0_REQ = CL_CRU * SM
 CM0_WING_N10 = +0.003258              # r1 root/tip integrated at cruise Re [D]
 CM0_WING_N12 = +0.002095              # conservative trim case [D]
-TWIST_DISENO = 3.0                    # R-TWIST (nueva cota, ver guia §5.3)
+DESIGN_TWIST = 3.0
 
 
 def cm0_wing(twist_deg, elev_deg):
-    """Cm a CL=0 del ala (VLM, placa plana) para wash-in + elevon por tramos."""
+    """Wing Cm at CL=0 from flat-plate VLM wash-in plus segmented elevon."""
     g = geom(B, S, TAPER, SWEEP, 0.0)
     eta = np.abs(g['cps'][:, 1]) / (B / 2)
     mask = (eta >= ETA_IN) & (eta <= ETA_OUT)
@@ -40,26 +50,27 @@ def main():
     dCm_de = cm0_wing(0.0, 1.0) - cm0_wing(0.0, 0.0)
     print(f"  wash-in yield : {dCm_tw:+.5f} /deg")
     print(f"  elevon yield  : {dCm_de:+.5f} /deg over 30--90% b/2")
-    print(f"  required trim : Cm0 = {CM0_REQ:+.5f} (SM 8%, cruise CL 0.132)")
+    print(f"  required trim : Cm0 = {CM0_REQ:+.5f} "
+          f"(SM 8%, cruise CL {CL_CRU:.4f})")
 
     print("\n  Trim closure with 3.0 deg printed wash-in:")
     elev_needed = {}
     for tag, cm0_wing_profile in [
             ("Ncrit 10 integrated r1", CM0_WING_N10),
             ("Ncrit 12 integrated r1", CM0_WING_N12)]:
-        deficit = CM0_REQ - (cm0_wing_profile + dCm_tw * TWIST_DISENO)
+        deficit = CM0_REQ - (cm0_wing_profile + dCm_tw * DESIGN_TWIST)
         elev_deg = deficit / dCm_de
         elev_needed[tag] = elev_deg
         print(f"    {tag:28s}: profile Cm0 {cm0_wing_profile:+.4f} -> "
               f"residual {deficit:+.4f} -> elevon {elev_deg:+.2f} deg")
 
-    print(f"\n  Control margin (limiting Ncrit 12 case):")
-    cm0_lim = CM0_WING_N12 + dCm_tw * TWIST_DISENO
+    print("\n  Control margin (limiting Ncrit 12 case):")
+    cm0_lim = CM0_WING_N12 + dCm_tw * DESIGN_TWIST
     d = CM0_REQ - cm0_lim
     for de in [5.0, 10.0, 20.0]:
         avail = dCm_de * de
         print(f"    elevon {de:5.1f} deg -> Dm {avail:+.4f}  "
-              f"({avail/d:5.1f} x el trim requerido {d:+.4f})")
+              f"({avail/d:5.1f} x required trim residual {d:+.4f})")
     best = elev_needed["Ncrit 10 integrated r1"]
     worst = elev_needed["Ncrit 12 integrated r1"]
     checks = {
@@ -68,7 +79,7 @@ def main():
         "Ncrit 12 trim is within +/-0.6 deg": abs(worst) <= 0.6,
         "5 deg control covers the limiting residual": dCm_de * 5.0 > d,
     }
-    print("\n  VALIDACION")
+    print("\n  VALIDATION")
     for name, passed in checks.items():
         print(f"    [{'PASS' if passed else 'FAIL'}] {name}")
     if not all(checks.values()):

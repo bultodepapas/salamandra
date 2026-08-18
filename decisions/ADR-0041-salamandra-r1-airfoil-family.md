@@ -27,8 +27,8 @@ vary linearly between root and tip. The controlling coordinate files are
 intermediate station files. Printed twist remains **+3.0° wash-in**.
 
 At the real cruise Reynolds numbers (root 510k, tip 255k), the c²-integrated profile
-moment is +0.00326 at Ncrit 10 and +0.00209 at Ncrit 12. With VLM twist and elevon
-yields, neutral trim is **−0.06° to +0.39°**, inside the ±0.6° cap. Every endpoint
+moment is +0.00326 at Ncrit 10 and +0.00209 at Ncrit 12. At the C32 V1 lower mass,
+VLM twist and elevon yields give neutral trim **−0.04° to +0.41°**, inside the ±0.6° cap. Every endpoint
 XFOIL case exceeds section `clmax = 1.07`; this is computational evidence, not a
 measured stall guarantee.
 

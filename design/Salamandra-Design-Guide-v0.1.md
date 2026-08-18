@@ -1,11 +1,12 @@
 # Salamandra — Design Guide
 
-**Version 0.18** · 17 August 2026 · Status: **RELEASED — v0.3.0 CAD baseline.**
+**Version 0.19** · 17 August 2026 · Status: **RELEASED — v0.3.0 CAD baseline,
+post-release calculation correction.**
 Planform, airfoil coordinates, twist, propulsion reference and mass allocation are
 controlling. Values still flagged `PROVISIONAL` (principally the CORE outer shape and
 unmeasured structural properties) retain an explicit trigger in the open-points register.
 
-> **AUTHORITATIVE RELEASE DOCUMENT:** this guide v0.18 is the controlling CAD
+> **AUTHORITATIVE RELEASE DOCUMENT:** this guide v0.19 is the controlling CAD
 > specification for release `v0.3.0`. It supersedes the v0.2.0 airfoil, propulsion and
 > mass allocations as well as the complete v0.1.0 planform and
 > balance baseline. Do not reuse or mix v0.1.0 wing sketches, panel solids, CORE wing
@@ -39,12 +40,12 @@ version live in `design/prompts/` (the site generator intentionally excludes the
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.18 |
+| Version | 0.19 |
 | Date | 2026-08-17 |
-| Release | **v0.3.0 — airfoil, propulsion and mass closure** |
+| Release | **v0.3.0 — airfoil, propulsion and mass allocation; C32 reopens V1** |
 | Status | **RELEASED**; supersedes v0.2.0 airfoil/propulsion/mass values; E2, D2 and F2 remain measured acceptance gates |
 | Reference configuration | **Cruise — Article #1** |
-| Inputs | ADR-0001…ADR-0043, I-01…I-22, docs/00, docs/02…docs/07, docs/10 |
+| Inputs | ADR-0001…ADR-0043, I-01…I-23, docs/00, docs/02…docs/07, docs/10 |
 | Intended reader | CAD designer (Fusion 360 or equivalent) |
 
 **How this guide evolves.** The design is expected to change as Phase 1 closes (airfoil
@@ -87,10 +88,10 @@ inputs:
 | Driver | v0.2.0 | v0.3.0 |
 |---|---:|---:|
 | Airfoil | provisional scaled MH60 | **Salamandra r1 station coordinates** |
-| Neutral elevon trim band | +0.6° to +1.9° provisional | **−0.06° to +0.39°** |
-| APC 8×8 cruise point | 9,900 rpm at peak η | **8,667 rpm at T = D / O1 power** |
+| Neutral elevon trim band | +0.6° to +1.9° provisional | **−0.04° to +0.41°** at the corrected V1 mass |
+| APC 8×8 cruise point | 9,900 rpm at peak η | **O1 power boundary: 8,443 rpm, maximum allowable drag 2.06 N; equilibrium requires E2 drag** |
 | Article #1 battery | four-config requirement unresolved | **6S1P reference; 4S is a separate motor module** |
-| CLEAN / V1 mass | 1685.2 g / 1722–1747 g | **1583.5 g / ≤1620.2 g** |
+| CLEAN / V1 mass | 1685.2 g / 1722–1747 g | **1583.5 g CLEAN; V1 lower model 1626.5 g** (1620.2 g allocation target reopened by C32) |
 
 ---
 
@@ -137,22 +138,22 @@ exists yet; it will be updated by the open point listed.
 | Mean aerodynamic chord (MAC) | **225 mm** | I-07 |
 | Sweep Λ_c/4 | **−15.0°** (LE −11.99°, TE −23.50°) | ADR-0040 / I-21 `[D]` |
 | Relative thickness t/c | **13.5 % root → 9 % tip** (linear) | ADR-0027 |
-| Geometric twist ε | **+3.0° wash-in** (linear root→tip); r1 neutral trim is −0.06°…+0.39° elevon over Ncrit 10–12 | ADR-0041 `[D]` (§4.3) |
+| Geometric twist ε | **+3.0° wash-in** (linear root→tip); r1 neutral trim is −0.04°…+0.41° elevon over Ncrit 10–12 at the V1 lower mass | ADR-0041 `[D]` (§4.3) |
 | Dihedral Γ | **2.0° total** (polyhedral at segment joints: 0 / 1.07 / 1.53 / 2.0°) | PROVISIONAL |
 | Airfoil | **Salamandra r1 spanwise family**: 13.5 % root / 9 % tip, mean-line-preserving thickness, +1.0°/+0.5° reflex | ADR-0041 `[D]`; E2 measured gate |
 | Neutral point NP | **25.72 % MAC** (= −75.8 mm from root c/4) | `[D]` I-21; independent Weissinger −72.9 mm / 27.0 % MAC |
 | Target CG | **17.72 % MAC** (= −93.8 mm from root c/4, SM 8 %) | `[D]` ADR-0040; see OP-01 |
-| All-up weight (6S1P P42A) | **1583.5 g CLEAN / 1620.2 g V1** allocation (§7.1) | ADR-0043; `mass_budget.py` |
-| Wing loading (6S1P) | **56.2 / 57.5 g/dm²** CLEAN/V1 | `[D]` |
-| Cruise speed / CL | **95 km/h** / CL 0.132 | docs/00, I-07 |
-| Stall speed | **≤ 45 km/h required**; **44.5 CLEAN / 45.0 V1** at the allocation | ADR-0043; §11 |
+| All-up weight (6S1P P42A) | **1583.5 g CLEAN / 1626.5 g V1 lower model**; V1 allocation target 1620.2 g is open (§7.1) | ADR-0043/C32; `mass_budget.py` |
+| Wing loading (6S1P) | **56.2 / 57.7 g/dm²** CLEAN/V1 lower model | `[D]` |
+| Cruise speed / CL | **95 km/h** / CL **0.1291 CLEAN / 0.1327 V1** | `design_config.py` `[D]` |
+| Stall speed | **≤45 km/h required**; **44.5 CLEAN / 45.1 V1 lower model** | ADR-0043/C32; §11 |
 | V_NE (article #1) | **160 km/h** (design 180) | docs/00 |
-| **V_limit (first flights)** | **105 km/h** (0.85 × conservative V_div 128.8, rounded down; **150** if S3 confirms the G_XY model) | docs/07 rev. 3, §11 |
+| **V_limit (first flights)** | **105 km/h retained conservatively**; released-r1 recalculation gives 0.85 × 129.6 = 110.2 km/h, but no envelope expansion is authorized without S3. **150 km/h** if S3 confirms the G_XY model. | docs/07 rev. 4, §11 |
 | Load factors | +6 / −3 (later +9), gust-dominated | docs/00 |
 | Skin / infill | 0.9 mm (2 perimeters) / gyroid 5 % | ADR-0028 |
 | Panel carbon | Bending tube Ø12×1.0 + anti-rotation pin Ø6 | PROVISIONAL (ADR-0015), §6.3 |
 | **Battery boom (prototype)** | Aluminium tube **Ø8 / int Ø6** + printed cradle, ≈ **37.4 g**, two-support arrangement | ADR-0040/0043, §6.7, §8 |
-| Reference propeller | APC-E 8×8; equilibrium at 95 km/h: **J 0.899, 8,667 rpm, 2.42 N** | ADR-0042 / UIUC `[D]` |
+| Reference propeller | APC-E 8×8; O1 power-limited boundary at 95 km/h: **J 0.923, 8,443 rpm, maximum allowable drag 2.06 N**; not an equilibrium prediction before E2 | ADR-0042 / UIUC `[D]` |
 | Reference motor | 28-class, 500–550 KV, ~170 g | PROVISIONAL (ADR-0033) |
 | Battery (reference) | 6S1P Li-Ion 21700, **445 g P42A** (90.7 Wh; 50E 433 g / 108 Wh) | I-16 |
 
@@ -210,7 +211,7 @@ All x-values from the root c/4 origin; chord and thickness in mm.
 | LE line | Straight line from (−72.3, 0) to (−210.3, 650); slope −0.2123 |
 | TE line | Straight line from (+216.9, 0) to (−65.7, 650); slope −0.4348 |
 | t/c schedule | Linear: 13.5 % at y = 0 → 9.0 % at y = 650 |
-| Twist schedule | Linear: ε = 0° at y = 0 → **+3.0°** at y = 650 (wash-in, trailing edge down); rotate each section about its local c/4 spanwise axis. The Salamandra r1 family gives −0.06°/+0.39° neutral elevon trim at Ncrit 10/12, inside the ±0.6° cap (`airfoil_reflex_trade.py`, `elevon_authority.py`). Keep the parameter exposed for E2 refinement; CAD value is fixed by ADR-0041. |
+| Twist schedule | Linear: ε = 0° at y = 0 → **+3.0°** at y = 650 (wash-in, trailing edge down); rotate each section about its local c/4 spanwise axis. At the C32 V1 lower mass, the Salamandra r1 family gives −0.04°/+0.41° neutral elevon trim at Ncrit 10/12, inside the ±0.6° cap (`airfoil_reflex_trade.py`, `elevon_authority.py`). Keep the parameter exposed for E2 refinement; CAD value is fixed by ADR-0041. |
 | Dihedral | **Polyhedral, piecewise-linear**; cumulative at the outboard end of each segment: CORE 0° (y 0–195) / seg 1 +1.07° (195–347) / seg 2 +1.53° (347–498) / seg 3 +2.0° (498–650). Values generated by Γ(y) = 2.0° × (y/650) sampled at the joints. Tip rise ≈ **12 mm** |
 | Dihedral — CAD recipe | Each printed segment is modeled **flat** (all its sections in one plane). In the assembly, each segment is rotated about the **chordwise (x) axis — through its inboard joint line, at the section mid-plane (z = 0)** — by its **cumulative** angle (seg 1 +1.07° at y = 195, seg 2 +1.53° at y = 347, seg 3 +2.0° at y = 498). Kinks occur at **every** segment joint (y = 195, 347, 498), including the CORE↔PANEL joint; the CORE stays at 0°. Within a segment the dihedral is constant, not continuous |
 
@@ -224,14 +225,14 @@ FC change).
 | | **SALAMANDRA-CLEAN** | **SALAMANDRA-V1** |
 |---|---|---|
 | Vertical stabilizer | **None** | **Fixed centreline fin** (passive) |
-| Role | O1 efficiency build (≤ 1.15 Wh/km) | **Recommended build for the Article #1 test programme** |
+| Role | O1 efficiency build (≤ 1.15 Wh/km) | **Recommended test build, conditional on F2 mass closure** |
 | Cnβ total | **−0.0006…−0.0014 /deg — negative** (statically unstable yaw `[E]`) | **−0.00005…+0.00095 /deg, nominal +0.0005 (V1a)**; V1b +0.00049…+0.00141 `[D]` on `[E]` bands (I-20) |
-| Yaw mode | Divergence τ ≈ 0.8 s `[E]` | Damped subsidence τ ≈ 1.5 s; Cnr doubled `[E]` |
+| Yaw mode | Corrected 2-DOF eigenvalues +6.25/−7.13 s⁻¹; divergence τ ≈ **0.16 s** `[E]` | Damped reduced β-r pair −0.796 ± 3.947i s⁻¹; decay τ ≈ **1.3 s** `[E]`; not a full Dutch-roll identification |
 | Fin geometry (V1a) | — | S_v = **2.13 dm²**; trapezoid **b_v ≈ 253 mm, c_r ≈ 105, c_t ≈ 63 mm**, AR_v ≈ 3.0; swept tip; root t ≥ **3.0 mm solid** (σ 29.9 MPa, FS 1.67 at V_NE without spar credit); fin AC ≈ **x = +285 mm** (l_v = 379 mm from CG −93.8); rear-pod extension ≈ 30 mm |
-| **Fin section** | **Symmetric biconvex plate**: local thickness t_v(y) = **3.0 mm root → 1.5 mm tip**, linear; LE radius ≈ 1.5 mm; TE ≈ 0.8 mm; no camber. Ø3 mm Al spar in a Ø3.2 LE channel, root to tip (EI ×1.60 at the 3 mm root; no strength credit). Mount: 105 mm × 3 mm slot + 1× Ø1.75 mm filament dowel + 1× M2 screw. | ADR-0038 / `boom_flexion.py` |
-| Fin mass | — | **≤ 36.72 g** `[E]` CAD acceptance cap, equal to the lower-band model (ADR-0043); weigh complete fin + mount |
+| **Fin section** | — | **Symmetric biconvex plate**: local thickness t_v(y) = **3.0 mm root → 1.5 mm tip**, linear; LE radius ≈ 1.5 mm; TE ≈ 0.8 mm; no camber. Ø3 mm Al spar in a Ø3.2 LE channel, root to tip (EI ×1.60 at the 3 mm root; no strength credit). Mount: 105 mm × 3 mm slot + 1× Ø1.75 mm filament dowel + 1× M2 screw (ADR-0038). |
+| Fin mass | — | Allocation target **≤36.72 g**, but C32 lower model is **37.31 g shell/mount + 5.70 g spar = 43.01 g**. The **6.29 g gap is open**; weigh the complete assembly. |
 | Drag / energy | — | ΔCD0 ≈ **+0.0014** → **+9.8 % drag ≈ 1.26 Wh/km** `[E]` |
-| V_stall impact | **44.5 km/h** at 1583.5 g | **45.0 km/h** at the 1620.2 g V1 allocation |
+| V_stall impact | **44.5 km/h** at 1583.5 g | **45.1 km/h** at the 1626.5 g lower model; fails C16 pending F2 |
 | Rudder | None | **None — not justified** (I-20 §5.4: cannot hold a 20 km/h crosswind slip at stall; bank-to-turn suffices; Mojito precedent `[M]` has no rudder servo) |
 
 Installation (V1): the fin mounts on the rear-pod extension, centreline, in the pusher
@@ -265,11 +266,11 @@ parameters, but a designer must use the r1 coordinates for this release.
 | Reynolds range | **Re(MAC) ≈ 3–5×10⁵**; root up to ≈ 5.2×10⁵ at cruise, ≈ 2.5×10⁵ at stall | I-01 |
 | Family | Reflexed low-Re flying-wing airfoils | B3 (docs/03) |
 | **Stall character** | **Gentle, root-first; no tip stall before the root** — a criterion of the designed section, not a hope: the thickness-separation evidence shows thick sections can transition local → massive separation | I-02, I-15/A5 |
-| L/D at cruise CL | As high as possible at CL = 0.132 | B2 |
+| L/D at cruise CL | As high as possible at CL = **0.1327** (C32 V1 lower model) | B2 |
 
 > **Computed closure `[D]`:** root/tip cruise Reynolds numbers are 510k/255k. The r1
 > c²-integrated profile Cm0 is +0.00326/+0.00209 at Ncrit 10/12; with +3.0° wash-in,
-> neutral elevon trim is −0.06°/+0.39°. Root and tip endpoint XFOIL `clmax` values are
+> neutral elevon trim is −0.04°/+0.41° at the corrected V1 mass. Root and tip endpoint XFOIL `clmax` values are
 > 1.27–1.34 and 1.08–1.14. These margins admit the CAD geometry; they do not replace E2
 > measurements of a printed surface.
 
@@ -416,7 +417,7 @@ following **binding constraints**; the final body shape is designer's choice wit
 | Spanwise extent | y = 0 → **±195** (30 % half-span) | The wing surface continues across the CORE (same planform and t/c schedule, §4) |
 | Centerline section | Root airfoil (c = 289.2 mm, t/c 13.5 %) at y = 0, mid-plane z = 0 | Same airfoil family as the panels (pending OP-02) |
 | Trailing edge | **Fixed** from y = 0 to ±195 (no hinge line on the CORE, C23) | The torsion box may run closed to the TE inboard of the panel root (PROVISIONAL) |
-| **Nose boom (battery)** | Aluminium tube **Ø8 / int Ø6 (wall 1.0 mm)** from the CORE support at x ≈ −132 to the forward support at x ≈ **−459** (support span **327 mm**, plus 50 mm CORE insertion) + printed cradle. The pack sits between the supports. FPV camera station **x ≈ −393**; printed front skid is the crush zone. | Required for the 6S1P P42A station **x = −359.6 mm**. Current two-support check: σ 54 MPa, FS 5.08 (6061-T6), δ 1.4 mm, 27.0 Hz; pure cantilever fails (`boom_flexion.py`). Hybrid assembly **37.4 g**. |
+| **Nose boom (battery)** | Aluminium tube **Ø8 / int Ø6 (wall 1.0 mm)** from the CORE support at x ≈ −132 to the forward support at x ≈ **−459** (support span **327 mm**, plus 50 mm CORE insertion) + printed cradle. The pack sits between the supports. FPV camera station **x ≈ −393**; printed front skid is the crush zone. | Required for the 6S1P P42A station **x = −359.6 mm**. Corrected multi-load two-support check: σ **56 MPa**, FS **4.96** (6061-T6), δ **1.7 mm**, **31.4 Hz**; pure cantilever fails (`boom_flexion.py`). Hybrid assembly **37.4 g**. |
 | **Battery cradle** | Printed cradle, 2 halves, walls 1.2 mm, mass ≤ 15 g: inner envelope **155 × 66 × 24 mm**, length **201 mm** from x ≈ **−460 to −259**, lower Ø8.2 channel gripping the tube; **2× 12 mm velcro straps + spring-lock hatch**; camera mount (2× M2/16 mm) on the forward support piece. | Pack centred at x = **−359.6 mm** (CG band −377.4…−341.9); PROVISIONAL until F2. |
 | **Boom socket (CORE)** | Ø8.2 straight bore in the CORE nose face at x ≈ −132, **centered z = 0** on the centreline, with a 4-perimeter collar; the tube is bonded into the cradle and slips into the socket (no adhesive in the CORE) | — |
 | **Rear pod (motor)** | Extends **48 mm aft of the root TE** (to x ≈ +265); **lower surface at the prop plane ≤ z = −111.6 mm** (≈ 92 mm below the wing lower surface) | Required so the 8×8 prop (Ø203, axis at z = 0) keeps ≥ 10 mm tip ground clearance (C26); PROVISIONAL |
@@ -489,10 +490,12 @@ The designer has full freedom for the CORE outer shape within the constraints of
 | **Battery 6S1P P42A (21700)** | **445** | `[D]` I-16 |
 | **Total CLEAN** | **1583.5** | **56.2 g/dm²; Vstall 44.5 km/h** |
 
-> **V1 variant:** add a complete fin/mount with mass **≤ 36.72 g** → AUW
-> **≤ 1620.2 g**, 57.5 g/dm² and Vstall **45.0 km/h**. The exact analytical
-> 45 km/h ceiling is 1620.4 g, so V1 must be weighed and accepted as a limit
-> configuration. CLEAN retains 36.1 g to that ceiling.
+> **V1 variant:** the ADR-0043 target remains a complete fin assembly ≤36.72 g and
+> AUW ≤1620.2 g. C32 found that the current lower model is **37.31 g shell/mount +
+> 5.70 g spar = 43.01 g**, so the connected V1 estimate is **1626.5 g, 57.7 g/dm²
+> and Vstall 45.1 km/h**. It exceeds the exact 1620.4 g / 45 km/h ceiling by about
+> 6.1 g. F2 must remove at least 6.3 g from CLEAN/fin CAD, or E2 must justify a
+> revised CLmax; V1 is not mass-closed today. CLEAN retains about 36.9 g to the ceiling.
 >
 > **Material variants:** per-part mass with PETG / AERO-PLA wings / PLA+ policies in
 > `mass_budget.py` (docs/06): reference ALL PETG **1583.5 g** · AERO WINGS **1420.9 g**
@@ -528,7 +531,7 @@ The designer has full freedom for the CORE outer shape within the constraints of
 | **Cradle (CAD question Q1)** | Printed, 2 halves, walls 1.2 mm, ≤ 15 g: inner envelope **155 × 66 × 24 mm** (pack 153.2 × 64.5 × 22.2 + clearance), length **201 mm from x ≈ −460 to −259**, lower Ø8.2 channel gripping the boom tube; 2× 12 mm velcro straps + spring-lock hatch; threaded inserts + reinforcement collar | PROVISIONAL until F2 |
 | Cradle position | Centres the pack at **x = −359.6 mm** (CG band −377.4…−341.9), between the forward support x ≈ −459 and CORE socket x ≈ −132 — structural requirement (§6.7) | `balance_cg.py` `[D]` |
 | Longitudinal adjustment | Pack slide along x inside the cradle; range sized to keep CG within ±5 mm (reference 6S1P) | docs/00 R-CG; re-derived in F2 (OP-23) |
-| Pack configs | **Article #1 is 6S1P only**: P42A 445 g at x = −359.6 mm. A 4S aircraft needs a separate ~730 Kv motor module and carrier/CG solution; both 2P packs need a different outer carrier. | ADR-0042, I-16, `balance_cg.py` `[D]` |
+| Pack configs | **Article #1 is 6S1P only**: P42A 445 g at x = −359.6 mm. A 4S aircraft needs a separate ~713 Kv motor module at the current O1 boundary and its own carrier/CG solution; both 2P packs need a different outer carrier. | ADR-0042, I-16, `balance_cg.py` `[D]` |
 
 ---
 
@@ -540,10 +543,10 @@ The designer has full freedom for the CORE outer shape within the constraints of
 |---|---|---|
 | Layout | **Single pusher** at the CORE rear center | PROVISIONAL (ADR-0006 under dispute) |
 | Propeller | **APC-E 8×8** — P/D 1.00; UIUC peak η is a comparison datum, not the commanded point | ADR-0007/0042, UIUC `[M]` |
-| Cruise operating point | **J 0.899, 8,667 rpm, 2.42 N, η_prop 0.688** at 95 km/h and O1's 109.25 W electrical ceiling; motor+ESC η = 0.85 `[E]` | `propulsion_match.py` `[D]` |
+| O1 propulsion boundary | O1 total battery power **109.25 W** minus **14.04 W** avionics/O4 Lite battery load leaves **95.21 W** for motor+ESC. APC E 8×8: **J 0.923, 8,443 rpm, maximum allowable drag 2.06 N, η_prop 0.671**, shaft 80.9 W. Aerodynamic acceptance: **CD ≤ 0.01711 and CLEAN L/D ≥ 7.55**. This is a power/drag boundary, not a unique equilibrium before E2. | `propulsion_match.py`, `fpv_power_budget.py` `[D]`/`[E]` |
 | Motor | 28-class (Ø28 mm), **500–550 KV**, ~170 g, ≥ 400 W peak | PROVISIONAL, derived |
 | ESC | 6S, **30 A** (cruise ≈ 5 A, peak ≈ 20 A) | derived |
-| Alternatives | 4S requires a separate approximately **730 Kv** module; APC-E 9×6/10×7 remain D3 alternatives | ADR-0042 |
+| Alternatives | 4S requires a separate approximately **713 Kv** module at an assumed 80 % loaded/no-load ratio; APC-E 9×6/10×7 remain D3 alternatives | ADR-0042 |
 | Battery energy (reference) | 6S1P P42A **90.7 Wh** / 50E **108 Wh** (pack 445/433 g, I-16 §6.1 `[D]`) | I-16; supersedes the docs/00 97 Wh estimate |
 
 > With the prop disk behind the root TE (x ≈ +235), the slipstream does **not** wash the
@@ -574,9 +577,9 @@ The designer has full freedom for the CORE outer shape within the constraints of
 | Launch | Autolaunch via acceleration detection | docs/00 |
 | Servos | 4× digital, no freeplay, dual actuation per elevon (§6.6; class and current in I-18) | ADR-0026 |
 | Wiring | Current path (ESC→battery) separated from GPS/mag, pitot and FPV runs | docs/00 |
-| Avionics power | **≈ 6.6 W** = ≈ 6 % of cruise (5 V rail 300–555 mA vs 2 A BEC; servo rail 1.2–2.8 A avg vs ≥ 4.5 A Vx BEC) → **≈ 7.3 % of the 6S1P P42A pack per flight-hour** (I-17 §6 `[D]`) | I-17 |
+| Avionics power | **6.64 W rail / 7.38 W battery** at η_BEC = 0.90 `[E]` = 6.8 % of O1; **8.1 % of the 6S1P P42A pack per flight-hour**. Rail-current bands remain 5 V 300–555 mA and active servo 1.2–2.8 A. | I-17 |
 | FPV (video) | **Article #1: DJI O4 Lite, 8.2 g**, powered from the 5 V rail. O4/Pro and legacy O3 mounts remain supported but require a new mass/stall check; O4 Pro must use the 9 V rail. | ADR-0043; I-19 `[M]`/`[D]` |
-| Total electronics | Avionics + FPV = **17.0 W with O4 Pro** (15.5 % of cruise; 18.8 % of pack per flight-hour) / 12.6 W with Lite. Fly the lowest usable power level (CE legal limit is 14 dBm, not the FCC number) | I-19 §5 `[D]` |
+| Total electronics | Avionics + FPV rail load = **17.1 W Pro / 12.64 W Lite**; at η_BEC = 0.90 the battery loads are **19.0 / 14.04 W** (17.4/12.9 % of O1; 20.9/15.5 % of the pack per flight-hour). Fly the lowest usable power level. | I-19 §5 `[D]`/`[E]` |
 
 ---
 
@@ -590,7 +593,7 @@ The designer has full freedom for the CORE outer shape within the constraints of
 | Endurance | 60 min at minimum-power speed | docs/00 |
 | Cruise speed | 90–105 km/h; design point **95 km/h** | docs/00 |
 | V_NE article #1 | **160 km/h** (design V_NE 180) | docs/00 |
-| **V_limit (first test flights)** | **105 km/h** (0.85 × 128.8, rounded down); **150 km/h** if S3 confirms the G_XY-plane model (0.85 × 179.0, rounded down) | docs/07 rev. 3, §11.3 |
+| **V_limit (first test flights)** | **105 km/h retained** below the recalculated 110 km/h clearance; **150 km/h** if S3 confirms the G_XY-plane model (0.85 × 180.0, rounded down) | docs/07 rev. 4, §11.3 |
 | Stall speed | **≤ 45 km/h** | docs/00 (C16) |
 | Required C_Lmax | ≥ 0.65 | docs/00 |
 | n_max / n_min | +6 / −3 (later +9) | docs/00 |
@@ -600,33 +603,37 @@ The designer has full freedom for the CORE outer shape within the constraints of
 
 ### 11.2 Stall margin and mass acceptance (ADR-0043)
 
-> The post-v0.2 Article #1 allocation is **1583.5 g CLEAN → 44.5 km/h** and
-> **1620.2 g V1 → 45.0 km/h**. The 45 km/h analytical ceiling is 1620.4 g. Binding
-> limits are a 550 g PETG shell, 36.72 g complete V1 fin, O4 Lite, 4× Corona DS-939MG,
-> SpeedyBee FC+PDB and the 25 g APC propeller assembly. F2 must replace `[E]` rows with
-> CAD mass properties and the complete airframe must be weighed. Any V1 build above
-> 1620.4 g fails C16 unless E2 supplies a measured `CLmax` that supports a re-derivation.
+> CLEAN is **1583.5 g → 44.5 km/h**. The ADR-0043 V1 allocation target is
+> **1620.2 g → 45.0 km/h**, but C32's complete-fin lower model gives
+> **1626.5 g → 45.1 km/h** because the mandatory 5.70 g spar was omitted from the old
+> fin row. The exact 45 km/h mass ceiling is 1620.4 g. Binding CLEAN inputs remain a
+> 550 g PETG shell, O4 Lite, 4× Corona DS-939MG, SpeedyBee FC+PDB and the 25 g APC
+> assembly. F2 must demonstrate at least 6.3 g of compensation in CLEAN/fin CAD and the
+> aircraft must be weighed. Any V1 build above 1620.4 g fails C16 unless E2 supplies a
+> measured `CLmax` that supports a re-derivation.
 > LW-PLA is not an allowed mass lever under the current divergence model.
 
-### 11.3 Divergence and V_limit (docs/07 rev. 3, `divergence.py` — G6)
+### 11.3 Divergence and V_limit (docs/07 rev. 4, `divergence.py` — G6)
 
-> V_div vs the **240 km/h criterion** at Λc/4 = −15°: nominal **325.3 km/h
-> (1.36× — PASS)**; **conservative unmeasured end 128.8 km/h (0.54× — FAIL)**;
-> AERO LW-PLA wings **91.1 km/h (not airworthy)**. The old enclosed-area-centroid
-> "shear centre" was invalid; revision 3 instead brackets xEA/c = 0.30…0.45 `[E]`
-> (I-21). A validated in-plane G_XY model raises the conservative result to 179.0 km/h;
-> G_XY + gyroid + 1.1 mm wall reaches only 206 km/h. **Operating rule:** V_limit
+> V_div vs the **240 km/h criterion** at Λc/4 = −15° using the released r1 root:
+> nominal **327.2 km/h (1.36× — PASS)**; **conservative unmeasured end 129.6 km/h
+> (0.54× — FAIL)**; AERO LW-PLA wings **91.6 km/h (not airworthy)**. The old enclosed-area-centroid
+> "shear centre" was invalid; revision 3 introduced the xEA/c = 0.30…0.45 `[E]`
+> bracket and revision 4 applies it to the released r1 profile
+> (I-21). A validated in-plane G_XY model raises the conservative result to 180.0 km/h;
+> G_XY + gyroid + 1.1 mm wall reaches only 207 km/h. **Operating rule:** V_limit
 > **105 km/h** initially; **150 km/h** only after S3 confirms G_XY. S3 elastic-axis/GJ
 > measurement and E7 Southwell expansion remain mandatory. Full analysis: docs/07; OP-29.
 
-### 11.4 Launch envelope (I-14 rev. 2 executed — `launch_speed.py` `[D]`)
+### 11.4 Launch envelope (I-14 rev. 4 executed — `launch_speed.py` `[D]`)
 
 > **Hand launch FEASIBLE.** Release gate: **V_suelta ≥ V_stall** (44.5 km/h CLEAN,
-> 45.0 km/h V1) with
+> 45.1 km/h at the 1626.5 g V1 lower model) with
 > elevon-up attitude — the k = 1.20 margin is built by motor acceleration in < 0.5 s
-> (T/W ≈ 1.0). Typical throw (10.5 m/s + ref idle): **48.4 km/h at release, k = 1.20 in
-> 0.39 s**; firm throw: **62.4 km/h (k = 1.36)**; a weak 8 m/s throw releases below stall
-> (9.8 km/h) — the technique is part of the specification (§12, step 0). Anchored on the
+> (T/W ≈ 1.0). With the revised drag-inclusive integrator, a typical throw
+> (10.5 m/s + reference idle) gives **46.3 km/h at release and k = 1.20 in 0.36 s**;
+> firm throw gives **58.5 km/h (k = 1.30)**; a weak 8 m/s throw releases below stall
+> (**34.2 km/h**) — the technique is part of the specification (§12, step 0). Anchored on the
 > configuration class `[M]`: the TBS Mojito (1300 mm, 1800 g, higher reported stall) is
 > hand-launched in service. **The measured CL_max chain (E2) stays double-critical:
 > it lowers V_stall and raises the release margin.**
@@ -640,10 +647,11 @@ out of scope for this version.
 
 ## 12. Assembly and control setup
 
-0. **Launch rules (I-14 rev. 2, `launch_speed.py`):** **firm throw (V_hand ≥ 10 m/s),
+0. **Launch rules (I-14 rev. 4, `launch_speed.py`):** **firm throw (V_hand ≥ 10 m/s),
    release at 0–5° pitch** — the gate is V_suelta ≥ V_stall (44.5 CLEAN / 45.0 V1); the
    k = 1.20 margin is reached by motor acceleration in < 0.5 s (typical throw:
-   48.4 km/h at release, k = 1.20 in 0.39 s). INAV autolaunch: `nav_fw_launch_thr`
+   46.3 km/h at release, k = 1.20 in 0.36 s). The revised integration includes
+   launch drag (`CD = 0.08` `[E]`). INAV autolaunch: `nav_fw_launch_thr`
    = hover throttle (bench: nose-up until "about to fly out of your hand"),
    `nav_fw_launch_idle_thr` 1350–1450 (0.5–0.67 × launch, wing-throw band),
    `nav_fw_launch_motor_delay` 200 ms (pusher: never 0), `nav_fw_launch_spinup_time`
@@ -680,7 +688,7 @@ out of scope for this version.
 | Set | Documents |
 |---|---|
 | Decisions | ADR-0001…ADR-0043 ([`decisions/`](../decisions/)) |
-| Research | I-01…I-22 ([`research/`](../research/)); **v0.3 audit: I-22**; **airfoil: I-15 §8**; **sweep/elastic-axis: I-21**; **directional stability: I-20** |
+| Research | I-01…I-23 ([`research/`](../research/)); **calculation integration audit: I-23**; **v0.3 audit: I-22**; **airfoil: I-15 §8**; **sweep/elastic-axis: I-21**; **directional stability: I-20** |
 | Specification | [`docs/00-objectives-and-requirements.md`](../docs/00-objectives-and-requirements.md) |
 | Measured data | [`docs/02-measured-references.md`](../docs/02-measured-references.md) |
 | Plans | [`docs/03-phase-1-plan.md`](../docs/03-phase-1-plan.md), [`docs/05-master-plan.md`](../docs/05-master-plan.md) |
@@ -696,7 +704,8 @@ out of scope for this version.
 
 | Version | Date | Change |
 |---|---|---|
-| 0.18 | 2026-08-17 | **Released in v0.3.0.** Salamandra r1 coordinate family and +3.0° twist fixed for CAD (ADR-0041); APC 8×8 cruise corrected to the aircraft-equilibrium point (ADR-0042); 6S1P-only Article #1 and the 1583.5/1620.2 g CLEAN/V1 mass allocation adopted (ADR-0043). Release notes: [`docs/10-release-v0.3.md`](../docs/10-release-v0.3.md). |
+| 0.19 | 2026-08-17 | **Post-release calculation-system correction (C29–C32, I-23).** Unified shared inputs and added `verify_calculations.py`; corrected O1 total-power boundary, servo units/margin and dimensional yaw modes; divergence now uses r1, launch includes drag and boom uses exact static load superposition. C32 found the mandatory 5.70 g V1 spar missing from the mass chain: the 1620.2 g allocation remains the target, while the connected lower model is 1626.5 g / 45.1 km/h and F2 is reopened. No planform, airfoil-coordinate or CLEAN CG change. |
+| 0.18 | 2026-08-17 | **Released in v0.3.0.** Salamandra r1 coordinate family and +3.0° twist fixed for CAD (ADR-0041); original APC 8×8 O1 calculation published (its equilibrium interpretation and hotel-load omission are superseded by v0.19/C29); 6S1P-only Article #1 and the 1583.5/1620.2 g CLEAN/V1 mass allocation adopted (ADR-0043). |
 | 0.17 | 2026-08-17 | **Released in tag v0.2.0 as the controlling CAD specification.** Added an explicit authority hierarchy and breaking migration table; prohibited mixing v0.1.0 wing/CORE/cradle geometry with the −15° baseline; corrected the summary twist statement so the adverse 1.9° reflex case remains an open B3 gate. Release notes: [`docs/09-release-v0.2.md`](../docs/09-release-v0.2.md). |
 | 0.16 | 2026-08-17 | **Highest-ROI design audit implemented:** quarter-chord sweep −20° → **−15°** (ADR-0040/I-21); canonical station table generated from `design_config.py`; NP/CG and 6S1P cradle rebalanced; false shear-centre identification removed; divergence revision 3 and initial V_limit **105 km/h** adopted. Supersedes all v0.15 planform coordinates. |
 | 0.15 | 2026-08-06 | **First release (tag v0.1.0).** Status → RELEASED (CAD baseline); segment spans added (§6.5, C24); new §6.9 bought-in items and consumables table; the remaining open items are named with their triggers (OP-02 airfoil, OP-21 CORE shape). Release notes: [`docs/08-release-v0.1.md`](../docs/08-release-v0.1.md). |

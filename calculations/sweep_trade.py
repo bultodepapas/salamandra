@@ -11,27 +11,36 @@ NASA TP-1685 figures 7-8 are used only for a relative divergence-speed trend;
 their aluminium flat-plate magnitudes do not transfer to the printed wing.
 """
 import argparse
-import numpy as np
 
+import numpy as np
 from balance_cg import solve_reference_layout
-from design_config import B, MAC, S, SWEEP_C4_DEG, TAPER
+from design_config import (
+    ARTICLE_V1_MASS_KG,
+    CRUISE_SPEED_KMH,
+    STALL_SPEED_LIMIT_KMH,
+    STATIC_MARGIN,
+    SWEEP_C4_DEG,
+    TAPER,
+    B,
+    S,
+    lift_coefficient,
+    speed_mps,
+)
 from vlm_ala_volante import analiza, geom, solve
 from weissinger_np import weissinger
 
-
 CANDIDATES = (-20.0, -16.0, -15.0, -12.0, -10.0)
-STATIC_MARGIN = 0.08
-CL_CRUISE = 0.132
+CL_CRUISE = lift_coefficient(
+    ARTICLE_V1_MASS_KG, speed_mps(CRUISE_SPEED_KMH))
 PROFILE_CM0 = 0.002095     # conservative r1 root/tip integral, Ncrit 12 [D]
 TWIST_CAP = 3.0
 ELEVON_EQUIV_CAP = 0.6
 SECTION_CL_MAX = 0.65
 MIN_SECTION_CL_MARGIN = 0.01
 
-DESIGN_REF_MASS = 1.620  # kg; O1/V1 target, current allocation 1.6202 kg
-RHO = 1.225
-V_STALL = 45.0 / 3.6
-CL_MAX_REQUIRED = DESIGN_REF_MASS * 9.81 / (0.5 * RHO * V_STALL**2 * S)
+DESIGN_REF_MASS = ARTICLE_V1_MASS_KG
+V_STALL = speed_mps(STALL_SPEED_LIMIT_KMH)
+CL_MAX_REQUIRED = lift_coefficient(DESIGN_REF_MASS, V_STALL)
 
 # Conservative digitization band from NASA TP-1685 figures 7-8, expressed as
 # divergence SPEED ratio relative to -20 deg. Trend only [D]/[E].
@@ -111,7 +120,8 @@ def main():
     print("=" * 118)
     print("SALAMANDRA SWEEP TRADE - I-21 / ADR-0040")
     print(f"mesh VLM={ny}x{nx}; Weissinger ny={wny}; r1 integrated profile Cm0={PROFILE_CM0:+.4f}")
-    print(f"stall screen mass={DESIGN_REF_MASS:.3f} kg (O1/V1 target; current allocation 1.6202 kg)")
+    print(f"stall screen mass={DESIGN_REF_MASS:.5f} kg "
+          "(shared V1 analytical lower model)")
     print("=" * 118)
     print(" sweep   NP VLM/WL(mm)  twist req  elevon eq  cl peak@eta  6S station  boom  NASA Vdiv gain  result")
     for row in rows:

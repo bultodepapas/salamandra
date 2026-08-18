@@ -52,8 +52,8 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | [0039](ADR-0039-filament-dowel-pins.md) | Filament dowel pins in the glued segment joints | ✅ | High `[D]`/`[E]` | Yes |
 | [0040](ADR-0040-quarter-chord-sweep.md) | Quarter-chord sweep reduced to −15° | 🔄 | Medium `[D]`/`[E]` | Yes, before CAD freeze |
 | [0041](ADR-0041-salamandra-r1-airfoil-family.md) | Salamandra r1 coupled root/tip airfoil family | ✅ | Medium `[D]` | Yes, before tooling |
-| [0042](ADR-0042-cruise-propulsion-equilibrium.md) | Match cruise propulsion at aircraft equilibrium | ✅ | Medium `[D]`/`[E]` | Yes |
-| [0043](ADR-0043-article-1-mass-allocation.md) | Article #1 mass allocation and 45 km/h stall closure | ✅ | Medium `[M]`/`[D]`/`[E]` | Yes |
+| [0042](ADR-0042-cruise-propulsion-equilibrium.md) | Bound cruise propulsion by total power; close equilibrium with E2 drag | ✅ | Medium `[D]`/`[E]` | Yes |
+| [0043](ADR-0043-article-1-mass-allocation.md) | Article #1 mass allocation; CLEAN closes 45 km/h, V1 reopened by C32 | 🔄 | Medium `[M]`/`[D]`/`[E]` | Yes |
 
 ### Superseded or cancelled
 

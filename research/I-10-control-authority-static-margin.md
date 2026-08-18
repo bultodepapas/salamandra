@@ -34,7 +34,8 @@ gust/extreme-CG envelope. Two dependencies keep the thread open:
 - Current VLM: wash-in yield +0.00249 Cm/°, elevon yield +0.00256 Cm/°. Five degrees
   of elevon gives 12.8× the limiting r1 trim residual; low-Re physical validation is open.
 - Printed twist is 3.0°. ADR-0041 supersedes the provisional root-only cases: the
-  c²-integrated Salamandra r1 family needs −0.06°…+0.39° neutral elevon across
+  c²-integrated Salamandra r1 family needs −0.04°…+0.41° neutral elevon at the
+  corrected V1 lower-model mass across
   Ncrit 10/12, inside the ±0.6° cap.
 - In-service trim data points: Peregrine INAV "level flight pitch 0→3°" `[M]` (I-02);
   Nemesis/Stormbird 1–2 mm of reflex `[M]` (I-08).

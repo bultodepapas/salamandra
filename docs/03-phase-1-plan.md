@@ -93,8 +93,8 @@ Solved by **calibration**, not by search.
 |---|---|---|
 | D1 | Build the measurement chain: pitot + blackbox + current logging | Instrument of E2, E3 and E7 |
 | **D2** | **Validate the method on an existing platform** | Stabilized flight, speed sweep, data reduction |
-| D3 | Propeller-matching sweep | APC 8×8 equilibrium solved at O1 power; bench alternatives remain |
-| D4 | Matching table per power module | 6S reference published; 4S requires ~730 Kv and its own carrier/CG closure |
+| D3 | Propeller-matching sweep | APC 8×8 O1 power/drag boundary solved; E2 drag and bench alternatives remain |
+| D4 | Matching table per power module | 6S reference published; 4S requires ~713 Kv and its own carrier/CG closure |
 
 **D2 is the most underrated step in the plan.** It validates the whole measurement chain on an aircraft that already flies, before the new one exists. If the method does not work there, it will not work later — and it would be far worse to discover that with article #1.
 

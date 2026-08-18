@@ -5,10 +5,11 @@
 **Feeds:** First platform variant (O14, ADR-0032), CORE rear-pod design (guide §7.6), OP-21, gap G10, in-service Mojito comparison (docs/02, I-02)
 **Does not close:** G8 (pitch NP) — this is the lateral-directional axis, Phase 1's declared task (I-10 §7)
 
-> **ADR-0040 update:** `yaw_stability.py` now consumes the −15° geometry and solved
+> **C31/C32 update:** `yaw_stability.py` consumes the −15° geometry and solved
 > −93.8 mm CG. It also corrects an internal inconsistency: structure/rudder/damping now
 > use the calculated fin area instead of a stale fixed 2.0 dm². With the v0.3 boom,
-> current V1a is 2.13 dm² with a 3.0 mm solid root; V1b is 2.83 dm².
+> current V1a is 2.13 dm² with a 3.0 mm solid root; V1b is 2.83 dm². C32 adds the
+> mandatory 5.70 g spar to both complete-fin mass bands.
 
 ---
 
@@ -97,13 +98,14 @@ alternative (on the wing, ahead of the prop) needs ≈ 1.7× the area for the sa
 | Body (k 0.40 … 0.96, S_fs 0.040 m²) | **−0.00056 … −0.00135** |
 | Wing, FSW (band) | −0.00010 … 0.00000 |
 | **Total, no fin** | **−0.00056 … −0.00145** — negative across the whole band |
-| Worst-case yaw mode | λ ≈ +1.31 1/s → **divergence τ ≈ 0.8 s** `[E]` |
+| Worst-case yaw mode | Corrected 2-DOF λ ≈ +6.25/−7.13 s⁻¹ → **divergence τ ≈ 0.16 s** `[E]` |
 
-The finless Salamandra is **directionally unstable in the classical sense**. It would fly
-only because INAV holds heading through roll (bank-to-turn) and the time constant is long
-enough for the FC — but there is no physical yaw effector, no restoring moment, and the
-boom's yaw inertia (≈ 0.07 kg·m² from the pack alone) delays any correction. This is
-exactly why the Mojito — the closest in-service FSW + nose + pusher — carries a fin.
+The finless Salamandra is **directionally unstable in the classical sense**. The
+corrected 0.16 s divergence is too fast to claim that bank-to-turn stabilization will
+recover it, especially because there is no physical yaw effector or restoring moment.
+Finless flight therefore requires its own E8 build-up evidence; it is not the first-test
+configuration. This is exactly why the Mojito — the closest in-service FSW + nose +
+pusher — carries a fin.
 
 ## 5.2 Fin sizing (centreline, rear-pod, l_v = 379 mm, AR_v = 3.0)
 
@@ -113,14 +115,15 @@ exactly why the Mojito — the closest in-service FSW + nose + pusher — carrie
 | b_v / c_r / c_t | 253 / 105 / 63 mm | 291 / 121 / 73 mm |
 | Cnβ_total band | −0.00006 … +0.00096 (nominal **+0.0005**) | +0.00048 … +0.00142 (nominal **+0.0010**) |
 | V_v = S_v·l_v/(S·b) | 0.022 | 0.030 (tailless practice ≈ 0.02–0.05 `[I]`) |
-| Mass (distributed thickness) | **36.72–61.20 g** | **49–81 g** |
+| Complete mass (distributed thickness + mount + spar) | **43.01–67.88 g** | **55.32–88.39 g** |
 | ΔCD0 | +0.0014 | +0.0019 |
 | Drag / Wh/km impact | **+9.8 % → ≈ 1.26** `[E]` | +12.9 % → ≈ 1.30 `[E]` |
-| AUW & V_stall | Article #1 cap 36.72 g → 1620.2 g / 45.0 km/h | +65 g nominal → 45.4 km/h |
+| AUW & V_stall | Lower model 1626.5 g / **45.1 km/h FAIL**; allocation target 1620.2 g / 45.0 km/h | +72 g nominal → 45.5 km/h |
 
-C16 tension: both options push V_stall above the 45 km/h requirement at the current
-budget; the guide's declared lever (shell 550 g, boom ≤ 40 g, servos 48 g → ≈ 1625 g)
-absorbs V1a with ≈ 45.7 km/h at the lever — **flagged to F2/OP-24**.
+C16 tension: both complete-fin models push V_stall above the 45 km/h requirement at
+the current CLEAN budget. The former 36.72 g V1a value is an allocation target, not a
+physical lower bound. C32's connected lower model misses that allocation by 6.29 g —
+**flagged to F2/OP-24**.
 
 ## 5.3 Structure (V1a at V_NE 180 km/h, cantilever)
 
@@ -128,7 +131,7 @@ absorbs V1a with ≈ 45.7 km/h at the lever — **flagged to F2/OP-24**.
 - Root thickness: 1.5 mm → σ ≈ 121 MPa (**fails**); 2.5 mm → σ ≈ 43.6 MPa,
   **FS 1.16 (rejected)**; **3.0 mm → σ 29.9 MPa, FS 1.67** without spar credit.
 - **Spec: root t ≥ 3.0 mm solid, trapezoidal, swept tip.**
-- First bending mode ≈ 8.0 Hz — flutter/strength verification in F2 (G7 discipline).
+- First bending mode ≈ 7.9 Hz — flutter/strength verification in F2 (G7 discipline).
 
 ## 5.4 Movable rudder — quantified rejection
 
@@ -145,9 +148,10 @@ rudder is not justified in this analysis.** The Mojito agrees `[M]`.
 
 ## 5.5 Yaw damping
 
-Cnr: wing −0.033 → with V1a fin **−0.089 /rad (doubled)**; yaw subsidence with V1a:
-λ ≈ −0.65 1/s (stable, τ ≈ 1.5 s) `[E]` vs +1.5 1/s finless. The fin converts a
-divergence into a damped subsidence.
+Cnr: wing −0.032 → with V1a fin **−0.084 /rad (doubled)**. With the corrected C31
+dimensionalization, CLEAN gives +6.25/−7.13 s⁻¹ and V1a gives the damped reduced pair
+−0.796 ± 3.947i s⁻¹ (decay τ ≈ 1.3 s) `[E]`. The fin converts a divergence into a
+damped lateral-directional oscillation in this reduced model.
 
 # 6. Recommendation (engineering)
 
@@ -156,7 +160,8 @@ divergence into a damped subsidence.
    c_r ≈ 105 / c_t ≈ 63 mm, AR_v ≈ 3.0, root t ≥ 3.0 mm) on a ≈ 30 mm rear-pod extension
    behind the prop disk, fin AC ≈ +285 mm, slipstream-mounted (η ≈ 1.25 — the fin is
    *most* effective at low speed, exactly where launch and stall handling need it).
-   Article #1 mass cap 36.72 g, ΔCD0 ≈ +0.0014. V1b (+0.0010/deg nominal) if F2 allows.
+   Complete lower mass 43.01 g against a 36.72 g allocation target, ΔCD0 ≈ +0.0014.
+   V1b (+0.0010/deg nominal) if F2 allows its 55.32–88.39 g complete mass.
 2. **The finless configuration remains the O1-efficiency baseline** (≤ 1.15 Wh/km needs
    the cleanest build; the fin costs ≈ +10 % energy `[E]`). It is documented here as
    directionally unstable and FC-dependent — a declared risk, not a silent assumption.
@@ -194,8 +199,8 @@ divergence into a damped subsidence.
   printed surface, slipstream η, yaw inertia, and the simplified 2-DOF dynamics. The
   *sign* conclusions (finless negative; fin restores stability; rudder not needed) are
   robust to the band; the *sizes* (2.13 vs 2.83 dm²) are not — hence the two tiers.
-- The 2-DOF (β, r) model is a subsidence check, not a Dutch-roll analysis (4-DOF with
-  p, φ needed) — declared `[E]`, flight data to close.
+- The 2-DOF (β, r) model estimates reduced lateral-directional modes, not a full
+  Dutch-roll identification (p and φ are omitted) — declared `[E]`, flight data to close.
 - Mojito practice is one data point from a single manufacturer `[M]` (same limitation
   class as I-08/I-09): configuration-class evidence, not replication.
 

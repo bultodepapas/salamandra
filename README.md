@@ -9,7 +9,7 @@ forward-swept flying wing, but that is only the first design. The repository is 
 grow into a whole family of airframes, parts, adapters and experiments — contributed by
 the community.
 
-**Revision 1.14** · 17 August 2026 · **Release v0.3.0 · Phase 1 in progress**
+**Revision 1.15** · 17 August 2026 · **Release v0.3.0 · Phase 1 in progress**
 
 > 📖 **Read this project as a website:** <https://bultodepapas.github.io/salmandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
@@ -90,15 +90,17 @@ The aircraft is designed as a **modular platform**:
 
 This is the first, reference design on the platform, named **Salamandra**. Its current
 specification for the designer is the
-[**Salamandra Design Guide v0.18**](design/Salamandra-Design-Guide-v0.1.md), with the
+[**Salamandra Design Guide v0.19**](design/Salamandra-Design-Guide-v0.1.md), with the
 justification in [`design/`](design/). The baseline is a PETG forward-swept flying wing,
 **modular and configurable**: a standard center module and interchangeable wing panels.
 Efficient FPV cruise flight, with electronics chosen by the builder.
 
-**📦 Current release — `v0.3.0`: airfoil, propulsion and mass closure.** The Design
+**📦 Current release — `v0.3.0`: airfoil, propulsion and mass allocation.** The Design
 Guide is the authoritative entry point. This release supplies the Salamandra r1 CAD
-coordinate family, corrects cruise matching to aircraft equilibrium, and adopts a
-binding 6S1P mass/CG allocation. Read the [**v0.3.0 release notes**](docs/10-release-v0.3.md)
+coordinate family and a binding 6S1P mass/CG allocation. Post-release calculation
+audit C29–C32 corrects the propulsion boundary, servo units, yaw modes and the omitted
+V1 fin-spar mass. Read the
+[**v0.3.0 release notes**](docs/10-release-v0.3.md)
 before continuing v0.2.0 CAD. Historical v0.1.0/v0.2.0 notes remain audit records.
 The wiki renders the package at
 <https://bultodepapas.github.io/salmandra/>.
@@ -127,13 +129,13 @@ comes from the propulsion chain, which is where the data say the gap is.
 | Quarter-chord sweep | **−15°** | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | **t/c** | **13.5 % root / 9 % tip** | [ADR-0027](decisions/ADR-0027-relative-thickness.md) |
 | Airfoil | **Salamandra r1:** MH60 mean line, +1.0°/+0.5° root/tip reflex | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md) |
-| Printed wash-in | **+3.0°**; neutral elevon −0.06°…+0.39° `[D]` | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md) |
+| Printed wash-in | **+3.0°**; neutral elevon −0.04°…+0.41° at the corrected V1 mass `[D]` | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md) |
 | Material | **Conventional PETG**, light color | [ADR-0021](decisions/ADR-0021-base-material.md) |
 | Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** | [ADR-0028](decisions/ADR-0028-gyroid-infill.md) |
 | Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
 | Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
-| AUW (6S1P) | **1583.5 g CLEAN / ≤1620.2 g V1** | [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md) |
-| Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; 8667 rpm equilibrium at O1** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
+| AUW (6S1P) | **1583.5 g CLEAN; V1 lower model 1626.5 g / 45.1 km/h** (1620.2 g allocation target open, C32) | [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md) |
+| Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; O1 boundary J 0.923 / 8443 rpm / drag ≤2.06 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
 | Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | V_NE article #1 | **160 km/h** (design 180) | — |
 | Initial V_limit | **105 km/h**; 150 only after GXY validation | [`docs/07`](docs/07-divergence-margin.md) |
@@ -169,7 +171,7 @@ configuration contributed to the platform.
 
 | Folder | What it contains |
 |---|---|
-| [`design/`](design/) | **Salamandra Design Guide v0.18** — the authoritative v0.3.0 CAD specification, its justification, and the open points |
+| [`design/`](design/) | **Salamandra Design Guide v0.19** — the authoritative v0.3.0 CAD specification plus C29–C32 corrections, its justification, and the open points |
 | [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |
@@ -225,25 +227,30 @@ Phase-1 status (2026-08-17):
 - **G2 (airfoil) — closed for CAD, open for measured acceptance.** The corrected B3
   pipeline preserves the mean line, invalidates stale polar caches and uses the local
   Reynolds envelope. The released Salamandra r1 family integrates root/tip moments with
-  c² weights and trims at **−0.06°…+0.39° neutral elevon** with +3.0° wash-in
+  c² weights and trims at **−0.04°…+0.41° neutral elevon** with +3.0° wash-in
   ([ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md)); E2 remains mandatory.
 - **ADR-0040/0043 — coupled planform, mass and balance resolved.** The −15° planform
   and target CG **−93.8 mm** remain. With Article #1 hardware and the 550 g PETG-shell
-  cap, CLEAN/V1 are **1583.5/1620.2 g** and the 6S1P P42A pack balances at
+  cap, CLEAN is **1583.5 g** and the 6S1P P42A pack balances at
   **−359.6 mm** in a 327 mm two-support nose boom. Current stations and acceptance gates in the
   [guide §7.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
-- **OP-29 (divergence) — operationally bounded, structurally open.** Revision 3 removed
-  an invalid area-centroid/shear-centre assumption. Nominal Vdiv is 325.3 km/h, but the
-  conservative unmeasured case is **128.8 km/h**; initial **Vlimit = 105 km/h**. S3 GJ,
+- **C32 — V1 mass allocation reopened.** The former 36.72 g fin row omitted the
+  mandatory 5.7 g aluminium spar. The connected lower assembly model is **43.01 g**,
+  so V1 is **1626.5 g / 45.1 km/h**, 6.1 g above the exact stall mass limit. F2 must
+  save at least 6.3 g in CLEAN/fin CAD or measured E2 must justify a new CLmax.
+- **OP-29 (divergence) — operationally bounded, structurally open.** Revision 4 uses
+  the released r1 profile. Nominal Vdiv is 327.2 km/h, but the conservative unmeasured
+  case is **129.6 km/h**; initial **Vlimit = 105 km/h**. S3 GJ,
   GXY and elastic-axis measurements plus E7 Southwell expansion are mandatory.
 - **G10 (directional stability) — bounded by calculation (I-20, ADR-0038).** The
   finless baseline is estimated **directionally unstable** (Cnβ −0.0006…−0.0014/deg
   `[E]`, FSW + nose boom); the platform now publishes two configurations:
   **SALAMANDRA-CLEAN** (finless, O1 efficiency build) and **SALAMANDRA-V1** (fixed
   centreline fin, no rudder — first platform variant, recommended for the test
-  programme): S_v 2.13–2.83 dm², 37–81 g, ΔCD0 +0.0014–0.0019 `[D]`/`[E]`
+  programme after F2 mass closure): S_v 2.13–2.83 dm², **43–88 g complete**, ΔCD0
+  +0.0014–0.0019 `[D]`/`[E]`
   (`calculations/yaw_stability.py`). A movable rudder is **rejected with numbers**
   (I-20 §5.4; Mojito `[M]` flies a fixed stabilizer with elevons only). Closure by
   flight test **E8** (yaw perturbation).
@@ -272,16 +279,19 @@ The full guide (versions, commands, batch quirks, validation discipline) is in
 The current high-value results reproduce with:
 
 ```bash
+python3 calculations/verify_calculations.py        # fast cross-module contracts
+python3 calculations/verify_calculations.py --all-scripts  # deterministic local suite
 python3 calculations/vlm_ala_volante.py       # NP (I-07)
 python3 calculations/weissinger_np.py         # C2 independent NP check (I-15 §6.3)
 python3 calculations/airfoil_reflex_trade.py --xfoil /path/to/xfoil.exe  # r1 coordinates/trim
-python3 calculations/propulsion_match.py      # APC E 8x8 aircraft-equilibrium match
+python3 calculations/propulsion_match.py      # APC E 8x8 O1 power/drag boundary
 python3 calculations/mass_budget.py --config all  # Article #1 allocation and variants
 python3 calculations/balance_cg.py            # coupled 6S1P station / nose-boom sizing
 ```
 
-Each script ships its validation case; a modification that breaks the validation is
-not accepted.
+Each script ships validation cases. The system verifier also checks that geometry,
+mass, battery, CG, stall, power, propulsion, stability and structural modules use the
+same design contract; a modification that breaks either level is not accepted.
 
 ---
 

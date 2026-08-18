@@ -15,22 +15,26 @@ reference 6S1P P42A pack (90.7 Wh, I-16). Reference, not a verdict.
 """
 import sys
 
+from battery_pack_layout import CELLS as PACK_CELL_SPECS
+from design_config import REFERENCE_BEC_EFFICIENCY, electrical_power_limit_w
+from inav_fc_match import avionics_power_budget
+
 # --- Salamandra FPV assumptions ---------------------------------------------
 BEC_9V = (2.0, 3.0)      # A continuous / peak, Matek 9V BEC
 BEC_5V = (2.0, 3.0)      # A continuous / peak, Matek 5V BEC
-PACK_WH = 90.7            # Wh, 6S1P P42A (I-16 §6.1)
-CRUISE_W = 110.0          # W, guide §9.1 (5 A @ 22 V, 6S)
-AVIONICS_W = 6.6          # W, I-17 §6.2 (avionics without FPV)
+PACK_WH = 6.0 * PACK_CELL_SPECS["Molicel P42A"][5]
+CRUISE_W = electrical_power_limit_w()  # W, total O1 battery-power ceiling
+AVIONICS_W = avionics_power_budget()[2]
 
 # model : (measured voltage V, disarmed current A, {power_mW: current_A})
 UNITS = {
-    "O4 Pro": dict(v=9.0, disarmed=0.33, draw={
+    "O4 Pro": {"v": 9.0, "disarmed": 0.33, "draw": {
         1200: 1.16, 700: 1.05, 400: 0.98, 200: 0.92,
-        100: 0.87, 50: 0.84, 25: 0.82}),
-    "O4 (standard)": dict(v=9.0, disarmed=0.33, draw={
+        100: 0.87, 50: 0.84, 25: 0.82}},
+    "O4 (standard)": {"v": 9.0, "disarmed": 0.33, "draw": {
         700: 1.05, 400: 0.98, 200: 0.92,
-        100: 0.87, 50: 0.84, 25: 0.82}),
-    "O4 Lite": dict(v=5.0, disarmed=0.60, draw={700: 1.2}),
+        100: 0.87, 50: 0.84, 25: 0.82}},
+    "O4 Lite": {"v": 5.0, "disarmed": 0.60, "draw": {700: 1.2}},
 }
 
 # model : (input range V, weight g, VTX size, camera size, sensor)  [M]
@@ -44,7 +48,10 @@ DIMS = {
 def model_power(name, v_input=None):
     """Return list of (mW, W, I_at_input) at the given input voltage."""
     u = UNITS[name]
-    v = v_input or u["v"]
+    v = u["v"] if v_input is None else v_input
+    v_min, v_max = DIMS[name][0]
+    if not v_min <= v <= v_max:
+        raise ValueError(f"{name} input {v} V is outside {v_min}--{v_max} V")
     rows = []
     for mw, ia in sorted(u["draw"].items()):
         w = ia * u["v"]            # measured W (constant-power converter)
@@ -55,6 +62,16 @@ def model_power(name, v_input=None):
     return v, rows
 
 
+def reference_hotel_load_w(fpv_name="O4 Lite", avionics_w=AVIONICS_W,
+                           bec_efficiency=REFERENCE_BEC_EFFICIENCY):
+    """Continuous non-propulsion battery input for a selected FPV unit [W]."""
+    if avionics_w < 0.0 or not 0.0 < bec_efficiency <= 1.0:
+        raise ValueError("avionics power must be non-negative and BEC eta in (0, 1]")
+    _, rows = model_power(fpv_name)
+    fpv_max = max(w for level, w, _ in rows if level > 0)
+    return (avionics_w + fpv_max) / bec_efficiency
+
+
 def main():
     print("=" * 76)
     print("FPV SYSTEM POWER BUDGET — DJI O4 / O4 Pro / O4 Lite")
@@ -62,8 +79,8 @@ def main():
     for name, (vr, w, vt, cam, sen) in DIMS.items():
         print(f"\n{name}  [M]: weight {w} g | VTX {vt} mm | camera {cam} mm | "
               f"sensor {sen} | input {vr[0]}-{vr[1]} V")
-    print(f"\nMeasured draw anchors [M]: O4 Pro/Lite armed+recording. "
-          f"O4 (standard) = same TX module as Pro [I].")
+    print("\nMeasured draw anchors [M]: O4 Pro/Lite armed+recording. "
+          "O4 (standard) = same TX module as Pro [I].")
 
     default_v = 9.0
     if len(sys.argv) > 1:
@@ -73,9 +90,10 @@ def main():
             pass
 
     for name in UNITS:
-        v, rows = model_power(name, default_v)
+        _, rows = model_power(name, default_v)
         print(f"\n--- {name}  (input {default_v:.1f} V) ---")
-        print(f"  {'level':>8} {'W':>7} {'I@%.1fV' % default_v:>10}")
+        current_header = f"I@{default_v:.1f}V"
+        print(f"  {'level':>8} {'W':>7} {current_header:>10}")
         for mw, w, ia in rows:
             tag = "disarmed" if mw == 0 else f"{mw} mW"
             print(f"  {tag:>8} {w:>7.1f} {ia*1000:>9.0f} mA")
@@ -85,7 +103,7 @@ def main():
     print("-" * 76)
     # worst case per model: max power level
     for name in UNITS:
-        v, rows = model_power(name)
+        _, rows = model_power(name)
         max_mw, max_w, _ = max((r for r in rows if r[0]), key=lambda r: r[0])
         min_mw, min_w, _ = min((r for r in rows if r[0]), key=lambda r: r[0])
         rail = "9V" if name != "O4 Lite" else "5V"
@@ -109,11 +127,28 @@ def main():
         _, rows = model_power(name)
         max_w = max(r[1] for r in rows if r[0])
         tot = AVIONICS_W + max_w
+        battery_w = tot / REFERENCE_BEC_EFFICIENCY
         print(f"  {name} at max: avionics {AVIONICS_W:.1f} W + FPV {max_w:.1f} W "
-              f"= {tot:.1f} W  = {tot/CRUISE_W*100:.1f} % of cruise "
+              f"= {tot:.1f} W rail / {battery_w:.1f} W battery "
+              f"= {battery_w/CRUISE_W*100:.1f} % of O1 "
               f"({CRUISE_W:.0f} W)")
-        print(f"    1 h of electronics = {tot:.1f} Wh = {tot/PACK_WH*100:.1f} % "
+        print(f"    1 h of electronics = {battery_w:.1f} Wh battery = "
+              f"{battery_w/PACK_WH*100:.1f} % "
               f"of the 6S1P P42A pack")
+
+    checks = {
+        "O4 Lite reference battery hotel load is 14.04 W": abs(
+            reference_hotel_load_w() - 12.6375 / 0.90) < 1e-12,
+        "O1 battery-power ceiling is 109.25 W": abs(CRUISE_W - 109.25) < 1e-12,
+        "Article #1 hotel load is below 15 percent of O1 power":
+            reference_hotel_load_w() / CRUISE_W < 0.15,
+    }
+    print("\nVALIDATION")
+    for name, passed in checks.items():
+        print(f"  [{'PASS' if passed else 'FAIL'}] {name}")
+    if not all(checks.values()):
+        raise SystemExit(1)
+    print("\nVALIDATION: ALL PASS")
 
 
 if __name__ == "__main__":

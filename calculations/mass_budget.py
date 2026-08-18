@@ -30,17 +30,38 @@ the post-v0.2 Article #1 mass allocation, and reproduces the I-16 pack masses.
 import argparse
 import sys
 
+from battery_pack_layout import (
+    CELLS as PACK_CELL_SPECS,
+)
+from battery_pack_layout import (
+    pack_mass_g as layout_pack_mass_g,
+)
+from design_config import (
+    ARTICLE_CLEAN_MASS_KG,
+    ARTICLE_V1_ALLOCATION_MASS_KG,
+    ARTICLE_V1_MASS_KG,
+    PETG_DENSITY_KG_M3,
+    STALL_SPEED_LIMIT_KMH,
+    V1_FIN_SHELL_MOUNT_LOWER_KG,
+    V1_FIN_SPAR_MASS_KG,
+    mass_at_stall_speed,
+    speed_mps,
+    stall_speed,
+    wing_loading_g_dm2,
+)
+
 # --------------------------------------------------------------------------
 # 1. MATERIALS (rho [M]/[E], E printed [M]/[E], cost [E])
 # --------------------------------------------------------------------------
 MATERIALS = {
-    "PETG":     dict(rho=1.27, e=1.94e9, price=18.0, note="base material (ADR-0021)"),
-    "PLA":      dict(rho=1.24, e=3.00e9, price=15.0, note="stiffest, fails at 65 °C"),
-    "PLA_PLUS": dict(rho=1.24, e=2.20e9, price=22.0,
-                     note="ADR-0016: REJECTED (softer than PLA, no thermal gain)"),
-    "AERO_PLA": dict(rho=0.68, e=1.00e9, price=35.0,
-                     note="LW-PLA foamed (PLA-AERO); FLOW RATIO 0.60, never 0.95; "
-                          "E ≈ 0.5× PETG -> structural re-check required"),
+    "PETG":     {"rho": PETG_DENSITY_KG_M3 / 1000.0, "e": 1.94e9, "price": 18.0,
+                     "note": "base material (ADR-0021)"},
+    "PLA":      {"rho": 1.24, "e": 3.00e9, "price": 15.0, "note": "stiffest, fails at 65 °C"},
+    "PLA_PLUS": {"rho": 1.24, "e": 2.20e9, "price": 22.0,
+                     "note": "ADR-0016: REJECTED (softer than PLA, no thermal gain)"},
+    "AERO_PLA": {"rho": 0.68, "e": 1.00e9, "price": 35.0,
+                     "note": "LW-PLA foamed (PLA-AERO); FLOW RATIO 0.60, never 0.95; "
+                          "E ≈ 0.5× PETG -> structural re-check required"},
 }
 
 # --------------------------------------------------------------------------
@@ -50,23 +71,26 @@ MATERIALS = {
 #    and its printed cradle are a fixed hybrid assembly, not a material-policy part.
 # --------------------------------------------------------------------------
 PRINTED = {
-    "core":    dict(m=165.0, src="[E] 30 % of shell",        default="PETG"),
-    "wings":   dict(m=341.0, src="[E] 62 % of shell, 6 seg", default="PETG"),
-    "tips":    dict(m=44.0,  src="[E] 8 % of shell, 2 pcs",  default="PETG"),
-    "elevons": dict(m=50.0,  src="[D] ADR-0025: 2 × 25 g",   default="PETG"),
-    "fin":     dict(m=36.72, src="[E] V1a lower-band estimate / CAD cap", default="PETG",
-                    optional=True),
+    "core":    {"m": 165.0, "src": "[E] 30 % of shell",        "default": "PETG"},
+    "wings":   {"m": 341.0, "src": "[E] 62 % of shell, 6 seg", "default": "PETG"},
+    "tips":    {"m": 44.0,  "src": "[E] 8 % of shell, 2 pcs",  "default": "PETG"},
+    "elevons": {"m": 50.0,  "src": "[D] ADR-0025: 2 × 25 g",   "default": "PETG"},
+    "fin":     {"m": V1_FIN_SHELL_MOUNT_LOWER_KG * 1000.0,
+                    "src": "[E] V1a shell+mount analytical lower model; C32", "default": "PETG",
+                    "optional": True},
 }
 
 # --------------------------------------------------------------------------
 # 3. FIXED / OPTION COMPONENTS (masses in g)
 # --------------------------------------------------------------------------
 BATTERIES = {  # I-16 model [D]: n_cells × cell + 25 g packaging
-    "4S1P": dict(n=4), "6S1P": dict(n=6),
-    "4S2P": dict(n=8), "6S2P": dict(n=12),
+    "4S1P": {"n": 4}, "6S1P": {"n": 6},
+    "4S2P": {"n": 8}, "6S2P": {"n": 12},
 }
-CELLS = {"P42A": 70.0, "50E": 68.0}          # [M] I-16
-PACKAGING = 25.0                              # [D] I-16 (445-420, 305-280)
+CELLS = {                                      # [M] I-16, shared with pack layout
+    "P42A": PACK_CELL_SPECS["Molicel P42A"][0],
+    "50E": PACK_CELL_SPECS["Samsung 50E"][0],
+}
 
 FC = {  # [M] I-17 catalog; masses are the board alone
     "F405-WING-V2":    25.0, "F765-WING": 26.0, "F722-WING": 25.0,
@@ -97,11 +121,8 @@ CARBON_REF = 70.0                             # [E] tubes + pins
 HARDWARE_REF = 20.0                           # [E] screws, TPU, adhesive, dowels
 AVIONICS_REF = 110.0                          # [E] guide §8.1 (incl. pitot/GPS/RX)
 BOOM_REF = 37.4                               # [D]/[E] 327 mm Al extension + 15 g cradle
+FIN_SPAR_REF = V1_FIN_SPAR_MASS_KG * 1000.0  # [D]/[E] mandatory Ø3 mm Al LE spar
 
-# Aircraft constants
-S = 0.282                                     # m²
-RHO_AIR = 1.225
-CLMAX = 0.589                                 # [D] I-07 (wing, non-elliptic)
 V_STALL_REF, AUW_REF = 45.9, 1685.0           # ADR-0040 / balance_cg.py datum
 
 # --------------------------------------------------------------------------
@@ -124,8 +145,9 @@ def scale(m_petg, mat):
 
 
 def pack_mass(config, cell):
-    n = BATTERIES[config]["n"]
-    return n * CELLS[cell] + PACKAGING
+    if config not in BATTERIES or cell not in CELLS:
+        raise ValueError(f"unsupported pack selection {config} {cell}")
+    return layout_pack_mass_g(config, cell)
 
 
 def shell_base_mass(part, shell_cap):
@@ -154,47 +176,51 @@ def build(policy, battery="6S1P", cell="P42A", fc="SpeedyBee-F405",
         base_m = shell_base_mass(pid, shell_cap)
         m = scale(base_m, mat[pid])
         printed_m += m
-        rows.append(dict(part=pid, kind="printed", m=m, mat=mat[pid],
-                         src=spec["src"]))
+        rows.append({"part": pid, "kind": "printed", "m": m, "mat": mat[pid],
+                         "src": spec["src"]})
     # elevon balance mass, derived [D] ADR-0025
     m_elev = next(r["m"] for r in rows if r["part"] == "elevons")
     m_bal = 1.2 * m_elev
-    rows.append(dict(part="balance", kind="fixed", m=m_bal, mat="(derived)",
-                     src="[D] ADR-0025: 1.2 × elevons"))
+    rows.append({"part": "balance", "kind": "fixed", "m": m_bal, "mat": "(derived)",
+                     "src": "[D] ADR-0025: 1.2 × elevons"})
+    if fin:
+        rows.append({
+            "part": "fin_spar", "kind": "fixed", "m": FIN_SPAR_REF, "mat": "aluminium",
+            "src": "[D]/[E] guide §6.7: mandatory Ø3 mm LE spar"})
     # fixed rows
-    m_fc = FC[fc] if fc in FC else FC_AVG
+    m_fc = FC.get(fc, FC_AVG)
     rows += [
-        dict(part="boom",     kind="fixed", m=BOOM_REF,      mat="Al + PETG",
-             src="[D]/[E] ADR-0043: 327 mm Al extension + 15 g cradle; CAD pending"),
-        dict(part="carbon",   kind="fixed", m=CARBON_REF,    mat="carbon",
-             src="[E] guide §8.1"),
-        dict(part="motor",    kind="fixed", m=motor,         mat="(option)",
-             src="[E] 28-class, reference"),
-        dict(part="esc",      kind="fixed", m=ESC_REF,       mat="fixed",
-             src="[E] 6S 30 A"),
-        dict(part="avionics", kind="fixed",
-             m=AVIONICS_REF + (m_fc - FC_AVG), mat=f"FC {fc}",
-             src="[E] 110 g incl. pitot/GPS/RX; FC adjust [D]"),
-        dict(part="servos",   kind="fixed",
-             m=SERVOS["heavy"] if servo_heavy else SERVOS[servo], mat="servos",
-             src=("[M] I-18 catalog" if not servo_heavy
-                  else "[E] 4 x 19 g heavy class")),
-        dict(part="prop",     kind="fixed", m=PROPS[prop],   mat=f"prop {prop}",
-             src=("[M] 15 g blade + [E] 10 g adapter" if prop == "APC-E-8x8"
-                  else "[E] incl. adapter")),
-        dict(part="fpv",      kind="fixed", m=FPV[fpv],      mat=f"FPV {fpv}",
-             src="[M] I-19"),
-        dict(part="hardware", kind="fixed", m=HARDWARE_REF,  mat="fixed",
-             src="[E] screws, TPU, adhesive, dowels"),
-        dict(part="battery",  kind="fixed", m=pack_mass(battery, cell),
-             mat=f"{battery} {cell}", src="[D] I-16 model"),
+        {"part": "boom",     "kind": "fixed", "m": BOOM_REF,      "mat": "Al + PETG",
+             "src": "[D]/[E] ADR-0043: 327 mm Al extension + 15 g cradle; CAD pending"},
+        {"part": "carbon",   "kind": "fixed", "m": CARBON_REF,    "mat": "carbon",
+             "src": "[E] guide §8.1"},
+        {"part": "motor",    "kind": "fixed", "m": motor,         "mat": "(option)",
+             "src": "[E] 28-class, reference"},
+        {"part": "esc",      "kind": "fixed", "m": ESC_REF,       "mat": "fixed",
+             "src": "[E] 6S 30 A"},
+        {"part": "avionics", "kind": "fixed",
+             "m": AVIONICS_REF + (m_fc - FC_AVG), "mat": f"FC {fc}",
+             "src": "[E] 110 g incl. pitot/GPS/RX; FC adjust [D]"},
+        {"part": "servos",   "kind": "fixed",
+             "m": SERVOS["heavy"] if servo_heavy else SERVOS[servo], "mat": "servos",
+             "src": ("[M] I-18 catalog" if not servo_heavy
+                  else "[E] 4 x 19 g heavy class")},
+        {"part": "prop",     "kind": "fixed", "m": PROPS[prop],   "mat": f"prop {prop}",
+             "src": ("[M] 15 g blade + [E] 10 g adapter" if prop == "APC-E-8x8"
+                  else "[E] incl. adapter")},
+        {"part": "fpv",      "kind": "fixed", "m": FPV[fpv],      "mat": f"FPV {fpv}",
+             "src": "[M] I-19"},
+        {"part": "hardware", "kind": "fixed", "m": HARDWARE_REF,  "mat": "fixed",
+             "src": "[E] screws, TPU, adhesive, dowels"},
+        {"part": "battery",  "kind": "fixed", "m": pack_mass(battery, cell),
+             "mat": f"{battery} {cell}", "src": "[D] I-16 model"},
     ]
     auw = sum(r["m"] for r in rows)
-    wl = auw / (S * 100.0)
-    vs = 3.6 * (2.0 * auw / 1000.0 * 9.81 / (RHO_AIR * S * CLMAX)) ** 0.5
+    wl = wing_loading_g_dm2(auw / 1000.0)
+    vs = stall_speed(auw / 1000.0) * 3.6
     cost = sum(scale(r["m"], r["mat"]) * MATERIALS[r["mat"]]["price"] / 1000.0
                for r in rows if r["kind"] == "printed")
-    return rows, dict(auw=auw, wl=wl, vs=vs, printed=printed_m, cost=cost)
+    return rows, {"auw": auw, "wl": wl, "vs": vs, "printed": printed_m, "cost": cost}
 
 
 def print_config(name, rows, tot):
@@ -244,7 +270,7 @@ def main():
         print("\nPER-PART × MATERIAL MATRIX (mass, g, from the PETG base)")
         hdr = f"  {'part':10s}" + "".join(f"{m:>11s}" for m in MATERIALS)
         print(hdr)
-        for pid, spec in PRINTED.items():
+        for pid in PRINTED:
             row = f"  {pid:10s}" + "".join(
                 f"{scale(shell_base_mass(pid, a.shell_cap), m):10.1f} "
                 for m in MATERIALS)
@@ -324,27 +350,37 @@ def main():
           abs(1.2 * PRINTED["elevons"]["m"] - 60.0) < 1e-6)
     _, reference = build("all_petg", fin=False)
     _, reference_v1 = build("all_petg", fin=True)
-    check(f"Article #1 CLEAN <= 1620.4 g (got {reference['auw']:.1f})",
-          reference["auw"] <= 1620.4)
-    check(f"Article #1 V1 <= 1620.4 g (got {reference_v1['auw']:.1f})",
-          reference_v1["auw"] <= 1620.4)
-    check(f"Article #1 V1 V_stall <= 45 km/h (got {reference_v1['vs']:.2f})",
-          reference_v1["vs"] <= 45.0)
+    stall_mass_limit_g = 1000.0 * mass_at_stall_speed(
+        speed_mps(STALL_SPEED_LIMIT_KMH))
+    check(f"Article #1 CLEAN matches shared contract (got {reference['auw']:.2f} g)",
+          abs(reference["auw"] - ARTICLE_CLEAN_MASS_KG * 1000.0) < 0.01)
+    check(f"Article #1 V1 analytical lower model matches shared contract "
+          f"(got {reference_v1['auw']:.2f} g)",
+          abs(reference_v1["auw"] - ARTICLE_V1_MASS_KG * 1000.0) < 0.01)
+    check(f"ADR-0043 allocation target remains {ARTICLE_V1_ALLOCATION_MASS_KG*1000:.2f} g",
+          abs(ARTICLE_V1_ALLOCATION_MASS_KG * 1000.0 - 1620.22) < 0.01)
+    check(f"C32 analytical V1 exceeds exact {STALL_SPEED_LIMIT_KMH:.0f} km/h mass "
+          f"limit {stall_mass_limit_g:.1f} g by 6--7 g "
+          f"(got {reference_v1['auw']:.1f})",
+          6.0 <= reference_v1["auw"] - stall_mass_limit_g <= 7.0)
+    check(f"C32 analytical V1 V_stall exceeds {STALL_SPEED_LIMIT_KMH:.0f} km/h "
+          f"(got {reference_v1['vs']:.2f})",
+          reference_v1["vs"] > STALL_SPEED_LIMIT_KMH)
     _, ta = build("aero_wings", "6S1P", "P42A")
-    check(f"AERO_WINGS 6S1P: V_stall <= 45 km/h (got {ta['vs']:.2f})",
-          ta["vs"] <= 45.0)
+    check(f"AERO_WINGS 6S1P: V_stall <= {STALL_SPEED_LIMIT_KMH:.0f} km/h "
+          f"(got {ta['vs']:.2f})", ta["vs"] <= STALL_SPEED_LIMIT_KMH)
     print(f"\n  VALIDATION: {'ALL PASS' if ok else 'FAILURES PRESENT'}")
 
     # ---- markdown report ----
     if a.out:
         lines = ["# Salamandra mass budget — material variants (2026-08-17)",
                  "",
-                 f"Battery {a.battery} {a.cell} · FC {a.fc} · FPV {a.fpv} · "
-                 f"prop {a.prop} · fin {'V1' if a.fin else 'CLEAN'} · "
-                 f"servos {'heavy' if a.servo_heavy else a.servo} · "
-                 f"shell cap {a.shell_cap:.0f} g",
-                 "", "| Config | AUW (g) | g/dm² | V_stall (km/h) | printed (g) | "
-                 "printed cost (€) |",
+                 (f"Battery {a.battery} {a.cell} · FC {a.fc} · FPV {a.fpv} · "
+                  f"prop {a.prop} · fin {'V1' if a.fin else 'CLEAN'} · "
+                  f"servos {'heavy' if a.servo_heavy else a.servo} · "
+                  f"shell cap {a.shell_cap:.0f} g"),
+                 "", ("| Config | AUW (g) | g/dm² | V_stall (km/h) | "
+                      "printed (g) | printed cost (€) |"),
                  "|---|---|---|---|---|---|"]
         for name, rows, tot in results:
             if tot is None:
@@ -352,8 +388,8 @@ def main():
             lines.append(f"| **{name}** | {tot['auw']:.1f} | {tot['wl']:.1f} | "
                          f"{tot['vs']:.1f} | {tot['printed']:.0f} | "
                          f"{tot['cost']:.2f} |")
-        lines += ["", "Rows are [E]/[D] on [M] data — see "
-                  "docs/06-material-mass-variants.md.", ""]
+        lines += ["", ("Rows are [E]/[D] on [M] data — see "
+                       "docs/06-material-mass-variants.md."), ""]
         with open(a.out, "w", encoding="utf-8") as f:
             f.write("\n".join(lines))
         print(f"\nReport written: {a.out}")

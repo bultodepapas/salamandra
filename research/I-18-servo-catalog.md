@@ -2,6 +2,11 @@
 
 **Status:** Open — reference catalog · **Feeds:** guide §5.3 (elevon control), §7.5 (actuation), ADR-0025 (mass balancing), ADR-0026 (dual actuation / no freeplay), CORE servo bays
 
+> **Correction C30 (2026-08-17):** the former N·m conversion displayed kgf·cm
+> magnitudes with a g·cm label, a factor-1000 unit error, and then double-counted the
+> benefit of two servos. The SI calculation and physical pass verdict remain; the
+> corrected values and factored margins are below and in `servo_torque.py` revision 2.
+
 > **This is a reference catalog, not a decision.** It reports the verified
 > technical data and current prices of the most common servos used on
 > **3D-printed FPV flying wings of the Salamandra class** (1.1–1.6 m, elevon
@@ -40,11 +45,13 @@ dividing the load per servo (ADR-0026). Geometry from the guide §5.3/§7.5; `Ch
 | Control area S_control (each elevon) | ≈ 221 cm² | `[D]` |
 | Design speed V | 180 km/h (50 m/s) | `[D]` (guide design 180) |
 | **Hinge moment per elevon** | **19–96 mN·m** (Ch 0.01–0.05) | `[D]`+`[E]` |
-| **Per servo (÷ 2, dual actuation)** | **10–48 mN·m (0.10–0.49 g·cm)** | `[D]`+`[E]` |
+| **Per servo (÷ 2, dual actuation)** | **10–48 mN·m (0.10–0.49 kgf·cm)** | `[D]`+`[E]` |
 
 > **Fact for the designer:** even the most modest catalog servo below
-> (MG90S ≈ 180 g·cm) has **≥ 3.7× margin** on the worst hinge-moment case, and
-> **≥ 7×** with dual actuation counted. **Static torque is not the binding
+> (MG90S ≈ 1.8 kgf·cm) has **3.7× ideal margin** on the worst per-servo
+> hinge-moment case. With a 1.5 safety factor and 80 % linkage efficiency, the
+> required catalog torque is 0.917 kgf·cm; the Article #1 Corona DS-939MG at
+> 2.5 kgf·cm has **2.7× factored margin**. **Static torque is not the binding
 > constraint** — mass, holding stiffness, reliability, deadband and price dominate
 > the choice. This is exactly why ADR-0025 emphasises stiffness over torque.
 
@@ -66,8 +73,8 @@ The hinge-moment model used here (`Mh = 0.5·ρ·V²·S·c·Ch`) is the same non
   derivative values fall in the `Ch` 0.01–0.05 band used here. `[M]`
 
 No published source disputes the conclusion of §2: the aerodynamic hinge moment of
-a ~0.28 c elevon on this class of wing is a few hundred g·cm at most, far below
-any digital micro servo.
+a ~0.28 c elevon on this class of wing is approximately 0.98 kgf·cm per elevon at
+the conservative Ch endpoint, within the capability of two digital micro servos.
 
 ## 3. Servo catalog (verified data sheets)
 
@@ -139,7 +146,7 @@ wide (standard mini-servo width), so one pocket width fits all listed servos.
 | TowerPro MG90S | ✓ (13.4 g) | ✓ | ✓ (≥3.7×) | US$2.5–5 |
 | Emax ES09MD | ✓ (13.5–14.8 g) | ✓ | ✓ | US$12.5–18 |
 | Corona DS-939MG | ✓ (12.5 g) | ✓ | ✓ | US$12.5 |
-| Hitec HS-5055MG | ✓ (9.5 g) | ✓ | ✓ (≥1.9× best-case only) | — |
+| Hitec HS-5055MG | ✓ (9.5 g) | ✓ | 2.7–3.3× ideal, voltage-dependent | — |
 | Savox SH-0255MG+ | ✓ (15.8 g) | ✓ | ✓ | — |
 | KST DS115MG | no (20–21 g) | ✓ | ✓ | — |
 | MKS DS92A+ | no (17.4 g) | ✓ | ✓ | — |

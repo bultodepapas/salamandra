@@ -18,7 +18,9 @@ Outputs are [D] derived from the declared board specs [M] (sources in I-17).
 This is a reference for the designer, not a decision; every board listed is a
 real, purchasable/legacy product.
 """
-import json
+
+from battery_pack_layout import CELLS as PACK_CELL_SPECS
+from design_config import REFERENCE_BEC_EFFICIENCY, electrical_power_limit_w
 
 # --- Salamandra avionics requirements (guide §11, docs/00 §3.5) ------------
 REQ = {
@@ -33,51 +35,76 @@ REQ = {
     "v_max":       25.2,  # V, 6S fully charged
 }
 
+# (name, I_mA_low, I_mA_high, rail, confidence tag)
+POWER_COMPONENTS = [
+    ("FC board (INAV F4 wing, OSD+SD)", 150, 250, "5V", "[E]"),
+    ("RX ELRS 2.4G (EP1 class)",        100, 200, "5V", "[E]"),
+    ("GPS M10 + compass",                25,  60, "5V", "[M]"),
+    ("Pitot MS4525 (I2C)",                5,  15, "5V", "[E]"),
+    ("Buzzer (transient)",               20,  30, "5V", "[E]"),
+    ("4x servo 13-15 g digital (idle)",  40,  80, "Vx", "[E]"),
+    ("4x servo (active/mixed)",         600, 1200, "Vx", "[E]"),
+    ("4x servo (stall, brief)",        2800, 4000, "Vx", "[E]"),
+]
+
+
+def avionics_power_budget():
+    """Return nominal 5 V, active-servo and total avionics power [W]."""
+    lo_5 = sum(row[1] for row in POWER_COMPONENTS if row[3] == "5V")
+    hi_5 = sum(row[2] for row in POWER_COMPONENTS if row[3] == "5V")
+    lo_servo = sum(row[1] for row in POWER_COMPONENTS
+                   if row[3] == "Vx" and "active" in row[0])
+    hi_servo = sum(row[2] for row in POWER_COMPONENTS
+                   if row[3] == "Vx" and "active" in row[0])
+    power_5v = (lo_5 + hi_5) / 2.0 / 1000.0 * 5.0
+    power_servo = (lo_servo + hi_servo) / 2.0 / 1000.0 * 5.0
+    return power_5v, power_servo, power_5v + power_servo
+
 # --- candidate boards (specs [M]; price [E]/[M] marked) ---------------------
 # fields: name, mcu, imu, baro, osd, bb, uarts, i2c, pwm, current_ok, baro_ok,
 #         vmin, vmax, bec5v, bec_servo, size_mm, mount, weight_g, target,
 #         price_usd, status
 BOARDS = [
-    dict(name="Matek F405-WING (v1)", mcu="STM32F405 168MHz", imu="MPU6000",
-         baro="BMP280", osd="AT7456E", bb="MicroSD", uarts=6, i2c=2, pwm=9,
-         current=True, vmin=9, vmax=30, bec5v="2A", bec_servo="5A/6A pk",
-         size=(56, 36, 13), mount="30.5x30.5", weight=25, target="MATEKF405SE",
-         price=45, status="EOL"),
-    dict(name="Matek F405-WING-V2", mcu="STM32F405 168MHz 1MB", imu="ICM42688P",
-         baro="DPS310", osd="AT7456E", bb="MicroSD", uarts=6, i2c=2, pwm=10,
-         current=True, vmin=9, vmax=30, bec5v="2A", bec_servo="5A/6A pk",
-         size=(54, 36, 13), mount="30.5x30.5", weight=25, target="MATEKF405SE",
-         price=50, status="Current"),
-    dict(name="Matek F765-WING", mcu="STM32F765 216MHz 2MB", imu="MPU6000+ICM20602",
-         baro="BMP280", osd="AT7456E", bb="MicroSD (SDIO)", uarts=7, i2c=2, pwm=12,
-         current=True, vmin=9, vmax=36, bec5v="2A", bec_servo="8A/10A pk",
-         size=(54, 36, 13), mount="30.5x30.5", weight=26, target="MATEKF765",
-         price=80, status="EOL"),
-    dict(name="Matek F722-WING", mcu="STM32F722 216MHz", imu="MPU6000",
-         baro="BMP280", osd="AT7456E", bb="MicroSD", uarts=5, i2c=2, pwm=8,
-         current=True, vmin=9, vmax=36, bec5v="2A", bec_servo="5A",
-         size=(54, 36, 13), mount="30.5x30.5", weight=25, target="MATEKF722SE",
-         price=70, status="EOL"),
-    dict(name="Matek F411-WING", mcu="STM32F411 100MHz", imu="MPU6000",
-         baro="BMP280", osd="AT7456E", bb=None, uarts=2, i2c=2, pwm=7,
-         current=True, vmin=9, vmax=30, bec5v="2A", bec_servo="3A",
-         size=(41, 28, None), mount="30.5x30.5", weight=12, target="MATEKF411",
-         price=20, status="EOL"),
-    dict(name="Matek F411-WSE", mcu="STM32F411 100MHz", imu="MPU6000",
-         baro="BMP280", osd="AT7456E", bb=None, uarts=2, i2c=2, pwm=6,
-         current=True, vmin=9, vmax=30, bec5v="2A", bec_servo="3.5A/5A pk",
-         size=(28, 28, None), mount="30.5x30.5", weight=8.5, target="MATEKF411SE",
-         price=15, status="EOL"),
-    dict(name="Foxeer F405 V2", mcu="STM32F405RGT6 168MHz", imu="ICM42688-P",
-         baro="DPS310", osd="AT7456E", bb="16MB flash", uarts=6, i2c=1, pwm=6,
-         current=False, vmin=14, vmax=34, bec5v="3A", bec_servo="--",
-         size=(37, 37, None), mount="30.5x30.5", weight=8.4, target="FOXEERF405V2",
-         price=39.9, status="Current"),
-    dict(name="SpeedyBee F405 WING APP", mcu="STM32F405 168MHz 1MB",
-         imu="ICM42688-P", baro="SPL06-001", osd="AT7456E", bb="MicroSD",
-         uarts=6, i2c=1, pwm=12, current=True, vmin=7, vmax=36, bec5v="2.4A",
-         bec_servo="4.5A/5.5A pk", size=(36.5, 36.5, 7), mount="30.5x30.5",
-         weight=8.9, target="SPEEDYBEEF405WING", price=39.99, status="Current"),
+    {"name": "Matek F405-WING (v1)", "mcu": "STM32F405 168MHz", "imu": "MPU6000",
+         "baro": "BMP280", "osd": "AT7456E", "bb": "MicroSD", "uarts": 6, "i2c": 2, "pwm": 9,
+         "current": True, "vmin": 9, "vmax": 30, "bec5v": "2A", "bec_servo": "5A/6A pk",
+         "size": (56, 36, 13), "mount": "30.5x30.5", "weight": 25, "target": "MATEKF405SE",
+         "price": 45, "status": "EOL"},
+    {"name": "Matek F405-WING-V2", "mcu": "STM32F405 168MHz 1MB", "imu": "ICM42688P",
+         "baro": "DPS310", "osd": "AT7456E", "bb": "MicroSD", "uarts": 6, "i2c": 2, "pwm": 10,
+         "current": True, "vmin": 9, "vmax": 30, "bec5v": "2A", "bec_servo": "5A/6A pk",
+         "size": (54, 36, 13), "mount": "30.5x30.5", "weight": 25, "target": "MATEKF405SE",
+         "price": 50, "status": "Current"},
+    {"name": "Matek F765-WING", "mcu": "STM32F765 216MHz 2MB", "imu": "MPU6000+ICM20602",
+         "baro": "BMP280", "osd": "AT7456E", "bb": "MicroSD (SDIO)", "uarts": 7, "i2c": 2, "pwm": 12,
+         "current": True, "vmin": 9, "vmax": 36, "bec5v": "2A", "bec_servo": "8A/10A pk",
+         "size": (54, 36, 13), "mount": "30.5x30.5", "weight": 26, "target": "MATEKF765",
+         "price": 80, "status": "EOL"},
+    {"name": "Matek F722-WING", "mcu": "STM32F722 216MHz", "imu": "MPU6000",
+         "baro": "BMP280", "osd": "AT7456E", "bb": "MicroSD", "uarts": 5, "i2c": 2, "pwm": 8,
+         "current": True, "vmin": 9, "vmax": 36, "bec5v": "2A", "bec_servo": "5A",
+         "size": (54, 36, 13), "mount": "30.5x30.5", "weight": 25, "target": "MATEKF722SE",
+         "price": 70, "status": "EOL"},
+    {"name": "Matek F411-WING", "mcu": "STM32F411 100MHz", "imu": "MPU6000",
+         "baro": "BMP280", "osd": "AT7456E", "bb": None, "uarts": 2, "i2c": 2, "pwm": 7,
+         "current": True, "vmin": 9, "vmax": 30, "bec5v": "2A", "bec_servo": "3A",
+         "size": (41, 28, None), "mount": "30.5x30.5", "weight": 12, "target": "MATEKF411",
+         "price": 20, "status": "EOL"},
+    {"name": "Matek F411-WSE", "mcu": "STM32F411 100MHz", "imu": "MPU6000",
+         "baro": "BMP280", "osd": "AT7456E", "bb": None, "uarts": 2, "i2c": 2, "pwm": 6,
+         "current": True, "vmin": 9, "vmax": 30, "bec5v": "2A", "bec_servo": "3.5A/5A pk",
+         "size": (28, 28, None), "mount": "30.5x30.5", "weight": 8.5, "target": "MATEKF411SE",
+         "price": 15, "status": "EOL"},
+    {"name": "Foxeer F405 V2", "mcu": "STM32F405RGT6 168MHz", "imu": "ICM42688-P",
+         "baro": "DPS310", "osd": "AT7456E", "bb": "16MB flash", "uarts": 6, "i2c": 1, "pwm": 6,
+         "current": False, "vmin": 14, "vmax": 34, "bec5v": "3A", "bec_servo": "--",
+         "size": (37, 37, None), "mount": "30.5x30.5", "weight": 8.4, "target": "FOXEERF405V2",
+         "price": 39.9, "status": "Current"},
+    {"name": "SpeedyBee F405 WING APP", "mcu": "STM32F405 168MHz 1MB",
+         "imu": "ICM42688-P", "baro": "SPL06-001", "osd": "AT7456E", "bb": "MicroSD",
+         "uarts": 6, "i2c": 1, "pwm": 12, "current": True, "vmin": 7, "vmax": 36, "bec5v": "2.4A",
+         "bec_servo": "4.5A/5.5A pk", "size": (36.5, 36.5, 7), "mount": "30.5x30.5",
+         "weight": 8.9, "target": "SPEEDYBEEF405WING", "price": 39.99, "status": "Current"},
 ]
 
 
@@ -127,8 +154,8 @@ def main():
         tag = tag + "*" if (ok and tight) else tag
         bb = str(b["bb"]).replace("MicroSD", "SD")
         print(f"{b['name']:>24} {b['mcu'][:20]:>20} {b['uarts']:>4} {b['i2c']:>3} "
-              f"{b['pwm']:>3} {bb:>6} {str(bool(b['current'])):>4} "
-              f"{str(bool(b['baro'])):>4} {b['vmax']:>5.0f} {b['weight']:>5.1f} "
+              f"{b['pwm']:>3} {bb:>6} {bool(b['current'])!s:>4} "
+              f"{bool(b['baro'])!s:>4} {b['vmax']:>5.0f} {b['weight']:>5.1f} "
               f"{b['target']:>18} {tag:>3}")
     print()
 
@@ -177,7 +204,7 @@ def main():
     w_min, w_max, w_avg = ws[0], ws[-1], sum(ws) / len(ws)
     h_min, h_max, h_avg = hs[0], hs[-1], sum(hs) / len(hs)
     m_min, m_max, m_avg = ms[0], ms[-1], sum(ms) / len(ms)
-    print(f"  Mounting pattern (all boards): 30.5 x 30.5 mm, Phi4 mm  [M]")
+    print("  Mounting pattern (all boards): 30.5 x 30.5 mm, Phi4 mm  [M]")
     print(f"  MINIMUM (per-dimension floor): {l_min:.0f} x {w_min:.0f} mm "
           f"({h_min:.0f} mm h)  - {m_min:.1f} g smallest board")
     print(f"  AVERAGE board envelope : {l_avg:.0f} x {w_avg:.0f} mm "
@@ -185,8 +212,8 @@ def main():
     print(f"  MAXIMUM (per-dimension ceiling): {l_max:.0f} x {w_max:.0f} mm "
           f"({h_max:.0f} mm h)  - {m_max:.0f} g heaviest board")
     rec = (l_max + 8, w_max + 8, h_max + 8)
-    print(f"  RECOMMENDED station cavity (largest board + 8 mm clearance "
-          f"+ cables):")
+    print("  RECOMMENDED station cavity (largest board + 8 mm clearance "
+          "+ cables):")
     print(f"      {rec[0]:.0f} x {rec[1]:.0f} x {rec[2]:.0f} mm  ->  "
           f"accepts every board in this survey")
     print(f"  Mass budget absorbed: worst board {m_max:.0f} g << 110 g "
@@ -200,28 +227,21 @@ def main():
     print("  FC 100 mA, RX 100 mA); GPS [M] (BN-220 35 / BN-880 45 / M10 25 mA);")
     print("  the rest are declared estimates [E] (see I-17 §5).")
     print()
-    # (name, I_mA_low, I_mA_high, rail, tag)
-    COMP = [
-        ("FC board (INAV F4 wing, OSD+SD)", 150, 250, "5V", "[E]"),
-        ("RX ELRS 2.4G (EP1 class)",        100, 200, "5V", "[E]"),
-        ("GPS M10 + compass",                25,  60, "5V", "[M]"),
-        ("Pitot MS4525 (I2C)",                5,  15, "5V", "[E]"),
-        ("Buzzer (transient)",               20,  30, "5V", "[E]"),
-        ("4x servo 13-15 g digital (idle)",  40,  80, "Vx", "[E]"),
-        ("4x servo (active/mixed)",         600, 1200, "Vx", "[E]"),
-        ("4x servo (stall, brief)",        2800, 4000, "Vx", "[E]"),
-    ]
     print(f"{'component':>38} {'min mA':>8} {'max mA':>8} {'rail':>4}  tag")
     print("-" * 78)
-    for name, lo, hi, rail, tag in COMP:
+    for name, lo, hi, rail, tag in POWER_COMPONENTS:
         print(f"{name:>38} {lo:>7.0f} {hi:>8.0f} {rail:>4}  {tag}")
 
-    lo5 = sum(c[1] for c in COMP if c[3] == "5V")
-    hi5 = sum(c[2] for c in COMP if c[3] == "5V")
-    loV = sum(c[1] for c in COMP if c[3] == "Vx" and "active" in c[0])
-    hiV = sum(c[2] for c in COMP if c[3] == "Vx" and "active" in c[0])
-    loS = sum(c[1] for c in COMP if c[3] == "Vx" and "stall" in c[0])
-    hiS = sum(c[2] for c in COMP if c[3] == "Vx" and "stall" in c[0])
+    lo5 = sum(c[1] for c in POWER_COMPONENTS if c[3] == "5V")
+    hi5 = sum(c[2] for c in POWER_COMPONENTS if c[3] == "5V")
+    loV = sum(c[1] for c in POWER_COMPONENTS
+              if c[3] == "Vx" and "active" in c[0])
+    hiV = sum(c[2] for c in POWER_COMPONENTS
+              if c[3] == "Vx" and "active" in c[0])
+    loS = sum(c[1] for c in POWER_COMPONENTS
+              if c[3] == "Vx" and "stall" in c[0])
+    hiS = sum(c[2] for c in POWER_COMPONENTS
+              if c[3] == "Vx" and "stall" in c[0])
     print("-" * 78)
     print(f"  5V rail  total        : {lo5:6.0f} ... {hi5:6.0f} mA  "
           f"(Matek F405/F765 5V BEC = 2 A)")
@@ -230,17 +250,33 @@ def main():
     print(f"  Servo rail total (stall): {loS:6.0f} ... {hiS:6.0f} mA  "
           f"(brief, within Vx BEC 5 A)")
 
-    w5 = (lo5 + hi5) / 2 / 1000 * 5.0          # W on 5V rail (5 V)
-    wV = (loV + hiV) / 2 / 1000 * 5.0          # W on servo rail (5 V)
-    cruise_w = 22.0 * 5.0                      # W, guide §10.1: ~5 A @ ~22 V (6S)
-    pct = (w5 + wV) / cruise_w * 100
-    pack_wh = 90.7                            # Wh, 6S1P P42A (I-16 §6.1)
+    w5, wV, avionics_w = avionics_power_budget()
+    cruise_w = electrical_power_limit_w()
+    battery_avionics_w = avionics_w / REFERENCE_BEC_EFFICIENCY
+    pct = battery_avionics_w / cruise_w * 100
+    pack_wh = 6.0 * PACK_CELL_SPECS["Molicel P42A"][5]
     print(f"\n  Avionics power: ~{w5:.1f} W (5V rail) + ~{wV:.1f} W (servos) "
           f"= ~{w5+wV:.1f} W")
-    print(f"  Cruise power (guide §10.1): ~{cruise_w:.0f} W "
-          f"(5 A @ 22 V, 6S)  ->  avionics ~{pct:.1f} % of cruise")
-    print(f"  Energy impact: 1 h of flight burns ~{w5+wV:.1f} Wh of avionics "
-          f"= ~{(w5+wV)/pack_wh*100:.1f} % of a 6S1P P42A pack ({pack_wh:.1f} Wh)")
+    print(f"  O1 total battery-power ceiling: {cruise_w:.2f} W; rail load "
+          f"{avionics_w:.2f} W -> battery {battery_avionics_w:.2f} W at "
+          f"eta_BEC={REFERENCE_BEC_EFFICIENCY:.2f} ({pct:.1f} % of O1)")
+    print(f"  Energy impact: 1 h burns ~{battery_avionics_w:.1f} Wh from the pack "
+          f"= ~{battery_avionics_w/pack_wh*100:.1f} % of a 6S1P P42A pack "
+          f"({pack_wh:.1f} Wh)")
+
+    checks = {
+        "nominal avionics power is 6.64 W": abs(avionics_w - 6.6375) < 1e-9,
+        "O1 total battery-power ceiling is shared": abs(cruise_w - 109.25) < 1e-9,
+        "6S1P P42A nominal energy is 90.72 Wh": abs(pack_wh - 90.72) < 1e-9,
+        "battery avionics power includes BEC loss":
+            battery_avionics_w > avionics_w,
+    }
+    print("\nVALIDATION")
+    for name, passed in checks.items():
+        print(f"  [{'PASS' if passed else 'FAIL'}] {name}")
+    if not all(checks.values()):
+        raise SystemExit(1)
+    print("\nVALIDATION: ALL PASS")
 
 
 if __name__ == "__main__":

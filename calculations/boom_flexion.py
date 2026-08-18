@@ -34,12 +34,20 @@ Confidence tags: [M] measured, [D] derived, [E] estimated. Validation cases
 at the end.
 """
 import sys
+
 import numpy as np
+from balance_cg import (
+    CAMERA_FROM_BAY_FWD,
+    CRADLE_LENGTH,
+    CRADLE_MASS,
+    NOSE_POD_TIP,
+    REFERENCE_PACK,
+    TUBE_CORE_INSERTION,
+    solve_reference_layout,
+)
+from design_config import G0, POSITIVE_LIMIT_LOAD_FACTOR
 
-from balance_cg import (CRADLE_MASS, NOSE_POD_TIP, REFERENCE_PACK,
-                        TUBE_CORE_INSERTION, solve_reference_layout)
-
-G = 9.81
+G = G0
 E_AL = 70.0e9             # Pa, aluminium 6061
 SIG_Y = (276.0e6, 55.0e6, 503.0e6)   # 6061-T6 / 6061-O / 7075-T6 [M]
 RHO_AL = 2700.0           # kg/m³
@@ -55,15 +63,49 @@ X_CORE = NOSE_POD_TIP
 L = X_CORE - X_TIP
 X_PACK = _LAYOUT["pack_station"]
 M_PACK = REFERENCE_PACK
-M_CAM = 0.015             # kg, FPV camera at the tip
+M_FORWARD_PAYLOAD = 0.015 # kg, conservative camera/wiring/connector allowance [E]
 M_CRADLE = CRADLE_MASS
-N_MAX = 6.0               # design load factor (docs/00)
+N_MAX = POSITIVE_LIMIT_LOAD_FACTOR
 N_IMPACT = 5.0            # landing impact at the tip skid [E]
 
 
 def tube_i(d_ext, d_int):
     """Second moment of area of a thin tube, m⁴."""
     return np.pi / 64.0 * (d_ext ** 4 - d_int ** 4)
+
+
+def simply_supported_response(length, point_loads, flexural_rigidity,
+                              samples=4001):
+    """Maximum moment and deflection for point loads on a simple beam.
+
+    ``point_loads`` contains ``(force_N, station_from_left_m)``. Deflection is
+    evaluated by exact point-load superposition on a fine output grid.
+    """
+    if length <= 0.0 or flexural_rigidity <= 0.0 or samples < 3:
+        raise ValueError("length, EI and sample count must be positive")
+    if any(force < 0.0 or not 0.0 <= station <= length
+           for force, station in point_loads):
+        raise ValueError("loads must be non-negative and lie on the beam")
+    x = np.linspace(0.0, length, samples)
+    reaction_left = sum(
+        force * (length - station) / length
+        for force, station in point_loads)
+    moment = reaction_left * x
+    deflection = np.zeros_like(x)
+    for force, station in point_loads:
+        moment -= force * np.maximum(x - station, 0.0)
+        a, b = station, length - station
+        left = x <= a
+        deflection[left] += (
+            force * b * x[left]
+            * (length**2 - b**2 - x[left]**2)
+            / (6.0 * length * flexural_rigidity))
+        xr = length - x[~left]
+        deflection[~left] += (
+            force * a * xr
+            * (length**2 - a**2 - xr**2)
+            / (6.0 * length * flexural_rigidity))
+    return float(np.max(np.abs(moment))), float(np.max(np.abs(deflection)))
 
 
 def main():
@@ -75,7 +117,7 @@ def main():
     a_t = np.pi / 4.0 * (D_T ** 2 - D_I ** 2)
     m_tube = RHO_AL * a_t * (L + TUBE_CORE_INSERTION)
     m_total_boom = m_tube + M_CRADLE
-    print(f"\n1. TUBE DATA (Ø8 / int Ø6 — wall 1.0 mm, measured)")
+    print("\n1. TUBE DATA (Ø8 / int Ø6 — wall 1.0 mm, measured)")
     print(f"   A = {a_t*1e6:.2f} mm² · I = {i_t*1e12:.1f} mm⁴ "
           f"· mass {(L+TUBE_CORE_INSERTION)*1000:.0f} mm = {m_tube*1000:.1f} g")
     print(f"   Boom total (tube + cradle) = {m_total_boom*1000:.1f} g "
@@ -85,17 +127,17 @@ def main():
 
     # ---- 2. Pure cantilever (rejected arrangement) ----
     print("\n2. PURE CANTILEVER (pack at the tip) — REJECTED")
-    f = N_MAX * (M_PACK + M_CAM + M_CRADLE) * G
+    f = N_MAX * (M_PACK + M_FORWARD_PAYLOAD + M_CRADLE) * G
     m_max = f * L
     sig = m_max * (D_T / 2) / i_t
     delta = f * L ** 3 / (3 * E_AL * i_t)
     k = 3 * E_AL * i_t / L ** 3
-    freq = np.sqrt(k / (M_PACK + M_CAM + M_CRADLE)) / (2 * np.pi)
+    freq = np.sqrt(k / (M_PACK + M_FORWARD_PAYLOAD + M_CRADLE)) / (2 * np.pi)
     print(f"   +{N_MAX:.0f} g: M = {m_max:.2f} N·m -> σ = {sig/1e6:.0f} MPa "
           f"(6061-T6 yield {SIG_Y[0]/1e6:.0f}) FS {SIG_Y[0]/sig:.2f} — FAILS")
     print(f"   deflection {delta*1000:.0f} mm · first mode {freq:.1f} Hz "
           f"(pack in the 5 Hz band: bad)")
-    print(f"   => The tube alone cannot cantilever the 445 g pack.")
+    print("   => The tube alone cannot cantilever the 445 g pack.")
 
     # ---- 3. Two-support beam (pack between supports) ----
     print(f"\n3. TWO-SUPPORT BEAM (pack {X_PACK*1000:.0f}, supports "
@@ -103,36 +145,39 @@ def main():
     a = X_PACK - X_TIP
     b = X_CORE - X_PACK
     f_pack = N_MAX * M_PACK * G
-    f_cam = N_MAX * M_CAM * G
-    m_pack = f_pack * a * b / L   # simply-supported point load
-    m_cam = f_cam * (X_TIP - X_TIP + 0.08) * (L - 0.08) / L
-    m_max = m_pack + m_cam
+    f_forward = N_MAX * M_FORWARD_PAYLOAD * G
+    f_cradle = N_MAX * M_CRADLE * G
+    loads = [
+        (f_pack, a),
+        (f_forward, CAMERA_FROM_BAY_FWD),
+        (f_cradle, CRADLE_LENGTH / 2.0),
+    ]
+    m_max, delta_max = simply_supported_response(L, loads, E_AL * i_t)
     sig = m_max * (D_T / 2) / i_t
-    delta_pack = f_pack * a ** 2 * b ** 2 / (3 * E_AL * i_t * L)
-    k2 = 48 * E_AL * i_t / L ** 3
-    freq2 = np.sqrt(k2 / (M_PACK + M_CRADLE)) / (2 * np.pi)
+    k2 = 3.0 * E_AL * i_t * L / (a**2 * b**2)
+    freq2 = np.sqrt(
+        k2 / (M_PACK + M_CRADLE + M_FORWARD_PAYLOAD)) / (2 * np.pi)
     print(f"   M_max = {m_max:.2f} N·m -> σ = {sig/1e6:.0f} MPa "
           f"(FS {SIG_Y[0]/sig:.2f} vs 6061-T6; {SIG_Y[1]/sig:.2f} vs 6061-O)")
-    print(f"   deflection {delta_pack*1000:.1f} mm at +{N_MAX:.0f} g "
+    print(f"   deflection {delta_max*1000:.1f} mm at +{N_MAX:.0f} g "
           f"· first mode {freq2:.1f} Hz")
-    ok_2s = sig < SIG_Y[0] / 2.0 and delta_pack < 0.005 and freq2 > 15.0
+    ok_2s = sig < SIG_Y[0] / 2.0 and delta_max < 0.005 and freq2 > 15.0
     print(f"   Verdict: {'PASS' if ok_2s else 'FAIL'} "
           f"(FS >= 2, δ < 5 mm, f > 15 Hz)")
 
     # ---- 4. Landing impact at the tip skid ----
     print("\n4. LANDING IMPACT (tip skid first contact, ~5 g [E])")
-    f_imp = N_IMPACT * (M_PACK + M_CRADLE) * G * (a / L)   # pack near tip:
     # actually the skid load acts at the tip: short cantilever from the
     # cradle face (~60 mm) — the cradle carries the pack, the tip sees the
     # camera only
-    f_tip = N_IMPACT * M_CAM * G
+    f_tip = N_IMPACT * M_FORWARD_PAYLOAD * G
     m_tip = f_tip * 0.06
     sig_tip = m_tip * (D_T / 2) / i_t
     print(f"   tip skid (camera only, 60 mm cantilever): σ = "
           f"{sig_tip/1e6:.1f} MPa — trivial")
-    print(f"   pack impact absorbed by the printed cradle + skid [E]; the "
-          f"bare tube must not see impacts > 3 g at the tip (printed skid "
-          f"is the crush zone)")
+    print("   pack impact absorbed by the printed cradle + skid [E]; the "
+          "bare tube must not see impacts > 3 g at the tip (printed skid "
+          "is the crush zone)")
 
     # ---- 5. Ø3 aft stiffener (V1 fin leading-edge spar) ----
     print("\n5. Ø3 mm AFT STIFFENER — V1 fin / rear-pod (TE region)")
@@ -177,7 +222,7 @@ def main():
           abs(i_t - 1.374e-10) / 1.374e-10 < 0.01)
     check(f"A tube = 22.0 mm² (got {a_t*1e6:.2f})", abs(a_t*1e6 - 22.0) < 0.5)
     # cantilever formulas
-    f_cl = N_MAX * (M_PACK + M_CAM + M_CRADLE) * G
+    f_cl = N_MAX * (M_PACK + M_FORWARD_PAYLOAD + M_CRADLE) * G
     m_cl = f_cl * L
     sig_cl = m_cl * 0.004 / i_t
     check(f"Cantilever σ at +6 g in 260-300 MPa band (got {sig_cl/1e6:.0f})",
@@ -193,8 +238,13 @@ def main():
     # δ = F·a²·b²/(3·E·I·L)
     d2 = N_MAX * M_PACK * G * a ** 2 * b ** 2 / (3 * E_AL * i_t * L)
     check(f"Two-support δ < 2.0 mm (got {d2*1000:.1f})", d2 * 1000 < 2.0)
-    f2 = np.sqrt(48 * E_AL * i_t / L ** 3 / (M_PACK + M_CRADLE)) / (2 * np.pi)
+    f2 = np.sqrt(
+        3.0 * E_AL * i_t * L / (a**2 * b**2)
+        / (M_PACK + M_CRADLE + M_FORWARD_PAYLOAD)) / (2 * np.pi)
     check(f"Two-support mode > 20 Hz (got {f2:.1f})", f2 > 20)
+    m_response, d_response = simply_supported_response(L, loads, E_AL * i_t)
+    check("multi-load response is used for the reported two-support stress",
+          abs(m_response - m_max) < 1e-12 and abs(d_response - delta_max) < 1e-12)
     # mass
     check(f"Tube mass 22-25 g for current length (got {m_tube*1000:.1f})",
           22 <= m_tube * 1000 <= 25)

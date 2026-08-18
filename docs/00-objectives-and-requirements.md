@@ -111,7 +111,7 @@ See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 
 > **R-CG:** the Article #1 carrier shall hold CG within ±5 mm with the 6S1P pack. The
 > current solution places it at x = −359.6 mm (band −377.4…−341.9). A 4S aircraft
-> requires approximately 730 Kv rather than the 500–550 Kv 6S motor and therefore is a
+> requires approximately 713 Kv rather than the 500–550 Kv 6S motor and therefore is a
 > separate power module. The former requirement to interchange 4S1P/4S2P/6S1P/6S2P in
 > one cradle is superseded by ADR-0042.
 
@@ -149,7 +149,7 @@ linkage, no FC change):
 | | SALAMANDRA-CLEAN | SALAMANDRA-V1 |
 |---|---|---|
 | Vertical stabilizer | None | Fixed centreline fin (passive), S_v ≈ 2.1 dm² (V1a) |
-| Cnβ total | **−0.0006…−0.0014/deg — negative** (FC-stabilized, documented risk G10) | **−0.00005…+0.00095/deg** (nominal +0.0005) `[D]`/`[E]` |
+| Cnβ total | **−0.0006…−0.0014/deg — negative** (FC recovery unproven; not the first-flight configuration, G10/C31) | **−0.00005…+0.00095/deg** (nominal +0.0005) `[D]`/`[E]` |
 | Role | O1 efficiency build (≤ 1.15 Wh/km) | Recommended build for the Article #1 test programme |
 | Cost | — | 36–60 g `[E]` · ΔCD0 +0.0014 (+9.6 % energy `[E]`) · V_stall +0.6 km/h (OP-24 lever) |
 

@@ -36,17 +36,24 @@ import argparse
 import bisect
 import hashlib
 import json
-import math
 import os
 import re
 import subprocess
-import sys
 import time
+
+from design_config import (
+    ARTICLE_V1_MASS_KG,
+    CRUISE_SPEED_KMH,
+    lift_coefficient,
+    speed_mps,
+)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AF_DIR = os.path.join(ROOT, "geometry", "airfoils")
 OUT = os.path.join(ROOT, "calculations", "xfoil_out")
 os.makedirs(OUT, exist_ok=True)
+CRUISE_CL = lift_coefficient(
+    ARTICLE_V1_MASS_KG, speed_mps(CRUISE_SPEED_KMH))
 
 
 def find_xfoil(arg=None):
@@ -157,8 +164,7 @@ def scale_thickness_by_factor(pts, factor):
 def write_dat(pts, path):
     with open(path, "w", encoding="utf-8") as f:
         f.write(f"{os.path.basename(path)}\n")
-        for x, y in pts:
-            f.write(f"{x: .8f} {y: .8f}\n")
+        f.writelines(f"{x: .8f} {y: .8f}\n" for x, y in pts)
 
 
 def run_xfoil(dat_path, re_no, ncrit, tag, xfoil, *, alpha_end=16.0,
@@ -177,7 +183,8 @@ def run_xfoil(dat_path, re_no, ncrit, tag, xfoil, *, alpha_end=16.0,
         "reynolds": int(re_no),
     }
     if os.path.exists(pol) and os.path.exists(meta_path):
-        header = open(pol, encoding="utf-8", errors="ignore").read()
+        with open(pol, encoding="utf-8", errors="ignore") as f:
+            header = f.read()
         ok_ncrit = re.search(rf"Ncrit\s*=\s*{ncrit}\.000", header) is not None
         ok_re = re.search(rf"Re\s*=\s*{re_no/1e6:.3f} e 6", header) is not None
         try:
@@ -245,7 +252,8 @@ def run_xfoil(dat_path, re_no, ncrit, tag, xfoil, *, alpha_end=16.0,
     if not os.path.exists(pol):
         print(f"  !! no polar for {tag}")
         return None
-    header = open(pol, encoding="utf-8", errors="ignore").read()
+    with open(pol, encoding="utf-8", errors="ignore") as f:
+        header = f.read()
     ok_ncrit = re.search(rf"Ncrit\s*=\s*{ncrit}\.000", header) is not None
     ok_re = re.search(rf"Re\s*=\s*{re_no/1e6:.3f} e 6", header) is not None
     if not ok_ncrit:
@@ -275,16 +283,19 @@ def parse_polar(pol):
             parts = line.split()
             if len(parts) == 7:
                 try:
-                    a, cl, cd, cdp, cm, xtr, btr = [float(p) for p in parts]
+                    a, cl, cd, _, cm, _, _ = [float(p) for p in parts]
                     rows.append((a, cl, cd, cm))
                 except ValueError:
                     pass
     return rows
 
 
-def summarize(rows):
+def summarize(rows, cruise_cl=CRUISE_CL):
+    """Summarize a polar at the connected Article #1 cruise lift coefficient."""
     if not rows:
         return None
+    if cruise_cl <= 0.0:
+        raise ValueError("cruise CL must be positive")
     # Only the first monotonic pre-stall branch belongs in the CM(CL) fit.
     # A global ``CL < 0.6`` filter also admitted post-stall points after CL had
     # fallen again and could shift cm0 by more than 0.01 on reflexed sections.
@@ -293,7 +304,7 @@ def summarize(rows):
         if row[1] >= 0.6:
             break
         lin.append(row)
-    a, cl, cd, cm = zip(*rows)
+    a, cl, cd, _ = zip(*rows)
     cm0 = None
     if len(lin) >= 3:
         n = len(lin)
@@ -304,20 +315,20 @@ def summarize(rows):
     clmax = max(cl)
     astall = a[cl.index(clmax)]
     ld = max(c / d for c, d in zip(cl, cd) if d > 0)
-    # cd at cruise CL = 0.132 (interpolate; extrapolate linearly from the first
+    # Cd at the shared cruise CL (interpolate; extrapolate linearly from the first
     # two points if the first computed alpha is already above cruise CL)
     cd_cruise = None
     if len(cl) >= 2:
-        if cl[0] > 0.132:
-            f = (0.132 - cl[0]) / (cl[1] - cl[0])
+        if cl[0] > cruise_cl:
+            f = (cruise_cl - cl[0]) / (cl[1] - cl[0])
             cd_cruise = cd[0] + f * (cd[1] - cd[0])
         else:
             for i in range(len(cl) - 1):
-                if cl[i] <= 0.132 <= cl[i + 1]:
-                    f = (0.132 - cl[i]) / (cl[i + 1] - cl[i])
+                if cl[i] <= cruise_cl <= cl[i + 1]:
+                    f = (cruise_cl - cl[i]) / (cl[i + 1] - cl[i])
                     cd_cruise = cd[i] + f * (cd[i + 1] - cd[i])
                     break
-    return dict(cm0=cm0, clmax=clmax, astall=astall, ldmax=ld, cd_cruise=cd_cruise)
+    return {"cm0": cm0, "clmax": clmax, "astall": astall, "ldmax": ld, "cd_cruise": cd_cruise}
 
 
 def main():
@@ -346,10 +357,8 @@ def main():
             pts = scale_tc(pts, target)
             dat = os.path.join(AF_DIR, f"{tag}.dat")
             write_dat(pts, dat)
-            dat_src = f"{tag}.dat (scaled)"
         else:
             dat = os.path.join(AF_DIR, fname)
-            dat_src = fname
         cases.append((tag, dat, label))
 
     print("=" * 110)

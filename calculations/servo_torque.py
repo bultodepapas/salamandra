@@ -1,65 +1,137 @@
 #!/usr/bin/env python3
-"""
-Requisito de par de los servos de elevon para Salamandra (articulo #1, 1300 mm).
+"""Elevon-servo hinge-moment requirement for Salamandra Article #1.
 
-Motiva la seleccion del servo en research/I-18-servo-catalog.md: el par de
-bisagra aerodinamico es pequeno frente a cualquier servo digital de micro clase,
-asi que la seleccion NO la domina el par estatico, sino la rigidez de holding,
-el juego nulo y la masa (~15 g/servo, ADR-0025: 60 g total).
+The aerodynamic hinge moment is
 
-Modelo de par de bisagra (comun en la practica de aeromodelismo):
-    Mh = 0.5 * rho * V^2 * S_control * c_control * Ch
-donde Ch es el coeficiente de momento de bisagra de la superficie (orden 1e-2).
-La doble actuacion (ADR-0026, 2 puntos por elevon) divide el par por 2.
-Todo [D] sobre la geometria del guide §5.3/§7.5 y datos de perfil [M]/[D].
+    H = q * S_control * c_control * Ch.
+
+Two servos share each elevon. A 1:1 servo/control-horn radius ratio is the
+conservative CAD contract until linkage geometry is frozen. The selection
+check includes 80 % linkage efficiency and a 1.5 torque safety factor.
+
+All calculations use SI units internally. Catalog torque is reported in
+kgf*cm; 1 N*m = 10.197 kgf*cm. Revision 2 corrects the former 1000x display
+error that labelled kgf*cm values as gf*cm.
 """
 import numpy as np
+from design_config import (
+    G0,
+    RHO_SL,
+    ROOT_CHORD,
+    STRUCTURAL_DESIGN_SPEED_KMH,
+    TAPER,
+    B,
+    speed_mps,
+)
 
-# --- Geometria de la geometria del ala (guide §4) ---------------------------
-B = 1.30                # envergadura, m
-S = 0.282               # superficie, m^2
-TAPER = 0.50            # afinamiento
-CR = 2 * S / (B * (1 + TAPER))          # cuerda raiz, m
-CT = TAPER * CR                          # cuerda punta, m
-ELEVON_CHORD_FRAC = 1.0 - 0.72           # 0.28 c, bisagra a 0.72 c (ADR-0002)
-ETA_IN, ETA_OUT = 0.30, 0.90             # tramo de elevon (guide §7.5)
+ELEVON_CHORD_FRAC = 1.0 - 0.72
+ETA_IN, ETA_OUT = 0.30, 0.90
+CH_RANGE = (0.01, 0.05)       # hinge-moment coefficient [E]
+N_SERVOS_PER_ELEVON = 2
+HORN_RADIUS_RATIO = 1.0       # servo horn / control horn [E], CAD upper bound
+LINKAGE_EFFICIENCY = 0.80     # joints, horn alignment and compliance [E]
+TORQUE_SAFETY_FACTOR = 1.50
 
-RHO = 1.225             # densidad ISA nivel del mar, kg/m^3
-V_NE = 180.0 / 3.6      # V de diseno 180 km/h -> 50 m/s [D] (guide, design 180)
-CH_RANGE = (0.01, 0.05)  # rango razonable de Ch de bisagra de elevon [E]
-N_SERVOS_PER_ELEVON = 2   # doble actuacion (ADR-0026)
+# Lowest catalog torque used only as a comparison; the Article #1 Corona
+# DS-939MG is 2.5 kgf*cm at 4.8 V (I-18 [M]).
+MG90S_TORQUE_KGFCM = 1.80
+CORONA_TORQUE_KGFCM = 2.50
+STRUCTURAL_SPEED_MPS = speed_mps(STRUCTURAL_DESIGN_SPEED_KMH)
+MAX_HINGE_COEFFICIENT = max(CH_RANGE)
 
 
-def elevon_chord_avg():
-    """Cuerda media del elevon = 0.28 * cuerda local media sobre el tramo 30-90 %."""
-    eta = np.linspace(ETA_IN, ETA_OUT, 200)
-    c_local = CR * (1 - (1 - TAPER) * eta)
-    return ELEVON_CHORD_FRAC * c_local.mean()
+def elevon_chord_avg(samples=200):
+    """Mean elevon chord [m] over the 30--90 % semi-span interval."""
+    if samples < 2:
+        raise ValueError("at least two span samples are required")
+    eta = np.linspace(ETA_IN, ETA_OUT, samples)
+    local_chord = ROOT_CHORD * (1.0 - (1.0 - TAPER) * eta)
+    return ELEVON_CHORD_FRAC * float(local_chord.mean())
+
+
+def control_geometry():
+    """Return mean chord, span and planform area of one elevon [SI]."""
+    mean_chord = elevon_chord_avg()
+    span = B / 2.0 * (ETA_OUT - ETA_IN)
+    return mean_chord, span, span * mean_chord
+
+
+def hinge_moment(ch, speed=STRUCTURAL_SPEED_MPS):
+    """Aerodynamic hinge moment of one elevon [N*m]."""
+    if ch < 0.0 or speed <= 0.0:
+        raise ValueError("Ch must be non-negative and speed positive")
+    mean_chord, _, area = control_geometry()
+    q = 0.5 * RHO_SL * speed**2
+    return q * area * mean_chord * ch
+
+
+def servo_torque_nm(ch, speed=STRUCTURAL_SPEED_MPS):
+    """Ideal torque demand per servo [N*m] before efficiency and safety factor."""
+    return hinge_moment(ch, speed) * HORN_RADIUS_RATIO / N_SERVOS_PER_ELEVON
+
+
+def nm_to_kgf_cm(torque_nm):
+    """Convert N*m to kgf*cm."""
+    return torque_nm / (G0 * 0.01)
+
+
+def required_catalog_torque_kgf_cm(ch=MAX_HINGE_COEFFICIENT):
+    """Minimum catalog torque after efficiency and safety factor."""
+    ideal = servo_torque_nm(ch)
+    return nm_to_kgf_cm(ideal) * TORQUE_SAFETY_FACTOR / LINKAGE_EFFICIENCY
 
 
 def main():
-    print("=" * 70)
-    print("REQUISITO DE PAR DE SERVO — elevones Salamandra (todo [D]/[E])")
-    print("=" * 70)
-    print(f"  Cuerda raiz {CR*1000:.0f} mm, punta {CT*1000:.0f} mm")
-    c_av = elevon_chord_avg()
-    span_e = B / 2 * (ETA_OUT - ETA_IN)      # 390 mm
-    s_control = span_e * c_av                 # superficie de un elevon, m^2
-    print(f"  Elevon: cuerda media {c_av*1000:.0f} mm, vano {span_e*1000:.0f} mm, "
-          f"S_control = {s_control*1e4:.0f} cm^2 = {s_control*1e2:.1f} dm^2")
-    print(f"  V diseno = {V_NE*3.6:.0f} km/h, rho = {RHO} kg/m^3")
+    mean_chord, span, area = control_geometry()
+    speed = speed_mps(STRUCTURAL_DESIGN_SPEED_KMH)
+    print("=" * 74)
+    print("SALAMANDRA ELEVON SERVO TORQUE - SI MODEL AND CATALOG CHECK")
+    print("=" * 74)
+    print(f"  Elevon mean chord={mean_chord*1000:.1f} mm, span={span*1000:.0f} mm, "
+          f"area={area*1e4:.0f} cm2")
+    print(f"  Structural sizing speed={speed*3.6:.0f} km/h; two servos/elevon; "
+          f"horn ratio={HORN_RADIUS_RATIO:.2f}")
 
-    print("\n  Par de bisagra por elevon  (Mh = 0.5 rho V^2 S c Ch):")
+    print("\n  Aerodynamic hinge moment and ideal demand per servo")
     for ch in CH_RANGE:
-        mh = 0.5 * RHO * V_NE**2 * s_control * c_av * ch
-        mh_servo = mh / N_SERVOS_PER_ELEVON
-        print(f"    Ch={ch:.2f}: Mh={mh*1000:.0f} mN.m -> por servo "
-              f"{mh_servo*1000:.0f} mN.m ({mh_servo*0.0102*1000:.2f} g.cm)")
+        total = hinge_moment(ch, speed)
+        per_servo = servo_torque_nm(ch, speed)
+        print(f"    Ch={ch:.2f}: elevon={total*1000:.1f} mN*m; "
+              f"servo={per_servo*1000:.1f} mN*m = "
+              f"{nm_to_kgf_cm(per_servo):.3f} kgf*cm")
 
-    print("\n  Comparacion con el catalogo (I-18): el MG90S mas modesto da")
-    print("  ~180 g.cm; el peor caso Mh ~ 49 g.cm por servo. Margen >= 3.7x, y")
-    print("  con doble actuacion el margen efectivo es >= 7x. CONCL: el par")
-    print("  NO es el driver; la seleccion la domina rigidez/masa/precio.")
+    worst_ideal = nm_to_kgf_cm(servo_torque_nm(max(CH_RANGE), speed))
+    required = required_catalog_torque_kgf_cm()
+    print("\n  Selection check")
+    print(f"    Worst ideal demand={worst_ideal:.3f} kgf*cm")
+    print(f"    Required catalog torque={required:.3f} kgf*cm "
+          f"(SF={TORQUE_SAFETY_FACTOR:.2f}, linkage eta={LINKAGE_EFFICIENCY:.2f})")
+    print(f"    MG90S 1.8 kgf*cm: ideal margin={MG90S_TORQUE_KGFCM/worst_ideal:.2f}x")
+    print(f"    Article #1 Corona 2.5 kgf*cm: factored margin="
+          f"{CORONA_TORQUE_KGFCM/required:.2f}x")
+    print("    Static torque passes; backlash, holding stiffness, current and "
+          "linkage freeplay remain independent acceptance gates.")
+
+    checks = {
+        "1 N*m converts to 10.19--10.20 kgf*cm":
+            10.19 < nm_to_kgf_cm(1.0) < 10.20,
+        "one elevon area is 0.0220--0.0222 m2": 0.0220 < area < 0.0222,
+        "worst hinge moment is 0.095--0.097 N*m":
+            0.095 < hinge_moment(max(CH_RANGE), speed) < 0.097,
+        "dual actuation halves ideal servo torque": abs(
+            servo_torque_nm(max(CH_RANGE), speed)
+            - hinge_moment(max(CH_RANGE), speed) / 2.0) < 1e-12,
+        "MG90S retains at least 3.5x ideal margin":
+            MG90S_TORQUE_KGFCM / worst_ideal >= 3.5,
+        "Article #1 Corona passes factored demand by at least 2.5x":
+            CORONA_TORQUE_KGFCM / required >= 2.5,
+    }
+    print("\nVALIDATION")
+    for name, passed in checks.items():
+        print(f"  [{'PASS' if passed else 'FAIL'}] {name}")
+    if not all(checks.values()):
+        raise SystemExit(1)
+    print("\nVALIDATION: ALL PASS")
 
 
 if __name__ == "__main__":

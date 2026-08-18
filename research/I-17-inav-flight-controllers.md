@@ -260,11 +260,11 @@ GPS modules 25–45 mA. Modern F4 wing boards with OSD + SD + baro draw about
 | Servo rail (4 servos active) | **600–1200 mA** | 5 A Vx (8 A F765) | 12–24 % |
 | Servo rail (4 servos stall, brief) | **2800–4000 mA** | 5 A Vx | ≤ 80 % |
 
-- **Total avionics power ≈ 6.6 W** (≈ 2.1 W 5 V rail + ≈ 4.5 W servos) `[D]`.
-- **vs cruise:** the guide §10.1 cruise is ≈ 110 W (5 A @ 22 V, 6S) → avionics is
-  **≈ 6 % of cruise power** `[D]`.
-- **Energy impact:** 1 h of flight burns **≈ 6.6 Wh** of avionics = **≈ 7.3 %** of a
-  6S1P P42A pack (90.7 Wh, I-16 §6.1) `[D]`. Not negligible for the O1 efficiency
+- **Total avionics rail power = 6.64 W** (≈2.1 W 5 V rail + ≈4.5 W servos) `[D]`.
+- **Battery-side power = 7.38 W** at the shared 90 % BEC efficiency, or 6.75 % of
+  O1's 109.25 W total battery-power ceiling `[D]`.
+- **Energy impact:** 1 h burns **≈7.38 Wh = 8.1 %** of a 6S1P P42A pack
+  (90.72 Wh, I-16 §6.1) `[D]`. Not negligible for the O1 efficiency
   claim, but small enough that the range equation is dominated by propulsion.
 - **BEC sizing conclusion:** the 2 A 5 V BEC and 5 A servo BEC of the F405/F765
   class carry the full avionics + servo load with 3–4× margin `[D]`. The F411 class
@@ -294,8 +294,8 @@ Self-validating: the printed matrix must show **YES** for the five
 F405/F722/F765/SpeedyBee entries and the stated MISS reasons for F411 (no
 blackbox) and Foxeer (no current input); the footprint summary must print
 **min 28×28×7 / avg 45×34×12 / max 56×37×13 mm / recommended 64×45×21 mm**; and
-the power budget must print **5 V rail 300–555 mA, avionics ≈ 6.6 W ≈ 6 % of
-cruise, ≈ 7.3 % of a 6S1P P42A pack per flight-hour**. A change to the requirement
+the power budget must print **5 V rail 300–555 mA, avionics 6.64 W at the rails,
+7.38 W at the battery and 8.1 % of a 6S1P P42A pack per hour**. A change to the requirement
 set, board specs, or consumption values must reproduce these lines.
 
 ## 9. Popularity basis

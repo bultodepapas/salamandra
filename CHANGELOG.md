@@ -4,6 +4,48 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.31] — 2026-08-17
+
+**Calculation-system integration audit — one numerical design contract, corrected
+physics and automated cross-module verification.**
+
+- **C29, propulsion energy boundary:** the v0.3 calculation incorrectly allocated all
+  109.25 W of O1 battery power to motor+ESC and called a propeller point an aircraft
+  equilibrium despite having no aircraft drag input. The corrected chain reserves
+  14.04 W for avionics, O4 Lite and BEC losses, leaving 95.21 W. The APC E 8×8 boundary
+  is J 0.923, 8,443 rpm, maximum drag 2.06 N and ηprop 0.671; E2 drag is required for a
+  unique equilibrium. Four-cell sizing becomes approximately 713 Kv.
+- **C30, servo units:** SI hinge moment had been labelled g·cm after applying a kgf·cm
+  conversion, a factor-1000 unit error in the text. The corrected worst ideal demand is
+  0.489 kgf·cm per servo; with 0.80 linkage efficiency and SF 1.5, the catalog
+  requirement is 0.917 kgf·cm. MG90S margin is 3.68× ideal / 1.96× factored.
+- **C31, yaw dynamics:** dimensional yaw-rate derivatives omitted the standard `1/(2V)`
+  factor. Corrected CLEAN eigenvalues are +6.25/−7.13 s⁻¹ (unstable); V1 is
+  −0.80 ± 3.95i s⁻¹ with approximately 1.3 s decay. The fixed-fin decision stands, but
+  the previous 0.8 s finless time constant is superseded.
+- **C32, V1 mass chain:** the former 36.72 g fin row represented only an allocation and
+  omitted the mandatory 5.70 g aluminium spar from the analytical assembly. The
+  complete lower model is 43.01 g, so connected V1 mass/stall are 1,626.5 g and
+  45.1 km/h. The 1,620.2 g allocation remains the target, but F2 is reopened by
+  6.29 g; a passing calculation suite must not disguise this requirement failure.
+- **Integrated numerical contract:** `design_config.py` now owns shared atmosphere,
+  speeds, load factor, stall model, mass targets and O1 power as well as geometry.
+  Battery mass/envelope, CG, boom, mass, avionics, FPV, propulsion, launch, controls,
+  yaw, divergence and aerodynamic tools consume those shared values instead of local
+  copies.
+- **Verification and model improvements:** new `verify_calculations.py` checks all
+  interfaces and can execute all 19 deterministic local CLIs. Launch propagation now
+  includes drag and motor delay; the boom uses exact multi-point beam superposition;
+  VLM caches/vectorizes its influence calculation; divergence uses the final r1 profile
+  (129.6 km/h conservative) while retaining the 105 km/h released limit.
+- Design Guide **v0.19**, justification/open points **v0.14**, docs/07 revision 4 and
+  research thread I-23 are the corrected technical record. This entry supersedes the
+  propulsion, servo and yaw values in [1.30] and earlier entries without rewriting
+  their historical audit trail. C32 likewise supersedes the V1 closure claim in
+  [1.30].
+
+---
+
 ## [1.30] — 2026-08-17
 
 **Release v0.3.0 — the three highest-ROI open design chains are corrected and closed

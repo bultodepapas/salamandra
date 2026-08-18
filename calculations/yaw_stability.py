@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Salamandra directional (yaw) stability — Cn_beta budget, centreline-fin sizing,
-rudder-authority check, yaw-subsidence estimate, and the mass/drag/stall cost
+rudder-authority check, reduced 2-DOF yaw-mode estimate, and the mass/drag/stall cost
 of the fin options. Full analysis thread: research/I-20 (2026-08-05).
 
 Methods (published methodology, cited in I-20 §Sources):
@@ -11,7 +11,7 @@ Methods (published methodology, cited in I-20 §Sources):
   - Wing (FSW)        : small for AR 6; negative sign for forward sweep; band [E]
   - Rudder authority  : Cnδr  = −η_r·CLα_v·τ·(S_v/S)·(l_v/b)                  [DATCOM]
   - Yaw damping       : Cnr_v = −2·η·CLα_v·(S_v/S)·(l_v/b)² ; Cnr_w ≈ −CL/4   [DATCOM]
-  - Yaw subsidence    : linear 2-DOF (β, r) eigenvalue check                  [E inputs]
+  - Yaw modes         : linear 2-DOF (β, r) eigenvalue check                  [E inputs]
   - Fin bending       : cantilever at V_NE, CN = 1.0, slipstream q ratio      [D]
   - Drag penalty      : flat-plate Cf + interference + slipstream             [Hoerner]
   - Stall impact      : V_stall ∝ sqrt(AUW)                                   [D]
@@ -21,26 +21,48 @@ declared; band inputs are [E]. Validation cases run at the end and must PASS
 before a modification is trusted (calculations/README.md).
 """
 import sys
+
 import numpy as np
-from design_config import B, MAC, S, SWEEP_C4_DEG
 from balance_cg import CG_TARGET, solve_reference_layout
+from design_config import (
+    ARTICLE_CLEAN_MASS_KG,
+    ARTICLE_V1_MASS_KG,
+    ASPECT_RATIO,
+    CRUISE_SPEED_KMH,
+    NU_SL,
+    PETG_DENSITY_KG_M3,
+    RHO_SL,
+    STRUCTURAL_DESIGN_SPEED_KMH,
+    SWEEP_C4_DEG,
+    V1_FIN_MASS_CAP_KG,
+    V1_FIN_SPAR_MASS_KG,
+    B,
+    S,
+    lift_coefficient,
+    speed_mps,
+    stall_speed,
+)
 
 # --------------------------------------------------------------------------
 # Inputs — reference geometry (design guide v0.5, §5/§7.6, OP-01) [D]/[M]
 # --------------------------------------------------------------------------
-ARW = 6.0               # aspect ratio
+ARW = ASPECT_RATIO      # aspect ratio
 LAM_C4 = SWEEP_C4_DEG   # c/4 sweep, deg — negative = forward sweep (ADR-0040)
-CL_CRU = 0.132          # cruise CL (I-07)
-E_OSW = 0.85            # Oswald factor [E]
-CD0_CRU = 0.0136        # zero-lift drag of the finless clean config [D] (L/D ≈ 8-10)
 CG = CG_TARGET           # target CG, m from root c/4 (ADR-0040)
-V_CRU = 26.4            # 95 km/h cruise speed (m/s)
-V_NE = 50.0             # design V_NE, 180 km/h (m/s)
-RHO = 1.225             # air density sea level (kg/m³)
-NU = 1.5e-5             # kinematic viscosity (m²/s)
-AUW_REF = 1.5835        # CLEAN Article #1 allocation (kg, ADR-0043)
-V_STALL_REF = 44.5      # km/h at AUW_REF (guide §11)
-V1_FIN_CAP_G = 36.72    # lower-band V1a estimate and CAD acceptance cap [E]
+V_CRU = speed_mps(CRUISE_SPEED_KMH)
+V_NE = speed_mps(STRUCTURAL_DESIGN_SPEED_KMH)
+RHO = RHO_SL
+NU = NU_SL
+AUW_REF = ARTICLE_CLEAN_MASS_KG
+V1_FIN_CAP_G = V1_FIN_MASS_CAP_KG * 1000.0
+CL_CRU = lift_coefficient(AUW_REF, V_CRU)
+
+# Reporting-only clean drag decomposition. SPAN_EFFICIENCY applies only to the
+# induced term; it is not a single low-Re Oswald factor (ADR-0009).
+SPAN_EFFICIENCY = 0.85   # induced span efficiency [E]
+CD_PROFILE_CRUISE = 0.0136
+PETG_DENSITY = PETG_DENSITY_KG_M3
+FIN_SPAR_MASS_G = V1_FIN_SPAR_MASS_KG * 1000.0
 
 # Fuselage + nose boom (guide §7.6, OP-01): length nose tip → rear pod end
 L_F = 0.265 - solve_reference_layout()["bay_fwd"]  # nose support to rear pod
@@ -128,11 +150,17 @@ def fin_geometry(S_v, b_v):
     return c_r, c_t, h_c
 
 
-def fin_mass_band(S_v):
-    """Solid thin PETG fin, t 1.2–2.0 mm + 15 % mount, g [E]."""
-    m_lo = S_v * 0.0012 * 1250.0 * 1.15
-    m_hi = S_v * 0.0020 * 1250.0 * 1.15
+def fin_shell_mount_mass_band(S_v):
+    """PETG fin shell plus 15 % mount allowance, excluding the spar [g]."""
+    m_lo = S_v * 0.0012 * PETG_DENSITY * 1.15
+    m_hi = S_v * 0.0020 * PETG_DENSITY * 1.15
     return 1000.0 * m_lo, 1000.0 * m_hi
+
+
+def fin_mass_band(S_v):
+    """Complete fin assembly band [g], including the mandatory aluminium spar."""
+    lo, hi = fin_shell_mount_mass_band(S_v)
+    return lo + FIN_SPAR_MASS_G, hi + FIN_SPAR_MASS_G
 
 
 def fin_drag(S_v):
@@ -146,27 +174,41 @@ def fin_drag(S_v):
 
 
 def stall_speed_kmh(auw):
-    """V_stall scaling from the reference point (guide §4 datum)."""
-    return V_STALL_REF * np.sqrt(auw / AUW_REF)
+    """Stall speed from the shared wing CLmax contract."""
+    return stall_speed(auw) * 3.6
 
 
-def yaw_subsidence(cnb_per_deg, cnr, cyb=-0.15, cyr=0.25):
-    """Simplified 2-DOF (β, r) yaw dynamics: returns eigenvalues, 1/s.
+def yaw_state_matrix(cnb_per_deg, cnr, cyb=-0.15, cyr=0.25,
+                     mass=AUW_REF, iz=IZ, speed=V_CRU):
+    """Dimensional 2-DOF lateral-directional state matrix for (beta, r).
+
+    Cnr and Cyr are derivatives with respect to normalized yaw rate r*b/(2V).
+    The 1/(2V) conversion is therefore mandatory in Nr and Yr. Revision 2
+    corrects the former omission of this factor.
+    """
+    if mass <= 0.0 or iz <= 0.0 or speed <= 0.0:
+        raise ValueError("mass, yaw inertia and speed must be positive")
+    q = 0.5 * RHO * speed**2
+    y_beta = q * S * cyb
+    y_r = q * S * B * cyr / (2.0 * speed)
+    n_beta = q * S * B * cnb_per_deg * DEG
+    n_r = q * S * B**2 * cnr / (2.0 * speed)
+    return np.array([
+        [y_beta / (mass * speed), -1.0 + y_r / (mass * speed)],
+        [n_beta / iz, n_r / iz],
+    ])
+
+
+def yaw_modes(cnb_per_deg, cnr, cyb=-0.15, cyr=0.25):
+    """Simplified 2-DOF (beta, r) eigenvalues [1/s].
 
     [E] inputs: Cyβ ≈ −0.15 (finless), Cyr ≈ +0.25; I_z band. The finless
     configuration with Cnβ < 0 shows a divergent real mode (time constant
-    reported); the finned configuration shows stable subsidence. Full Dutch
-    roll (4-DOF) is left to the flight-test programme (E-series).
+    reported); the finned configuration shows a damped oscillatory pair. This
+    reduced pair is not a full Dutch-roll identification: roll rate and bank
+    angle are omitted and remain in the E-series flight-test programme.
     """
-    q = 0.5 * RHO * V_CRU**2
-    m = AUW_REF
-    yb = q * S * cyb / m
-    yr = q * S * B * cyr / (m * V_CRU)
-    nb = q * S * B * cnb_per_deg * DEG / IZ
-    nr = q * S * B**2 * cnr / IZ
-    A = np.array([[yb / V_CRU, -1.0 + yr / V_CRU],
-                  [nb, nr]])
-    return np.linalg.eigvals(A)
+    return np.linalg.eigvals(yaw_state_matrix(cnb_per_deg, cnr, cyb, cyr))
 
 
 def rudder_delta_req(cnb_total, cndr, v_air, v_cw):
@@ -198,9 +240,9 @@ def main():
     cnb_no_hi = cnb_f + CNB_W_BAND[0]
     print(f"   TOTAL no fin  : {cnb_no_lo:+.5f} … {cnb_no_hi:+.5f} /deg  "
           f"=> NEGATIVE (statically unstable) [E]")
-    lam = yaw_subsidence(cnb_no_hi, cnr_wing())
-    print(f"   Yaw subsidence mode (worst): λ = {lam.real[0]:+.3f} 1/s"
-          f"  (divergence τ ≈ {1.0/max(lam.real):.1f} s [E])")
+    lam = yaw_modes(cnb_no_hi, cnr_wing())
+    print(f"   2-DOF yaw modes (worst): λ = {lam[0]:+.3f}, {lam[1]:+.3f} 1/s"
+          f"  (divergence τ ≈ {1.0/max(lam.real):.2f} s [E])")
 
     # ---- 2. Fin sizing for stability tiers ----
     print("\n2. FIN SIZING (centreline, rear-pod extension, l_v = %.0f mm)" % (L_V*1000))
@@ -218,15 +260,17 @@ def main():
         S_v = fin_area_for_target(target)
         tier_areas.append(S_v)
         # band propagation
-        cnb_lo = cnb_fin(S_v, L_V, cla_fin_band(AR_FIN, 12.0)[0]) + \
+        cnb_case_a = cnb_fin(S_v, L_V, cla_fin_band(AR_FIN, 12.0)[0]) + \
             cnb_fuselage(K_FUS_BAND[0], S_FS_BAND[0], L_F) + CNB_W_BAND[1]
-        cnb_hi = cnb_fin(S_v, L_V, cla_fin_band(AR_FIN, 12.0)[1]) + \
+        cnb_case_b = cnb_fin(S_v, L_V, cla_fin_band(AR_FIN, 12.0)[1]) + \
             cnb_fuselage(K_FUS_BAND[1], S_FS_BAND[1], L_F) + CNB_W_BAND[0]
+        cnb_lo, cnb_hi = sorted((cnb_case_a, cnb_case_b))
         b_v = np.sqrt(S_v * AR_FIN)
         c_r, c_t, h_c = fin_geometry(S_v, b_v)
         m_lo, m_hi = fin_mass_band(S_v)
-        dcd0, cf = fin_drag(S_v)
-        cd_tot = CD0_CRU + CL_CRU**2 / (np.pi * ARW * E_OSW)
+        dcd0, _ = fin_drag(S_v)
+        cd_tot = CD_PROFILE_CRUISE + CL_CRU**2 / (
+            np.pi * ARW * SPAN_EFFICIENCY)
         dwhkm = 100.0 * dcd0 / cd_tot
         auw_new = AUW_REF + (m_lo + m_hi) / 2.0 / 1000.0
         vs = stall_speed_kmh(auw_new)
@@ -238,7 +282,8 @@ def main():
               f"(nominal ≈ {cnb_fin(S_v,L_V,cla_nom)+cnb_fus_nom+WING_MEAN:+.5f})")
         print(f"   Fin Cn_beta     : {cnb_fin(S_v,L_V,cla_nom):+.5f} /deg")
         print(f"   Volume coeff V_v = {V_v:.3f} (tailless practice ≈ 0.02–0.05 [I])")
-        print(f"   Mass            : {m_lo:.0f}–{m_hi:.0f} g (solid 1.2–2.0 mm PETG)")
+        print(f"   Mass complete   : {m_lo:.0f}–{m_hi:.0f} g "
+              f"(1.2–2.0 mm PETG + mount + {FIN_SPAR_MASS_G:.1f} g spar)")
         print(f"   ΔCD0            : +{dcd0:.4f}  →  +{dwhkm:.1f} % drag / "
               f"Wh/km ≈ {1.15*(1+dwhkm/100):.2f} [E]")
         print(f"   AUW +{1000*(auw_new-AUW_REF):.0f} g → V_stall ≈ {vs:.1f} km/h "
@@ -248,6 +293,8 @@ def main():
             print(f"   V1 allocation   : {V1_FIN_CAP_G:.2f} g cap → "
                   f"AUW {selected_auw*1000:.1f} g / V_stall "
                   f"{stall_speed_kmh(selected_auw):.1f} km/h")
+            print(f"   F2 mass gap     : current analytical lower assembly "
+                  f"{m_lo:.2f} g exceeds the cap by {m_lo-V1_FIN_CAP_G:.2f} g")
 
     # ---- 3. Recommended geometry (V1a) — structural check ----
     S_v = tier_areas[0]
@@ -265,7 +312,7 @@ def main():
               f"(PETG yield ≈ 50 MPa, FS {50.0/sig:.2f})")
     print("   => root t ≥ 3.0 mm solid for FS ≥ 1.5 without crediting the Al spar")
     om = 3.516 * np.sqrt(2.0e9 * (c_r*0.0025**3/12.0) /
-                         (1250.0 * c_r*0.0025 * b_v**4))
+                         (PETG_DENSITY * c_r*0.0025 * b_v**4))
     print(f"   First bending mode ≈ {om/(2*np.pi):.1f} Hz — flutter/strength "
           f"check in F2 [E]")
 
@@ -295,9 +342,9 @@ def main():
     cnr_f = cnr_fin(S_v, L_V, helmbold_cla(AR_FIN, 12.0))
     print(f"   Wing ≈ {cnr_w:.3f} ; fin V1a ≈ {cnr_f:.3f} → total ≈ "
           f"{cnr_w+cnr_f:.3f} (damping doubled)")
-    lam_f = yaw_subsidence(0.0005, cnr_w + cnr_f)
-    print(f"   Yaw subsidence (V1a): λ = {lam_f.real.max():+.3f} 1/s "
-          f"(stable, τ ≈ {1.0/abs(lam_f.real.max()):.1f} s) [E]")
+    lam_f = yaw_modes(0.0005, cnr_w + cnr_f)
+    print(f"   V1a 2-DOF modes: λ = {lam_f[0]:+.3f}, {lam_f[1]:+.3f} 1/s "
+          f"(stable decay τ ≈ {1.0/abs(lam_f.real.max()):.1f} s) [E]")
 
     # ---- 6. Validation cases ----
     print("\n6. VALIDATION CASES")
@@ -329,11 +376,22 @@ def main():
     check(f"V1a 3.0 mm root FS >= 1.5 without spar credit "
           f"(got {50e6/sig_root_3:.2f})", 50e6 / sig_root_3 >= 1.5)
     v1a_lo = fin_mass_band(tier_areas[0])[0]
-    check(f"V1 fin cap matches the lower mass estimate "
-          f"({V1_FIN_CAP_G:.2f} vs {v1a_lo:.2f} g)",
-          abs(V1_FIN_CAP_G - v1a_lo) <= 0.01)
-    check("V1 allocation remains below the 1620.4 g stall ceiling",
-          AUW_REF * 1000.0 + V1_FIN_CAP_G <= 1620.4)
+    check(f"C32 complete-fin mass gap is explicit and 6--7 g "
+          f"({V1_FIN_CAP_G:.2f} cap vs {v1a_lo:.2f} g lower assembly)",
+          6.0 <= v1a_lo - V1_FIN_CAP_G <= 7.0)
+    check("V1 analytical lower assembly matches the shared mass contract",
+          abs(AUW_REF + v1a_lo / 1000.0 - ARTICLE_V1_MASS_KG) < 1e-5)
+    finless_modes = yaw_modes(cnb_no_hi, cnr_wing())
+    finned_modes = yaw_modes(0.0005, cnr_w + cnr_f)
+    check("corrected finless 2-DOF model has one divergent mode",
+          max(finless_modes.real) > 0.0)
+    check("corrected V1a reduced 2-DOF oscillatory pair is damped",
+          np.all(finned_modes.real < 0.0) and np.any(abs(finned_modes.imag) > 0.0))
+    a_ref = yaw_state_matrix(0.0005, -0.10)
+    q_ref = 0.5 * RHO * V_CRU**2
+    expected_nr = q_ref * S * B**2 * -0.10 / (2.0 * V_CRU * IZ)
+    check("Cnr dimensionalization includes 1/(2V)",
+          abs(a_ref[1, 1] - expected_nr) < 1e-12)
     print(f"\n   VALIDATION: {'ALL PASS' if ok else 'FAILURES PRESENT'}")
     sys.exit(0 if ok else 1)
 

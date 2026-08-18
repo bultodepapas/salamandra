@@ -61,8 +61,10 @@ python sweep_trade.py --full
 
 Fixed inputs: span 1.300 m, area 0.282 m², taper 0.50, 3.0° printed-twist cap,
 0.6° permanent-reflex cap, target static margin 8 % MAC and section-Cl ceiling 0.65.
-The section-Cl screen uses the **1.620 kg O1 design target** at 45 km/h. The current
-1.685 kg P42A 6S1P budget remains non-compliant with that mass/stall target (OP-24).
+The section-Cl screen originally used the **1.620 kg O1 allocation target** at 45 km/h.
+The connected C32 V1 lower model is now 1.62651 kg; rerunning the selected case changes
+peak section Cl only to 0.639 and does not change the sweep selection. V1 nevertheless
+remains non-compliant with its mass/stall requirement (OP-24).
 The full-resolution result is:
 
 | Λc/4 | NP VLM / Weissinger (mm) | Twist / reflex | Peak Cl | 6S1P station (mm) | Extension from tip (mm) | Result |
@@ -78,24 +80,26 @@ passes all constraints. The result is −15°, not the locally attractive −12�
 
 ## 5. Revised balance and divergence results
 
-At −15°, `balance_cg.py` gives a VLM target CG of −93.8 mm. The current 6S1P P42A pack
-balances at −372.7 mm (−373.1 mm in the full trade), inside the −473.3 to −272.2 mm
-one-layer cradle. Current baseline AUW is 1.685 kg and calculated stall speed is
-45.9 km/h. The 4S1P and both 2P packs remain outside this one-layer balance envelope.
+At −15°, `balance_cg.py` gives a VLM target CG of −93.8 mm. After ADR-0043, the Article
+#1 6S1P P42A pack balances at −359.6 mm inside the approximately −460 to −259 mm
+one-layer cradle. CLEAN AUW is 1.5835 kg and calculated stall speed is 44.5 km/h. The
+V1 allocation is 1.6202 kg / 45.0 km/h, while C32's connected lower model is
+1.6265 kg / 45.1 km/h and remains open at F2. Other packs are future power modules,
+not Article #1 options.
 
-`divergence.py` revision 3 gives:
+`divergence.py` revision 4, using the released r1 section, gives:
 
 | Case | Divergence speed | Interpretation |
 |---|---:|---|
-| Nominal | 325.3 km/h | Sensitivity reference only |
-| Conservative, unmeasured baseline | 128.8 km/h | Governing pre-test case |
-| Optimistic | 847 km/h | Non-design case |
-| Conservative + Gxy plane | 179.0 km/h | Conditional on coupon validation |
-| Conservative + Gxy + gyroid + 1.1 mm wall | 206 km/h | Still below the 240 km/h structural target |
+| Nominal | 327.2 km/h | Sensitivity reference only |
+| Conservative, unmeasured baseline | 129.6 km/h | Governing pre-test case |
+| Optimistic | 852 km/h | Non-design case |
+| Conservative + Gxy plane | 180.0 km/h | Conditional on coupon validation |
+| Conservative + Gxy + gyroid + 1.1 mm wall | 207 km/h | Still below the 240 km/h structural target |
 
-The initial operating limit is derived transparently as 0.85 × 128.8 = 109.5 km/h,
-rounded downward to the next 5 km/h increment: **105 km/h**. If the Gxy-plane coupon
-validates that stiffness model, 0.85 × 179.0 = 152.1 km/h, rounded down to **150 km/h**.
+The computed clearance is 0.85 × 129.6 = 110.2 km/h, rounded downward to 110 km/h.
+The released initial limit remains **105 km/h** conservatively. If the Gxy-plane coupon
+validates that stiffness model, 0.85 × 180.0 = 153.0 km/h, rounded down to **150 km/h**.
 
 ## 6. What is decided and what remains open
 

@@ -20,27 +20,46 @@ import math
 import os
 
 from b3_screening import (
-    AF_DIR, load_dat, run_xfoil, scale_tc, split_surfaces, interp_surface,
-    summarize, thickness, write_dat,
+    AF_DIR,
+    interp_surface,
+    load_dat,
+    run_xfoil,
+    scale_tc,
+    split_surfaces,
+    summarize,
+    thickness,
+    write_dat,
 )
 from design_config import (
-    HALF_SPAN, MAC, ROOT_CHORD, ROOT_TC, S, STATION_Y, TIP_CHORD, TIP_TC,
-    chord, thickness_ratio,
+    ARTICLE_V1_MASS_KG,
+    CRUISE_SPEED_KMH,
+    HALF_SPAN,
+    MAC,
+    NU_SL,
+    ROOT_CHORD,
+    ROOT_TC,
+    STALL_SPEED_LIMIT_KMH,
+    STATIC_MARGIN,
+    STATION_Y,
+    TIP_CHORD,
+    TIP_TC,
+    S,
+    chord,
+    lift_coefficient,
+    speed_mps,
+    thickness_ratio,
 )
 from elevon_authority import cm0_wing
 
-
-NU = 1.50e-5                 # m2/s, sea-level kinematic viscosity [E]
-V_STALL = 45.0 / 3.6
-V_CRUISE = 95.0 / 3.6
+NU = NU_SL
+V_STALL = speed_mps(STALL_SPEED_LIMIT_KMH)
+V_CRUISE = speed_mps(CRUISE_SPEED_KMH)
 HINGE_X = 0.72
-DESIGN_MASS = 1.620
-RHO = 1.225
-STATIC_MARGIN = 0.08
+DESIGN_MASS = ARTICLE_V1_MASS_KG
 TWIST_DEG = 3.0
 ELEVON_TRIM_CAP = 0.6
-ROOT_ANGLES = tuple(i * 0.5 for i in range(0, 7))    # 0..3 deg
-TIP_ANGLES = tuple(i * 0.5 for i in range(0, 17))    # 0..8 deg
+ROOT_ANGLES = tuple(i * 0.5 for i in range(7))    # 0..3 deg
+TIP_ANGLES = tuple(i * 0.5 for i in range(17))    # 0..8 deg
 
 
 def reynolds(chord, speed):
@@ -49,7 +68,7 @@ def reynolds(chord, speed):
 
 ROOT_RE = (reynolds(ROOT_CHORD, V_STALL), reynolds(ROOT_CHORD, V_CRUISE))
 TIP_RE = (reynolds(TIP_CHORD, V_STALL), reynolds(TIP_CHORD, V_CRUISE))
-CL_CRUISE = DESIGN_MASS * 9.81 / (0.5 * RHO * V_CRUISE**2 * S)
+CL_CRUISE = lift_coefficient(DESIGN_MASS, V_CRUISE)
 CM_REQUIRED = CL_CRUISE * STATIC_MARGIN
 DCM_TWIST = cm0_wing(1.0, 0.0) - cm0_wing(0.0, 0.0)
 DCM_ELEVON = cm0_wing(0.0, 1.0) - cm0_wing(0.0, 0.0)
@@ -114,7 +133,7 @@ def make_profile(target_tc, angle_deg):
 
 
 def angle_tag(angle):
-    return f"{int(round(angle * 10)):03d}"
+    return f"{round(angle * 10):03d}"
 
 
 def screen_angles(kind, target_tc, angles, cruise_re, xfoil):
@@ -129,7 +148,7 @@ def screen_angles(kind, target_tc, angles, cruise_re, xfoil):
             polar = run_xfoil(
                 dat, cruise_re, ncrit, tag, xfoil, alpha_end=6.0,
                 iter_limit=120, stable_seconds=8.0)
-            summary = summarize(polar)
+            summary = summarize(polar, CL_CRUISE)
             if summary is None or summary["cm0"] is None:
                 raise RuntimeError(f"no usable cruise polar for {tag}")
             by_ncrit[ncrit] = summary
@@ -169,7 +188,7 @@ def full_polars(kind, path, reynolds_band, angle, xfoil):
             tag = (f"salamandra_{kind}_r{int(re_no/1000)}k_n{ncrit}_"
                    f"a{angle_tag(angle)}")
             polar = run_xfoil(path, re_no, ncrit, tag, xfoil)
-            summary = summarize(polar)
+            summary = summarize(polar, CL_CRUISE)
             if summary is None:
                 raise RuntimeError(f"no converged polar for {tag}")
             rows.append((re_no, ncrit, summary))
@@ -249,7 +268,7 @@ def main():
         angle = root_angle + eta * (tip_angle - root_angle)
         tc = thickness_ratio(y)
         points = make_profile(tc, angle)
-        path = os.path.join(AF_DIR, f"salamandra-r1-y{int(round(y*1000)):03d}.dat")
+        path = os.path.join(AF_DIR, f"salamandra-r1-y{round(y*1000):03d}.dat")
         write_dat(points, path)
         checks[f"station y={y*1000:.0f} mm thickness"] = (
             abs(thickness(points) - tc) < 1e-5)

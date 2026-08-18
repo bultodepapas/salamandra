@@ -32,7 +32,15 @@ Spec (ADR-0039):
 Outputs [D] on [E] bands; validation cases at the end.
 """
 import sys
+
 import numpy as np
+from design_config import (
+    ARTICLE_V1_MASS_KG,
+    G0,
+    PETG_DENSITY_KG_M3,
+    POSITIVE_LIMIT_LOAD_FACTOR,
+    chord,
+)
 
 # --------------------------------------------------------------------------
 # Inputs
@@ -45,13 +53,13 @@ N_GLUED_JOINTS = 4        # y = 347 and 498, both halves
 # Joint shear demand at +6 g, V_NE (guide §4: n_max 6): half-wing lift at 6 g
 # ≈ 50 N; outboard-area fractions [E bands]:
 FRAC_OUT = {347: (0.40, 0.70), 498: (0.15, 0.35)}   # of the half-wing lift
-W = 1.6202 * 9.81          # N, current V1 worst-case allocation (ADR-0043)
-N_MAX = 6.0
+W = ARTICLE_V1_MASS_KG * G0
+N_MAX = POSITIVE_LIMIT_LOAD_FACTOR
 
 # Material [M]/[E]: PETG printed shear strength band; PLA brittle in shear
 TAU_PETG = (26e6, 35e6)
 TAU_PLA = (35e6, 50e6)
-RHO = 1270.0               # kg/m³ PETG
+RHO = PETG_DENSITY_KG_M3
 
 # Solid collar around each bore (bearing material)
 COLLAR_D = 0.008           # m
@@ -98,7 +106,7 @@ def main():
     # ---- 3. Spec check: positions clear of tube and hinge ----
     print("\n3. POSITION CHECK (clear of carbon tube and hinge cell)")
     for y in (347, 498):
-        c = 0.2892 - 0.2225 * y / 1000.0
+        c = chord(y / 1000.0)
         tube_span = (0.25 * c - 0.006, 0.25 * c + 0.006)
         p1, p2 = 0.40 * c, 0.60 * c
         ok = p1 > tube_span[1] + 0.005 and p2 < 0.72 * c - 0.005

@@ -171,8 +171,9 @@ range **7.4–9.5 W** `[D]`.
 
 ## 5. Power budget and BEC margin for the Salamandra `[D]`
 
-`python3 calculations/fpv_power_budget.py`. Reference pack: 6S1P P42A = 90.7 Wh
-(I-16). Cruise ≈ 110 W (guide §10.1). Avionics without FPV ≈ 6.6 W (I-17 §6).
+`python3 calculations/fpv_power_budget.py`. Reference pack: 6S1P P42A = 90.72 Wh
+(I-16). O1 total battery power is 109.25 W. Avionics without FPV is 6.6375 W at
+the regulated rails (I-17 §6); battery-side totals use 90 % BEC efficiency.
 
 | Unit | Power range | Rail | I@max vs BEC | BEC margin |
 |---|---|---|---|---|
@@ -186,9 +187,10 @@ range **7.4–9.5 W** `[D]`.
   The O4 Lite fits the 5 V rail (1.2 A, 60 %) or better a dedicated 9 V/1 A BEC.
 - **Energy impact** `[D]`: 1 h at max power = **10.4 Wh (11.5 %)** for the Pro,
   9.5 Wh (10.4 %) for the O4, 6.0 Wh (6.6 %) for the Lite, of the 90.7 Wh pack.
-- **Total electronics** `[D]`: avionics + FPV = **17.0 W with O4 Pro (15.5 % of
-  cruise)**, 12.6 W with O4 Lite (11.5 %). One flight-hour of electronics =
-  **18.8 % of the pack** (Pro) — material for the O1 efficiency claim; fly the
+- **Total electronics** `[D]`: avionics + FPV = **17.04 W rail / 18.93 W battery
+  with O4 Pro**, and **12.64 W rail / 14.04 W battery with O4 Lite**. One hour is
+  **20.9 % of the pack** (Pro) or **15.5 %** (Lite) — material for the O1 efficiency
+  claim; fly the
   lowest usable power level (25 mW indoors/near, max mW only when needed).
 
 ## 6. Integration notes for the Salamandra (nose pod / camera mount)
@@ -217,7 +219,8 @@ python3 calculations/fpv_power_budget.py [input_V]
 
 Self-validating: must print O4 Pro 1200 mW = 10.4 W, O4 standard max 9.5 W
 (700 mW cap), O4 Lite 6.0 W, the 9 V rail utilization ≤ 58 %, and the total
-electronics 17.0 W / 18.8 % per flight-hour (Pro) and 12.6 W / 13.9 % (Lite).
+electronics 17.04 W rail / 18.93 W battery / 20.9 % per hour (Pro) and
+12.64 W rail / 14.04 W battery / 15.5 % (Lite).
 
 ## 8. Sources
 

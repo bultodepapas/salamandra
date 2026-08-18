@@ -1,13 +1,13 @@
 # I-22 — High-ROI v0.3 engineering audit
 
 **Status:** Executed · **Date:** 2026-08-17 · **Feeds:** ADR-0041/0042/0043,
-Design Guide v0.18, release v0.3.0
+Design Guide v0.19, release v0.3.0, I-23/C29
 
 ## 1. Ranking method
 
 The audit ranked findings by safety/design effect, ability to unblock CAD, evidence
 quality and implementation cost. The three highest-return corrections were the airfoil
-generator and trim chain, cruise propulsion equilibrium, and Article #1 mass allocation.
+generator and trim chain, cruise propulsion boundary, and Article #1 mass allocation.
 
 ## 2. Airfoil pipeline correction
 
@@ -27,13 +27,19 @@ ADR-0041. All final endpoint polars and coordinate-thickness checks pass.
 XFOIL 6.99 is the official MIT build: <https://web.mit.edu/drela/Public/web/xfoil/>.
 Its results remain `[D]`; E2 is the measured closer.
 
-## 3. Propulsion-equilibrium correction
+## 3. Propulsion-boundary correction
 
-The prior 9,900 rpm prescription came from the APC 8×8's peak measured efficiency and
-did not enforce `T = D`. Scaling the official UIUC wind-tunnel coefficients at 95 km/h
-shows that the peak-efficiency row would require 230 W electrical, versus O1's 109.25 W.
-Solving the measured curve at the O1 power produces J 0.899, 8,667 rpm and 2.42 N.
-The full derivation and sensitivity band are executable in `propulsion_match.py`.
+The prior 9,900 rpm prescription came from the APC 8×8's peak measured efficiency.
+Scaling the official UIUC wind-tunnel coefficients at 95 km/h shows that this row would
+require approximately 230 W electrical, versus O1's 109.25 W total battery ceiling.
+
+Post-release audit C29 found a second error: the first v0.3 calculation allocated all
+109.25 W to motor+ESC and called the resulting propeller point an aircraft equilibrium
+without an aircraft drag input. The corrected chain reserves 14.04 W for avionics,
+O4 Lite and BEC loss, leaving 95.21 W. It produces an O1 boundary at J 0.923,
+8,443 rpm, maximum drag 2.06 N and ηprop 0.671. E2 drag is required for a unique
+equilibrium. The full derivation and optional drag solve are executable in
+`propulsion_match.py`; I-23 records the system-level correction.
 
 Primary sources: [UIUC Propeller Database](https://m-selig.ae.illinois.edu/props/propDB.html),
 [APC 8×8E product data](https://www.apcprop.com/product/8x8e/) and
@@ -42,15 +48,18 @@ Primary sources: [UIUC Propeller Database](https://m-selig.ae.illinois.edu/props
 ## 4. Mass/stall correction
 
 The release estimate mixed conservative component allowances with no selected build.
-The new allocation selects catalogued components, corrects the propeller blade mass,
+The release allocation selects catalogued components, corrects the propeller blade mass,
 and turns the already-declared 550 g PETG shell lower bound into a CAD limit. It avoids
 the tempting but structurally rejected LW-PLA path. `mass_budget.py` preserves the v0.2
-case and validates CLEAN at 1,583.5 g and V1 at 1,620.2 g. The 36.72 g V1a fin cap
-matches the lower bound from `yaw_stability.py`. The coupled balance solution
+case and validates CLEAN at 1,583.5 g. Post-release C32 found that the 36.72 g V1a fin
+row omitted its mandatory 5.70 g aluminium spar: the connected complete-fin lower
+model is 43.01 g and V1 becomes 1,626.5 g / 45.1 km/h. The 1,620.2 g value remains an
+allocation target and F2 is reopened by 6.29 g. The coupled balance solution
 moves the 6S1P pack to −359.6 mm and shortens the forward support span to 327 mm.
 
 The result is a design allocation, not a measured mass claim. F2 must report CAD mass
-properties and the complete aircraft must be weighed before flight.
+properties, remove or compensate the V1 gap, and weigh the complete aircraft before
+flight.
 
 ## 5. Remaining high-risk items
 

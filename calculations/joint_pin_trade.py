@@ -23,6 +23,7 @@ printed, same bench; pultruded carbon E 100-150 GPa band [M]); loads [E]
 (declared band); results [D]. Validation cases at the end.
 """
 import sys
+
 import numpy as np
 
 # --------------------------------------------------------------------------
@@ -121,7 +122,7 @@ def main():
     print(f"   Carbon Ø6 × 140 mm : {m_c*1000:.1f} g · ≈ €0.25–0.50 per pin "
           f"(pultruded rod market price [E])")
     print(f"   Filament Ø1.75     : {m_f*1000:.1f} g · ≈ €0.01 (free)")
-    print(f"   Savings per aircraft (2 pins): ≈ €0.5–1.0 and ≈ 12 g")
+    print("   Savings per aircraft (2 pins): ≈ €0.5–1.0 and ≈ 12 g")
     print("   Complexity: IDENTICAL — both need a bore, embedment and sliding")
     print("   fit; the socket is the complexity, not the material.")
     print("   Verdict: −29 % of divergence margin is not purchasable for €0.5.")

@@ -16,11 +16,11 @@ from __future__ import annotations
 import argparse
 import math
 import os
-from pathlib import Path
 import subprocess
 import tempfile
+from itertools import pairwise
+from pathlib import Path
 from urllib.request import urlopen
-
 
 COORD_URL = "https://m-selig.ae.illinois.edu/ads/coord_seligFmt/e387.dat"
 DRAG_URL = "https://m-selig.ae.illinois.edu/pd/pub/lsat/vol3/E387C.DRG"
@@ -77,7 +77,7 @@ def parse_xfoil_polar(text: str) -> list[tuple[float, float, float]]:
 def interpolate_cd(polar: list[tuple[float, float, float]], cl: float) -> float | None:
     """Interpolación lineal de Cd(Cl), sin extrapolar."""
     points = sorted((row[1], row[2]) for row in polar)
-    for (cl0, cd0), (cl1, cd1) in zip(points, points[1:]):
+    for (cl0, cd0), (cl1, cd1) in pairwise(points):
         if cl0 <= cl <= cl1 and cl1 > cl0:
             weight = (cl - cl0) / (cl1 - cl0)
             return cd0 + weight * (cd1 - cd0)

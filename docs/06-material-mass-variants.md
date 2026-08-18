@@ -22,7 +22,7 @@ properties in F2/P2 (OP-28); everything else is anchored to measured data.
 | Item | Model | Tag |
 |---|---|---|
 | Materials (ρ, g/cm³) | PETG **1.27** · PLA 1.24 · PLA+ 1.24 · AERO PLA **0.68** (foamed, flow 0.60) | `[M]` (I-04) / `[E]` band 0.55–0.70 for AERO |
-| Printed parts | v0.2 raw estimate 600 g is retained as a regression input. Article #1 applies a **550 g PETG CAD cap**: core 150 + wings 310 + tips 40 + elevons 50; optional V1a fin ≤36.72 g (the calculated lower mass bound) | ADR-0043 `[E]` |
+| Printed parts | v0.2 raw estimate 600 g is retained as a regression input. Article #1 CLEAN applies a **550 g PETG CAD cap**: core 150 + wings 310 + tips 40 + elevons 50. C32 V1a adds 37.31 g shell/mount plus a fixed 5.70 g spar; the old 36.72 g complete allocation is not currently met | ADR-0043/C32 `[E]` |
 | Hybrid nose boom | 327 mm support span + 50 mm CORE insertion + printed cradle = **37.4 g** | `[D]`/`[E]` ADR-0043 / `balance_cg.py` |
 | Material scaling | m_part(mat) = m_part(PETG) × ρ_mat/ρ_PETG (same geometry) | `[D]` |
 | Elevon balance mass | m_b = 1.2 × m_elevons (ADR-0025: 25 g, 24 mm offset, 20 mm horn → 30 g/elevon) | `[D]` |
@@ -50,7 +50,8 @@ Example option combinations (all validated runs of `mass_budget.py`):
 | Scenario | AUW (g) | V_stall (km/h) |
 |---|---:|---:|
 | ALL PETG · Article #1 CLEAN | 1583.5 | 44.5 |
-| ALL PETG · Article #1 V1 | 1620.2 | 45.0 |
+| ALL PETG · V1 allocation target | 1620.2 | 45.0 |
+| **ALL PETG · V1 current lower model** | **1626.5** | **45.1 — FAIL** |
 
 Per-part × material matrix (mass, g, from the PETG base):
 
@@ -67,7 +68,7 @@ Per-part × material matrix (mass, g, from the PETG base):
 1. **AERO PLA wings are structurally softer** (E ≈ 1.0 GPa vs PETG 1.94 — I-04). The
    wing shell carries torsion (ADR-0015/0030) and the divergence criterion is
    V_div ≥ 1.5×V_NE on a forward-swept wing (I-05). **AERO WINGS / AERO MAX require a
-   re-verification of G4/G6**. Revision 3 gives **V_div = 91.1 km/h** at the
+   re-verification of G4/G6**. Revision 4 gives **V_div = 91.6 km/h** at the
    conservative end, below the 95 km/h cruise point: the present AERO wing is **not
    airworthy** despite its real mass benefit. Tracked in OP-28.
 2. **PLA+ is rejected by ADR-0016** (softer than PLA, no thermal gain) — the PLA+
@@ -90,7 +91,7 @@ Per-part × material matrix (mass, g, from the PETG base):
 - **ALL PETG at the 550 g shell cap** remains the reference and closes C16 without
   introducing the divergence penalty of a softer wing.
 - **AERO WINGS is not cleared for flight:** the −179 g return does not compensate for
-  V_div = 91.1 km/h in the conservative model. It remains a coupon/section experiment,
+  V_div = 91.6 km/h in the conservative model. It remains a coupon/section experiment,
   not the first aircraft material policy.
 - **AERO MAX** (−230 g) additionally lightens the elevons and their balance mass —
   only after the elevon-flutter chain (ADR-0025/0026, G7) is re-checked with the
@@ -107,7 +108,8 @@ python3 calculations/mass_budget.py --config all_petg --fc F765-WING --fpv O4-Li
 ```
 
 Validation preserves the v0.2 1685.2 g / 45.9 km/h regression and checks the new CLEAN
-and V1 allocations, pack masses, material scaling and balance rule. All must pass.
+and V1 target/model separation, pack masses, material scaling and balance rule. The
+suite passes only when the known C32 V1 requirement failure is explicit.
 
 ## 7. Evolution path
 

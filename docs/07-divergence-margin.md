@@ -1,6 +1,6 @@
 # Salamandra — Absolute divergence margin
 
-**Revision 3.0** · 17 August 2026 · Tool: `calculations/divergence.py`
+**Revision 4.0** · 17 August 2026 · Tool: `calculations/divergence.py`
 **Configuration:** ADR-0040 planform, Λc/4 = −15°
 **Validation:** all internal numerical and regression cases pass; FEM and independent
 flux-form shooting solutions agree within 0.1 % on the real tapered wing.
@@ -15,18 +15,20 @@ closed**, and the first-flight operating limit is **105 km/h**. A 150 km/h limit
 conditional on measured in-plane stiffness. Neither number replaces E7 flight-envelope
 expansion.
 
-Revision 3 also corrects a conceptual error in revision 2: the centroid of the enclosed
+Revision 3 corrected a conceptual error in revision 2: the centroid of the enclosed
 cell areas is not the shear centre of this multicell printed section. It is retained only
 as a geometry diagnostic. The elastic axis is now an explicit uncertainty that must be
-measured.
+measured. Revision 4 replaces the stale provisional MH60-13.5 geometry with the
+released Salamandra r1 root section and connects all shared design constants to
+`design_config.py`.
 
 ## 2. Model and evidence
 
-| Element | Revision-3 model | Evidence/status |
+| Element | Revision-4 model | Evidence/status |
 |---|---|---|
 | Planform | b = 1.300 m, S = 0.282 m², taper 0.50, Λc/4 = −15° | `design_config.py`, ADR-0040 |
 | Section | Closed box x/c 0→0.72, web at 0.30; hinge cell excluded | guide §6.2, ADR-0002 |
-| Geometry | Real `mh60-135.dat`; multicell Bredt-Batho compatibility; J = 3.17×10⁻⁷ m⁴ root to 1.81×10⁻⁸ m⁴ tip | `[D]` |
+| Geometry | Released `salamandra-root-r1.dat`; multicell Bredt-Batho compatibility; J = 3.21×10⁻⁷ m⁴ root to 1.83×10⁻⁸ m⁴ tip | `[D]` |
 | Skin/web | 0.9 mm, 2 perimeters | ADR-0028 |
 | G_eff | 0.55 GPa nominal; ±35 % band | `[M]` anchor / `[E]` transfer, G4 |
 | Elastic axis | xEA/c = 0.35 nominal; 0.30 optimistic; 0.45 conservative | `[E]`, replaces false shear-centre claim |
@@ -46,25 +48,25 @@ of the NASA configurations' absolute values. Primary source:
 
 | Case | Vdiv (km/h) | Margin to 240 km/h | Verdict |
 |---|---:|---:|---|
-| **Nominal** | **325.3** | **1.36×** | PASS as a sensitivity reference |
-| **Conservative, unmeasured baseline** | **128.8** | **0.54×** | **FAIL — governing pre-test case** |
-| Optimistic | 847.0 | 3.53× | Non-design case |
-| Conservative + fully bonded carbon tube | 135.9 | 0.57× | FAIL; only +5.5 % |
-| **AERO LW-PLA panels, conservative** | **91.1** | **0.38×** | **FAIL — below design cruise** |
+| **Nominal** | **327.2** | **1.36×** | PASS as a sensitivity reference |
+| **Conservative, unmeasured baseline** | **129.6** | **0.54×** | **FAIL — governing pre-test case** |
+| Optimistic | 852.0 | 3.55× | Non-design case |
+| Conservative + fully bonded carbon tube | 136.6 | 0.57× | FAIL; only +5.4 % |
+| **AERO LW-PLA panels, conservative** | **91.6** | **0.38×** | **FAIL — below design cruise** |
 
 The broad range is not statistical confidence. It is a sensitivity envelope over
 unmeasured G, elastic-axis location, section lift slope and the forward-sweep factor.
-Quoting 325.3 km/h without the 128.8 km/h case is prohibited.
+Quoting 327.2 km/h without the 129.6 km/h case is prohibited.
 
 ## 4. Real-print sensitivities
 
 | Lever at the conservative end | Vdiv | Change |
 |---|---:|---:|
-| Baseline | 128.8 km/h | — |
-| Gyroid contribution, +10 % GJ `[E]` | 135.1 km/h | +5 % |
-| Wall 0.9 → 1.1 mm | 141.1 km/h | +10 % |
-| In-plane GXY = 0.69 GPa `[D]` | 179.0 km/h | +39 % |
-| GXY + gyroid + 1.1 mm wall | 206 km/h | +60 %; **still below 240** |
+| Baseline | 129.6 km/h | — |
+| Gyroid contribution, +10 % GJ `[E]` | 135.9 km/h | +5 % |
+| Wall 0.9 → 1.1 mm | 142.0 km/h | +10 % |
+| In-plane GXY = 0.69 GPa `[D]` | 180.0 km/h | +39 % |
+| GXY + gyroid + 1.1 mm wall | 207 km/h | +60 %; **still below 240** |
 
 The previous revision's 242 km/h combined result is superseded. The new result is lower
 because the conservative elastic-axis arm is no longer replaced by the enclosed-area
@@ -77,7 +79,7 @@ Secondary findings remain useful:
 - The distributed y = 195 mm joint gives a 12.0 % penalty at k = 5× and 37.7 % at k = 1×.
   R-JOINT ≥ 5× remains binding.
 - AERO LW-PLA panels cannot be accepted on mass benefit alone. Their conservative
-  91.1 km/h result is below the 95 km/h cruise design point.
+  91.6 km/h result is below the 95 km/h cruise design point.
 
 ## 5. Operating limit derivation
 
@@ -85,12 +87,15 @@ Use a pre-measurement clearance factor of **0.85** and round downward to the nex
 5 km/h increment:
 
 ```text
-unmeasured baseline: 0.85 × 128.8 = 109.5 km/h → V_limit = 105 km/h
-GXY validated:       0.85 × 179.0 = 152.1 km/h → V_limit = 150 km/h
+unmeasured baseline: 0.85 × 129.6 = 110.2 km/h → computed clearance = 110 km/h
+released initial limit:                              V_limit = 105 km/h
+GXY validated:       0.85 × 180.0 = 153.0 km/h → conditional limit = 150 km/h
 ```
 
-The 105 km/h limit covers the 95 km/h design cruise with 10 km/h of operational
-headroom. It does not clear the 160 km/h article VNE. Do not raise the limit from a
+The computed pre-test clearance rounds to 110 km/h. Revision 4 deliberately retains
+the already released 105 km/h limit, which covers the 95 km/h design cruise with
+10 km/h of operational headroom and avoids expanding the envelope without evidence.
+It does not clear the 160 km/h article VNE. Do not raise the limit from a
 favourable material data sheet alone: the coupon orientation, wall process and geometry
 must represent the actual wing.
 

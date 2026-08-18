@@ -299,7 +299,8 @@ integrated with exact c² weights: root 0.6071, tip 0.3929.
 
 At cruise the integrated profile Cm0 is +0.00326/+0.00209. VLM gives
 `dCm/dtwist = +0.00249/deg` and `dCm/delevon = +0.00256/deg`; therefore +3.0°
-printed wash-in trims at **−0.06°/+0.39° neutral elevon**. The complete band passes
+printed wash-in trims at **−0.04°/+0.41° neutral elevon** at the corrected V1
+lower-model mass. The complete band passes
 the ±0.6° CAD cap. Coordinate and thickness validations pass at every CAD station.
 
 ## 8.3 Decision boundary

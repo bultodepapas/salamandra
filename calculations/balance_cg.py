@@ -10,26 +10,30 @@ Coordinates: x aft, origin at the root quarter chord. Outputs are [D] on [E]
 component locations until CAD mass properties replace the table in F2/P1-P3.
 """
 import numpy as np
-
+from battery_pack_layout import reference_pack_envelope
 from design_config import (
-    MAC, S, SWEEP_C4_DEG, planform_centroid, x_c4,
+    ARTICLE_CLEAN_MASS_KG,
+    MAC,
+    STATIC_MARGIN,
+    SWEEP_C4_DEG,
+    planform_centroid,
+    stall_speed,
+    x_c4,
 )
-
+from mass_budget import build, pack_mass
 
 NP_VLM = -75.8e-3       # m, VLM 40x6, I-21 [D]
 NP_WL = -72.9e-3        # m, Weissinger-L ny=100, I-21 [D]
-STATIC_MARGIN = 0.08
 CG_TARGET = NP_VLM - STATIC_MARGIN * MAC
 R_CG = 5e-3             # m, docs/00 section 3.3
 NOSE_POD_TIP = -132e-3  # unchanged root-geometry datum
 
-RHO_AIR, CLMAX = 1.225, 0.589       # same C16 chain as mass_budget.py
-
 # I-16 P42A pack model: n cells x 70 g + 25 g packaging.
-PACKS = [("4S1P", 0.305), ("6S1P", 0.445),
-         ("4S2P", 0.585), ("6S2P", 0.865)]
-PACK_LEN = {"4S1P": 0.1532, "6S1P": 0.1532}
-REFERENCE_PACK = 0.445
+PACKS = [(name, pack_mass(name, "P42A") / 1000.0)
+         for name in ("4S1P", "6S1P", "4S2P", "6S2P")]
+PACK_LEN = {name: reference_pack_envelope(name)[0] / 1000.0
+            for name in ("4S1P", "6S1P")}
+REFERENCE_PACK = pack_mass("6S1P", "P42A") / 1000.0
 PACK_CLEARANCE = 0.005
 
 # Prototype 0.1 calibration: the old structural check gave 26 g over the
@@ -40,6 +44,18 @@ AL_TUBE_LINEAR_MASS = 2700.0 * np.pi / 4.0 * (0.008 ** 2 - 0.006 ** 2)
 CRADLE_MASS = 0.015
 CRADLE_LENGTH = 0.201
 CAMERA_FROM_BAY_FWD = 0.066  # reproduces the old -450 mm station
+
+
+def reference_mass_breakdown():
+    """Return the canonical CLEAN mass rows in kilograms, keyed by part."""
+    rows, totals = build("all_petg")
+    masses = {row["part"]: row["m"] / 1000.0 for row in rows}
+    if abs(totals["auw"] / 1000.0 - ARTICLE_CLEAN_MASS_KG) > 1e-8:
+        raise RuntimeError("mass_budget default no longer matches the design contract")
+    return masses
+
+
+REFERENCE_MASSES = reference_mass_breakdown()
 
 
 def pack_station(m_no_batt, moment_no_batt, m_pack, cg):
@@ -56,16 +72,25 @@ def component_table(sweep_deg, bay_fwd):
     boom_mass = CRADLE_MASS + tube_mass
     boom_station = (CRADLE_MASS * cradle_station + tube_mass * tube_station) / boom_mass
     camera_station = bay_fwd + CAMERA_FROM_BAY_FWD
+    printed_shell = sum(REFERENCE_MASSES[name]
+                        for name in ("core", "wings", "tips", "elevons"))
+    camera_mass = 0.0030
     return [
-        ("PETG shell (ADR-0043 cap)", 0.550, planform_centroid(sweep_deg)),
-        ("Carbon (mean c/4, y=195..585)", 0.070, x_c4(0.390, sweep_deg)),
-        ("Motor + APC 8x8 assembly", 0.195, +217e-3),
-        ("ESC", 0.035, +40e-3),
-        ("Avionics (SpeedyBee FC+PDB etc.)", 0.1129, -10e-3),
-        ("Corona servos + elevon balance", 0.110, -5e-3),
-        ("Hardware", 0.020, +50e-3),
-        ("FPV DJI O4 Lite - camera", 0.0030, camera_station),
-        ("FPV DJI O4 Lite - VTX/antenna", 0.0052, +10e-3),
+        ("PETG shell (ADR-0043 cap)", printed_shell,
+         planform_centroid(sweep_deg)),
+        ("Carbon (mean c/4, y=195..585)", REFERENCE_MASSES["carbon"],
+         x_c4(0.390, sweep_deg)),
+        ("Motor + APC 8x8 assembly",
+         REFERENCE_MASSES["motor"] + REFERENCE_MASSES["prop"], +217e-3),
+        ("ESC", REFERENCE_MASSES["esc"], +40e-3),
+        ("Avionics (SpeedyBee FC+PDB etc.)", REFERENCE_MASSES["avionics"],
+         -10e-3),
+        ("Corona servos + elevon balance",
+         REFERENCE_MASSES["servos"] + REFERENCE_MASSES["balance"], -5e-3),
+        ("Hardware", REFERENCE_MASSES["hardware"], +50e-3),
+        ("FPV DJI O4 Lite - camera", camera_mass, camera_station),
+        ("FPV DJI O4 Lite - VTX/antenna",
+         REFERENCE_MASSES["fpv"] - camera_mass, +10e-3),
         ("Battery boom + cradle", boom_mass, boom_station),
     ]
 
@@ -149,7 +174,7 @@ def main():
             <= layout["bay_aft"] - PACK_LEN[name] / 2.0)
         reason = "IN" if fits else (
             "OUT: station" if physical else "OUT: no one-layer pack envelope")
-        v_stall = 3.6 * np.sqrt(2.0 * auw * 9.81 / (RHO_AIR * S * CLMAX))
+        v_stall = 3.6 * stall_speed(auw)
         print(f"    {name:5s}: AUW={auw*1000:.0f} g  V_stall={v_stall:.1f} km/h  {reason}")
 
     checks = {
@@ -161,6 +186,8 @@ def main():
             <= layout["pack_station"]
             <= layout["bay_aft"] - PACK_LEN["6S1P"] / 2.0),
         "boom estimate 36-40 g": 0.036 <= layout["components"][-1][1] <= 0.040,
+        "balance CLEAN mass equals mass_budget": abs(
+            m0 + REFERENCE_PACK - ARTICLE_CLEAN_MASS_KG) < 5e-5,
     }
     print("\n  Validation:")
     for name, passed in checks.items():

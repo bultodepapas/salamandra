@@ -9,7 +9,7 @@ produced the absolute value: I-05 gives only a RELATIVE scaling anchor to the
 Peregrine (GJ 6.45x, V_div 1.14x) and explicitly says "it does not give the
 absolute value". This script is the first absolute, reproducible estimate.
 
-MODEL (revision 3, S3/CAD remains the closure trigger):
+MODEL (revision 4, S3/CAD remains the closure trigger):
   1. Section per guide §6.2 + §5.2: torsion box x/c 0 -> 0.72 (D-box 0->0.30,
      center cell 0.30->0.72; the hinge cell 0.72->1.00 is the elevon, OUT of the
      torsion path — "the closed torsion box ends here"). Idealized as a double
@@ -41,15 +41,24 @@ The verdict is reported at the CONSERVATIVE end of the declared bands.
 """
 import os
 import sys
-from functools import lru_cache
+from functools import cache
+
 import numpy as np
-from design_config import HALF_SPAN, STATIONS, SWEEP_C4_DEG
+from design_config import (
+    ARTICLE_V_NE_KMH,
+    HALF_SPAN,
+    INITIAL_SPEED_LIMIT_KMH,
+    RHO_SL,
+    STATIONS,
+    SWEEP_C4_DEG,
+    speed_mps,
+)
 
 # ---------------------------------------------------------------------------
 # Inputs (all with confidence tags)
 # ---------------------------------------------------------------------------
-RHO = 1.225                # kg/m³, ISA sea level
-V_NE = 160.0 / 3.6         # m/s, article #1 (docs/00)
+RHO = RHO_SL
+V_NE = speed_mps(ARTICLE_V_NE_KMH)
 F_DIV = 1.5                # criterion V_div >= 1.5 x V_NE
 
 L = HALF_SPAN              # m, half-span
@@ -59,7 +68,7 @@ T_SKIN = 0.0009            # m, skin 0.9 mm = 2 perimeters (ADR-0028)
 X_AC = 0.25                # aerodynamic centre x/c (reflexed sections 0.24-0.27)
 X_EA_BAND = (0.35, 0.30, 0.45)  # nominal / optimistic / conservative [E]
 E_BAND = tuple(x - X_AC for x in X_EA_BAND)
-PROFILE_FILE = r"geometry\airfoils\mh60-135.dat"   # real section coordinates
+PROFILE_FILE = r"geometry\airfoils\salamandra-root-r1.dat"
 AREA_BAND = (1.00, 0.95, 1.05)  # nominal / conservative / optimistic area
                                 # factor for the final-profile uncertainty (OP-02)
 G_PETG = 0.55e9            # Pa, G_eff printed PETG [M] (ADR-0021)
@@ -95,7 +104,7 @@ def load_profile():
     return upper, lower
 
 
-@lru_cache(maxsize=None)
+@cache
 def section_geometry(tc_scale=1.0):
     """Cell areas, perimeters, web length and enclosed-area centroid of the REAL
     two-cell torsion box (D-box 0->X_DBOX, center cell X_DBOX->X_BOX) from
@@ -152,7 +161,7 @@ def section_geometry(tc_scale=1.0):
             s += abs(zu[-1] - zl[-1])     # aft closure (hinge line)
         return A, s, (zu[0], zl[0]), (zu[-1], zl[-1]), poly_centroid(p)
 
-    A1, s1, web_in, web_out, (cx1, _) = cell(0.0, X_DBOX, False)
+    A1, s1, _, web_out, (cx1, _) = cell(0.0, X_DBOX, False)
     A2, s2, _, _, (cx2, _) = cell(X_DBOX, X_BOX, True)
     s12 = abs(web_out[0] - web_out[1])    # shared web at x = X_DBOX
     s1 += s12                             # web belongs to cell 1's perimeter
@@ -297,7 +306,7 @@ def q_divergence_shooting(ys, c, j, g, a, e_frac=0.11, nq=40000, qmax=2e5):
 # ---------------------------------------------------------------------------
 def main():
     print("=" * 74)
-    print("ABSOLUTE DIVERGENCE SPEED - Salamandra Cruise (revision 3)")
+    print("ABSOLUTE DIVERGENCE SPEED - Salamandra Cruise (revision 4)")
     print(f"Planform: sweep c/4 = {SWEEP_C4_DEG:+.1f} deg (ADR-0040)")
     print(f"Criterion: V_div >= {F_DIV:.1f} x V_NE = {F_DIV*V_NE*3.6:.0f} km/h")
     print("=" * 74)
@@ -306,13 +315,13 @@ def main():
     e_nom, e_lo, e_hi = E_BAND
 
     # ---- 1. Section J per station (REAL profile geometry) ----
-    print("\n1. TORSION BOX — multi-cell Bredt-Batho, REAL profile (mh60-135.dat)")
+    print("\n1. TORSION BOX — multi-cell Bredt-Batho, released Salamandra r1 root")
     print(f"   {'y (mm)':>8} {'c (m)':>7} {'t/c':>6} {'J (m⁴)':>12}")
     for yi, ci, tci in STATIONS:
         ji = j_section(ci, tci, T_SKIN)
         print(f"   {yi*1000:8.0f} {ci:7.4f} {tci:6.3f} {ji:12.4e}")
     js = [j_section(ci, tci, T_SKIN) for _, ci, tci in STATIONS]
-    A1r, A2r, s1r, s2r, s12r, x_cell_r = section_geometry(1.0)
+    A1r, A2r, _, _, _, x_cell_r = section_geometry(1.0)
     print(f"   -> J varies {min(js):.3e} .. {max(js):.3e} m⁴ along the span")
     print(f"   -> real geometry: A1={A1r:.4f} A2={A2r:.4f} c², "
           f"cell-area centroid x/c = {x_cell_r:.3f} (NOT the shear center)")
@@ -340,12 +349,12 @@ def main():
     def grid_area(af):
         ys_, c_, h_, j_ = grid(401, area_factor=af)
         return ys_, c_, h_, j_
-    ys_c, c_c, h_c, j_c = grid_area(AREA_BAND[1])
+    ys_c, c_c, _, j_c = grid_area(AREA_BAND[1])
     q_cons = q_divergence(ys_c, c_c, j_c, G_PETG * (1 - G_BAND), a_hi,
                           joint=True, e_frac=e_hi)
     v_cons = k_lo * v_from_q(q_cons)
     # optimistic end
-    ys_o, c_o, h_o, j_o = grid_area(AREA_BAND[2])
+    ys_o, c_o, _, j_o = grid_area(AREA_BAND[2])
     q_opt = q_divergence(ys_o, c_o, j_o, G_PETG * (1 + G_BAND), a_lo,
                          joint=True, e_frac=e_lo)
     v_opt = k_hi * v_from_q(q_opt)
@@ -389,7 +398,7 @@ def main():
     q_aero = q_divergence(ys_c, c_c, j_c, g_aero_cons, a_hi, joint=True,
                           e_frac=e_hi)
     v_aero = k_lo * v_from_q(q_aero)
-    print(f"\n4. AERO LW-PLA WINGS (docs/06, OP-28): G ~ 0.5 x PETG [E]")
+    print("\n4. AERO LW-PLA WINGS (docs/06, OP-28): G ~ 0.5 x PETG [E]")
     print(f"   V_div = {v_aero*3.6:.1f} km/h vs {req*3.6:.0f} km/h required "
           f"-> {'PASS' if v_aero >= req else 'FAIL — confirms OP-28 with numbers'}")
 
@@ -408,8 +417,7 @@ def main():
     # torsion practice suggest 5-15 % GJ contribution [E]
     for gx_tag, gx_frac in [("gyroid +10 % GJ", 1.10),
                             ("wall 1.1 mm (J ~ t)", 1.0 + 0.2)]:
-        jx = j_c * gx_frac if gx_tag.startswith("gyroid") else \
-            j_c * gx_frac
+        jx = j_c * gx_frac
         qx = q_divergence(ys_c, c_c, jx, G_PETG * (1 - G_BAND), a_hi,
                           joint=True, e_frac=e_hi)
         vx = k_lo * v_from_q(qx)
@@ -517,7 +525,7 @@ def main():
     verdict = ("PASS" if v_cons >= req else
                "FAIL — margin at risk; S3 GJ/EI verification is mandatory "
                "before trusting the nominal value")
-    print(f"\n6. CRITERION VERDICT (conservative end of the declared bands)")
+    print("\n6. CRITERION VERDICT (conservative end of the declared bands)")
     print(f"   V_div = {v_cons*3.6:.1f} km/h vs {req*3.6:.0f} km/h required: "
           f"{verdict}")
     # AERO penalty ~ sqrt(0.5) at the same geometry, G band and factors
@@ -528,6 +536,10 @@ def main():
           abs(v_aero / v_petg_hi - np.sqrt(0.5)) < 0.03)
     check("V_limit arithmetic uses the declared 0.85 clearance factor",
           abs(v_limit - V_LIMIT_FACTOR * v_cons) < 1e-12)
+    rounded_limit = np.floor(
+        v_limit * 3.6 / V_LIMIT_INCREMENT) * V_LIMIT_INCREMENT
+    check("shared initial speed limit does not exceed the computed clearance",
+          INITIAL_SPEED_LIMIT_KMH <= rounded_limit)
 
     print(f"\n   MODEL VALIDATION: {'ALL PASS' if ok else 'FAILURES PRESENT'}")
     sys.exit(0 if ok else 1)

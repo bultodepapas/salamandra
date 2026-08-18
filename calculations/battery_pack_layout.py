@@ -18,7 +18,6 @@ Full source / confidence discussion in research/I-16-battery-pack-layout.md.
 Bay check uses the Salamandra reference bay (guide §8, PROVISIONAL; superseded by the cradle):
     bay (x,y,z) = 190 x 70 x 32 mm, single 21 mm layer, never stacked.
 """
-import itertools
 
 # --- cell inputs ----------------------------------------------------------
 D_NOM = 21.0     # mm, 21700 nominal diameter, manufacturer datasheet [M]
@@ -45,6 +44,11 @@ CELLS = {
 # arithmetic mean of the two reference cells (declared average point)
 AVG = tuple(sum(v) / 2 for v in zip(*CELLS.values()))  # (69.0, 4.6, 3.6, 27.4, 6.65, 16.56)
 HARDWARE = 25.0    # g, pack hardware (nickel, wires, XT60, wrap) [E]
+CELL_ALIASES = {"P42A": "Molicel P42A", "50E": "Samsung 50E"}
+REFERENCE_LAYOUTS = {
+    "4S1P": (2, 2, 1, "A"),
+    "6S1P": (2, 3, 1, "A"),
+}
 
 
 def factor_triples(N):
@@ -109,6 +113,43 @@ def fits(px, bay):
     return (L <= bay_x and W <= bay_y) or (L <= bay_y and W <= bay_x)
 
 
+def cell_count(configuration):
+    """Number of cells in an NsMp pack configuration string."""
+    try:
+        series_text, parallel_text = configuration.upper().split("S", 1)
+        parallel_text = parallel_text.removesuffix("P")
+        count = int(series_text) * int(parallel_text)
+    except (AttributeError, TypeError, ValueError) as exc:
+        raise ValueError(f"invalid pack configuration {configuration!r}") from exc
+    if count <= 0:
+        raise ValueError("pack cell count must be positive")
+    return count
+
+
+def pack_mass_g(configuration, cell="P42A"):
+    """Installed pack mass [g] from shared cell data and hardware allowance."""
+    canonical = CELL_ALIASES.get(cell, cell)
+    if canonical not in CELLS:
+        raise ValueError(f"unknown cell {cell!r}")
+    return cell_count(configuration) * CELLS[canonical][0] + HARDWARE
+
+
+def reference_pack_envelope(configuration):
+    """Finished reference one-layer pack envelope [mm]."""
+    if configuration not in REFERENCE_LAYOUTS:
+        raise ValueError(f"no released one-layer layout for {configuration!r}")
+    nx, ny, nz, orientation = REFERENCE_LAYOUTS[configuration]
+    return assemble(envelope(nx, ny, nz, orientation))
+
+
+def _invalid_pack_is_rejected():
+    try:
+        cell_count("not-a-pack")
+    except ValueError:
+        return True
+    return False
+
+
 def main():
     print("=" * 74)
     print("PACK LAYOUT — 4S / 6S · 21700 Li-Ion")
@@ -118,9 +159,9 @@ def main():
     print(f"Assembly: outer wrap +{PVC_OUTER} mm/side, nickel +{NICKEL} mm,")
     print(f"  leads +{LEAD_ADD:.0f} mm on Length, inter-cell gap {GAP} mm")
     print(f"Reference bay (x,y,z) = {tuple(int(v) for v in BAY)} mm  (guide §8, PROVISIONAL; superseded by the cradle)")
-    print(f"  note: bay height 32 mm accommodates a single 21 mm layer (n_z = 1).")
-    print(f"  A pack taller than the bay is possible only if the bay is resized "
-          f"by the designer; this is a reference, not a verdict.\n")
+    print("  note: bay height 32 mm accommodates a single 21 mm layer (n_z = 1).")
+    print("  A pack taller than the bay is possible only if the bay is resized "
+          "by the designer; this is a reference, not a verdict.\n")
 
     for N in (4, 6):
         print("-" * 74)
@@ -186,6 +227,27 @@ def main():
             print(f"    {cname:>20} {pm:>7.0f} {pakw:>7.0f} {pwh:>7.1f} "
                   f"{N*q:>6.2f} {N*v:>6.1f} {N*4.2:>6.1f} {pwh/pakw*1000:>7.0f} {ic:>7.1f}")
         print()
+
+    checks = {
+        "4S1P P42A installed mass is 305 g":
+            abs(pack_mass_g("4S1P", "P42A") - 305.0) < 1e-12,
+        "6S1P P42A installed mass is 445 g":
+            abs(pack_mass_g("6S1P", "P42A") - 445.0) < 1e-12,
+        "6S1P reference envelope is 153.2 x 64.5 x 22.2 mm": all(
+            abs(got - expected) < 0.05
+            for got, expected in zip(
+                reference_pack_envelope("6S1P"), (153.2, 64.5, 22.2))),
+        "released 4S1P and 6S1P layouts fit the bay": all(
+            fits(reference_pack_envelope(name), BAY)
+            for name in REFERENCE_LAYOUTS),
+        "invalid pack configuration is rejected": _invalid_pack_is_rejected(),
+    }
+    print("VALIDATION")
+    for name, passed in checks.items():
+        print(f"  [{'PASS' if passed else 'FAIL'}] {name}")
+    if not all(checks.values()):
+        raise SystemExit(1)
+    print("\nVALIDATION: ALL PASS")
 
 
 if __name__ == "__main__":

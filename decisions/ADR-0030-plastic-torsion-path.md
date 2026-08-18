@@ -22,8 +22,8 @@ torsion tube added to the bending tube.
 
 ## Consequences
 
-- **Correction (2026-08-17): the shell-alone criterion is not demonstrated.** Revision 3
-  gives 325.3 km/h nominal but only 128.8 km/h at the conservative unmeasured end versus
+- **Correction (2026-08-17): the shell-alone criterion is not demonstrated.** Revision 4
+  uses the released r1 profile and gives 327.2 km/h nominal but only 129.6 km/h at the conservative unmeasured end versus
   240 km/h required. The base structural architecture remains provisional; it is not a
   speed-clearance claim. Option B must be sized if S3 confirms insufficient GJ.
 - G4/G6 remain the declared weakest links; validation: E5 (FFT) and E7 (Southwell in
