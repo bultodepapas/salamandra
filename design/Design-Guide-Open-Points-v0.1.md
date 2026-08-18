@@ -1,14 +1,14 @@
 # Salamandra — Design Guide: Open Points and Evolution
 
-**Version 0.16** · 17 August 2026 · **v0.4.0 release companion** to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.21)
+**Version 0.17** · 18 August 2026 · **post-v0.4.0 working companion** to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.22)
 
 This document lists everything in the Design Guide that is **not yet fixed**: assumptions
 that need verification, values that will change when the corresponding research closes,
 and the revision process. It is the "what to watch" map for the designer and for Phase 1.
 
-Every open point names the trigger that resolves it. Until a trigger fires, the v0.4
-value stands.
+Every open point names the trigger that resolves it. Until a trigger fires, the current
+v0.22 working value stands; v0.4.0 remains the historical release snapshot.
 
 ---
 
@@ -18,17 +18,17 @@ value stands.
 
 | # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
-| **OP-01** | **CG reachability** | **Re-derived for ADR-0043:** target CG −93.8 mm. Aggregate ledger station = −355.2 mm; component-level E01 solution = −341.3 mm within travel −372.8…−337.6 mm. Cradle inner section 68×25 mm; overall length 201 mm. | Real mass properties and central-body NP | F2/P1–P3; first-print balance |
-| **OP-02** | **Measured airfoil acceptance** | **CAD coordinate closure complete (ADR-0041):** Salamandra r1, 13.5/9 % t/c, +1.0°/+0.5° added reflex. Real-Re XFOIL endpoints pass; integrated cruise Cm0 +0.00326/+0.00209 and neutral elevon −0.04°/+0.41° at the C32 V1 lower mass and 3.0° wash-in. | Printed-section/flight polar, drag and gentle root-first stall may revise exposed profile/twist parameters | **E2**; computational/CAD part closed |
+| **OP-01** | **CG reachability** | **Re-derived for ADR-0045:** target CG −93.8 mm. CLEAN E01 solution −338.17 mm is inside travel −371.62…−336.52 mm. V1 requires −374.34 mm and clamps 2.72 mm short; xCG −93.04 mm remains inside band. Cradle inner section 68×25 mm; overall length 201 mm. | Real mass properties and central-body NP; recover or accept V1 station | F2/P1–P3; first-print balance |
+| **OP-02** | **Measured airfoil acceptance** | **CAD coordinate closure complete (ADR-0041):** Salamandra r1, 13.5/9 % t/c, +1.0°/+0.5° added reflex. With ADR-0045 physical-surface effectiveness, neutral elevon is −0.14°/+0.50° at Ncrit 10/12 and 3.0° wash-in. | Printed-section/flight polar, hinge-gap loss, drag and stall progression may revise exposed profile/twist/control parameters | **E2**; computational/CAD part closed |
 
 ### Geometry and stability
 
 | # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
-| OP-03 | Twist ε | **CLOSED FOR CAD:** +3.0° printed wash-in; r1 needs −0.04°…+0.41° neutral elevon over Ncrit 10–12 at the V1 lower mass | E2 may refine the exposed parameter before production | ADR-0041 / E2 |
+| OP-03 | Twist ε | **CLOSED FOR CAD:** +3.0° printed wash-in; selected r1/elevon model needs −0.14°…+0.50° neutral elevon over Ncrit 10–12 at the V1 lower mass | E2 may refine the exposed parameter before production | ADR-0041/0045 / E2 |
 | OP-04 | Dihedral Γ | 2.0° total, piecewise-polyhedral (kinks at y = 195/347/498; 0 / 1.07 / 1.53 / 2.0°) | Roll-stability verification; may be revised by the stability analysis | Phase 1 stability (C-series), first flights |
 | OP-05 | Neutral point | **25.72 % MAC / −75.8 mm** `[D]` (32×5 VLM); Weissinger-L **27.0 % / −72.9 mm**, 2.9 mm difference (I-21) | Central-body model and measured balance/flight NP | C2 body model; E-series |
-| OP-06 | Elevon span / travel | 195–585 mm (30–90 % half-span), ±20°, one midspan actuator per elevon. At 180 km/h DS-939MG factored torque margin is 1.36×; VLM gives +0.00256 Cm/° and 5° provides **12.2×** the limiting r1 trim residual. | Measured authority, servo stiffness/freeplay and G7 modal response across the envelope | E2 / E5 / I-10 |
+| OP-06 | Elevon span / travel | **ADR-0045 CAD baseline:** 227.5–585 mm (35–90 %), 357.5 mm, 0.28 c, servo y ±406.25. Rigid VLM retains 94.5 % roll derivative, gives +0.001828 Cm/physical deg and +0.500° limiting trim. Hinge proxy −11.7 %; DS-939MG factored margin 1.52× at 180 km/h. ±20° is only a mechanical envelope; no flap mode/final throw is released. | Measured authority/stall, hinge-gap loss, servo stiffness/freeplay and G7 modal response | I-27; E2 / E5 / G7 |
 | OP-07 | Hinge line x/c | 0.72 | Fixed by structure (ADR-0002); keep unless section is redesigned | — |
 
 ### Structure and materials
@@ -53,12 +53,12 @@ value stands.
 
 | # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
-| OP-16 | Battery carrier (cradle) | Printed 2 halves, **201 mm overall**, inner cross-section **68×25 mm**, 6S1P P42A E01 envelope 153.0×65.7×22.6 mm and solved center −341.3 mm; Ø8.2 channel gripping the boom | R-CG verification in CAD with real packs | F2/P3 |
+| OP-16 | Battery carrier (cradle) | Printed 2 halves, **201 mm overall**, inner cross-section **68×25 mm**, 6S1P P42A E01 envelope 153.0×65.7×22.6 mm; CLEAN centre −338.17 mm, V1 required −374.34 mm versus −371.62 mm stop; Ø8.2 channel gripping the boom | R-CG verification and V1 travel recovery in CAD with real packs | F2/P3 |
 | OP-17 | Pitot probe position | y ≈ 260 mm LE; lines cross the CORE↔PANEL joint (dedicated channel) | Install/test convenience | D1/D2 |
 | OP-18 | FC pitot input | SpeedyBee F405 WING (not MINI) must be verified. **I-17 catalog check (v0.5):** the F405-WING-V2 and SpeedyBee F405 WING meet the full requirement set (I2C for the MS4525 pitot included); H7A3-WING excluded (no INAV target) | Bench check before buying | D1 |
 | OP-19 | Cradle position (nose) | Forward support x ≈ **−459**, CORE support x ≈ −132, 327 mm span + 50 mm insertion; pack between supports | OP-01 final validation | F2 |
 | **OP-23** | **Battery variants** | **CLOSED for Article #1:** 6S1P only. O2 now means separate 4S/6S platform power modules; 4S needs ~713 Kv at the current boundary and a different carrier/CG solution; 2P needs another outer carrier. | Each future module must close its own propulsion, fit and CG chain | ADR-0042; future variant ADR |
-| **OP-24** | **Measured mass acceptance** | Two-servo baseline: CLEAN **1559.25 g / 44.1 km/h**; V1 allocation 1595.97 g and connected lower model **1602.26 g / 44.7 km/h** including the complete 43.01 g fin. Analytical margin to the exact C16 ceiling is about 18.1 g. | CAD mass properties and complete-aircraft scale measurement; reject V1 >1620.4 g unless E2 re-derives CLmax | F2/P3; first complete assembly |
+| **OP-24** | **Measured mass acceptance** | ADR-0045 baseline: CLEAN **1553.25 g / 44.1 km/h**; V1 allocation 1589.97 g and connected lower model **1596.26 g / 44.7 km/h** including the complete 43.01 g fin. Analytical margin to the exact C16 ceiling is about 24.1 g. Only 6 g balance saving is credited; fixed bridge PETG remains in the shell. | CAD mass properties and complete-aircraft scale measurement; reject V1 >1620.4 g unless E2 re-derives CLmax | F2/P3; first complete assembly |
 | **OP-25** | **FPV system selection / integration** | DJI O4 series reference (I-19 `[M]`): Article #1 camera 13.44×12.36×16.50 in the nose boom; 30×30×6 VTX in the CORE with airflow; attached antenna mass lumped into E19 and 80 mm route retained. Power: Pro on the 9 V/2 A rail (≥13.5 W), Article #1 O4 Air Unit on 5 V. Including two-servo avionics and 90 % BEC: Pro **16.48 W battery / 18.2 % pack·h⁻¹**; Article #1 **11.54 W / 12.7 % pack·h⁻¹**. **Legacy O3 Air Unit (I-19 §2.4 `[M]`)** requires its own camera-mount and power checks. | Camera FOV/lens for the mission, CE legal power, real current measurement | D-series bench; O1 energy re-check |
 | **OP-26** | **Fin variant V1 verification (ADR-0038, I-20)** | V1a **2.13 dm²**, 253/105/63 mm; V1b **2.83 dm²**, 291/121/73 mm. Root **3.0 mm solid** gives FS 1.67 without spar credit; mode ≈7.9 Hz. Ø3 mm Al LE spar retained. C32 complete lower mass 43.01 g exceeds its 36.72 g allocation by 6.29 g. V1a lower uncertainty corner is slightly negative; V1b stays positive. | CAD side area, fin flutter/wake test, **mass reduction/compensation**, E8 yaw perturbation/full modal identification | F2/F4-S8; E8 |
 
@@ -109,6 +109,7 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.17 | 2026-08-18 | Guide v0.22/I-27/ADR-0045 propagated: OP-06 adopts the 35–90 % elevon as the working CAD baseline while retaining E2/E5/G7; OP-01/16 expose the 2.72 mm V1 battery-station shortfall; OP-24 credits only the 6 g balance reduction. No flap mode, final throw or flutter closure is claimed. |
 | 0.16 | 2026-08-17 | **Released with v0.4.0 / guide v0.21.** The open-gate state is intentionally unchanged: OP-31/G11/E9 still require dynamic gust and negative-`CLmin` evidence, while F2, E2 and S3 retain the mass, aerodynamic and structural physical acceptance work. |
 | 0.15 | 2026-08-17 | Guide v0.20/I-24 propagated: C33 separates manoeuvre limit from ultimate load, adds positive V-n/VA results and OP-31 for the dynamic gust and negative-CL closure; C34 distinguishes local section `clmax` from wing `CLmax`. No false gust load or CAD change is adopted. |
 | 0.14 | 2026-08-17 | Guide v0.19/I-23 propagated: C29–C32 correct power, servo, yaw and complete-fin mass chains; OP-24 reopens V1 because its 1626.5 g lower model exceeds the 1620.2 g allocation target. |

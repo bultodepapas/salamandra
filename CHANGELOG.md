@@ -6,6 +6,29 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ## [Unreleased] — 2026-08-18
 
+**C36 — Article #1 elevon geometry selected from a span/chord/tip trade.**
+
+- New I-27/ADR-0045 and `elevon_sizing.py` compare retained, shorter, tip-extended
+  and 0.24/0.28/0.32 c surfaces using exact planform integrals, ideal plain-flap
+  effectiveness, an 80×6 VLM, connected V1 inertia and the corrected hinge model.
+- Each 0.28 c elevon now spans **y = 227.5…585 mm (35–90 % half-span), 357.5 mm**.
+  A 32.5 mm fixed PANEL-root trailing-edge bridge separates the hinge from the
+  removable joint; the 65 mm fixed tip remains. The servo moves to y = **±406.25 mm**.
+- Moving area falls 10.0 %, while the rigid-VLM roll derivative retains 94.5 %.
+  Limiting Ncrit-12 trim is +0.500° after ideal 0.28 c flap effectiveness; the hinge
+  proxy falls 11.7 %. The DS-939MG factored static margin becomes 1.52× at 180 km/h.
+- Moving PETG is estimated at 45 g total and balance allocation at 54 g. The removed
+  surface PETG becomes fixed panel material, so only 6 g lead saving is credited:
+  **1553.25 g CLEAN / 1596.26 g V1**, with V1 24.1 g below the exact stall-mass limit.
+- The connected V1 battery target is 2.72 mm beyond current forward travel, although
+  CG remains in the released band. F2 remains open; no flap mode, final throw or
+  flutter-speed improvement is claimed.
+- Design Guide **v0.22**, justification/open points **v0.17**. Release v0.4.0 remains
+  the immutable v0.21 snapshot. The inconsistent interim C35 narrative mass figures
+  are superseded by the connected C36 values above.
+
+---
+
 **C35 — Article #1 actuation simplified from four servos to two.**
 
 - ADR-0026 now specifies one midspan servo per 390 mm elevon. The former `sqrt(2)`

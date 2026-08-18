@@ -1,9 +1,9 @@
 # I-14 — Hand-launch and stall-margin practice for printed FPV wings
 
-**Status:** ✅ **Executed (rev. 5 — drag-inclusive, C32 lower mass propagated)** · **Feeds:** O1
+**Status:** ✅ **Executed (rev. 6 — drag-inclusive, ADR-0045 masses propagated)** · **Feeds:** O1
 stall-speed requirement (≤ 45 km/h), C16 review, launch method (docs/00), D1/D2
-autolaunch configuration · **Updated:** 2026-08-17
-**Tool:** `calculations/launch_speed.py` (revision 5, drag-inclusive RK4; all validations PASS)
+autolaunch configuration · **Updated:** 2026-08-18
+**Tool:** `calculations/launch_speed.py` (revision 6, drag-inclusive RK4; all validations PASS)
 
 > **Correction record (2026-08-06):** rev. 1 concluded "infeasible" by demanding
 > k_safe = 1.20 at the release instant and using a low idle-thrust estimate. Rev. 2
@@ -19,14 +19,15 @@ autolaunch configuration · **Updated:** 2026-08-17
 
 What is a realistic hand-launch velocity, how much stall margin do in-service FPV
 aircraft actually operate with, and what does the INAV/ArduPlane autolaunch practice
-require of the stall speed and thrust — for the 1583.5 g CLEAN / 1626.5 g V1
+require of the stall speed and thrust — for the 1553.25 g CLEAN / 1596.26 g V1
 lower-model wing?
 
 # 2. Why it matters
 
-The stall requirement is ≤45 km/h (C16). CLEAN closes at **44.5 km/h**, but C32's
-connected V1 lower model is **45.1 km/h** (`mass_budget.py`), so F2 must remove or
-compensate at least 6.3 g before V1 satisfies C16. The launch is a
+The stall requirement is ≤45 km/h (C16). CLEAN closes at **44.1 km/h** and C32's
+connected V1 lower model closes analytically at **44.7 km/h** (`mass_budget.py`) after
+ADR-0045. The fin remains 6.29 g over its internal allocation and physical F2/E2
+closure remains mandatory. The launch is a
 mandatory hand throw (docs/00) with autolaunch via acceleration detection. If the
 achievable launch speed is below stall, the aircraft cannot leave the hand. This thread
 was opened with **zero project data**; it now closes with the quantitative envelope.
@@ -45,7 +46,7 @@ was opened with **zero project data**; it now closes with the quantitative envel
   **hand-launched in service** (TBS manual, community launches with INAV idle 1300 +
   launch 1850, over-head techniques; bungee hook documented as an option). Heavier
   and higher-stall than the Salamandra, it launches by hand: the Salamandra at
-  12.5 m/s V1 stall is a strictly easier case.
+  12.4 m/s V1 stall is a strictly easier case.
 - In-service failure reports exist on record (Mojito "a few throwing failures" on the
   first day, Chupito autolaunch roll, ZOHD Dart XL "difficult and dangerous to
   launch") — launch is the documented weak moment of this aircraft class, but the
@@ -58,8 +59,8 @@ was opened with **zero project data**; it now closes with the quantitative envel
 
 | Setting | Default | Salamandra recommendation | Basis |
 |---|---|---|---|
-| `nav_fw_launch_thr` | 1700 | **Hover throttle: T/W ≈ 1.0 → ≈ 16.5 N** (bench: nose-up, throttle until "about to fly out of your hand") | guide: hover rule; the 8×8 static band 15–20 N at 6S `[D]` |
-| `nav_fw_launch_idle_thr` | 1000 | **0.5–0.67 × launch (≈ 8.3–11.1 N)** — extra push during the throw | guide Scenario 3 (wing throws): 1350–1450 for launch 1700 |
+| `nav_fw_launch_thr` | 1700 | **Hover throttle: T/W ≈ 1.0 → ≈ 15.7 N** (bench: nose-up, throttle until "about to fly out of your hand") | guide: hover rule; the 8×8 static band 15–20 N at 6S `[D]` |
+| `nav_fw_launch_idle_thr` | 1000 | **0.5–0.67 × launch (≈ 7.8–10.5 N)** — extra push during the throw | guide Scenario 3 (wing throws): 1350–1450 for launch 1700 |
 | `nav_fw_launch_motor_delay` | 500 ms | **200 ms** — pusher: never 0 (prop past the hand) | guide: smaller planes lose speed fast; 200 ms recommended |
 | `nav_fw_launch_accel` | 1863 (1.8 G) | keep (heavy-wing throw still exceeds it) | guide: default OK |
 | `nav_fw_launch_detect_time` | 40 ms | keep | guide |
@@ -84,12 +85,12 @@ exceed hover** (backward G-forces confuse the FC climb detection).
 
 | Quantity | Value |
 |---|---:|
-| V_stall (V1 lower model 1626.5 g / CLEAN 1583.5 g) | **45.1 / 44.5 km/h** (12.5 / 12.4 m/s) |
+| V_stall (V1 lower model 1596.26 g / CLEAN 1553.25 g) | **44.7 / 44.1 km/h** (12.4 / 12.2 m/s) |
 | **Release gate:** V_suelta ≥ V_stall | **PASS for typical and firm throws** |
-| V_suelta, typical throw 10.5 m/s + ref idle | **12.9 m/s (46.3 km/h) — k = 1.03 at release; k = 1.20 reached in 0.36 s** |
-| V_suelta, firm throw 13 m/s + high idle | **16.2 m/s (58.5 km/h) — k = 1.30 at release** |
+| V_suelta, typical throw 10.5 m/s + ref idle | **12.8 m/s (46.3 km/h) — k = 1.04 at release; k = 1.20 reached in 0.35 s** |
+| V_suelta, firm throw 13 m/s + high idle | **16.2 m/s (58.4 km/h) — k = 1.31 at release** |
 | V_suelta, weak throw 8 m/s + low idle | 9.5 m/s (34.2 km/h) — **below stall: technique is part of the specification** |
-| Time to k = 1.20 after release (typical, incl. 0.2 s motor delay) | 0.36 s |
+| Time to k = 1.20 after release (typical, incl. 0.2 s motor delay) | 0.35 s |
 | Launch T/W (hover rule) | 0.9–1.1 — inside the 1.5 torque-roll threshold |
 
 **Verdict: HAND LAUNCH IS FEASIBLE** with a firm throw (V_hand ≥ 10 m/s) +
@@ -108,14 +109,15 @@ instrumented test programme; (d) accept the declared technique rule (firm throw)
 # 5. Deliverables
 
 1. **Declared launch envelope** (guide §4/§12, this document):
-   - **Release gate: V_suelta ≥ V_stall** (45.1 km/h at the connected V1 lower model) with the elevon-up
+   - **Release gate: V_suelta ≥ V_stall** (44.7 km/h at the connected V1 lower model) with the elevon-up
      launch attitude; margin k = 1.20 reached by acceleration in < 0.5 s.
    - **Technique rule: firm throw (V_hand ≥ 10 m/s), release at 0–5° pitch
      (ArduPilot guidance; higher → stall), launch throttle at the hover setting.**
    - Autolaunch configuration table (§3.2) for D1/D2 validation.
-2. **Stall-margin policy (C16 chain):** CLEAN closes at 44.5 km/h, while the C32 V1
-   lower model is 1626.5 g / 45.1 km/h and therefore fails. F2 must save or compensate
-   at least 6.3 g against the 1620.2 g allocation target (OP-24).
+2. **Stall-margin policy (C16 chain):** CLEAN closes at 44.1 km/h and the C32/ADR-0045
+   V1 lower model closes analytically at 1596.26 g / 44.7 km/h. F2 must still verify
+   actual aircraft mass, the fin's 6.29 g internal allocation gap and the V1 battery
+   travel shortfall (OP-24/OP-16).
    The launch analysis no longer blocks the first flight — it
    prescribes the technique. The CL_max chain (R-AIRFOIL, designed section, OP-02)
    remains double-critical for COMFORT: it lowers V_stall AND raises the release
@@ -150,5 +152,5 @@ envelope says when the launch is *allowed*, blackbox data (E-series) will say ho
 - In-service stall margins are community estimates, not measured polars.
 - Autolaunch behavior is firmware-specific: the table pins INAV 9.x per docs/00; D2
   must validate on the bench + first flights.
-- The 0.36 s margin time is `[D]` on the declared bands; it is the quantity to measure
+- The 0.35 s margin time is `[D]` on the declared bands; it is the quantity to measure
   first (blackbox launch log).

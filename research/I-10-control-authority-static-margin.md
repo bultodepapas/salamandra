@@ -24,15 +24,18 @@ gust/extreme-CG envelope. Two dependencies keep the thread open:
 1. **OP-01:** ADR-0040 now gives NP −75.8 mm and target CG −93.8 mm; the 6S1P pack closes
    that point. The remaining question is the defensible SM floor and usable CG envelope,
    not basic reachability.
-2. **OP-06:** the ±20° travel and 390 mm span are assumptions; authority verification
-   decides them.
+2. **OP-06:** ADR-0045 selects ±20° travel and a 357.5 mm surface over 35–90 %
+   half-span for Article #1. Low-Re and aeroelastic validation still decide whether
+   those limits can be released for the complete envelope.
 
 # 3. What is already known in the repo `[D]`
 
 - VLM NP = 25.72 % MAC / −75.8 mm, SM target 8 % (I-21/ADR-0040).
-- Elevon 0.28 c, span 30–90 % half-span, ±20°, one midspan actuator per elevon (guide §6.6).
-- Current VLM: wash-in yield +0.00249 Cm/°, elevon yield +0.00256 Cm/°. Five degrees
-  of elevon gives 12.8× the limiting r1 trim residual; low-Re physical validation is open.
+- Elevon 0.28 c, span 35–90 % half-span (y = 227.5…585 mm), ±20°, one actuator
+  at y = 406.25 mm per elevon (guide §6.6, I-27/ADR-0045).
+- Current partial-span hinged-flap VLM: elevon yield **+0.00183 Cm per physical degree**.
+  The Ncrit-10/12 neutral trim demand is −0.14°…+0.50°; five degrees provides about
+  10× the limiting residual. Low-Re physical validation is open.
 - Printed twist is 3.0°. ADR-0041 supersedes the provisional root-only cases: the
   c²-integrated Salamandra r1 family needs −0.04°…+0.41° neutral elevon at the
   corrected V1 lower-model mass across
@@ -51,9 +54,10 @@ gust/extreme-CG envelope. Two dependencies keep the thread open:
 
 # 5. Method
 
-1. **Partial:** the in-house VLM models the elevon as a local incidence step over the
-   30–90 % half-span. Replace/validate that approximation with a hinged-flap model and
-   at least one measured low-Re datum (search item 1).
+1. **Partial:** the in-house VLM now applies thin-airfoil hinged-flap effectiveness
+   (τ = 0.641 for 0.28 c) with fractional overlap of each span panel over 35–90 %
+   half-span. Validate that potential-flow approximation with at least one measured
+   low-Re datum (search item 1).
 2. Build the trim envelope: Cm_δ × δ_avail (minus authority reserve) vs. the torsion
    window of I-07 → feasible SM range.
 3. Cross it with the in-service SM survey (items 2–3) → recommended SM floor and CG

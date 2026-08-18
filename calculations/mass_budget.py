@@ -74,12 +74,20 @@ MATERIALS = {
 # --------------------------------------------------------------------------
 PRINTED = {
     "core":    {"m": 165.0, "src": "[E] 30 % of shell",        "default": "PETG"},
-    "wings":   {"m": 341.0, "src": "[E] 62 % of shell, 6 seg", "default": "PETG"},
+    "wings":   {"m": 346.0, "src": "[E] shell incl. fixed y195--227.5 TE bridges", "default": "PETG"},
     "tips":    {"m": 44.0,  "src": "[E] 8 % of shell, 2 pcs",  "default": "PETG"},
-    "elevons": {"m": 50.0,  "src": "[D] ADR-0025: 2 × 25 g",   "default": "PETG"},
+    "elevons": {"m": 45.0,  "src": "[D]/[E] ADR-0045: 2 × 22.5 g", "default": "PETG"},
     "fin":     {"m": V1_FIN_SHELL_MOUNT_LOWER_KG * 1000.0,
                     "src": "[E] V1a shell+mount analytical lower model; C32", "default": "PETG",
                     "optional": True},
+}
+
+# Exact pre-ADR-0045 distribution retained only for the v0.2 regression.  It
+# must not be selected by the Article #1 CLI or downstream design modules.
+LEGACY_PRINTED = {
+    **PRINTED,
+    "wings": {"m": 341.0, "src": "[E] historical 62 % shell share", "default": "PETG"},
+    "elevons": {"m": 50.0, "src": "[D] historical 2 × 25 g", "default": "PETG"},
 }
 
 # --------------------------------------------------------------------------
@@ -157,39 +165,48 @@ def pack_mass(config, cell):
     return layout_pack_mass_g(config, cell)
 
 
-def shell_base_mass(part, shell_cap):
+def shell_base_mass(part, shell_cap, printed_parts=PRINTED):
     """PETG base mass after applying the shell cap; fin is outside the cap."""
-    if not 50.0 <= shell_cap <= 600.0:
-        raise ValueError("shell_cap must be between the fixed 50 g elevons and 600 g")
-    mass = PRINTED[part]["m"]
+    elevon_mass = printed_parts["elevons"]["m"]
+    if not elevon_mass <= shell_cap <= 600.0:
+        raise ValueError(
+            "shell_cap must be between the selected elevon mass and 600 g"
+        )
+    mass = printed_parts[part]["m"]
     if part in ("core", "wings", "tips"):
-        mass *= (shell_cap - PRINTED["elevons"]["m"]) / 550.0
+        fixed_base = sum(
+            printed_parts[name]["m"] for name in ("core", "wings", "tips")
+        )
+        mass *= (shell_cap - elevon_mass) / fixed_base
     return mass
 
 
 def build(policy, battery="6S1P", cell="P42A", fc="SpeedyBee-F405",
           fpv="O4-Air-Unit", prop="APC-E-8x8", fin=False, servo_heavy=False,
-          motor=MOTOR_REF, shell_cap=550.0, servo="Corona-DS939MG"):
+          motor=MOTOR_REF, shell_cap=550.0, servo="Corona-DS939MG",
+          legacy_elevon_geometry=False):
     """Returns (rows, totals) for one configuration. rows: list of dicts."""
     mat = dict(POLICIES[policy])
     if not fin:
         mat.pop("fin", None)
     rows, printed_m = [], 0.0
-    # Preserve the 50 g balanced-elevon geometry; distribute the CAD shell saving
-    # over CORE+wings+tips in proportion to their v0.2 estimates.
-    for pid, spec in PRINTED.items():
+    printed_parts = LEGACY_PRINTED if legacy_elevon_geometry else PRINTED
+    # Keep the declared total shell cap while assigning the 5 g printed-area
+    # transfer from the shortened moving surfaces to the fixed panel bridges.
+    for pid, spec in printed_parts.items():
         if spec.get("optional") and pid not in mat:
             continue
-        base_m = shell_base_mass(pid, shell_cap)
+        base_m = shell_base_mass(pid, shell_cap, printed_parts)
         m = scale(base_m, mat[pid])
         printed_m += m
         rows.append({"part": pid, "kind": "printed", "m": m, "mat": mat[pid],
                          "src": spec["src"]})
-    # elevon balance mass, derived [D] ADR-0025
+    # Elevon balance mass, derived from the selected moving mass.  The 1.2
+    # ratio remains a conservative allocation until CAD measures the moments.
     m_elev = next(r["m"] for r in rows if r["part"] == "elevons")
     m_bal = 1.2 * m_elev
     rows.append({"part": "balance", "kind": "fixed", "m": m_bal, "mat": "(derived)",
-                     "src": "[D] ADR-0025: 1.2 × elevons"})
+                     "src": "[D]/[E] ADR-0025/0045: 1.2 × moving elevons"})
     if fin:
         rows.append({
             "part": "fin_spar", "kind": "fixed", "m": FIN_SPAR_REF, "mat": "aluminium",
@@ -333,7 +350,7 @@ def main():
 
     rows, tot = build("all_petg", "6S1P", "P42A", "FC_AVG", "O4-Pro",
                       "APC-E-8x8-v0.2", False, False, MOTOR_REF, 600.0,
-                       "class-15g-v0.2")
+                       "class-15g-v0.2", legacy_elevon_geometry=True)
     check(f"Released v0.2 baseline = 1685 ± 2 g (got {tot['auw']:.1f})",
           abs(tot["auw"] - 1685.0) <= 2.0)
     check(f"Baseline V_stall = 45.9 ± 0.15 km/h (got {tot['vs']:.2f})",
@@ -357,8 +374,8 @@ def main():
     check("Printed parts sum = 600 g (core+wings+tips+elevons)",
           abs(PRINTED["core"]["m"] + PRINTED["wings"]["m"] +
               PRINTED["tips"]["m"] + PRINTED["elevons"]["m"] - 600.0) < 1e-6)
-    check("Balance rule: 50 g elevons -> 60 g balance",
-          abs(1.2 * PRINTED["elevons"]["m"] - 60.0) < 1e-6)
+    check("Article #1 balance rule: 45 g elevons -> 54 g balance",
+          abs(1.2 * PRINTED["elevons"]["m"] - 54.0) < 1e-6)
     _, reference = build("all_petg", fin=False)
     _, reference_v1 = build("all_petg", fin=True)
     stall_mass_limit_g = 1000.0 * mass_at_stall_speed(
@@ -368,13 +385,13 @@ def main():
     check(f"Article #1 V1 analytical lower model matches shared contract "
           f"(got {reference_v1['auw']:.2f} g)",
           abs(reference_v1["auw"] - ARTICLE_V1_MASS_KG * 1000.0) < 0.01)
-    check(f"ADR-0043 two-servo allocation target is "
+    check(f"Post-ADR-0045 two-servo allocation target is "
           f"{ARTICLE_V1_ALLOCATION_MASS_KG*1000:.2f} g",
-          abs(ARTICLE_V1_ALLOCATION_MASS_KG * 1000.0 - 1595.97) < 0.01)
-    check(f"Two-servo V1 is at least 18 g below the exact "
+          abs(ARTICLE_V1_ALLOCATION_MASS_KG * 1000.0 - 1589.97) < 0.01)
+    check(f"Two-servo V1 is at least 24 g below the exact "
           f"{STALL_SPEED_LIMIT_KMH:.0f} km/h mass limit {stall_mass_limit_g:.1f} g "
           f"(got {reference_v1['auw']:.1f})",
-          stall_mass_limit_g - reference_v1["auw"] >= 18.0)
+          stall_mass_limit_g - reference_v1["auw"] >= 24.0)
     check(f"Two-servo V1 V_stall is below {STALL_SPEED_LIMIT_KMH:.0f} km/h "
           f"(got {reference_v1['vs']:.2f})",
           reference_v1["vs"] < STALL_SPEED_LIMIT_KMH)

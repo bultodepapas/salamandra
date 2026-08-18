@@ -60,10 +60,12 @@ reopened only if the E-flight programme demonstrates a yaw-handling failure mode
 
 ## Consequences
 
-- **C16 (stall), corrected by C32:** the 36.72 g allocation omitted the mandatory
-  5.70 g aluminium spar. The connected lower assembly is 43.01 g, giving
-  **1626.5 g / 45.1 km/h**, about 6.1 g above the exact mass ceiling. V1 remains the
-  preferred test configuration only after F2 removes/compensates at least 6.3 g.
+- **C16 (stall), corrected by C32 and ADR-0045:** the 36.72 g fin allocation omitted
+  the mandatory 5.70 g aluminium spar. The connected fin lower assembly is 43.01 g
+  and still misses that internal allocation by 6.29 g; however, the current aircraft
+  lower model is **1596.26 g / 44.7 km/h**, 24.1 g below the exact C16 mass ceiling.
+  V1 remains the preferred test configuration subject to F2 measured mass and battery
+  travel closure.
 - **O1 (≤ 1.15 Wh/km):** only SALAMANDRA-CLEAN can carry the headline claim; V1 costs
   ≈ +10 % energy `[E]` — still better than the market reference (Mojito 1.40 Wh/km `[M]`).
 - **Test programme:** V1 is the instrumented article — doubled Cnr, no yaw divergence,

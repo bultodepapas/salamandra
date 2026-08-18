@@ -52,7 +52,8 @@ Data sources consumed (all `[M]`):
 | `balance_cg.py` | **OP-01: mass/CG balance** — pack-station solver for the CG target; planform-centroid self-check; bay sizing for the nose boom; envelope checks (AUW, V_stall) | OP-01, justification §3.1–3.2 | numpy |
 | `equipment_layout.py` | **Three-dimensional equipment and mass-properties model** — one x/y/z station, oriented envelope, movement authority and uncertainty per physical component; derives total CG/inertia, fixed servo stations from the released r1 sections, cable/separation/collision gates and the battery-only CG solution for CLEAN/V1 | CAD packaging source, future SVG sheets, OP-01/P1/F1 | stdlib + released airfoil DAT files |
 | `equipment_catalog.py` | **Bought-in equipment catalog** — manufacturer body dimensions and masses separated from installation abstractions; controls DJI O4 E18/E19 and their 8.95 g installed-mass closure. The 0.75 g antenna is catalogued but lumped into E19, not drawn as a third rigid body. | I-19, `equipment_layout.py`, `mass_budget.py`, SLM-EQP-001 | stdlib |
-| `elevon_authority.py` | **Elevon control power** — ΔCm per degree of elevon deflection (step incidence over 30–90 % half-span) via the VLM; trim closure and control margin at SM 8 % | Guide §5.3/§6.1, C6 (partial) | numpy |
+| `elevon_sizing.py` | **I-27/ADR-0045 control-surface trade** — exact surface geometry, thin-airfoil flap effectiveness, 80×6 VLM pitch/roll derivatives, connected-inertia roll response, hinge proxy and mass consequences for retained/shorter/tip/chord alternatives | I-27, ADR-0045, guide §6.6, OP-06 | numpy |
+| `elevon_authority.py` | **Selected elevon pitch power** — physical-deflection ΔCm over 35–90 % half-span with ideal 0.28 c flap effectiveness and fractional panel overlap; trim closure and control margin at SM 8 % | Guide §4.3/§6.6, C6 (partial) | numpy |
 | `battery_pack_layout.py` | **I-16: pack envelope** — enumerates every rectangular (n_x,n_y,n_z) layout of the 4S/6S 21700 pack, computes finished envelope (wrapper, nickel, leads) and fit-checks against the pack carrier (guide §8; the 200×70×32 bay is superseded by the cradle) | I-16, guide §8, OP-23 | stdlib only |
 | `inav_fc_match.py` | **I-17: FC compatibility** — cross-checks the popular INAV boards (Matek WING, SpeedyBee, Foxeer) against the Salamandra avionics requirements (≥5 PWM, ≥2 UART, ≥1 I2C, blackbox, current, baro, 6S voltage); footprint summary + power budget | I-17, guide §10, CORE avionics | stdlib only |
 | `fpv_power_budget.py` | **I-19: FPV power budget** — DJI O4 / Pro / Lite current-per-level (measured `[M]`), power at any input voltage, BEC margin vs the Matek 9V/2A and 5V/2A rails, energy impact on the 6S1P P42A pack | I-19, guide §10, O1 | stdlib only |
@@ -165,12 +166,12 @@ Self-validating: it imports the canonical planform, computes the shell and carbo
 stations, iterates boom mass/length with the pack solution, and solves all four P42A
 pack stations at target CG **−93.8 mm** (SM 8 %).
 
-Published aggregate result (ADR-0043, `[D]`): CLEAN mass **1559.25 g**, 6S1P pack
-station **−355.2 mm**, allowable CG-band station −372.7…−337.6 mm, cradle
-approximately −454.3…−256.0 mm, and support span **322.3 mm**. The component-level
-packaging model below supersedes the aggregate station with **−341.4 mm** after assigning
+Current aggregate screen (ADR-0043/0045, `[D]`): CLEAN mass **1553.25 g**, 6S1P pack
+station **−354.1 mm**, allowable CG-band station −371.5…−336.6 mm, cradle
+approximately −453.1…−255.0 mm, and support span **321.1 mm**. The component-level
+packaging model below supersedes the aggregate station with **−338.17 mm CLEAN** after assigning
 individual x/y/z locations. Diagnostic aggregate stations for future modules are
-4S1P −475.1 / 4S2P −292.6 / 6S2P −228.3 mm; they are not Article #1.
+4S1P −473.5 / 4S2P −291.8 / 6S2P −227.7 mm; they are not Article #1.
 
 ### 3.1 Three-dimensional component layout and battery trim
 
@@ -195,9 +196,9 @@ Movement authority is intentionally asymmetric:
 - The FC reference centre is x = −93.797 mm, y = 0, directly at the longitudinal target;
   its three-dimensional distance from the solved CLEAN CG is 0.42 mm.
 - Servo locations are derived once, then fixed. The solver lays one 22.5 × 24.6 ×
-  11.5 mm DS-939MG body in each half-wing at y = 390 mm and moves it as far aft as
+  11.5 mm DS-939MG body in each half-wing at y = **406.25 mm** and moves it as far aft as
   the released r1 airfoil permits while retaining 1.5 mm to both external surfaces.
-  The released result is x/c = 0.5455 with a 35.3 mm projected pushrod run to the
+  The working result is x/c = **0.5334** with a **37.1 mm** projected pushrod run to the
   x/c = 0.72 hinge.
 - Low-mass avionics may be repositioned only inside their declared packaging bounds.
   The O4 camera/VTX stations are governed by the 50 mm coax and envelope clearance,
@@ -206,10 +207,10 @@ Movement authority is intentionally asymmetric:
   equipment movement, the analytical solver recomputes only battery x; use
   `--hold-battery` solely to inspect an untrimmed candidate.
 
-Current candidate results `[D]`: CLEAN closes **1559.25 g** at xCG = −93.797 mm with the
-battery at x = **−341.39 mm**. V1 adds the complete fixed-fin lower model; the exact
-target would require x = **−377.55 mm**, beyond the current −372.78 mm forward stop.
-At that stop V1 remains inside the released band at xCG = −92.47 mm. These values differ
+Current candidate results `[D]`: CLEAN closes **1553.25 g** at xCG = −93.797 mm with the
+battery at x = **−338.17 mm**. V1 adds the complete fixed-fin lower model; the exact
+target requires x = **−374.34 mm**, beyond the current −371.62 mm forward stop.
+At that stop V1 remains inside the released band at xCG = −93.04 mm. These values differ
 from the aggregate `balance_cg.py` station because individual masses now occupy their
 explicit spatial locations.
 
@@ -227,10 +228,12 @@ gates remain explicit: longitudinal one-sigma CG uncertainty is about 7.8 mm ver
 python3 elevon_authority.py
 ```
 
-Models the elevon as step incidence over 30–90 % half-span in the same VLM and adds the
-c²-integrated r1 root/tip moment. Results at the −15° planform: elevon yield
-0.00256 Cm/° vs 0.00249 Cm/° full-span wash-in; neutral trim is **−0.04°/+0.41°**
-over Ncrit 10/12. A 5° command provides **12.2×** the limiting residual.
+Uses the ADR-0045 35–90 % surface, ideal thin-airfoil effectiveness `tau = 0.6408` for
+0.28 c and fractional span-panel overlap in the same VLM, then adds the c²-integrated
+r1 root/tip moment. Results at the −15° planform: elevon yield **0.001828 Cm per
+physical degree**; neutral trim is **−0.14°/+0.50°** over Ncrit 10/12. A 5° command
+provides about **10×** the limiting residual. Run `elevon_sizing.py` for the span/chord
+trade, roll derivatives and limitations.
 
 ### 5. Twist window (I-07)
 
@@ -238,12 +241,13 @@ over Ncrit 10/12. A 5° command provides **12.2×** the limiting residual.
 python3 ventana_torsion.py
 ```
 
-Uses the connected **1.62651 kg V1 lower model** for cruise trim and local section-Cl
-screening. At 45 km/h it reports required wing CL **0.59122**, correctly above the
-shared CLmax 0.589; the **1.62022 kg allocation target** requires CL 0.58894 and closes.
-With 3.0° wash-in the computed peak local cl is 0.641 versus the 0.65 section limit,
-while the r1 profile leaves 0.42° equivalent trim demand at SM 8 %. Validation treats
-the C32 aircraft-level stall miss as an explicit open F2 gate, not as a software error.
+Uses the connected **1.59626 kg V1 lower model** for cruise trim and local section-Cl
+screening. At 45 km/h it requires wing CL **0.58023**, below the shared CLmax 0.589;
+the **1.58997 kg allocation target** requires CL 0.57794. With 3.0° wash-in the
+computed peak local cl is 0.629 versus the 0.65 section limit, while the r1 profile
+leaves 0.34° equivalent twist demand at SM 8 %. Five degrees has only 0.001 local-cl
+margin and six degrees exceeds the section limit; the selected 3.0° remains the
+controlled value. F2/E2 physical mass and CLmax verification remain open.
 
 ### 5.1 Flight-load envelope (I-24 / ADR-0044)
 
@@ -252,18 +256,18 @@ python3 flight_envelope.py
 ```
 
 Uses the released VLM `CL_alpha = 4.2712/rad`, shared masses, `CLmax` and speed roles.
-The positive manoeuvre intersections are **VA = 109.0 km/h CLEAN / 110.4 km/h V1**;
-at the 105 km/h initial limit the stall boundary permits 5.57/5.42 g. It corrects C33:
+The positive manoeuvre intersections are **VA = 107.9 km/h CLEAN / 109.4 km/h V1**;
+at the 105 km/h initial limit the stall boundary permits 5.68/5.53 g. It corrects C33:
 **+6/−3 are provisional manoeuvre limit loads and +9/−4.5 are their 1.5× ultimate
 structural cases** — +9 is not a later flight target.
-At the V1 lower mass these are +95.7/−47.9 N limit and +143.6/−71.8 N ultimate
+At the V1 lower mass these are +94.0/−47.0 N limit and +140.9/−70.5 N ultimate
 whole-aircraft normal resultants; a proof fixture must reproduce the span load rather
 than apply either value at one point.
 
-The independent legacy Part 23 gust screen gives +12.94/−10.94 g for CLEAN at
-105 km/h, but its implied positive `CL = 1.37` exceeds the released `CLmax = 0.589`.
+The independent legacy Part 23 gust screen gives +13.09/−11.09 g for CLEAN at
+105 km/h, but its implied positive `CL = 1.36` exceeds the released `CLmax = 0.589`.
 That result is deliberately reported as a nonlinear/stall flag, not adopted as a design
-load. The inverse sensitivity at 105 km/h is 6.38 m/s to +6 and **5.10 m/s to −3**;
+load. The inverse sensitivity at 105 km/h is 6.30 m/s to +6 and **5.04 m/s to −3**;
 these are equivalent vertical-gust inputs, not forecast surface wind. A complete
 negative branch awaits a validated negative-polar `CLmin`; dynamic gust closure is
 G11/E9.
@@ -306,11 +310,11 @@ and lead allowances. `equipment_layout.py` imports this maximum envelope directl
 python3 servo_torque.py
 ```
 
-Hinge moment of the 0.28 c elevon (390 mm span) at the 180 km/h structural design
-speed over Ch 0.01–0.05 `[E]`: **0.196–0.978 kgf·cm per servo** with one actuator per elevon
+Hinge moment of the 0.28 c elevon (**357.5 mm span**) at the 180 km/h structural design
+speed over Ch 0.01–0.05 `[E]`: **0.175–0.876 kgf·cm per servo** with one actuator per elevon
 and a 1:1 horn ratio. After 0.80 linkage efficiency and a 1.5 safety factor, the
-catalog requirement is **1.834 kgf·cm**. The MG90S 1.8 kgf·cm rating therefore has
-**3.68× ideal / 1.96× factored margin**. The former g·cm label was a factor-1000 unit
+catalog requirement is **1.643 kgf·cm**. The Article #1 DS-939MG has **1.52× factored
+margin**. The former g·cm label was a factor-1000 unit
 error; C30 records the correction. A change to geometry, Ch, speed or linkage must
 reproduce the margin table.
 
@@ -421,12 +425,13 @@ Data-driven weight budget with per-part material selection. The Article #1 defau
 6S1P P42A, SpeedyBee F405 WING + mandatory PDB, DJI O4 Air Unit including its
 separate antenna, two Corona DS-939MG servos,
 APC E 8×8 assembly and the coupled ADR-0043 boom. Published results (docs/06 §3):
-ALL PETG CLEAN **1559.25 g / 44.1 km/h**. C32 separates the obsolete 36.72 g
+ALL PETG CLEAN **1553.25 g / 44.1 km/h**. C32 separates the obsolete 36.72 g
 allocation target from the current V1a lower assembly model: 37.31 g PETG shell/mount
-+ 5.70 g mandatory aluminium spar = **43.01 g**, giving **1602.26 g / 44.8 km/h**
++ 5.70 g mandatory aluminium spar = **43.01 g**, giving **1596.26 g / 44.7 km/h**
 with the two-servo baseline.
-V1 remains about 18.1 g below the exact 1620.4 g stall mass limit; F2 must still close
-at least 6.3 g against the allocation or E2 must re-derive CLmax. The AERO policies
+V1 remains about 24.1 g below the exact 1620.4 g stall mass limit; its exact battery
+station is still 2.72 mm outside current travel. F2 must verify mass, balance and CAD.
+The AERO policies
 remain rejected by divergence. Validation retains v0.2 as a historical regression and
 checks both the allocation target and the explicit C32 failure.
 
@@ -444,19 +449,19 @@ GXY+gyroid+1.1 mm wall case reaches 207 km/h. The computed 0.85 clearance rounds
 110 km/h, but the released initial **V_limit remains 105 km/h** conservatively;
 **150 km/h** remains conditional on S3 validating GXY.
 
-### 15. Hand-launch feasibility (I-14 executed, rev. 4 — guide §4/§12)
+### 15. Hand-launch feasibility (I-14 executed, rev. 6 — guide §4/§12)
 
 ```bash
 python3 launch_speed.py
 ```
 
-Gate check of the mandatory hand throw. Revision 4 propagates the **1626.5 g V1
+Gate check of the mandatory hand throw. Revision 6 propagates the **1596.26 g V1
 analytical lower mass**
 and integrates `m dV/dt = T − D(V)` by RK4 with piecewise-constant phase thrust,
 including the 0.2 s motor delay.
-**Result: FEASIBLE — typical throw 10.5 m/s + reference idle reaches 12.9 m/s
-(46.3 km/h, k = 1.03) at release and k = 1.20 in 0.36 s; firm throw reaches 16.2 m/s
-(58.5 km/h, k = 1.30). Weak throw remains below stall:
+**Result: FEASIBLE — typical throw 10.5 m/s + reference idle reaches 12.8 m/s
+(46.3 km/h, k = 1.04) at release and k = 1.20 in 0.35 s; firm throw reaches 16.2 m/s
+(58.4 km/h, k = 1.31). Weak throw remains below stall:
 technique is part of the specification.** Anchored on the Mojito configuration class
 `[M]` (1800 g, higher reported stall, hand-launched in service) and published
 biomechanics (van den Tillaar 2004). The worst torque-roll case is checked at the
@@ -477,7 +482,7 @@ the V1 fin near the trailing edge; carbon optimisation deferred (ADR-0015).
   σ 266 MPa vs 276 (6061-T6), δ 34 mm.
 - **Two-support arrangement ADOPTED** (`[D]`): the structural check conservatively
   retains the pack load at −359.6 mm; the current component-level balance station is
-  −341.3 mm between the forward
+  **−338.17 mm CLEAN** between the forward
   support (x ≈ −459) and CORE support (x ≈ −132), with pack, forward payload allowance
   and cradle represented as separate loads → σ **56 MPa** (FS **4.96**),
   δ **1.7 mm**, mode **31.4 Hz**. The cradle is a structural requirement, not

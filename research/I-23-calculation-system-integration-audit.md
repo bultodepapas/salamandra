@@ -5,6 +5,10 @@
 **Feeds:** Design Guide v0.19, C29–C32, ADR-0042/0043, OP-06/12/13/23/24/28/29,
 `calculations/verify_calculations.py`
 
+> **Supersession note (2026-08-18):** equations and audit findings remain valid, but
+> the numerical v0.3 mass/control snapshot is superseded by ADR-0045/I-27. Current
+> CLEAN/V1 are 1553.25/1596.26 g; rerun the verification tool for live values.
+
 ## 1. Purpose
 
 This audit asks a different question from an isolated formula review: does the complete

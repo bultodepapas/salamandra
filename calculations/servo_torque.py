@@ -15,6 +15,9 @@ error that labelled kgf*cm values as gf*cm.
 """
 import numpy as np
 from design_config import (
+    ELEVON_CHORD_FRACTION,
+    ELEVON_ETA_IN,
+    ELEVON_ETA_OUT,
     G0,
     RHO_SL,
     ROOT_CHORD,
@@ -24,8 +27,8 @@ from design_config import (
     speed_mps,
 )
 
-ELEVON_CHORD_FRAC = 1.0 - 0.72
-ETA_IN, ETA_OUT = 0.30, 0.90
+ELEVON_CHORD_FRAC = ELEVON_CHORD_FRACTION
+ETA_IN, ETA_OUT = ELEVON_ETA_IN, ELEVON_ETA_OUT
 CH_RANGE = (0.01, 0.05)       # hinge-moment coefficient [E]
 N_SERVOS_PER_ELEVON = 1
 HORN_RADIUS_RATIO = 1.0       # servo horn / control horn [E], CAD upper bound
@@ -41,7 +44,7 @@ MAX_HINGE_COEFFICIENT = max(CH_RANGE)
 
 
 def elevon_chord_avg(samples=200):
-    """Mean elevon chord [m] over the 30--90 % semi-span interval."""
+    """Arithmetic mean elevon chord [m] over the selected span interval."""
     if samples < 2:
         raise ValueError("at least two span samples are required")
     eta = np.linspace(ETA_IN, ETA_OUT, samples)
@@ -50,10 +53,22 @@ def elevon_chord_avg(samples=200):
 
 
 def control_geometry():
-    """Return mean chord, span and planform area of one elevon [SI]."""
-    mean_chord = elevon_chord_avg()
+    """Return aerodynamic mean chord, span and area of one elevon [SI].
+
+    The aerodynamic mean chord is ``integral(c_e**2 dy) / S_e``. Thus
+    ``S_e * c_bar_e`` is the exact tapered-surface hinge-moment reference.
+    """
+    eta = np.linspace(ETA_IN, ETA_OUT, 1001)
+    y = eta * B / 2.0
+    control_chord = ELEVON_CHORD_FRAC * ROOT_CHORD * (
+        1.0 - (1.0 - TAPER) * eta
+    )
     span = B / 2.0 * (ETA_OUT - ETA_IN)
-    return mean_chord, span, span * mean_chord
+    area = float(np.trapezoid(control_chord, y))
+    mean_aerodynamic_chord = float(
+        np.trapezoid(control_chord**2, y) / area
+    )
+    return mean_aerodynamic_chord, span, area
 
 
 def hinge_moment(ch, speed=STRUCTURAL_SPEED_MPS):
@@ -115,16 +130,16 @@ def main():
     checks = {
         "1 N*m converts to 10.19--10.20 kgf*cm":
             10.19 < nm_to_kgf_cm(1.0) < 10.20,
-        "one elevon area is 0.0220--0.0222 m2": 0.0220 < area < 0.0222,
-        "worst hinge moment is 0.095--0.097 N*m":
-            0.095 < hinge_moment(max(CH_RANGE), speed) < 0.097,
+        "one elevon area is 0.0198--0.0200 m2": 0.0198 < area < 0.0200,
+        "worst hinge moment is 0.085--0.087 N*m":
+            0.085 < hinge_moment(max(CH_RANGE), speed) < 0.087,
         "single actuator carries the complete elevon hinge moment": abs(
             servo_torque_nm(max(CH_RANGE), speed)
             - hinge_moment(max(CH_RANGE), speed)) < 1e-12,
         "MG90S exceeds the unfactored 180 km/h demand":
             MG90S_TORQUE_KGFCM / worst_ideal >= 1.8,
-        "Article #1 Corona passes factored 180 km/h demand by at least 1.3x":
-            CORONA_TORQUE_KGFCM / required >= 1.3,
+        "Article #1 Corona passes factored 180 km/h demand by at least 1.5x":
+            CORONA_TORQUE_KGFCM / required >= 1.5,
     }
     print("\nVALIDATION")
     for name, passed in checks.items():

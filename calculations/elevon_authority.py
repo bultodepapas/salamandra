@@ -1,45 +1,37 @@
 #!/usr/bin/env python3
-"""Elevon pitch authority and cruise trim for the Salamandra r1 airfoil family.
+"""Elevon pitch authority and cruise trim for the Salamandra r1 family.
 
-The VLM models an elevon as a local incidence change over 30--90 % of the
-semi-span.  Flat-plate VLM has no section moment, so root and tip XFOIL Cm0 are
-integrated with c^2 weights (0.6071/0.3929) before the VLM twist contribution
-is added.  Positive elevon angle is trailing-edge-up/reflex.
+The physical 0.28 c plain-elevon deflection is converted to ideal local
+incidence with thin-airfoil effectiveness, then applied over the selected
+35--90 % half-span with partial-panel overlap. Flat-plate VLM has no section
+moment, so root/tip XFOIL Cm0 remains the separate profile input. Positive
+elevon angle is trailing-edge-up/reflex.
 """
-import numpy as np
 from design_config import (
     ARTICLE_V1_MASS_KG,
     CRUISE_SPEED_KMH,
     STATIC_MARGIN,
-    SWEEP_C4_DEG,
-    TAPER,
-    B,
-    S,
     lift_coefficient,
     speed_mps,
 )
-from vlm_ala_volante import geom, solve
+from elevon_sizing import (
+    ARTICLE_1,
+    CM0_WING_N10,
+    CM0_WING_N12,
+    DESIGN_TWIST_DEG,
+    FLAP_EFFECTIVENESS,
+    cm0_wing as sizing_cm0_wing,
+)
 
-SWEEP = SWEEP_C4_DEG
-ETA_IN, ETA_OUT = 0.30, 0.90
 SM = STATIC_MARGIN
 CL_CRU = lift_coefficient(ARTICLE_V1_MASS_KG, speed_mps(CRUISE_SPEED_KMH))
 CM0_REQ = CL_CRU * SM
-CM0_WING_N10 = +0.003258              # r1 root/tip integrated at cruise Re [D]
-CM0_WING_N12 = +0.002095              # conservative trim case [D]
-DESIGN_TWIST = 3.0
+DESIGN_TWIST = DESIGN_TWIST_DEG
 
 
 def cm0_wing(twist_deg, elev_deg):
-    """Wing Cm at CL=0 from flat-plate VLM wash-in plus segmented elevon."""
-    g = geom(B, S, TAPER, SWEEP, 0.0)
-    eta = np.abs(g['cps'][:, 1]) / (B / 2)
-    mask = (eta >= ETA_IN) & (eta <= ETA_OUT)
-    g['eps'] = np.radians(twist_deg * eta + elev_deg * mask)
-    CL1, Cm1, _, _ = solve(g, 0.0)
-    CL2, Cm2, _, _ = solve(g, 4.0)
-    dCm_dCL = (Cm2 - Cm1) / (CL2 - CL1)
-    return Cm1 - CL1 * dCm_dCL
+    """Wing Cm at CL=0 for the selected physical Article #1 elevon."""
+    return sizing_cm0_wing(twist_deg, elev_deg, ARTICLE_1)
 
 
 def main():
@@ -49,7 +41,8 @@ def main():
     dCm_tw = cm0_wing(1.0, 0.0) - cm0_wing(0.0, 0.0)
     dCm_de = cm0_wing(0.0, 1.0) - cm0_wing(0.0, 0.0)
     print(f"  wash-in yield : {dCm_tw:+.5f} /deg")
-    print(f"  elevon yield  : {dCm_de:+.5f} /deg over 30--90% b/2")
+    print(f"  elevon yield  : {dCm_de:+.5f} /physical deg over 35--90% b/2")
+    print(f"  ideal flap tau: {FLAP_EFFECTIVENESS:.4f} for c_e/c=0.28")
     print(f"  required trim : Cm0 = {CM0_REQ:+.5f} "
           f"(SM 8%, cruise CL {CL_CRU:.4f})")
 

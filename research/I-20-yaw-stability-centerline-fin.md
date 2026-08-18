@@ -11,6 +11,11 @@
 > current V1a is 2.13 dm² with a 3.0 mm solid root; V1b is 2.83 dm². C32 adds the
 > mandatory 5.70 g spar to both complete-fin mass bands.
 
+> **ADR-0045 mass update (2026-08-18):** the selected elevon/balance allocation makes
+> current CLEAN 1553.25 g and V1a lower model 1596.26 g / 44.7 km/h. The 43.01 g fin
+> still exceeds its internal 36.72 g allocation by 6.29 g, but no longer causes an
+> analytical C16 stall-speed failure. Physical F2 mass and E2 CLmax remain gates.
+
 ---
 
 # 1. Question
@@ -118,12 +123,12 @@ pusher — carries a fin.
 | Complete mass (distributed thickness + mount + spar) | **43.01–67.88 g** | **55.32–88.39 g** |
 | ΔCD0 | +0.0014 | +0.0019 |
 | Drag / Wh/km impact | **+9.8 % → ≈ 1.26** `[E]` | +12.9 % → ≈ 1.30 `[E]` |
-| AUW & V_stall | Lower model 1626.5 g / **45.1 km/h FAIL**; allocation target 1620.2 g / 45.0 km/h | +72 g nominal → 45.5 km/h |
+| AUW & V_stall | Lower model **1596.26 g / 44.7 km/h analytical PASS**; allocation target 1589.97 g / 44.6 km/h | Heavier option; recompute after V1b CAD mass |
 
-C16 tension: both complete-fin models push V_stall above the 45 km/h requirement at
-the current CLEAN budget. The former 36.72 g V1a value is an allocation target, not a
-physical lower bound. C32's connected lower model misses that allocation by 6.29 g —
-**flagged to F2/OP-24**.
+C16 is analytically closed for the V1a lower model with 24.1 g margin to the exact
+45 km/h mass ceiling. The former 36.72 g V1a value is still an internal allocation
+target, not a physical lower bound; C32's connected fin model misses it by 6.29 g and
+the V1 battery target is 2.72 mm beyond travel — both are **flagged to F2/OP-24**.
 
 ## 5.3 Structure (V1a at V_NE 180 km/h, cantilever)
 

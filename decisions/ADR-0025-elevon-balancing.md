@@ -25,18 +25,21 @@ Preliminary flutter analysis `[E]`:
 
 **Elevon mass balancing, with the surface CG on the hinge line. Non-negotiable.**
 
-Budget: ~60 g in total (~3.5 % of the AUW).
+Article #1 allocation after ADR-0045: **54 g total** `[D]`/`[E]`. The final amount is
+set from the measured printed-surface moment, not from this budget.
 
 ## Rationale
 
 With the elevon CG on the hinge, the inertial coupling disappears and the mode stops being fed. It is the standard solution and attacks the dominant mechanism instead of going around it.
 
-A 25 g elevon with its CG ~24 mm behind the hinge → moment 0.60 g·m. With a 20 mm forward compensation horn: **m_b ≈ 30 g per elevon**.
+The current area-scaled estimate is a 22.5 g elevon with its CG approximately 24 mm
+behind the hinge → moment 0.54 g·m. With a 20 mm forward compensation horn,
+**m_b ≈ 27 g per elevon** `[E]`. CAD/bench measurement controls the real value.
 
 ## Concurrent mandatory measures
 
 - **Zero freeplay in the linkage** (ADR-0026). Freeplay is a nonlinearity that triggers a limit cycle **below** the linear critical speed. It is the number-one cause of flutter in models.
-- **One actuator at elevon midspan** for the 390 mm Article #1 surface (ADR-0026).
+- **One actuator at elevon midspan** for the 357.5 mm Article #1 surface (ADR-0026/0045).
   A second actuator receives no flutter credit without measured stiffness and modal evidence.
 - Digital servos with high holding stiffness. Static torque matters less than stiffness.
 

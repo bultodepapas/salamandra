@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
 Hand-launch feasibility of the Salamandra Cruise (I-14 — executed 2026-08-06,
-revision 5: C32 Article #1 masses, drag-inclusive RK4 propagation,
+revision 6: ADR-0045 Article #1 masses, drag-inclusive RK4 propagation,
 Mojito configuration-class correction and published throwing biomechanics).
 
 WHY THIS DOCUMENT EXISTS: the launch is a mandatory hand throw (docs/00) and
-the stall speed is the tightest margin in the design (45.1 km/h = 12.5 m/s for
-the connected V1 lower model; the 45.0 km/h allocation remains open at F2).
+the stall speed is the tightest margin in the design (44.7 km/h = 12.4 m/s for
+the connected V1 lower model; physical mass and CLmax closure remain open at F2/E2).
 The FIRST revision of this script demanded
 k_safe = 1.20 at the RELEASE INSTANT and concluded "infeasible". That was too
 strict on two counts, corrected here:
@@ -24,7 +24,7 @@ community-reported stall ~60 km/h (16.7 m/s), i.e. HEAVIER and with a HIGHER
 stall than the Salamandra — is hand-launched in service (TBS manual includes
 a bungee hook as an option; community launches it by hand with idle 1300 +
 launch 1850 and over-head techniques). If the configuration class launches at
-16.7 m/s stall, the Salamandra at 12.5 m/s is a strictly easier case.
+16.7 m/s stall, the Salamandra at 12.4 m/s is a strictly easier case.
 
 MODEL:
   m dV/dt   = T - 0.5 rho V^2 S CD_launch, integrated with RK4; T is
@@ -121,7 +121,7 @@ def time_to_speed(speed, target, idle_thrust, launch_thrust, mass,
 
 def main():
     print("=" * 74)
-    print("HAND-LAUNCH FEASIBILITY — Salamandra Cruise (I-14 executed, rev. 4)")
+    print("HAND-LAUNCH FEASIBILITY — Salamandra Cruise (I-14 executed, rev. 6)")
     print("=" * 74)
 
     vs = v_stall(AUW[1])
@@ -193,11 +193,11 @@ def main():
         print(f"   [{'PASS' if cond else 'FAIL'}] {name}")
 
     vs_c = v_stall(ARTICLE_V1_MASS_KG)
-    check(f"V_stall reproduces mass_budget V1 45.1 km/h (got "
-          f"{vs_c*3.6:.1f})", abs(vs_c * 3.6 - 45.0) < 0.3)
+    check(f"V_stall reproduces mass_budget V1 44.7 km/h (got "
+          f"{vs_c*3.6:.1f})", abs(vs_c * 3.6 - 44.7) < 0.1)
     vs_g2 = v_stall(ARTICLE_CLEAN_MASS_KG)
-    check(f"V_stall reproduces mass_budget CLEAN 44.5 km/h (got {vs_g2*3.6:.1f})",
-          abs(vs_g2 * 3.6 - 44.5) < 0.3)
+    check(f"V_stall reproduces mass_budget CLEAN 44.1 km/h (got {vs_g2*3.6:.1f})",
+          abs(vs_g2 * 3.6 - 44.1) < 0.1)
     v_zero = propagate_speed(vh_r, 0.0, AUW[1], t_r, cd=0.0)
     check(f"No thrust and no drag: release speed equals hand speed "
           f"({v_zero:.1f} m/s)",

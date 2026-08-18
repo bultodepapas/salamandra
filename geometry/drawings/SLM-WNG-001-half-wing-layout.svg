@@ -66,7 +66,7 @@
 <line x1="379" y1="274" x2="379" y2="287" class="title-line"/>
 <text x="16" y="266" class="sheet-subtitle" text-anchor="start">SALAMANDRA · OPEN 3D-PRINTED AIRCRAFT</text>
 <text x="16" y="272" class="note" text-anchor="start">METRIC TECHNICAL SKETCH · PRINT AT 100 %</text>
-<text x="16" y="280" class="micro" text-anchor="start">SOURCE: DESIGN GUIDE v0.21 §§4–6 · ADR-0002/0015/0032/0039</text>
+<text x="16" y="280" class="micro" text-anchor="start">SOURCE: DESIGN GUIDE v0.22 §§4–6 · ADR-0002/0015/0032/0039/0045</text>
 <text x="263" y="264" class="block-title" text-anchor="start" style="font-size:3.65px">RIGHT HALF-WING · STRUCTURAL LAYOUT</text>
 <text x="263" y="270" class="status" text-anchor="start">DRAFT · NOT FOR MANUFACTURE</text>
 <text x="352" y="263" class="micro" text-anchor="start">DRAWING</text>
@@ -93,13 +93,14 @@
 <polygon points="144.5,69.144 220.5,53.007 220.5,159.021 144.5,192.067" class="segment-fill-a"/>
 <polygon points="220.5,53.007 296,36.977 296,126.193 220.5,159.021" class="segment-fill-b"/>
 <polygon points="296,36.977 372,20.84 372,93.147 296,126.193" class="segment-fill-a"/>
-<polygon points="144.5,157.649 339.5,85.008 339.5,107.279 144.5,192.067" class="elevon-fill"/>
+<polygon points="160.75,151.595 339.5,85.008 339.5,107.279 160.75,185.002" class="elevon-fill"/>
 <polygon points="47,89.846 372,20.84 372,93.147 47,234.462" class="outline"/>
 <line x1="47" y1="133.231" x2="372" y2="42.532" class="hidden"/>
-<line x1="144.5" y1="157.649" x2="339.5" y2="85.008" class="derived"/>
+<line x1="160.75" y1="151.595" x2="339.5" y2="85.008" class="derived"/>
 <line x1="144.5" y1="69.144" x2="144.5" y2="192.067" class="station"/>
 <line x1="220.5" y1="53.007" x2="220.5" y2="159.021" class="station"/>
 <line x1="296" y1="36.977" x2="296" y2="126.193" class="station"/>
+<line x1="160.75" y1="65.694" x2="160.75" y2="185.002" class="derived"/>
 <line x1="109.5" y1="109.253" x2="144.5" y2="99.875" class="provisional-line"/>
 <line x1="144.5" y1="99.875" x2="339.5" y2="47.625" class="provisional-line" stroke-dasharray="none"/>
 <line x1="109.5" y1="141.753" x2="179.5" y2="122.997" class="provisional-line"/>
@@ -107,8 +108,8 @@
 <circle cx="220.5" cy="116.616" r="1" class="provisional-line"/>
 <circle cx="296" cy="72.663" r="1" class="provisional-line"/>
 <circle cx="296" cy="90.506" r="1" class="provisional-line"/>
-<rect x="238" y="93.595" width="8" height="17" rx="1" class="provisional-fill"/>
-<text x="242" y="103.095" class="provisional-text" text-anchor="middle">S</text>
+<rect x="246.125" y="90.911" width="8" height="17" rx="1" class="provisional-fill"/>
+<text x="250.125" y="100.411" class="provisional-text" text-anchor="middle">S</text>
 <line x1="47" y1="89.846" x2="47" y2="14.5" class="extension"/>
 <line x1="372" y1="20.84" x2="372" y2="14.5" class="extension"/>
 <line x1="47" y1="14.5" x2="372" y2="14.5" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
@@ -121,6 +122,10 @@
 <line x1="372" y1="93.147" x2="388" y2="93.147" class="extension"/>
 <line x1="388" y1="20.84" x2="388" y2="93.147" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
 <text x="390" y="56.993" class="dimension-text" text-anchor="middle" transform="rotate(-90 390 56.993)">144.6</text>
+<line x1="160.75" y1="151.595" x2="160.75" y2="91.5" class="extension"/>
+<line x1="339.5" y1="85.008" x2="339.5" y2="91.5" class="extension"/>
+<line x1="160.75" y1="91.5" x2="339.5" y2="91.5" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+<text x="250.125" y="89.8" class="dimension-text" text-anchor="middle">ELEVON 357.5 mm [D]</text>
 <line x1="47" y1="234.462" x2="47" y2="247" class="extension"/>
 <line x1="144.5" y1="192.067" x2="144.5" y2="247" class="extension"/>
 <line x1="47" y1="247" x2="144.5" y2="247" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
@@ -143,6 +148,9 @@
 <line x1="297" y1="100.84" x2="314" y2="152" class="leader"/>
 <circle cx="297" cy="100.84" r="0.65" class="datum-dot"/>
 <text x="315.5" y="151.2" class="note" text-anchor="start">HINGE · 0.72 c</text>
+<line x1="152.625" y1="188.534" x2="166" y2="207" class="leader provisional-line"/>
+<circle cx="152.625" cy="188.534" r="0.65" class="provisional-dot"/>
+<text x="167.5" y="206.2" class="provisional-text" text-anchor="start">FIXED TE BRIDGE · y195–227.5 · 32.5 mm</text>
 <line x1="307" y1="56.333" x2="293" y2="119" class="leader provisional-line"/>
 <circle cx="307" cy="56.333" r="0.65" class="provisional-dot"/>
 <text x="294.5" y="118.2" class="provisional-text" text-anchor="start">CFRP Ø12×1 · c/4 · PROVISIONAL</text>

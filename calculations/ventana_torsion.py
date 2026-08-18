@@ -132,17 +132,18 @@ def main():
     residual = max(
         0.0, trim["profile_plus_twist_deg"] - DESIGN_TWIST_DEG)
     checks = {
-        "allocation target closes against shared wing CLmax":
-            CL_ALLOCATION_REQUIRED <= CL_MAX_WING
-            and CL_MAX_WING - CL_ALLOCATION_REQUIRED < 1e-3,
-        "C32 lower model explicitly exceeds shared wing CLmax at 45 km/h":
-            CL_MAX_REQUIRED > CL_MAX_WING,
+        "allocation target retains positive shared-CLmax margin":
+            CL_ALLOCATION_REQUIRED < CL_MAX_WING,
+        "C32 lower model remains below shared wing CLmax at 45 km/h":
+            CL_MAX_REQUIRED < CL_MAX_WING,
         "3 deg wash-in plus <=0.6 deg elevon equivalent closes trim":
             residual <= ELEVON_EQUIVALENT_CAP_DEG,
         "3 deg wash-in retains positive computed local-cl stall margin":
             rows[3.0]["margin"] > 0.0,
-        "5 deg wash-in exceeds the section-cl limit":
-            rows[5.0]["margin"] < 0.0,
+        "5 deg wash-in remains only marginally below the section-cl limit":
+            0.0 < rows[5.0]["margin"] < 0.005,
+        "6 deg wash-in exceeds the section-cl limit":
+            rows[6.0]["margin"] < 0.0,
         "VLM solution reproduces requested total CL":
             abs(rows[3.0]["wing_cl"] - CL_MAX_REQUIRED) < 1e-10,
     }

@@ -90,7 +90,7 @@ The aircraft is designed as a **modular platform**:
 
 This is the first, reference design on the platform, named **Salamandra**. Its current
 specification for the designer is the
-[**Salamandra Design Guide v0.21**](design/Salamandra-Design-Guide-v0.1.md), with the
+[**Salamandra Design Guide v0.22**](design/Salamandra-Design-Guide-v0.1.md), with the
 justification in [`design/`](design/). The baseline is a PETG forward-swept flying wing,
 **modular and configurable**: a standard center module and interchangeable wing panels.
 Efficient FPV cruise flight, with electronics chosen by the builder.
@@ -102,6 +102,9 @@ manoeuvre limits, while +9/−4.5 g are their ultimate structural cases. It also
 the positive V-n branch and keeps the nonlinear dynamic-gust response explicitly open.
 Read the [**v0.4.0 release notes**](docs/11-release-v0.4.md) before structural sizing.
 Historical v0.1.0–v0.3.0 notes remain audit records.
+The repository now carries a post-release working change: I-27/ADR-0045 shortens the
+Article #1 elevons to 35–90 % half-span. Guide v0.22 controls current CAD work; v0.4.0
+remains the immutable release snapshot.
 The wiki renders the package at
 <https://bultodepapas.github.io/salmandra/>.
 
@@ -129,12 +132,13 @@ comes from the propulsion chain, which is where the data say the gap is.
 | Quarter-chord sweep | **−15°** | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | **t/c** | **13.5 % root / 9 % tip** | [ADR-0027](decisions/ADR-0027-relative-thickness.md) |
 | Airfoil | **Salamandra r1:** MH60 mean line, +1.0°/+0.5° root/tip reflex | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md) |
-| Printed wash-in | **+3.0°**; neutral elevon −0.04°…+0.41° at the corrected V1 mass `[D]` | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md) |
+| Printed wash-in | **+3.0°**; selected physical-elevon model trims −0.14°…+0.50° at the corrected V1 mass `[D]` | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md), [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
 | Material | **Conventional PETG**, light color | [ADR-0021](decisions/ADR-0021-base-material.md) |
 | Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** | [ADR-0028](decisions/ADR-0028-gyroid-infill.md) |
 | Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
 | Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
-| AUW (6S1P) | **1559.25 g CLEAN / 44.1 km/h; V1 lower model 1602.26 g / 44.7 km/h** | [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md) |
+| Elevons | **0.28 c, y 227.5…585 mm (35–90 %), 357.5 mm; fixed 32.5 mm root bridge and 65 mm tip; servo y ±406.25 mm** | [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
+| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; V1 lower model 1596.26 g / 44.7 km/h** | [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md), [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
 | Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; two-servo O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
 | Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | V_NE article #1 | **160 km/h** (design 180) | — |
@@ -171,7 +175,7 @@ configuration contributed to the platform.
 
 | Folder | What it contains |
 |---|---|
-| [`design/`](design/) | **Salamandra Design Guide v0.21** — the authoritative v0.4.0 CAD and engineering specification, its justification, and the open points |
+| [`design/`](design/) | **Salamandra Design Guide v0.22** — current post-v0.4.0 working CAD specification, its justification and open points; v0.21 remains the v0.4.0 release snapshot |
 | [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |
@@ -219,7 +223,7 @@ OP-29 measured torsional stiffness/elastic axis and G11 dynamic gust closure bef
 speed envelope can expand beyond 105 km/h. Airfoil coordinate generation is no longer a
 CAD blocker.
 
-Phase-1 status (2026-08-17):
+Phase-1 status (2026-08-18):
 
 - **G8 (neutral point) — largely closed.** On the ADR-0040 −15° planform, NP =
   **25.72 % MAC / −75.8 mm** by the full panel VLM, cross-checked by Weissinger-L at
@@ -228,19 +232,21 @@ Phase-1 status (2026-08-17):
 - **G2 (airfoil) — closed for CAD, open for measured acceptance.** The corrected B3
   pipeline preserves the mean line, invalidates stale polar caches and uses the local
   Reynolds envelope. The released Salamandra r1 family integrates root/tip moments with
-  c² weights and trims at **−0.04°…+0.41° neutral elevon** with +3.0° wash-in
-  ([ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md)); E2 remains mandatory.
-- **ADR-0040/0043 — coupled planform, mass and balance resolved.** The −15° planform
+  c² weights and, with the selected physical-elevon effectiveness, trims at
+  **−0.14°…+0.50° neutral elevon** with +3.0° wash-in
+  ([ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md),
+  [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md)); E2 remains mandatory.
+- **ADR-0040/0043/0045 — coupled planform, control surface, mass and balance updated.** The −15° planform
   and target CG **−93.8 mm** remain. With Article #1 hardware and the 550 g PETG-shell
-  cap and two-servo baseline, CLEAN is **1559.25 g**. The aggregate balance ledger gives
-  a 6S1P station of **−355.2 mm**; the component-level packaging solution used by the
-  drawings gives **−341.3 mm** inside the current cradle travel. Current stations and acceptance gates in the
+  cap and two-servo baseline, CLEAN is **1553.25 g**. Its component-level pack solution
+  is **−338.17 mm** inside current travel. V1 requires −374.34 mm, 2.72 mm beyond the
+  forward stop, although its CG remains inside the released band. Current stations and acceptance gates are in the
   [guide §7.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
 - **Two-servo correction closes the analytical V1 mass gap.** The complete fin remains
   **43.01 g**, including its mandatory 5.7 g aluminium spar. With 25 g removed from
-  actuation, V1 is **1602.26 g / 44.7 km/h**, about 18.1 g below the exact 45 km/h
+  actuation and ADR-0045 balance allocation, V1 is **1596.26 g / 44.7 km/h**, about 24.1 g below the exact 45 km/h
   mass ceiling. CAD and scale mass verification remain mandatory.
 - **OP-29 (divergence) — operationally bounded, structurally open.** Revision 4 uses
   the released r1 profile. Nominal Vdiv is 327.2 km/h, but the conservative unmeasured

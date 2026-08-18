@@ -32,6 +32,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-24](I-24-flight-load-envelope.md) | **Article #1 manoeuvre and regulatory-reference gust envelope** | 🔄 **Partial — limit/ultimate semantics and positive V-n branch closed; dynamic gust/CLmin open** | ADR-0044, guide v0.21, release v0.4.0, F4/S1–S2, G11/E9 |
 | [I-25](I-25-svg-technical-drawing-workflow.md) | **Reproducible SVG technical-drawing workflow** | ✅ **Executed — two A3 design-review sheets; manufacturing authority remains open** | `generate_blueprints.py`, `geometry/drawings/`, wiki drawing guide, future CAD ICDs |
 | [I-26](I-26-codex-svg-agent-toolchain.md) | **Codex, VS Code and agent toolchain for controlled SVG drawings** | ✅ **Executed — repository workflow hardened; optional renderer/schema gates open** | repository SVG skill, VS Code tasks, generator verification, drawing guide |
+| [I-27](I-27-elevon-geometry-trade.md) | **Article #1 elevon span, chord and tip-clearance trade** | 🔄 **Computational selection executed; E2/E5/G7 physical closure open** | ADR-0045, OP-06, guide §6.6, F2 |
 
 ## Source quality
 

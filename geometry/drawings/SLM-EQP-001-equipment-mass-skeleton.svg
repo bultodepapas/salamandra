@@ -97,31 +97,31 @@
 <line x1="330" y1="101.75" x2="330" y2="44.25" class="centre"/>
 <line x1="244" y1="31" x2="221" y2="31" class="medium" marker-end="url(#arrow-end)"/>
 <text x="247" y="32" class="label" text-anchor="start">FORWARD · −x</text>
-<rect x="67.88" y="131.946" width="28.959" height="10.108" rx="1" class="hidden" id="battery-travel-top" style="fill:none;stroke:#146e9b;stroke-width:.32;stroke-dasharray:5 1 1 1"/>
-<rect x="217.679" y="66.225" width="47.058" height="5.65" rx="1" class="hidden" id="battery-travel-side" style="fill:none;stroke:#146e9b;stroke-width:.32;stroke-dasharray:5 1 1 1"/>
-<rect x="72.725" y="131.946" width="23.538" height="10.108" rx="0.7" class="provisional-fill" id="equipment-top-battery_6s1p" style="fill:#e9e0f5;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
-<circle cx="84.494" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-battery_6s1p"/>
-<line x1="84.494" y1="137" x2="90.494" y2="129.5" class="leader"/>
-<rect x="86.994" y="127.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-battery_6s1p" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
-<text x="90.494" y="130.32" class="micro" text-anchor="middle">E01</text>
-<rect x="225.553" y="66.225" width="38.25" height="5.65" rx="0.7" class="provisional-fill" id="equipment-side-battery_6s1p" style="fill:#e9e0f5;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
-<circle cx="244.678" cy="69.05" r="0.55" class="datum-dot" id="mass-centre-side-battery_6s1p"/>
-<line x1="244.678" y1="69.05" x2="244.678" y2="77.05" class="leader"/>
-<rect x="241.178" y="74.6" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-battery_6s1p" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
-<text x="244.678" y="77.87" class="micro" text-anchor="middle">E01</text>
-<rect x="128.398" y="75.108" width="3.462" height="3.785" rx="0.7" class="provisional-fill" id="equipment-top-servo_left_390" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
-<circle cx="130.129" cy="77" r="0.55" class="datum-dot" id="mass-centre-top-servo_left_390"/>
-<rect x="126.629" y="74.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-servo_left_390" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
-<text x="130.129" y="77.82" class="micro" text-anchor="middle">E04</text>
-<rect x="316.022" y="70.97" width="5.625" height="2.875" rx="0.7" class="provisional-fill" id="equipment-side-servo_left_390" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
-<circle cx="318.834" cy="72.407" r="0.55" class="datum-dot" id="mass-centre-side-servo_left_390"/>
-<line x1="318.834" y1="72.407" x2="307.834" y2="57.407" class="leader"/>
-<rect x="302.884" y="54.957" width="9.9" height="4.9" rx="2" class="medium" id="mass-reference-side-servo_left_390" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
-<text x="307.834" y="58.227" class="micro" text-anchor="middle">E04/05</text>
-<rect x="128.398" y="195.108" width="3.462" height="3.785" rx="0.7" class="provisional-fill" id="equipment-top-servo_right_390" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
-<circle cx="130.129" cy="197" r="0.55" class="datum-dot" id="mass-centre-top-servo_right_390"/>
-<rect x="126.629" y="194.55" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-servo_right_390" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
-<text x="130.129" y="197.82" class="micro" text-anchor="middle">E05</text>
+<rect x="68.058" y="131.946" width="28.938" height="10.108" rx="1" class="hidden" id="battery-travel-top" style="fill:none;stroke:#146e9b;stroke-width:.32;stroke-dasharray:5 1 1 1"/>
+<rect x="217.97" y="66.225" width="47.024" height="5.65" rx="1" class="hidden" id="battery-travel-side" style="fill:none;stroke:#146e9b;stroke-width:.32;stroke-dasharray:5 1 1 1"/>
+<rect x="73.204" y="131.946" width="23.538" height="10.108" rx="0.7" class="provisional-fill" id="equipment-top-battery_6s1p" style="fill:#e9e0f5;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
+<circle cx="84.973" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-battery_6s1p"/>
+<line x1="84.973" y1="137" x2="90.973" y2="129.5" class="leader"/>
+<rect x="87.473" y="127.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-battery_6s1p" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
+<text x="90.973" y="130.32" class="micro" text-anchor="middle">E01</text>
+<rect x="226.332" y="66.225" width="38.25" height="5.65" rx="0.7" class="provisional-fill" id="equipment-side-battery_6s1p" style="fill:#e9e0f5;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
+<circle cx="245.457" cy="69.05" r="0.55" class="datum-dot" id="mass-centre-side-battery_6s1p"/>
+<line x1="245.457" y1="69.05" x2="245.457" y2="77.05" class="leader"/>
+<rect x="241.957" y="74.6" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-battery_6s1p" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
+<text x="245.457" y="77.87" class="micro" text-anchor="middle">E01</text>
+<rect x="127.193" y="72.608" width="3.462" height="3.785" rx="0.7" class="provisional-fill" id="equipment-top-servo_left_406" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
+<circle cx="128.924" cy="74.5" r="0.55" class="datum-dot" id="mass-centre-top-servo_left_406"/>
+<rect x="125.424" y="72.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-servo_left_406" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
+<text x="128.924" y="75.32" class="micro" text-anchor="middle">E04</text>
+<rect x="314.063" y="70.954" width="5.625" height="2.875" rx="0.7" class="provisional-fill" id="equipment-side-servo_left_406" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
+<circle cx="316.876" cy="72.391" r="0.55" class="datum-dot" id="mass-centre-side-servo_left_406"/>
+<line x1="316.876" y1="72.391" x2="305.876" y2="57.391" class="leader"/>
+<rect x="300.926" y="54.941" width="9.9" height="4.9" rx="2" class="medium" id="mass-reference-side-servo_left_406" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
+<text x="305.876" y="58.211" class="micro" text-anchor="middle">E04/05</text>
+<rect x="127.193" y="197.608" width="3.462" height="3.785" rx="0.7" class="provisional-fill" id="equipment-top-servo_right_406" style="fill:#dfeccf;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
+<circle cx="128.924" cy="199.5" r="0.55" class="datum-dot" id="mass-centre-top-servo_right_406"/>
+<rect x="125.424" y="197.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-servo_right_406" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
+<text x="128.924" y="200.32" class="micro" text-anchor="middle">E05</text>
 <rect x="167" y="134.846" width="5.385" height="4.308" rx="0.7" class="provisional-fill" id="equipment-top-motor" style="fill:#f6d8d1;fill-opacity:.72;stroke:#a86000;stroke-width:.48"/>
 <circle cx="169.692" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-motor"/>
 <line x1="169.692" y1="137" x2="165.692" y2="130" class="leader"/>
@@ -239,16 +239,16 @@
 <line x1="337.5" y1="71.75" x2="342.5" y2="80.25" class="leader"/>
 <rect x="339" y="77.8" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-buzzer" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="342.5" y="81.07" class="micro" text-anchor="middle">E17</text>
-<rect x="76.23" y="136.049" width="2.068" height="1.902" rx="0.7" class="derived" id="equipment-top-o4_camera" style="fill:#f0ddec;fill-opacity:.72;stroke:#9a4f87;stroke-width:.48"/>
-<circle cx="77.264" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-o4_camera"/>
-<line x1="77.264" y1="137" x2="77.264" y2="144.5" class="leader"/>
-<rect x="73.764" y="142.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-o4_camera" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
-<text x="77.264" y="145.32" class="micro" text-anchor="middle">E18</text>
-<rect x="231.249" y="72.188" width="3.36" height="4.125" rx="0.7" class="derived" id="equipment-side-o4_camera" style="fill:#f0ddec;fill-opacity:.72;stroke:#9a4f87;stroke-width:.48"/>
-<circle cx="232.929" cy="74.25" r="0.55" class="datum-dot" id="mass-centre-side-o4_camera"/>
-<line x1="232.929" y1="74.25" x2="230.929" y2="82.25" class="leader"/>
-<rect x="227.429" y="79.8" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-o4_camera" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
-<text x="230.929" y="83.07" class="micro" text-anchor="middle">E18</text>
+<rect x="76.409" y="136.049" width="2.068" height="1.902" rx="0.7" class="derived" id="equipment-top-o4_camera" style="fill:#f0ddec;fill-opacity:.72;stroke:#9a4f87;stroke-width:.48"/>
+<circle cx="77.443" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-o4_camera"/>
+<line x1="77.443" y1="137" x2="77.443" y2="144.5" class="leader"/>
+<rect x="73.943" y="142.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-top-o4_camera" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
+<text x="77.443" y="145.32" class="micro" text-anchor="middle">E18</text>
+<rect x="231.54" y="72.188" width="3.36" height="4.125" rx="0.7" class="derived" id="equipment-side-o4_camera" style="fill:#f0ddec;fill-opacity:.72;stroke:#9a4f87;stroke-width:.48"/>
+<circle cx="233.22" cy="74.25" r="0.55" class="datum-dot" id="mass-centre-side-o4_camera"/>
+<line x1="233.22" y1="74.25" x2="231.22" y2="82.25" class="leader"/>
+<rect x="227.72" y="79.8" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-o4_camera" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
+<text x="231.22" y="83.07" class="micro" text-anchor="middle">E18</text>
 <rect x="70.385" y="134.692" width="4.615" height="4.615" rx="0.7" class="derived" id="equipment-top-o4_vtx" style="fill:#f0ddec;fill-opacity:.72;stroke:#9a4f87;stroke-width:.48"/>
 <circle cx="72.692" cy="137" r="0.55" class="datum-dot" id="mass-centre-top-o4_vtx"/>
 <line x1="72.692" y1="137" x2="66.692" y2="129.5" class="leader"/>
@@ -269,13 +269,13 @@
 <line x1="327.5" y1="73" x2="331.5" y2="48.5" class="leader"/>
 <rect x="328" y="46.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-avionics_installation_reserve" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="331.5" y="49.32" class="micro" text-anchor="middle">E21</text>
-<rect x="67.88" y="131.946" width="23.538" height="10.108" rx="1" class="provisional-line" id="v1-battery-stop-top" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
-<rect x="217.679" y="66.225" width="38.25" height="5.65" rx="1" class="provisional-line" id="v1-battery-stop-side" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
+<rect x="68.058" y="131.946" width="23.538" height="10.108" rx="1" class="provisional-line" id="v1-battery-stop-top" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
+<rect x="217.97" y="66.225" width="38.25" height="5.65" rx="1" class="provisional-line" id="v1-battery-stop-side" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
 <line x1="122.57" y1="137.012" x2="97" y2="112" class="leader"/>
 <circle cx="122.57" cy="137.012" r="0.65" class="datum-dot"/>
 <text x="98.5" y="111.2" class="note" text-anchor="start">CLEAN CG (-93.8, +0.1) [D]</text>
-<line x1="306.551" y1="71.843" x2="291" y2="43" class="leader"/>
-<circle cx="306.551" cy="71.843" r="0.65" class="datum-dot"/>
+<line x1="306.551" y1="71.838" x2="291" y2="43" class="leader"/>
+<circle cx="306.551" cy="71.838" r="0.65" class="datum-dot"/>
 <text x="289.5" y="42.2" class="note" text-anchor="end">CG z +4.6 [D]</text>
 <g id="clean-cg-top" role="img" aria-label="Calculated centre of gravity"> <title>Calculated centre of gravity</title>
 <circle cx="122.57" cy="137.012" r="2.7" class="medium" style="fill:#fffdf8;stroke:none"/>
@@ -286,19 +286,19 @@
 <circle cx="122.57" cy="137.012" r="2.7" class="medium" style="fill:none;stroke:#111820;stroke-width:.52"/>
 </g>
 <g id="clean-cg-side" role="img" aria-label="Calculated centre of gravity"> <title>Calculated centre of gravity</title>
-<circle cx="306.551" cy="71.843" r="2.7" class="medium" style="fill:#fffdf8;stroke:none"/>
-<path d="M 306.551 71.843 L 306.551 69.143 A 2.7 2.7 0 0 0 303.851 71.843 Z" class="thin" style="fill:#111820;stroke:none"/>
-<path d="M 306.551 71.843 L 306.551 74.543 A 2.7 2.7 0 0 0 309.251 71.843 Z" class="thin" style="fill:#111820;stroke:none"/>
-<line x1="303.851" y1="71.843" x2="309.251" y2="71.843" class="thin" style="fill:none;stroke:#111820;stroke-width:.28"/>
-<line x1="306.551" y1="69.143" x2="306.551" y2="74.543" class="thin" style="fill:none;stroke:#111820;stroke-width:.28"/>
-<circle cx="306.551" cy="71.843" r="2.7" class="medium" style="fill:none;stroke:#111820;stroke-width:.52"/>
+<circle cx="306.551" cy="71.838" r="2.7" class="medium" style="fill:#fffdf8;stroke:none"/>
+<path d="M 306.551 71.838 L 306.551 69.138 A 2.7 2.7 0 0 0 303.851 71.838 Z" class="thin" style="fill:#111820;stroke:none"/>
+<path d="M 306.551 71.838 L 306.551 74.538 A 2.7 2.7 0 0 0 309.251 71.838 Z" class="thin" style="fill:#111820;stroke:none"/>
+<line x1="303.851" y1="71.838" x2="309.251" y2="71.838" class="thin" style="fill:none;stroke:#111820;stroke-width:.28"/>
+<line x1="306.551" y1="69.138" x2="306.551" y2="74.538" class="thin" style="fill:none;stroke:#111820;stroke-width:.28"/>
+<circle cx="306.551" cy="71.838" r="2.7" class="medium" style="fill:none;stroke:#111820;stroke-width:.52"/>
 </g>
-<line x1="79.649" y1="137" x2="79.649" y2="242" class="extension"/>
-<line x1="85.069" y1="137" x2="85.069" y2="242" class="extension"/>
-<line x1="79.649" y1="242" x2="85.069" y2="242" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
-<text x="82.359" y="240.3" class="dimension-text" text-anchor="middle">BATTERY CG TRAVEL 35.2 mm [D]/[E]</text>
-<line x1="79.649" y1="131.946" x2="24" y2="161" class="leader provisional-line"/>
-<circle cx="79.649" cy="131.946" r="0.65" class="provisional-dot"/>
+<line x1="79.828" y1="137" x2="79.828" y2="242" class="extension"/>
+<line x1="85.227" y1="137" x2="85.227" y2="242" class="extension"/>
+<line x1="79.828" y1="242" x2="85.227" y2="242" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+<text x="82.527" y="240.3" class="dimension-text" text-anchor="middle">BATTERY CG TRAVEL 35.1 mm [D]/[E]</text>
+<line x1="79.828" y1="131.946" x2="24" y2="161" class="leader provisional-line"/>
+<circle cx="79.828" cy="131.946" r="0.65" class="provisional-dot"/>
 <text x="25.5" y="160.2" class="provisional-text" text-anchor="start">V1 BATTERY AT FORWARD STOP</text>
 <text x="214" y="118" class="label" text-anchor="start">COMPONENT MASS / POSITION SCHEDULE</text>
 <text x="215" y="124" class="micro" text-anchor="start">REF</text>
@@ -312,22 +312,22 @@
 <text x="215" y="130" class="mono" text-anchor="start" style="fill:#6f4aa8;font-weight:700">E01</text>
 <text x="228" y="130" class="micro" text-anchor="start">battery_6s1p</text>
 <text x="314" y="130" class="mono" text-anchor="end">445.00</text>
-<text x="334" y="130" class="mono" text-anchor="end">-341.3</text>
+<text x="334" y="130" class="mono" text-anchor="end">-338.2</text>
 <text x="354" y="130" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="130" class="mono" text-anchor="end">+15.8</text>
 <text x="405" y="130" class="micro" text-anchor="end">[D]/[E]</text>
 <text x="215" y="134.05" class="mono" text-anchor="start" style="fill:#4f7f32;font-weight:700">E04</text>
-<text x="228" y="134.05" class="micro" text-anchor="start">servo_left_390</text>
+<text x="228" y="134.05" class="micro" text-anchor="start">servo_left_406</text>
 <text x="314" y="134.05" class="mono" text-anchor="end">12.50</text>
-<text x="334" y="134.05" class="mono" text-anchor="end">-44.7</text>
-<text x="354" y="134.05" class="mono" text-anchor="end">-390.0</text>
+<text x="334" y="134.05" class="mono" text-anchor="end">-52.5</text>
+<text x="354" y="134.05" class="mono" text-anchor="end">-406.2</text>
 <text x="374" y="134.05" class="mono" text-anchor="end">+2.4</text>
 <text x="405" y="134.05" class="micro" text-anchor="end">[D]/[E]</text>
 <text x="215" y="138.1" class="mono" text-anchor="start" style="fill:#4f7f32;font-weight:700">E05</text>
-<text x="228" y="138.1" class="micro" text-anchor="start">servo_right_390</text>
+<text x="228" y="138.1" class="micro" text-anchor="start">servo_right_406</text>
 <text x="314" y="138.1" class="mono" text-anchor="end">12.50</text>
-<text x="334" y="138.1" class="mono" text-anchor="end">-44.7</text>
-<text x="354" y="138.1" class="mono" text-anchor="end">+390.0</text>
+<text x="334" y="138.1" class="mono" text-anchor="end">-52.5</text>
+<text x="354" y="138.1" class="mono" text-anchor="end">+406.2</text>
 <text x="374" y="138.1" class="mono" text-anchor="end">+2.4</text>
 <text x="405" y="138.1" class="micro" text-anchor="end">[D]/[E]</text>
 <text x="215" y="142.15" class="mono" text-anchor="start" style="fill:#c44b34;font-weight:700">E06</text>
@@ -417,7 +417,7 @@
 <text x="215" y="190.75" class="mono" text-anchor="start" style="fill:#9a4f87;font-weight:700">E18</text>
 <text x="228" y="190.75" class="micro" text-anchor="start">o4_camera</text>
 <text x="314" y="190.75" class="mono" text-anchor="end">3.10</text>
-<text x="334" y="190.75" class="mono" text-anchor="end">-388.3</text>
+<text x="334" y="190.75" class="mono" text-anchor="end">-387.1</text>
 <text x="354" y="190.75" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="190.75" class="mono" text-anchor="end">-5.0</text>
 <text x="405" y="190.75" class="micro" text-anchor="end">[D]</text>
@@ -439,10 +439,10 @@
 <text x="214" y="219" class="micro" text-anchor="start">
 <tspan x="214" dy="0">AUDIT: E01 153.0x65.7x22.6 [M]/[E] · E18 13.44x12.36x16.50 [M].</tspan>
 <tspan x="214" dy="4.1">E19: VTX 30x30x6 [M] + ANTENNA MASS = 5.85 g [D] · 80 mm ROUTE NOTE · E20 RETIRED.</tspan>
-<tspan x="214" dy="4.1">SHOWN EQUIPMENT: 821.85 g · CLEAN INSTALLED: 1559.25 g</tspan>
-<tspan x="214" dy="4.1">NOT SHOWN: structure, elevons/balances and hardware = 737.40 g</tspan>
-<tspan x="214" dy="4.1">BATTERY: CLEAN x -341.29; V1 required -377.45, placed -372.78 mm.</tspan>
-<tspan x="214" dy="4.1">SERVOS: E04/E05 = 1 PER ELEVON AT y=390 mm · E02/E03 RETIRED WITH 4-SERVO CONCEPT.</tspan>
+<tspan x="214" dy="4.1">SHOWN EQUIPMENT: 821.85 g · CLEAN INSTALLED: 1553.25 g</tspan>
+<tspan x="214" dy="4.1">NOT SHOWN: structure, elevons/balances and hardware = 731.40 g</tspan>
+<tspan x="214" dy="4.1">BATTERY: CLEAN x -338.17; V1 required -374.34, placed -371.62 mm.</tspan>
+<tspan x="214" dy="4.1">SERVOS: E04/E05 = 1 PER ELEVON AT y=406.25 mm · E02/E03 RETIRED WITH 4-SERVO CONCEPT.</tspan>
 <tspan x="214" dy="4.1">COLOUR = SYSTEM FUNCTION · SOLID = MEASURED/CONTROLLED · AMBER DASH = OPEN.</tspan>
 <tspan x="214" dy="4.1">R = unresolved reserve · U = outside released budget · dimensions are envelopes.</tspan>
 <tspan x="214" dy="4.1">WING OUTLINE = CONTROLLED PLANFORM CONTEXT [D]; NO SKIN, STRUCTURE, FUSELAGE OR OML.</tspan>

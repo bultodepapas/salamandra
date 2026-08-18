@@ -26,6 +26,7 @@ import battery_pack_layout
 import design_config
 import divergence
 import elevon_authority
+import elevon_sizing
 import equipment_catalog
 import equipment_layout
 import flight_envelope
@@ -53,6 +54,7 @@ LOCAL_SCRIPTS = (
     "vlm_ala_volante.py",
     "weissinger_np.py",
     "sweep_trade.py",
+    "elevon_sizing.py",
     "elevon_authority.py",
     "ventana_torsion.py",
     "flight_envelope.py",
@@ -326,8 +328,31 @@ def contract_checks():
         "controls: SI torque conversion and factored Corona margin pass",
         10.19 < servo_torque.nm_to_kgf_cm(1.0) < 10.20
         and servo_torque.CORONA_TORQUE_KGFCM
-        / servo_torque.required_catalog_torque_kgf_cm() >= 1.3,
+        / servo_torque.required_catalog_torque_kgf_cm() >= 1.5,
         f"required={servo_torque.required_catalog_torque_kgf_cm():.3f} kgf*cm",
+    )
+    selected_surface = elevon_sizing.surface_geometry(elevon_sizing.ARTICLE_1)
+    selected_pitch = elevon_sizing.pitch_result(elevon_sizing.ARTICLE_1)
+    selected_roll = elevon_sizing.roll_derivatives(elevon_sizing.ARTICLE_1)
+    add(
+        "controls: Article #1 elevon geometry is canonical across modules",
+        close(selected_surface["span_m"], design_config.ELEVON_SPAN_M)
+        and close(servo_torque.ETA_IN, design_config.ELEVON_ETA_IN)
+        and close(servo_torque.ETA_OUT, design_config.ELEVON_ETA_OUT)
+        and close(
+            equipment_layout.SERVO_STATION_MM / 1000.0,
+            design_config.ELEVON_SERVO_STATION_M,
+        ),
+        f"span={selected_surface['span_m']*1000:.1f} mm; "
+        f"servo y={equipment_layout.SERVO_STATION_MM:.2f} mm",
+    )
+    add(
+        "controls: selected surface closes trim and retains roll authority",
+        abs(selected_pitch["trim_n12_deg"]) <= 0.6
+        and selected_roll["cl_delta_a_per_rad"] > 0.0
+        and selected_roll["cl_p_per_rad"] < 0.0,
+        f"trim={selected_pitch['trim_n12_deg']:+.3f} deg; "
+        f"Cl_da={selected_roll['cl_delta_a_per_rad']:.4f}/rad",
     )
     fin_area = yaw_stability.fin_area_for_target(0.0005)
     fin_mass_lower = yaw_stability.fin_mass_band(fin_area)[0]

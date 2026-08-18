@@ -3,6 +3,10 @@
 **Status:** Executed · **Date:** 2026-08-17 · **Feeds:** ADR-0041/0042/0043,
 Design Guide v0.19, release v0.3.0, I-23/C29
 
+> **Supersession note (2026-08-18):** this audit records the v0.3 state. ADR-0045/I-27
+> now control elevon geometry and connected mass/balance values; current CLEAN/V1 are
+> 1553.25/1596.26 g and 44.1/44.7 km/h.
+
 ## 1. Ranking method
 
 The audit ranked findings by safety/design effect, ability to unblock CAD, evidence

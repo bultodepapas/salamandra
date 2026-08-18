@@ -25,11 +25,13 @@ torsion window. Keep the value parametric until E2 measures the released r1 sect
 
 Trim requirement at SM 8 %: Cm0_req = CL·SM = 0.132 × 0.08 = **0.0106**. On the −15°
 planform the VLM gives +0.00249 Cm per degree of full-span wash-in and +0.00256 Cm per
-degree of elevon incidence over 30–90 % half-span. ADR-0041 integrates the released r1
+degree of equivalent elevon incidence over the former 30–90 % half-span reference.
+ADR-0045 supersedes that control geometry with a 35–90 % hinged-flap model yielding
+**+0.00183 Cm per physical degree**. ADR-0041 integrates the released r1
 root/tip moments with c² weighting: +3.0° wash-in closes neutral trim at
-**−0.04°…+0.41° elevon** at the corrected V1 lower-model mass over Ncrit 10/12. Five
-degrees of actuator travel provides
-12.8× the limiting residual (`elevon_authority.py`).
+**−0.14°…+0.50° physical elevon** at the corrected V1 lower-model mass over Ncrit
+10/12. Five degrees of actuator travel provides about 10× the limiting residual
+(`elevon_authority.py`).
 
 ## Consequences
 

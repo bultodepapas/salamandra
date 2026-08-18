@@ -52,8 +52,8 @@ O4_COAX_LENGTH_MM = equipment_catalog.DJI_O4_COAX_LENGTH_MM
 GPS_POWER_SEPARATION_MM = 100.0
 PRIMARY_CG_ADJUSTER = "battery_6s1p"
 
-ELEVON_HINGE_XC = 0.72
-SERVO_STATION_MM = 390.0
+ELEVON_HINGE_XC = design_config.ELEVON_HINGE_XC
+SERVO_STATION_MM = design_config.ELEVON_SERVO_STATION_M * 1000.0
 SERVO_BODY_SIZE_MM = (22.5, 24.6, 11.5)
 SERVO_SURFACE_CLEARANCE_MM = 1.5
 SERVO_MIN_PUSHROD_PROJECTION_MM = 20.0
@@ -629,7 +629,11 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
     core_x, _ = _strip_centroid(0.0, 0.195, 0.50)
     panel_x, panel_y = _strip_centroid(0.195, 0.585, 0.50)
     tip_x, tip_y = _strip_centroid(0.585, 0.650, 0.50)
-    elevon_x, elevon_y = _strip_centroid(0.195, 0.585, 0.86)
+    elevon_x, elevon_y = _strip_centroid(
+        design_config.ELEVON_INBOARD_M,
+        design_config.ELEVON_OUTBOARD_M,
+        0.5 * (design_config.ELEVON_HINGE_XC + 1.0),
+    )
 
     # Preserve the released 37.4 g boom+cradle allocation exactly.  The beam
     # calculation gives 22.39 g for the tube; the 0.01 g difference is merely
@@ -691,33 +695,43 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
         ),
         _component(
             "elevon_left", "Left elevon", "control",
-            masses["elevons"] / 2.0, (80.0, 390.0, 16.0),
+            masses["elevons"] / 2.0, (
+                design_config.chord(design_config.ELEVON_INBOARD_M)
+                * design_config.ELEVON_CHORD_FRACTION * 1000.0,
+                design_config.ELEVON_SPAN_M * 1000.0,
+                16.0,
+            ),
             (elevon_x, -elevon_y, 0.0), "[D]/[E]",
-            "ADR-0025 mass; planform centroid [D]",
+            "ADR-0025/0045 mass; planform centroid [D]",
             mass_sigma_g=2.0, position_sigma_mm=(10.0, 5.0, 2.0),
             collidable=False,
         ),
         _component(
             "elevon_right", "Right elevon", "control",
-            masses["elevons"] / 2.0, (80.0, 390.0, 16.0),
+            masses["elevons"] / 2.0, (
+                design_config.chord(design_config.ELEVON_INBOARD_M)
+                * design_config.ELEVON_CHORD_FRACTION * 1000.0,
+                design_config.ELEVON_SPAN_M * 1000.0,
+                16.0,
+            ),
             (elevon_x, elevon_y, 0.0), "[D]/[E]",
-            "ADR-0025 mass; planform centroid [D]",
+            "ADR-0025/0045 mass; planform centroid [D]",
             mass_sigma_g=2.0, position_sigma_mm=(10.0, 5.0, 2.0),
             collidable=False,
         ),
         _component(
             "elevon_balance_left", "Left elevon balance", "control",
             masses["balance"] / 2.0, (70.0, 30.0, 12.0),
-            (-5.0, -390.0, 0.0), "[D]/[E]",
-            "ADR-0025 allocation; physical station open",
+            (-5.0, -elevon_y, 0.0), "[D]/[E]",
+            "ADR-0025/0045 allocation; physical x station open",
             mass_sigma_g=3.0, position_sigma_mm=(30.0, 20.0, 5.0),
             collidable=False,
         ),
         _component(
             "elevon_balance_right", "Right elevon balance", "control",
             masses["balance"] / 2.0, (70.0, 30.0, 12.0),
-            (-5.0, 390.0, 0.0), "[D]/[E]",
-            "ADR-0025 allocation; physical station open",
+            (-5.0, elevon_y, 0.0), "[D]/[E]",
+            "ADR-0025/0045 allocation; physical x station open",
             mass_sigma_g=3.0, position_sigma_mm=(30.0, 20.0, 5.0),
             collidable=False,
         ),
@@ -782,7 +796,7 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
             identifier = f"servo_{side}_{int(servo_station_mm)}"
             components.append(_component(
                 identifier,
-                f"Corona DS-939MG {side} y={servo_station_mm:.0f}",
+                f"Corona DS-939MG {side} y={servo_station_mm:.2f}",
                 "actuator",
                 masses["servos"] / 2.0,
                 SERVO_BODY_SIZE_MM,

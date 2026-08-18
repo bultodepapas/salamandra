@@ -1,6 +1,6 @@
 # Objectives and requirements — Phase 0 specification
 
-**Revision 1.4** · 17 August 2026 · **Phase 0 closed**
+**Revision 1.5** · 18 August 2026 · **Phase 0 closed; Article #1 working allocation updated by ADR-0045**
 Defines **what is built and why**. No geometry line precedes this document.
 
 This is an **open, community-driven, modular 3D-printed FPV aircraft platform**. The core
@@ -92,7 +92,7 @@ These are the objectives that define the *platform*, as opposed to the reference
 | Structural ultimate loads | **+9 / −4.5 g** | Limit × 1.5 `[D]`; not flight targets (C33) |
 | Gust basis | **Open — legacy Part 23 screen is not adopted as a design load** | G11/E9; nonlinear dynamic response required |
 | **Stall speed** | **≤ 45 km/h** | See correction C16 |
-| Wing `CLmax` design value | **0.589** | I-07 `[D]`; closes 45 km/h only at the V1 allocation mass |
+| Wing `CLmax` design value | **0.589** | I-07 `[D]`; current CLEAN/V1 analytical masses predict 44.1/44.7 km/h; E2 measured closure remains mandatory |
 | Local section `clmax` screen | **≥ 0.65** | I-07/I-15; not the aircraft `CLmax` (C34) |
 
 > **Corrections C16/C34.** The original requirement was ≤ 40 km/h, derived with AUW
@@ -100,7 +100,7 @@ These are the objectives that define the *platform*, as opposed to the reference
 > C16 relaxed the requirement to 45 km/h but then used the local-section `clmax = 0.65`
 > as if it were whole-wing `CLmax`. I-07 supplies the correct distinction: local section
 > screen **0.65**, released wing design value **0.589**. The latter gives 45.0 km/h at
-> the V1 allocation mass. The two-servo 1602.26 g V1 lower model gives 44.7 km/h and
+> the V1 allocation mass. The ADR-0045 **1596.26 g** V1 lower model gives 44.7 km/h and
 > passes analytically; measured F2 mass remains mandatory.
 >
 > **Relaxed to ≤ 45 km/h**, justified by precedent: the Peregrine at 52 g/dm² and the Mojito at ~60 are hand-launched.
@@ -116,10 +116,12 @@ See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 
 | Pack | Cells | Energy | Mass | AUW | Wing loading |
 |---|---|---|---|---|---|
-| **6S1P P42A (Article #1)** | 6 | **90.7 Wh** | **445 g** | **1559.25 g CLEAN** | **55.3 g/dm²** |
+| **6S1P P42A (Article #1)** | 6 | **90.7 Wh** | **445 g** | **1553.25 g CLEAN** | **55.1 g/dm²** |
 
 > **R-CG:** the Article #1 carrier shall hold CG within ±5 mm with the 6S1P pack. The
-> component-level solution places it at x = −341.3 mm (travel −372.8…−337.6). A 4S aircraft
+> CLEAN component-level solution places it at x = **−338.17 mm** (travel
+> −371.62…−336.52). V1 requires −374.34 mm, 2.72 mm beyond current travel, although
+> the clamped CG remains inside the allowed band; F2 must close that station. A 4S aircraft
 > requires approximately 713 Kv rather than the 500–550 Kv 6S motor and therefore is a
 > separate power module. The former requirement to interchange 4S1P/4S2P/6S1P/6S2P in
 > one cradle is superseded by ADR-0042.

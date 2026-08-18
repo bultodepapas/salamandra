@@ -29,6 +29,9 @@ import equipment_layout
 from balance_cg import CG_TARGET, NP_VLM, NP_WL, solve_reference_layout
 from design_config import (
     ASPECT_RATIO,
+    ELEVON_HINGE_XC,
+    ELEVON_INBOARD_M,
+    ELEVON_OUTBOARD_M,
     HALF_SPAN,
     MAC,
     ROOT_CHORD,
@@ -57,9 +60,9 @@ class DrawingContract:
 
     core_half_span_m: float = 0.195
     segment_joints_m: tuple[float, ...] = (0.195, 0.347, 0.498, 0.650)
-    elevon_inboard_m: float = 0.195
-    elevon_outboard_m: float = 0.585
-    hinge_fraction: float = 0.72
+    elevon_inboard_m: float = ELEVON_INBOARD_M
+    elevon_outboard_m: float = ELEVON_OUTBOARD_M
+    hinge_fraction: float = ELEVON_HINGE_XC
     d_box_fraction: float = 0.30
     spar_fraction: float = 0.25
     spar_outboard_m: float = 0.585
@@ -95,8 +98,8 @@ CONTRACT = DrawingContract()
 
 MASS_SKELETON_COMPONENT_IDS = (
     "battery_6s1p",
-    "servo_left_390",
-    "servo_right_390",
+    "servo_left_406",
+    "servo_right_406",
     "motor",
     "prop_adapter",
     "propeller",
@@ -119,8 +122,8 @@ MASS_SKELETON_COMPONENT_IDS = (
 # the two-servo decision from silently renumbering the motor, avionics and O4 items.
 MASS_SKELETON_REFERENCE_BY_ID = {
     "battery_6s1p": "E01",
-    "servo_left_390": "E04",
-    "servo_right_390": "E05",
+    "servo_left_406": "E04",
+    "servo_right_406": "E05",
     "motor": "E06",
     "prop_adapter": "E07",
     "propeller": "E08",
@@ -492,7 +495,7 @@ def draw_general_arrangement() -> SvgSheet:
         "GENERAL ARRANGEMENT · TOP VIEW",
         "SLM-GA-001",
         "1:4",
-        "SOURCE: DESIGN GUIDE v0.21 · ADR-0040/0043 · I-21 · generate_blueprints.py",
+        "SOURCE: DESIGN GUIDE v0.22 · ADR-0040/0043/0045 · I-21/I-27 · generate_blueprints.py",
     )
     sheet.text(210, 151, "DRAFT · CONTROLLED GEOMETRY + PROVISIONAL EQUIPMENT", "watermark", "middle")
 
@@ -1214,7 +1217,7 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
     }
     side_reference_offsets = {
         "battery_6s1p": (0.0, 8.0),
-        "servo_left_390": (-11.0, -15.0),
+        "servo_left_406": (-11.0, -15.0),
         "motor": (-8.0, 7.0),
         "prop_adapter": (0.0, -8.0),
         "propeller": (8.0, 0.0),
@@ -1232,9 +1235,9 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         "avionics_installation_reserve": (4.0, -24.5),
     }
     side_reference_overrides = {
-        "servo_left_390": "E04/05",
+        "servo_left_406": "E04/05",
     }
-    side_projection_duplicates = {"servo_right_390"}
+    side_projection_duplicates = {"servo_right_406"}
 
     def draw_mass_reference(
         point: tuple[float, float],
@@ -1549,7 +1552,7 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         f"SHOWN EQUIPMENT: {shown_mass:.2f} g · CLEAN INSTALLED: {clean.mass_g():.2f} g",
         f"NOT SHOWN: structure, elevons/balances and hardware = {excluded_mass:.2f} g",
         f"BATTERY: CLEAN x {clean_battery_x:+.2f}; V1 required {v1_battery_x:+.2f}, placed {v1_battery.position_mm[0]:+.2f} mm.",
-        "SERVOS: E04/E05 = 1 PER ELEVON AT y=390 mm · E02/E03 RETIRED WITH 4-SERVO CONCEPT.",
+        "SERVOS: E04/E05 = 1 PER ELEVON AT y=406.25 mm · E02/E03 RETIRED WITH 4-SERVO CONCEPT.",
         "COLOUR = SYSTEM FUNCTION · SOLID = MEASURED/CONTROLLED · AMBER DASH = OPEN.",
         "R = unresolved reserve · U = outside released budget · dimensions are envelopes.",
         "WING OUTLINE = CONTROLLED PLANFORM CONTEXT [D]; NO SKIN, STRUCTURE, FUSELAGE OR OML.",
@@ -1616,7 +1619,7 @@ def draw_half_wing_layout() -> SvgSheet:
         "RIGHT HALF-WING · STRUCTURAL LAYOUT",
         "SLM-WNG-001",
         "PLAN 1:2",
-        "SOURCE: DESIGN GUIDE v0.21 §§4–6 · ADR-0002/0015/0032/0039",
+        "SOURCE: DESIGN GUIDE v0.22 §§4–6 · ADR-0002/0015/0032/0039/0045",
         title_font_size=3.65,
     )
     sheet.text(210, 146, "DRAFT · NOT A CUTTING OR MANUFACTURING TEMPLATE", "watermark", "middle")
@@ -1677,6 +1680,13 @@ def draw_half_wing_layout() -> SvgSheet:
     for station in CONTRACT.segment_joints_m[:-1]:
         sheet.line(*plan_point(x_le(station), station, ox, oy, scale),
                    *plan_point(x_te(station), station, ox, oy, scale), "station")
+    # The elevon begins 32.5 mm outboard of the removable joint.  Show this
+    # control boundary independently from the structural station chain.
+    sheet.line(
+        *plan_point(x_le(CONTRACT.elevon_inboard_m), CONTRACT.elevon_inboard_m, ox, oy, scale),
+        *plan_point(x_te(CONTRACT.elevon_inboard_m), CONTRACT.elevon_inboard_m, ox, oy, scale),
+        "derived",
+    )
 
     # Main carbon tube: inserted socket portion is dashed; bonded panel portion
     # is solid amber because its dimensions remain provisional pending CAD/F2.
@@ -1721,6 +1731,21 @@ def draw_half_wing_layout() -> SvgSheet:
     tip_te = plan_point(x_te(HALF_SPAN), HALF_SPAN, ox, oy, scale)
     sheet.vertical_dimension(388.0, tip_le[1], tip_te[1], tip_le[0], tip_te[0],
                              f"{TIP_CHORD*1000:.1f}", label_left=False)
+    elevon_inboard_hinge = chord_fraction_point(
+        CONTRACT.elevon_inboard_m, CONTRACT.hinge_fraction, ox, oy, scale
+    )
+    elevon_outboard_hinge = chord_fraction_point(
+        CONTRACT.elevon_outboard_m, CONTRACT.hinge_fraction, ox, oy, scale
+    )
+    sheet.horizontal_dimension(
+        elevon_inboard_hinge[0],
+        elevon_outboard_hinge[0],
+        91.5,
+        elevon_inboard_hinge[1],
+        elevon_outboard_hinge[1],
+        "ELEVON 357.5 mm [D]",
+        label_above=True,
+    )
 
     chain_y = 247.0
     chain_points = [plan_point(0.235, value, ox, oy, scale)[0] for value in intervals]
@@ -1736,6 +1761,13 @@ def draw_half_wing_layout() -> SvgSheet:
                  279, 177, "D-BOX WEB · 0.30 c · PROVISIONAL", True)
     sheet.leader(*chord_fraction_point(0.50, CONTRACT.hinge_fraction, ox, oy, scale),
                  314, 152, "HINGE · 0.72 c", False)
+    sheet.leader(
+        *plan_point(x_te(0.21125), 0.21125, ox, oy, scale),
+        166,
+        207,
+        "FIXED TE BRIDGE · y195–227.5 · 32.5 mm",
+        True,
+    )
     sheet.leader(*chord_fraction_point(0.52, CONTRACT.spar_fraction, ox, oy, scale),
                  293, 119, "CFRP Ø12×1 · c/4 · PROVISIONAL", True)
     sheet.leader(*plan_point(x_c4(0.20) + CONTRACT.anti_rotation_offset_m, 0.20, ox, oy, scale),
@@ -1805,8 +1837,8 @@ def validate_contract() -> dict[str, bool]:
             abs(actual - expected) < 1e-9
             for actual, expected in zip(segment_spans[1:], (152.0, 151.0, 152.0))
         ),
-        "elevon is a 390 mm PANEL component": abs(
-            (CONTRACT.elevon_outboard_m - CONTRACT.elevon_inboard_m) * 1000.0 - 390.0
+        "elevon is a 357.5 mm PANEL component": abs(
+            (CONTRACT.elevon_outboard_m - CONTRACT.elevon_inboard_m) * 1000.0 - 357.5
         ) < 1e-9,
         "target CG preserves 8 percent MAC margin": abs(
             (NP_VLM - CG_TARGET) / MAC - 0.08
@@ -1851,7 +1883,7 @@ def validate_contract() -> dict[str, bool]:
             "esc",
             "o4_camera",
             "o4_vtx",
-            "servo_right_390",
+            "servo_right_406",
         } <= equipment_ids,
         "drawing and equipment model use one fixed servo per half-wing": (
             sum(component.category == "actuator" for component in equipment_components) == 2

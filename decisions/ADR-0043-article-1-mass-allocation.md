@@ -1,7 +1,12 @@
 # ADR-0043 — Article #1 mass allocation targets the 45 km/h stall requirement
 
 **Status:** ✅ CLEAN and V1 analytically closed; physical F2 open · **Date:** 2026-08-18 · **Confidence:** Medium `[M]`/`[D]`/`[E]` · **Reversible:** Yes
-**Research:** I-16…I-19, I-22/I-23 · **Verification:** F2 CAD mass properties and weighed assembly
+**Research:** I-16…I-19, I-22/I-23, I-27 · **Verification:** F2 CAD mass properties and weighed assembly
+
+> **2026-08-18 amendment — ADR-0045:** the selected 35–90 % half-span elevons
+> reduce moving PETG by 5 g and balance mass by 6 g while retaining the 550 g total
+> shell cap. Current connected totals and torque margin below supersede the original
+> figures preserved in repository history.
 
 ## Context
 
@@ -20,7 +25,7 @@ Keep conventional PETG and make the following masses binding CAD/procurement lim
 | PETG shell, excluding V1 fin | **≤ 550 g** | low end of established 550–650 g estimate `[E]`; CAD acceptance cap |
 | FC/PDB | SpeedyBee F405 WING **20.3 g** | 8.9 g FC + mandatory 11.4 g PDB/current board `[M]`; wireless board omitted |
 | FPV | DJI O4 Air Unit **8.95 g installed** | E18 camera 3.10 g + E19 VTX/attached-antenna assembly 5.85 g `[M]`/`[D]`; I-19 |
-| Servos | 2× Corona DS-939MG **25.0 g** | one per elevon, 12.5 g each `[M]`; 1.36× factored torque margin at 180 km/h |
+| Servos | 2× Corona DS-939MG **25.0 g** | one per elevon, 12.5 g each `[M]`; 1.52× factored torque margin at 180 km/h |
 | Propeller assembly | **25 g** | APC blade 15 g `[M]` + adapter/collet allowance 10 g `[E]` |
 | V1a complete fin | **≤36.72 g target** | C32 current lower model: 37.31 g shell/mount + 5.70 g mandatory spar = **43.01 g**; 6.29 g gap `[E]` |
 
@@ -28,15 +33,15 @@ All other v0.2 rows remain unchanged. The reproducible totals are:
 
 | Configuration | AUW | Wing loading | Predicted stall |
 |---|---:|---:|---:|
-| SALAMANDRA-CLEAN | **1,559.25 g** | 55.3 g/dm² | **44.1 km/h** |
-| SALAMANDRA-V1 allocation target | **1,595.97 g** | 56.6 g/dm² | **44.7 km/h** |
-| SALAMANDRA-V1 current lower model | **1,602.26 g** | 56.8 g/dm² | **44.7 km/h — analytical PASS** |
+| SALAMANDRA-CLEAN | **1,553.25 g** | 55.1 g/dm² | **44.1 km/h** |
+| SALAMANDRA-V1 allocation target | **1,589.97 g** | 56.4 g/dm² | **44.6 km/h** |
+| SALAMANDRA-V1 current lower model | **1,596.26 g** | 56.6 g/dm² | **44.7 km/h — analytical PASS** |
 
-The formula's exact 45 km/h mass ceiling is 1,620.4 g. CLEAN carries 61.2 g of margin
-and the connected V1 lower model carries about 18.1 g. C32 remains the correction that
+The formula's exact 45 km/h mass ceiling is 1,620.4 g. CLEAN carries 67.2 g of margin
+and the connected V1 lower model carries about 24.1 g. C32 remains the correction that
 connected the mandatory fin spar; ADR-0026 removes two unsupported baseline actuators.
-The aggregate ledger gives x = −355.2 mm; the component-level layout that controls the
-drawing solves x = −341.3 mm after placing E18/E19 explicitly. Both calculations expose
+The aggregate ledger gives x = −354.1 mm; the component-level layout that controls the
+drawing solves x = −338.17 mm after placing E18/E19 explicitly. Both calculations expose
 their assumptions instead of retaining the v0.2 station.
 
 ## Consequences
