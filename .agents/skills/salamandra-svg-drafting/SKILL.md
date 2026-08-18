@@ -1,6 +1,6 @@
 ---
 name: salamandra-svg-drafting
-description: Create, revise, validate, or visually review Salamandra aircraft technical sketches in generated SVG. Use for drawing sheets, blueprint drafts, SVG geometry, drawing annotations, line hierarchy, and Codex or VS Code drawing workflows in this repository.
+description: Create, revise, validate, or visually review Salamandra aircraft technical sketches in generated SVG. Use for drawing sheets, blueprint drafts, fuselage or OML silhouettes, packaging envelopes, SVG geometry, drawing annotations, line hierarchy, and Codex or VS Code drawing workflows in this repository.
 ---
 
 # Salamandra SVG drafting
@@ -32,6 +32,12 @@ manufacturing authority.
   metadata, drawing number, revision, scale, and an explicit authority warning.
 - Keep provisional geometry amber, dashed, and text-labelled. Do not imply tolerance or
   precision that the evidence does not support.
+- Separate the outer mould line (OML), internal equipment envelopes, and structural
+  interfaces into distinct visual layers; do not substitute one for another.
+- For fuselage, pod, or fairing silhouette work, read
+  [`references/oml-continuity.md`](references/oml-continuity.md) before editing.
+- Scope drawing-specific styles to the affected sheet or element. After regeneration,
+  confirm that unrelated canonical drawings remain unchanged.
 
 ## Verify and review
 
@@ -44,6 +50,10 @@ python calculations/generate_blueprints.py --check
 
 The second command is read-only and must fail if a generated artifact is missing, stale,
 unsafe, inaccessible, or inconsistent with the numerical contract.
+
+Inspect `git diff --check` and the generated-file diff after regeneration. Treat an
+unexpected change to a sibling drawing as a generator fan-out defect, even when both SVGs
+remain valid.
 
 Then open each standalone SVG in a browser and apply
 [`references/review-checklist.md`](references/review-checklist.md). Inspect the full A3

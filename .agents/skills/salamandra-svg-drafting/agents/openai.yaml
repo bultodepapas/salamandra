@@ -1,0 +1,4 @@
+interface:
+  display_name: "Salamandra SVG Drafting"
+  short_description: "Engineering SVGs with traceable geometry"
+  default_prompt: "Use $salamandra-svg-drafting to create or revise a traceable aircraft technical sketch and verify it visually."

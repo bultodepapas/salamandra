@@ -10,6 +10,10 @@
 - Every provisional feature is dashed and explicitly labelled.
 - No feature can reasonably be mistaken for a manufacturing tolerance, cutting path, or
   released interface.
+- An OML encloses every controlling equipment envelope at the cited stations; required
+  wall, clearance, or offset values remain traceable and are not aesthetic guesses.
+- Bézier control points and fairing transitions are marked `[I]` unless a calculation or
+  released surface controls them.
 
 ## Structural review
 
@@ -19,6 +23,8 @@
   resources.
 - Title, description, generator provenance, warning, and drawing number are present.
 - `python calculations/generate_blueprints.py --check` leaves the working tree unchanged.
+- Regeneration changes only the intended canonical sheets; sheet-specific styles do not
+  leak into sibling drawings through the shared renderer.
 
 ## Visual review
 
@@ -31,3 +37,7 @@
   coordinate conventions are visually plausible.
 - Dense regions are inspected separately at higher zoom.
 - The sheet is checked in monochrome or grayscale as well as colour.
+- The OML reads as one closed silhouette without disconnected islands, self-intersections,
+  accidental flat spots, or visible tangent kinks.
+- Internal equipment and structural interfaces remain identifiable inside the OML instead
+  of being hidden by the fairing fill.
