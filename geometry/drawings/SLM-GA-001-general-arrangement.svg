@@ -67,7 +67,7 @@
 <text x="16" y="266" class="sheet-subtitle" text-anchor="start">SALAMANDRA · OPEN 3D-PRINTED AIRCRAFT</text>
 <text x="16" y="272" class="note" text-anchor="start">METRIC TECHNICAL SKETCH · PRINT AT 100 %</text>
 <text x="16" y="280" class="micro" text-anchor="start">SOURCE: DESIGN GUIDE v0.21 · ADR-0040/0043 · I-21 · generate_blueprints.py</text>
-<text x="263" y="264" class="block-title" text-anchor="start">GENERAL ARRANGEMENT · TOP VIEW</text>
+<text x="263" y="264" class="block-title" text-anchor="start" style="font-size:3.8px">GENERAL ARRANGEMENT · TOP VIEW</text>
 <text x="263" y="270" class="status" text-anchor="start">DRAFT · NOT FOR MANUFACTURE</text>
 <text x="352" y="263" class="micro" text-anchor="start">DRAWING</text>
 <text x="352" y="270" class="mono" text-anchor="start">SLM-GA-001</text>

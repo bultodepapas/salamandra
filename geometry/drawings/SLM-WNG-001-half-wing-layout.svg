@@ -67,7 +67,7 @@
 <text x="16" y="266" class="sheet-subtitle" text-anchor="start">SALAMANDRA · OPEN 3D-PRINTED AIRCRAFT</text>
 <text x="16" y="272" class="note" text-anchor="start">METRIC TECHNICAL SKETCH · PRINT AT 100 %</text>
 <text x="16" y="280" class="micro" text-anchor="start">SOURCE: DESIGN GUIDE v0.21 §§4–6 · ADR-0002/0015/0032/0039</text>
-<text x="263" y="264" class="block-title" text-anchor="start">RIGHT HALF-WING · STRUCTURAL LAYOUT</text>
+<text x="263" y="264" class="block-title" text-anchor="start" style="font-size:3.65px">RIGHT HALF-WING · STRUCTURAL LAYOUT</text>
 <text x="263" y="270" class="status" text-anchor="start">DRAFT · NOT FOR MANUFACTURE</text>
 <text x="352" y="263" class="micro" text-anchor="start">DRAWING</text>
 <text x="352" y="270" class="mono" text-anchor="start">SLM-WNG-001</text>
@@ -111,10 +111,10 @@
 <text x="164.5" y="128.689" class="provisional-text" text-anchor="middle">S</text>
 <rect x="238" y="93.595" width="8" height="17" rx="1" class="provisional-fill"/>
 <text x="242" y="103.095" class="provisional-text" text-anchor="middle">S</text>
-<line x1="47" y1="89.846" x2="47" y2="13.5" class="extension"/>
-<line x1="372" y1="20.84" x2="372" y2="13.5" class="extension"/>
-<line x1="47" y1="13.5" x2="372" y2="13.5" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
-<text x="209.5" y="11.8" class="dimension-text" text-anchor="middle">HALF-SPAN 650 mm [D]</text>
+<line x1="47" y1="89.846" x2="47" y2="14.5" class="extension"/>
+<line x1="372" y1="20.84" x2="372" y2="14.5" class="extension"/>
+<line x1="47" y1="14.5" x2="372" y2="14.5" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+<text x="209.5" y="12.8" class="dimension-text" text-anchor="middle">HALF-SPAN 650 mm [D]</text>
 <line x1="47" y1="89.846" x2="29" y2="89.846" class="extension"/>
 <line x1="47" y1="234.462" x2="29" y2="234.462" class="extension"/>
 <line x1="29" y1="89.846" x2="29" y2="234.462" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>

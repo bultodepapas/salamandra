@@ -17,6 +17,7 @@ one SVG user unit is one millimetre on the A3 sheet when printed at 100 %.
 from __future__ import annotations
 
 import argparse
+import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from html import escape
@@ -76,6 +77,15 @@ class DrawingContract:
 
 
 CONTRACT = DrawingContract()
+
+
+@dataclass(frozen=True)
+class DrawingOutput:
+    """One deterministic drawing artifact before it is written to disk."""
+
+    path: Path
+    drawing_number: str
+    source: str
 
 
 def fmt(value: float) -> str:
@@ -319,7 +329,7 @@ def airfoil_limits(points: list[tuple[float, float]], x_fraction: float) -> tupl
 
 
 def title_block(sheet: SvgSheet, title: str, number: str, scale: str,
-                sources: str) -> None:
+                sources: str, title_font_size: float = 3.8) -> None:
     sheet.rect(10, 10, 400, 277, "frame")
     sheet.line(10, TITLE_BLOCK_TOP, 410, TITLE_BLOCK_TOP, "title-line")
     sheet.line(258, TITLE_BLOCK_TOP, 258, 287, "title-line")
@@ -329,7 +339,7 @@ def title_block(sheet: SvgSheet, title: str, number: str, scale: str,
     sheet.text(16, 266, "SALAMANDRA · OPEN 3D-PRINTED AIRCRAFT", "sheet-subtitle")
     sheet.text(16, 272, "METRIC TECHNICAL SKETCH · PRINT AT 100 %", "note")
     sheet.text(16, 280, sources, "micro")
-    sheet.text(263, 264, title, "block-title")
+    sheet.text(263, 264, title, "block-title", style=f"font-size:{fmt(title_font_size)}px")
     sheet.text(263, 270, "DRAFT · NOT FOR MANUFACTURE", "status")
     sheet.text(352, 263, "DRAWING", "micro")
     sheet.text(352, 270, number, "mono")
@@ -537,6 +547,7 @@ def draw_half_wing_layout() -> SvgSheet:
         "SLM-WNG-001",
         "PLAN 1:2",
         "SOURCE: DESIGN GUIDE v0.21 §§4–6 · ADR-0002/0015/0032/0039",
+        title_font_size=3.65,
     )
     sheet.text(210, 146, "DRAFT · NOT A CUTTING OR MANUFACTURING TEMPLATE", "watermark", "middle")
 
@@ -630,7 +641,7 @@ def draw_half_wing_layout() -> SvgSheet:
     # Principal dimensions and station chain.
     root_le = plan_point(x_le(0.0), 0.0, ox, oy, scale)
     tip_le = plan_point(x_le(HALF_SPAN), HALF_SPAN, ox, oy, scale)
-    sheet.horizontal_dimension(root_le[0], tip_le[0], 13.5,
+    sheet.horizontal_dimension(root_le[0], tip_le[0], 14.5,
                                root_le[1], tip_le[1], "HALF-SPAN 650 mm [D]")
     root_te = plan_point(x_te(0.0), 0.0, ox, oy, scale)
     sheet.vertical_dimension(29.0, root_le[1], root_te[1], root_le[0], root_te[0],
@@ -716,38 +727,89 @@ def validate_contract() -> dict[str, bool]:
     }
 
 
-def validate_svg(path: Path, drawing_number: str) -> dict[str, bool]:
-    source = path.read_text(encoding="utf-8")
+def validate_svg(source: str, filename: str, drawing_number: str) -> dict[str, bool]:
+    """Validate the portable, static subset used by the drawing masters."""
     root = ET.fromstring(source)
     namespace = {"svg": "http://www.w3.org/2000/svg"}
     labels = " ".join(element.text or "" for element in root.findall(".//svg:text", namespace))
+    elements = list(root.iter())
+    ids = [element.attrib["id"] for element in elements if "id" in element.attrib]
+    id_set = set(ids)
+    aria_ids = root.attrib.get("aria-labelledby", "").split()
+    url_references = re.findall(r"url\(\s*['\"]?([^'\")\s]+)", source)
+    fragment_references = {value[1:] for value in url_references if value.startswith("#")}
+    hrefs = [
+        value
+        for element in elements
+        for key, value in element.attrib.items()
+        if key.rsplit("}", 1)[-1] == "href"
+    ]
+    active_tags = {"script", "foreignObject", "iframe", "object", "embed", "audio", "video", "image"}
+    event_attributes = [
+        key
+        for element in elements
+        for key in element.attrib
+        if key.rsplit("}", 1)[-1].lower().startswith("on")
+    ]
+    title_element = root.find("svg:title", namespace)
+    description_element = root.find("svg:desc", namespace)
+    metadata = root.find("svg:metadata", namespace)
     return {
-        f"{path.name}: XML parses": root.tag.endswith("svg"),
-        f"{path.name}: physical A3 size": root.attrib.get("width") == "420mm" and root.attrib.get("height") == "297mm",
-        f"{path.name}: metric viewBox": root.attrib.get("viewBox") == "0 0 420 297",
-        f"{path.name}: accessible title and description": (
-            root.find("svg:title", namespace) is not None
-            and root.find("svg:desc", namespace) is not None
+        f"{filename}: XML parses": root.tag.endswith("svg"),
+        f"{filename}: physical A3 size": root.attrib.get("width") == "420mm" and root.attrib.get("height") == "297mm",
+        f"{filename}: metric viewBox": root.attrib.get("viewBox") == "0 0 420 297",
+        f"{filename}: accessible title and description": (
+            title_element is not None
+            and title_element.attrib.get("id") == "svg-title"
+            and bool((title_element.text or "").strip())
+            and description_element is not None
+            and description_element.attrib.get("id") == "svg-desc"
+            and bool((description_element.text or "").strip())
+            and aria_ids == ["svg-title", "svg-desc"]
+            and all(reference in id_set for reference in aria_ids)
             and root.attrib.get("role") == "img"
         ),
-        f"{path.name}: drawing number present": drawing_number in source,
-        f"{path.name}: manufacture warning present": "NOT FOR MANUFACTURE" in labels or "NOT A CUTTING" in labels,
-        f"{path.name}: provisional style present": "PROVISIONAL" in labels,
+        f"{filename}: IDs are unique": len(ids) == len(id_set),
+        f"{filename}: fragment references resolve": fragment_references <= id_set,
+        f"{filename}: no external references": (
+            all(value.startswith("#") for value in hrefs)
+            and all(value.startswith("#") for value in url_references)
+        ),
+        f"{filename}: no active or embedded content": (
+            not event_attributes
+            and not any(element.tag.rsplit("}", 1)[-1] in active_tags for element in elements)
+            and "@import" not in source.lower()
+            and "<!doctype" not in source.lower()
+            and "<!entity" not in source.lower()
+        ),
+        f"{filename}: generator provenance present": (
+            metadata is not None
+            and "calculations/generate_blueprints.py" in (metadata.text or "")
+            and drawing_number in (metadata.text or "")
+        ),
+        f"{filename}: drawing number present": drawing_number in source,
+        f"{filename}: manufacture warning present": "NOT FOR MANUFACTURE" in labels or "NOT A CUTTING" in labels,
+        f"{filename}: provisional style present": "PROVISIONAL" in labels,
     }
 
 
-def write_drawings() -> list[Path]:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+def build_drawings() -> tuple[DrawingOutput, ...]:
+    """Render every drawing in memory without mutating the workspace."""
     drawings = (
         ("SLM-GA-001-general-arrangement.svg", "SLM-GA-001", draw_general_arrangement()),
         ("SLM-WNG-001-half-wing-layout.svg", "SLM-WNG-001", draw_half_wing_layout()),
     )
-    paths = []
-    for filename, _, drawing in drawings:
-        path = OUTPUT_DIR / filename
-        path.write_text(drawing.render(), encoding="utf-8", newline="\n")
-        paths.append(path)
-    return paths
+    return tuple(
+        DrawingOutput(OUTPUT_DIR / filename, drawing_number, drawing.render())
+        for filename, drawing_number, drawing in drawings
+    )
+
+
+def write_drawings(outputs: tuple[DrawingOutput, ...]) -> None:
+    """Write a previously rendered set using stable UTF-8/LF serialization."""
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    for output in outputs:
+        output.path.write_text(output.source, encoding="utf-8", newline="\n")
 
 
 def main() -> None:
@@ -755,21 +817,28 @@ def main() -> None:
     parser.add_argument(
         "--check",
         action="store_true",
-        help="regenerate, validate XML/contract, and fail on a stale or invalid drawing",
+        help="validate XML/contract and fail on a stale drawing without modifying files",
     )
     args = parser.parse_args()
 
-    paths = write_drawings()
+    outputs = build_drawings()
+    if not args.check:
+        write_drawings(outputs)
+
     checks = validate_contract()
-    numbers = ("SLM-GA-001", "SLM-WNG-001")
-    for path, number in zip(paths, numbers):
-        checks.update(validate_svg(path, number))
+    for output in outputs:
+        checks[f"{output.path.name}: generated file is current"] = (
+            output.path.exists()
+            and output.path.read_text(encoding="utf-8") == output.source
+        )
+        checks.update(validate_svg(output.source, output.path.name, output.drawing_number))
 
     print("=" * 86)
     print("SALAMANDRA SVG DRAWING SET · A3 METRIC · REV P0")
     print("=" * 86)
-    for path in paths:
-        print(f"  WROTE {path.relative_to(ROOT)}")
+    action = "CHECKED" if args.check else "WROTE"
+    for output in outputs:
+        print(f"  {action} {output.path.relative_to(ROOT)}")
     for name, passed in checks.items():
         print(f"  [{'PASS' if passed else 'FAIL'}] {name}")
     if args.check and not all(checks.values()):

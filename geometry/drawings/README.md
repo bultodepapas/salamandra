@@ -22,8 +22,14 @@ the applicable fit/structural test.
 From the repository root:
 
 ```bash
+python calculations/generate_blueprints.py
 python calculations/generate_blueprints.py --check
 ```
+
+The first command deliberately writes the deterministic artifacts. The second command is
+read-only: it fails if either artifact is missing, stale, structurally unsafe or
+inconsistent with the numerical contract. In VS Code, run **Tasks: Run Task** and choose
+`Drawings: regenerate`, `Drawings: verify`, or `Drawings: verify all calculations`.
 
 The generator imports:
 
@@ -36,7 +42,13 @@ The generator imports:
 
 No geometry is traced from an illustration. Changing a shared planform or balance input
 changes the SVG on regeneration. The script validates the numerical contract, XML,
-physical page size, accessibility metadata, warning text and drawing identifiers.
+physical page size, unique and resolved identifiers, same-document references,
+accessibility metadata, generator provenance, absence of active/embedded content, warning
+text and drawing identifiers.
+
+Use the installed SVG extension only for live preview and symbol navigation. Do not run
+its minimiser or any automatic SVG optimiser on the controlled masters. Browser rendering
+is a visual review gate, not a source of geometry.
 
 ## Graphic contract
 
@@ -62,6 +74,11 @@ W3C SVG viewport/accessibility requirements. The repository does not reproduce
 copyrighted standard text; it records only the project rules derived from public primary
 sources.
 
+Codex, VS Code, MCP, renderer, validator, library and skill choices are evaluated in
+[`research/I-26-codex-svg-agent-toolchain.md`](../../research/I-26-codex-svg-agent-toolchain.md).
+The executable agent procedure is
+[`salmandra-svg-drafting`](../../.agents/skills/salamandra-svg-drafting/SKILL.md).
+
 ## Next useful sheets
 
 1. `SLM-CORE-001`: CORE interface-control envelope after its outer mould is frozen.
@@ -69,4 +86,3 @@ sources.
 3. `SLM-WNG-002`: station/profile schedule with twist and local reference frames.
 4. `SLM-FIN-001`: optional V1 fin, after F2 closes root, spar and mass geometry.
 5. 1:1 tiled templates only after tolerances and print compensation are measured.
-

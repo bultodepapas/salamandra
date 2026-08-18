@@ -1,0 +1,64 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Drawings: regenerate",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/calculations/generate_blueprints.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "clear": true,
+        "panel": "dedicated",
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Drawings: verify",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/calculations/generate_blueprints.py",
+        "--check"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "clear": true,
+        "panel": "dedicated",
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Drawings: verify all calculations",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/calculations/verify_calculations.py",
+        "--all-scripts"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "problemMatcher": [],
+      "presentation": {
+        "clear": true,
+        "panel": "dedicated",
+        "reveal": "always"
+      }
+    }
+  ]
+}

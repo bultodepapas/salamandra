@@ -44,8 +44,16 @@ print. An attractive amber envelope is still an estimate, not authority.
 From the repository root:
 
 ```bash
+python calculations/generate_blueprints.py
 python calculations/generate_blueprints.py --check
 ```
+
+The first command writes the drawing set. The second is a **read-only gate**: it compares
+the committed artifacts with fresh in-memory output and fails on stale files. It also
+checks unique IDs, resolved fragment references, accessibility/provenance metadata and the
+absence of external or active content. In VS Code, the same operations are available as
+`Drawings: regenerate`, `Drawings: verify`, and `Drawings: verify all calculations` under
+**Tasks: Run Task**.
 
 The script imports the canonical planform, calculated balance solution and released y195
 airfoil coordinates. It then checks the shared geometry, segment lengths, elevon span,
@@ -66,3 +74,26 @@ The research and rationale are in [I-25](../research/i-25-svg-technical-drawing-
 the complete source/print contract is in the
 [drawing-set README](https://github.com/bultodepapas/salmandra/blob/main/geometry/drawings/README.md).
 Native CAD plus F2/S3 evidence remains the release path.
+
+## Codex and VS Code workflow
+
+Use Codex to connect the calculation, generator, validation output and rendered drawing;
+do not ask it to infer controlled geometry from a screenshot. The repository skill at
+`.agents/skills/salamandra-svg-drafting/` supplies the complete authoring and visual-review
+checklist automatically for drawing tasks.
+
+The preferred stack is deliberately small:
+
+| Need | Current choice | Boundary |
+|---|---|---|
+| Authoring | Python standard-library generator | Numerical modules remain authority |
+| Editing | Codex in VS Code | Review diffs; do not hand-edit generated SVG |
+| Preview | SVG extension or standalone browser | Preview only; disable minimisation |
+| Visual QA | Chrome DevTools or Playwright MCP | Inspect clipping, hierarchy and labels |
+| Optional future render gate | pinned resvg + screenshot baseline | Same OS/browser/font environment |
+| Optional future schema gate | vnu `--svg` | Complements, never replaces visual QA |
+
+Do not apply SVGO or editor optimisation automatically to a controlled master: such
+transformations may remove IDs, classes, metadata, descriptions or viewport information.
+The detailed current-tool research, alternatives and source links are in
+[I-26](../research/i-26-codex-svg-agent-toolchain/).
