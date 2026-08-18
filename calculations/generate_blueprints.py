@@ -30,9 +30,10 @@ from itertools import pairwise
 from math import sqrt
 from pathlib import Path
 
+import aero_contract
 import drawing_index
 import equipment_layout
-from balance_cg import CG_TARGET, NP_VLM, NP_WL, solve_reference_layout
+from balance_cg import cg_target, np_vlm, np_weissinger, solve_reference_layout
 from design_config import (
     ASPECT_RATIO,
     ELEVON_HINGE_XC,
@@ -41,6 +42,7 @@ from design_config import (
     HALF_SPAN,
     MAC,
     ROOT_CHORD,
+    STATIC_MARGIN,
     SWEEP_C4_DEG,
     TAPER,
     TIP_CHORD,
@@ -671,8 +673,8 @@ def draw_general_arrangement() -> SvgSheet:
 
     # CG and independent NP datums.  The separation is intentionally visible.
     for station, css, label, x_shift in (
-        (CG_TARGET, "derived-fill", f"CG {CG_TARGET*1000:+.1f}", -23.0),
-        (NP_VLM, "derived", f"NP VLM {NP_VLM*1000:+.1f}", 23.0),
+        (cg_target(), "derived-fill", f"CG {cg_target()*1000:+.1f}", -23.0),
+        (np_vlm(), "derived", f"NP VLM {np_vlm()*1000:+.1f}", 23.0),
     ):
         sx, sy = plan_point(station, 0.0, ox, oy, scale)
         if css == "derived-fill":
@@ -731,12 +733,12 @@ def draw_general_arrangement() -> SvgSheet:
     sheet.leader(*plan_point(CONTRACT.prop_plane_m, 0.1016, ox, oy, scale), 265, 229,
                  "APC 8×8 DISK x +235 · PROVISIONAL", True)
     sheet.leader(*chord_fraction_point(0.44, CONTRACT.hinge_fraction, ox, oy, scale),
-                 335, 206, "ELEVON · HINGE 0.72 c", False)
+                 335, 206, f"ELEVON · HINGE {ELEVON_HINGE_XC:.2f} c", False)
     provenance_legend(sheet, 302, 24)
     sheet.multiline(18, 239, [
         "DATUM: root c/4, x aft, y starboard.",
         f"S {S:.3f} m² · AR {ASPECT_RATIO:.2f} · taper {TAPER:.2f} · MAC {MAC*1000:.1f} mm.",
-        f"NP independent check: {NP_WL*1000:+.1f} mm (Weissinger-L).",
+        f"NP independent check: {np_weissinger()*1000:+.1f} mm (Weissinger-L).",
     ], "micro", 3.4)
     return sheet
 
@@ -1771,7 +1773,7 @@ def draw_half_wing_layout() -> SvgSheet:
     sheet.leader(*chord_fraction_point(0.46, CONTRACT.d_box_fraction, ox, oy, scale),
                  279, 177, "D-BOX WEB · 0.30 c · PROVISIONAL", True)
     sheet.leader(*chord_fraction_point(0.50, CONTRACT.hinge_fraction, ox, oy, scale),
-                 314, 152, "HINGE · 0.72 c", False)
+                 314, 152, f"HINGE · {ELEVON_HINGE_XC:.2f} c", False)
     sheet.leader(
         *plan_point(x_te(0.21125), 0.21125, ox, oy, scale),
         166,
@@ -1855,10 +1857,18 @@ def validate_contract() -> dict[str, bool]:
         "elevon is a 357.5 mm PANEL component": abs(
             (CONTRACT.elevon_outboard_m - CONTRACT.elevon_inboard_m) * 1000.0 - 357.5
         ) < 1e-9,
-        "target CG preserves 8 percent MAC margin": abs(
-            (NP_VLM - CG_TARGET) / MAC - 0.08
+        # Both of these were tautologies over hardcoded literals: the first
+        # reduced algebraically to abs(STATIC_MARGIN - 0.08), the second
+        # compared two constants.  The live derivation is checked here instead.
+        "target CG preserves the released static margin": abs(
+            (np_vlm() - cg_target()) / MAC - STATIC_MARGIN
         ) < 1e-12,
-        "independent NP methods agree within 5 mm": abs(NP_VLM - NP_WL) < 0.005,
+        "derived neutral point reproduces its published anchor": abs(
+            np_vlm() - aero_contract.NP_VLM_PUBLISHED
+        ) <= aero_contract.NP_ANCHOR_TOLERANCE,
+        "independent NP methods agree within the declared spread": abs(
+            np_vlm() - np_weissinger()
+        ) <= aero_contract.NP_METHOD_TOLERANCE,
         "provisional polyhedral tip rise is about 12 mm": 0.0115 < polyhedral_z(HALF_SPAN) < 0.0128,
         "released y195 airfoil coordinates are available": len(load_airfoil(
             ROOT / "geometry" / "airfoils" / "salamandra-r1-y195.dat"

@@ -4,7 +4,7 @@ Absolute aeroelastic divergence speed of the Salamandra Cruise wing (G6 — the
 project's declared weakest link, master plan F4-S3/S4).
 
 WHY THIS SCRIPT EXISTS: ADR-0030 states "the divergence criterion
-V_div >= 1.5 x V_NE is met with the shell alone", but until now no calculation
+V_div >= 1.5 x V_ARTICLE_NE is met with the shell alone", but until now no calculation
 produced the absolute value: I-05 gives only a RELATIVE scaling anchor to the
 Peregrine (GJ 6.45x, V_div 1.14x) and explicitly says "it does not give the
 absolute value". This script is the first absolute, reproducible estimate.
@@ -36,19 +36,21 @@ MODEL (revision 4, S3/CAD remains the closure trigger):
   8. Carbon tube Ø12x1.0: quantified, expected negligible (pultruded UD carbon
      G_12 ~ 3-7 GPa [E] -> GJ ~ 3-7 N·m² vs shell GJ ~ hundreds).
 
-CRITERION: V_div >= 1.5 x V_NE = 1.5 x 160 km/h = 240 km/h (docs/00).
+CRITERION: V_div >= 1.5 x V_ARTICLE_NE = 1.5 x 160 km/h = 240 km/h (docs/00).
 The verdict is reported at the CONSERVATIVE end of the declared bands.
 """
-import os
 import sys
 from functools import cache
 
 import numpy as np
 from design_config import (
+    AIRFOIL_DIR,
     ARTICLE_V_NE_KMH,
+    ELEVON_HINGE_XC,
     HALF_SPAN,
     INITIAL_SPEED_LIMIT_KMH,
     RHO_SL,
+    ROOT_TC,
     STATIONS,
     SWEEP_C4_DEG,
     speed_mps,
@@ -58,17 +60,20 @@ from design_config import (
 # Inputs (all with confidence tags)
 # ---------------------------------------------------------------------------
 RHO = RHO_SL
-V_NE = speed_mps(ARTICLE_V_NE_KMH)
-F_DIV = 1.5                # criterion V_div >= 1.5 x V_NE
+V_ARTICLE_NE = speed_mps(ARTICLE_V_NE_KMH)   # article V_ARTICLE_NE, 160 km/h
+F_DIV = 1.5                # criterion V_div >= 1.5 x V_ARTICLE_NE
 
 L = HALF_SPAN              # m, half-span
 X_DBOX = 0.30              # D-box x/c extent; shear web position (OP-09)
-X_BOX = 0.72               # torsion box end x/c (hinge line, ADR-0002)
+X_BOX = ELEVON_HINGE_XC    # torsion box end x/c: it IS the hinge line
+                           # (ADR-0002).  Duplicating 0.72 here meant a hinge
+                           # revision silently left the torsion box behind.
 T_SKIN = 0.0009            # m, skin 0.9 mm = 2 perimeters (ADR-0028)
 X_AC = 0.25                # aerodynamic centre x/c (reflexed sections 0.24-0.27)
 X_EA_BAND = (0.35, 0.30, 0.45)  # nominal / optimistic / conservative [E]
 E_BAND = tuple(x - X_AC for x in X_EA_BAND)
-PROFILE_FILE = r"geometry\airfoils\salamandra-root-r1.dat"
+PROFILE_NAME = "salamandra-root-r1.dat"
+PROFILE_FILE = AIRFOIL_DIR / PROFILE_NAME   # resolved, never a relative string
 AREA_BAND = (1.00, 0.95, 1.05)  # nominal / conservative / optimistic area
                                 # factor for the final-profile uncertainty (OP-02)
 G_PETG = 0.55e9            # Pa, G_eff printed PETG [M] (ADR-0021)
@@ -96,8 +101,7 @@ V_LIMIT_INCREMENT = 5.0    # km/h; operational limits always round down
 def load_profile():
     """Loads the MH60->13.5 % coordinates (x/c, z/c), UIUC order
     (TE->LE upper, LE->TE lower). Returns x, z arrays."""
-    pts = np.loadtxt(os.path.join(os.path.dirname(__file__), "..",
-                                  PROFILE_FILE), skiprows=1)
+    pts = np.loadtxt(PROFILE_FILE, skiprows=1)
     i_min = int(np.argmin(pts[:, 0]))
     upper = pts[:i_min + 1]      # TE -> LE
     lower = pts[i_min:]          # LE -> TE
@@ -172,7 +176,7 @@ def section_geometry(tc_scale=1.0):
 
 def j_section(c, tc, t, area_factor=1.0):
     """J of the real two-cell section scaled to chord c, local t/c tc."""
-    A1, A2, s1, s2, s12, _ = section_geometry(tc / 0.135)
+    A1, A2, s1, s2, s12, _ = section_geometry(tc / ROOT_TC)
     return j_bredt(A1 * c ** 2 * area_factor, A2 * c ** 2 * area_factor,
                    s1 * c, s2 * c, s12 * c, t)
 
@@ -224,7 +228,7 @@ def gj_shell(j, g=G_PETG):
 # ---------------------------------------------------------------------------
 # Divergence: smallest eigenvalue of (GJ·th')' + q·c·e·a·th = 0
 # ---------------------------------------------------------------------------
-def q_divergence(ys, c, j, g, a, k_joint=K_JOINT, joint=True, e_frac=0.11):
+def q_divergence(ys, c, j, g, a, e_frac, k_joint=K_JOINT, joint=True):
     """Smallest divergence dynamic pressure via the WEAK FORM (FEM, linear
     elements, lumped mass): K·th = q·M·th, K symmetric tridiagonal,
     M diagonal -> symmetric definite eigenproblem solved with np.linalg.eigh
@@ -245,14 +249,14 @@ def q_divergence(ys, c, j, g, a, k_joint=K_JOINT, joint=True, e_frac=0.11):
     M = m[1:] * dy
     j0 = int(np.argmin(np.abs(ys - JOINT_Y)))
     k_s = k_joint * gj[j0] / L if joint else None
-    for e in range(1, n):                  # element between nodes e-1 and e
-        gje = 0.5 * (gj[e - 1] + gj[e])    # edge stiffness
-        if k_s is not None and e == j0 + 1:
+    for elem in range(1, n):               # element between nodes elem-1, elem
+        gje = 0.5 * (gj[elem - 1] + gj[elem])   # edge stiffness
+        if k_s is not None and elem == j0 + 1:
             gje = 1.0 / (1.0 / gje + 1.0 / (k_s * dy))   # series compliance
-        if e == 1:
+        if elem == 1:
             K[0, 0] += gje / dy            # root element: node 0 fixed
         else:
-            r = e - 1                      # reduced index of original node e
+            r = elem - 1                   # reduced index of original node
             K[r - 1, r - 1] += gje / dy
             K[r - 1, r] -= gje / dy
             K[r, r - 1] -= gje / dy
@@ -267,12 +271,12 @@ def v_from_q(q):
     return np.sqrt(2.0 * q / RHO)
 
 
-def q_uniform(gj, c_ref, a, e_frac=0.11):
+def q_uniform(gj, c_ref, a, e_frac):
     """Closed form (I-05): q_D = pi²·GJ/(4·L²·c·e·a) — validation only."""
     return np.pi ** 2 * gj / (4.0 * L ** 2 * c_ref * e_frac * c_ref * a)
 
 
-def q_divergence_shooting(ys, c, j, g, a, e_frac=0.11, nq=40000, qmax=2e5):
+def q_divergence_shooting(ys, c, j, g, a, e_frac, nq=40000, qmax=2e5):
     """INDEPENDENT method (C2 discipline): shooting with transfer matrices in
     FLUX form — state (th, T = GJ·th'), T continuous across interfaces (the
     correct condition for varying GJ; matching th' instead is a
@@ -302,13 +306,48 @@ def q_divergence_shooting(ys, c, j, g, a, e_frac=0.11, nq=40000, qmax=2e5):
 
 
 # ---------------------------------------------------------------------------
+# Released clearance, exposed so the shared speed contract can consume it
+# ---------------------------------------------------------------------------
+def _grid_area(area_factor):
+    ys_, c_, h_, j_ = grid(area_factor=area_factor)
+    return ys_, c_, h_, j_
+
+
+@cache
+def conservative_divergence_speed():
+    """V_div [m/s] at the conservative end of every declared band.
+
+    This is the number the criterion is judged on, so it is a function the rest
+    of the system can call rather than a value buried inside `main`.
+    """
+    _, e_lo, e_hi = E_BAND
+    ys_c, c_c, _, j_c = _grid_area(AREA_BAND[1])
+    q_cons = q_divergence(ys_c, c_c, j_c, G_PETG * (1 - G_BAND),
+                          A_SLOPE[2], e_hi, joint=True)
+    return K_SWEEP[1] * v_from_q(q_cons)
+
+
+@cache
+def operational_speed_limit_kmh():
+    """First-flight operational speed limit [km/h], rounded DOWN.
+
+    `V_LIMIT_FACTOR` clearance below the conservative V_div, floored to
+    `V_LIMIT_INCREMENT`.  The shared `INITIAL_SPEED_LIMIT_KMH` must not exceed
+    it; that relationship is asserted here and in the cross-module harness.
+    """
+    v_limit = V_LIMIT_FACTOR * conservative_divergence_speed()
+    return float(np.floor(v_limit * 3.6 / V_LIMIT_INCREMENT)
+                 * V_LIMIT_INCREMENT)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 def main():
     print("=" * 74)
     print("ABSOLUTE DIVERGENCE SPEED - Salamandra Cruise (revision 4)")
     print(f"Planform: sweep c/4 = {SWEEP_C4_DEG:+.1f} deg (ADR-0040)")
-    print(f"Criterion: V_div >= {F_DIV:.1f} x V_NE = {F_DIV*V_NE*3.6:.0f} km/h")
+    print(f"Criterion: V_div >= {F_DIV:.1f} x V_ARTICLE_NE = {F_DIV*V_ARTICLE_NE*3.6:.0f} km/h")
     print("=" * 74)
 
     ys, c, h, j = grid()
@@ -358,7 +397,7 @@ def main():
     q_opt = q_divergence(ys_o, c_o, j_o, G_PETG * (1 + G_BAND), a_lo,
                          joint=True, e_frac=e_lo)
     v_opt = k_hi * v_from_q(q_opt)
-    req = F_DIV * V_NE
+    req = F_DIV * V_ARTICLE_NE
     # tube sensitivity at the conservative end (bonded 195 -> 585)
     jc_t = j_c.copy()
     bonded = (ys_c >= 0.195) & (ys_c <= 0.585)
@@ -465,9 +504,13 @@ def main():
     c_ref, gj_ref, a_ref = 0.225, 500.0, 6.28
     ys_u = np.linspace(0.0, L, 401)
     j_uniform = np.full_like(ys_u, gj_ref / G_PETG)
+    # Both sides use the SAME declared nominal eccentricity.  They previously
+    # relied on a 0.11 default that contradicted this module's own E_BAND
+    # nominal of 0.10; the comparison was self-consistent and therefore passed,
+    # but at an eccentricity the module never declares anywhere.
     q_num = q_divergence(ys_u, c_ref * np.ones_like(ys_u), j_uniform,
-                         G_PETG, a_ref, joint=False)
-    q_cl = q_uniform(gj_ref, c_ref, a_ref)
+                         G_PETG, a_ref, e_nom, joint=False)
+    q_cl = q_uniform(gj_ref, c_ref, a_ref, e_nom)
     check(f"Discretized solver reproduces uniform closed form "
           f"(q {q_num:.1f} vs {q_cl:.1f} Pa, {100*abs(q_num-q_cl)/q_cl:.2f} %)",
           abs(q_num - q_cl) / q_cl < 0.02)

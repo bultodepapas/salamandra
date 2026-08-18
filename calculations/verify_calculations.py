@@ -6,25 +6,32 @@ interfaces between them: one geometry, one mass allocation, one battery model,
 one atmosphere, distinct speed roles, and a closed total electrical-power
 budget. It is the first command to run after changing a shared input.
 
-Use --all-scripts to execute every deterministic local calculation CLI after
-the interface checks. XFOIL-dependent and network-calibration scripts are
-listed but intentionally excluded; their raw-data workflows have separate
-acceptance gates.
+By default it runs the interface contracts AND every deterministic local
+calculation CLI, so each module's own validation case is actually exercised;
+`--fast` restricts the run to the interface contracts. XFOIL-dependent and
+network-calibration scripts are listed but intentionally excluded; their
+raw-data workflows have separate acceptance gates.
+
+Every contract group is evaluated in isolation: a group that raises is reported
+as a failed check carrying the exception text, never as an aborted run.
 """
 import argparse
 import subprocess
 import sys
 import time
 from dataclasses import dataclass
+from functools import cache
 from math import dist
 from pathlib import Path
 
+import aero_contract
 import airfoil_reflex_trade
 import b3_screening
 import balance_cg
 import battery_pack_layout
 import design_config
 import divergence
+import drag_model
 import elevon_authority
 import elevon_sizing
 import equipment_catalog
@@ -46,6 +53,10 @@ ROOT = Path(__file__).resolve().parent.parent
 
 LOCAL_SCRIPTS = (
     "design_config.py",
+    "drawing_index.py",
+    "equipment_catalog.py",
+    "drag_model.py",
+    "aero_contract.py",
     "generate_blueprints.py",
     "battery_pack_layout.py",
     "mass_budget.py",
@@ -88,18 +99,34 @@ def close(actual, expected, atol=1e-9):
     return abs(actual - expected) <= atol
 
 
-def contract_checks():
-    """Build and evaluate every shared numerical contract."""
-    checks = []
+# ---------------------------------------------------------------------------
+# Shared setup.  Cached so each group can ask for what it needs independently:
+# a group that cannot build its inputs fails on its own without taking the rest
+# of the suite with it.
+# ---------------------------------------------------------------------------
+@cache
+def _mass_totals():
+    _, clean = mass_budget.build("all_petg", fin=False)
+    _, v1 = mass_budget.build("all_petg", fin=True)
+    return clean, v1
 
-    def add(name, condition, detail):
-        checks.append(Check(name, bool(condition), detail))
 
+@cache
+def _solved_equipment():
+    clean_layout, clean_required = equipment_layout.solve_battery_x(
+        equipment_layout.reference_layout("clean"))
+    v1_layout, v1_required = equipment_layout.solve_battery_x(
+        equipment_layout.reference_layout("v1"), clamp=True)
+    return clean_layout, clean_required, v1_layout, v1_required
+
+
+def check_geometry(add):
     for name, passed in design_config.validate_geometry().items():
         add(f"geometry: {name}", passed, "design_config invariant")
 
-    _, clean = mass_budget.build("all_petg", fin=False)
-    _, v1 = mass_budget.build("all_petg", fin=True)
+
+def check_mass(add):
+    clean, v1 = _mass_totals()
     add(
         "mass: CLEAN budget equals shared contract",
         close(clean["auw"] / 1000.0, design_config.ARTICLE_CLEAN_MASS_KG),
@@ -116,11 +143,44 @@ def contract_checks():
         f"{v1['vs']:.4f} km/h; measured F2 closure remains open",
     )
 
+
+def check_aero_contract(add):
+    for name, passed in aero_contract.validation_checks().items():
+        add(f"aero contract: {name}", passed,
+            f"x_NP={aero_contract.neutral_point_vlm()*1000:+.2f} mm "
+            f"({aero_contract.neutral_point_percent_mac():.2f} % MAC)")
+    add(
+        "aero contract: the CG target is derived, not a copied literal",
+        close(balance_cg.cg_target(),
+              aero_contract.neutral_point_vlm()
+              - design_config.STATIC_MARGIN * design_config.MAC, 1e-12),
+        f"CG target={balance_cg.cg_target()*1000:+.3f} mm",
+    )
+
+
+def check_drag(add):
+    for name, passed in drag_model.validation_checks().items():
+        add(f"drag: {name}", passed, "shared polar, ADR-0009")
+    add(
+        "drag: yaw and launch modules share one polar",
+        close(yaw_stability.CD_PROFILE_CRUISE, drag_model.CD_PROFILE_CRUISE)
+        and close(yaw_stability.SPAN_EFFICIENCY, drag_model.SPAN_EFFICIENCY)
+        and close(launch_speed.CD_LAUNCH, drag_model.launch_cd_band()[1]),
+        f"CD0={drag_model.CD_PROFILE_CRUISE:.4f}, "
+        f"e={drag_model.SPAN_EFFICIENCY:.2f}, "
+        f"CD_launch={launch_speed.CD_LAUNCH:.4f} (conservative end)",
+    )
+
+
+def check_flight_envelope(add):
     cla = flight_envelope.project_lift_curve_slope()
     envelope_checks = flight_envelope.validation_checks(cla)
     for name, passed in envelope_checks.items():
         add(f"flight envelope: {name}", passed, f"CL_alpha={cla:.4f}/rad")
 
+
+def check_balance_and_battery(add):
+    clean, _v1 = _mass_totals()
     pack_mass = battery_pack_layout.pack_mass_g("6S1P", "P42A") / 1000.0
     layout = balance_cg.solve_reference_layout()
     balance_mass = layout["m0"] + pack_mass
@@ -166,14 +226,11 @@ def contract_checks():
         ) + " mm",
     )
 
-    equipment_clean = equipment_layout.reference_layout("clean")
-    equipment_clean, clean_battery_required = equipment_layout.solve_battery_x(
-        equipment_clean
-    )
-    equipment_v1 = equipment_layout.reference_layout("v1")
-    equipment_v1, v1_battery_required = equipment_layout.solve_battery_x(
-        equipment_v1, clamp=True
-    )
+
+def check_equipment_layout(add):
+    clean, _v1 = _mass_totals()
+    (equipment_clean, clean_battery_required,
+     equipment_v1, v1_battery_required) = _solved_equipment()
     for name, passed in equipment_layout.validation_checks().items():
         add(f"equipment layout: {name}", passed, "3D packaging invariant")
     add(
@@ -182,7 +239,7 @@ def contract_checks():
             equipment_clean.mass_g(budgeted_only=True), clean["auw"], 1e-8
         )
         and close(
-            equipment_clean.cg_mm()[0], equipment_layout.TARGET_CG_MM, 1e-9
+            equipment_clean.cg_mm()[0], equipment_layout.target_cg_mm(), 1e-9
         ),
         f"{equipment_clean.mass_g(budgeted_only=True):.2f} g; "
         f"battery x={clean_battery_required:+.2f} mm",
@@ -214,11 +271,14 @@ def contract_checks():
     )
     add(
         "equipment layout: V1 at battery stop remains inside released CG band",
-        abs(equipment_v1.cg_mm()[0] - equipment_layout.TARGET_CG_MM)
+        abs(equipment_v1.cg_mm()[0] - equipment_layout.target_cg_mm())
         <= equipment_layout.CG_TOLERANCE_MM,
         f"xCG={equipment_v1.cg_mm()[0]:+.2f} mm",
     )
 
+
+def check_aerodynamics(add):
+    _clean, v1 = _mass_totals()
     v1_cl = design_config.lift_coefficient(
         design_config.ARTICLE_V1_MASS_KG,
         design_config.speed_mps(design_config.CRUISE_SPEED_KMH),
@@ -262,13 +322,15 @@ def contract_checks():
         f"{v1['vs']:.4f} km/h",
     )
 
+
+def check_power_and_propulsion(add):
     avionics_w = inav_fc_match.avionics_power_budget()[2]
     hotel_w = fpv_power_budget.reference_hotel_load_w()
     boundary = propulsion_match.o1_boundary()
     total_w = boundary.electrical_w + hotel_w
     add(
         "power: inav and FPV modules share avionics power",
-        close(fpv_power_budget.AVIONICS_W, avionics_w, 1e-12),
+        close(fpv_power_budget.reference_avionics_w(), avionics_w, 1e-12),
         f"{avionics_w:.4f} W",
     )
     add(
@@ -288,31 +350,56 @@ def contract_checks():
     )
     add(
         "propulsion: O1 boundary awaits measured E2 drag",
-        boundary.thrust_n > 0.0 and propulsion_match.REFERENCE_HOTEL_LOAD_W > 0.0,
+        boundary.thrust_n > 0.0 and propulsion_match.reference_hotel_load() > 0.0,
         f"allowable drag={boundary.thrust_n:.4f} N pending E2",
     )
 
+
+def check_speeds(add):
     add(
         "speeds: divergence uses 160 km/h article V_NE",
-        close(divergence.V_NE * 3.6, design_config.ARTICLE_V_NE_KMH),
-        f"{divergence.V_NE*3.6:.1f} km/h",
+        close(divergence.V_ARTICLE_NE * 3.6, design_config.ARTICLE_V_NE_KMH),
+        f"{divergence.V_ARTICLE_NE*3.6:.1f} km/h",
     )
     add(
         "speeds: servo and fin strength use 180 km/h structural case",
         close(
             servo_torque.speed_mps(
                 design_config.STRUCTURAL_DESIGN_SPEED_KMH) * 3.6,
-            yaw_stability.V_NE * 3.6,
+            yaw_stability.V_STRUCTURAL * 3.6,
         ),
-        f"{yaw_stability.V_NE*3.6:.1f} km/h",
+        f"{yaw_stability.V_STRUCTURAL*3.6:.1f} km/h",
+    )
+    # The aeroelastic clearance is a DERIVED ceiling on the operational cap.
+    # divergence.py checked this internally; the relationship is cross-module,
+    # so it belongs in the shared contract too.
+    v_limit_kmh = divergence.operational_speed_limit_kmh()
+    add(
+        "speeds: the operational cap respects the aeroelastic clearance",
+        design_config.INITIAL_SPEED_LIMIT_KMH <= v_limit_kmh,
+        f"cap={design_config.INITIAL_SPEED_LIMIT_KMH:.0f} km/h vs "
+        f"V_limit={v_limit_kmh:.0f} km/h "
+        f"(conservative V_div="
+        f"{divergence.conservative_divergence_speed()*3.6:.1f} km/h; "
+        f"criterion needs {divergence.F_DIV*divergence.V_ARTICLE_NE*3.6:.0f} "
+        "km/h - G6 remains open)",
+    )
+    add(
+        "speeds: the ladder is ordered and V_A sits above the operational cap",
+        design_config.validate_geometry()["the speed ladder is strictly ordered"]
+        and design_config.validate_geometry()[
+            "manoeuvring speed exceeds the initial operational cap"],
+        "roles ordered; the cap is not a Part 23 V_C",
     )
     add(
         "airfoil: divergence uses the released Salamandra r1 root",
-        divergence.PROFILE_FILE.endswith("salamandra-root-r1.dat")
-        and (ROOT / divergence.PROFILE_FILE).is_file(),
-        divergence.PROFILE_FILE,
+        divergence.PROFILE_FILE.name == "salamandra-root-r1.dat"
+        and divergence.PROFILE_FILE.is_file(),
+        str(divergence.PROFILE_FILE.relative_to(ROOT)),
     )
 
+
+def check_stability(add):
     vlm = vlm_ala_volante.analiza(
         design_config.B, design_config.S, design_config.TAPER,
         design_config.SWEEP_C4_DEG, 0.0, ny=24, nx=4, verbose=False)
@@ -324,6 +411,8 @@ def contract_checks():
         abs(vlm["x_np"] - weissinger["x_np"]) < 0.005,
         f"VLM={vlm['x_np']*1000:.2f}, WL={weissinger['x_np']*1000:.2f} mm",
     )
+
+def check_controls(add):
     add(
         "controls: SI torque conversion and factored Corona margin pass",
         10.19 < servo_torque.nm_to_kgf_cm(1.0) < 10.20
@@ -354,6 +443,8 @@ def contract_checks():
         f"trim={selected_pitch['trim_n12_deg']:+.3f} deg; "
         f"Cl_da={selected_roll['cl_delta_a_per_rad']:.4f}/rad",
     )
+
+def check_yaw(add):
     fin_area = yaw_stability.fin_area_for_target(0.0005)
     fin_mass_lower = yaw_stability.fin_mass_band(fin_area)[0]
     add(
@@ -363,7 +454,7 @@ def contract_checks():
         f"{design_config.V1_FIN_MASS_CAP_KG*1000.0:.2f} g cap; F2 open",
     )
     fin_cnr = yaw_stability.cnr_wing() + yaw_stability.cnr_fin(
-        fin_area, yaw_stability.L_V,
+        fin_area, yaw_stability.fin_moment_arm(),
         yaw_stability.helmbold_cla(3.0, 12.0))
     fin_modes = yaw_stability.yaw_modes(0.0005, fin_cnr)
     add(
@@ -371,7 +462,66 @@ def contract_checks():
         all(value.real < 0.0 for value in fin_modes),
         ", ".join(f"{value:.3f}" for value in fin_modes),
     )
+    layout, _ = equipment_layout.solve_battery_x(
+        equipment_layout.reference_layout("clean"))
+    layout_izz = layout.inertia_kg_m2()[2][2]
+    add(
+        "yaw: one yaw inertia, shared with the 3D mass model",
+        abs(yaw_stability.yaw_inertia() - layout_izz) / layout_izz < 0.10,
+        f"yaw={yaw_stability.yaw_inertia():.5f} vs "
+        f"layout={layout_izz:.5f} kg m2",
+    )
+    add(
+        "yaw: the declared inertia band is propagated, not just declared",
+        all(all(mode.real < 0.0 for mode in modes)
+            for modes in yaw_stability.yaw_mode_band(0.0005, fin_cnr)),
+        "modes stay damped across the full I_zz band",
+    )
 
+
+# ---------------------------------------------------------------------------
+# Contract registry and isolated runner
+# ---------------------------------------------------------------------------
+CONTRACT_GROUPS = (
+    ("geometry", check_geometry),
+    ("mass", check_mass),
+    ("aero contract", check_aero_contract),
+    ("drag", check_drag),
+    ("flight envelope", check_flight_envelope),
+    ("balance and battery", check_balance_and_battery),
+    ("equipment layout", check_equipment_layout),
+    ("aerodynamics", check_aerodynamics),
+    ("power and propulsion", check_power_and_propulsion),
+    ("speeds", check_speeds),
+    ("stability", check_stability),
+    ("controls", check_controls),
+    ("yaw", check_yaw),
+)
+
+
+def contract_checks(groups=CONTRACT_GROUPS):
+    """Evaluate every shared numerical contract, one isolated group at a time.
+
+    A group that raises is reported as a failed check carrying the exception
+    text.  It never aborts the run: a broken contract must produce a complete
+    PASS/FAIL table and a non-zero exit code, not a traceback with no diagnosis.
+    """
+    checks = []
+    for group_name, group in groups:
+        produced = []
+
+        def add(name, condition, detail, _sink=produced):
+            _sink.append(Check(name, bool(condition), detail))
+
+        try:
+            group(add)
+        except Exception as error:      # noqa: BLE001 - reported, never raised
+            produced.append(Check(
+                f"{group_name}: contract group raised",
+                False,
+                f"{type(error).__name__}: {error}",
+            ))
+        checks.extend(produced)
     return checks
 
 
@@ -414,8 +564,11 @@ def print_checks(title, checks):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "--fast", action="store_true",
+        help="interface contracts only; skip the deterministic script suite")
+    parser.add_argument(
         "--all-scripts", action="store_true",
-        help="also run every deterministic local calculation CLI")
+        help=argparse.SUPPRESS)      # retained: the script suite is now default
     parser.add_argument(
         "--timeout", type=float, default=180.0,
         help="per-script timeout used with --all-scripts")
@@ -428,11 +581,14 @@ def main():
     print("=" * 78)
     ok = print_checks("INTERFACE CONTRACTS", contract_checks())
 
-    if args.all_scripts:
+    if not args.fast:
         ok = print_checks(
             "DETERMINISTIC SCRIPT VALIDATIONS",
             run_local_scripts(args.timeout),
         ) and ok
+    else:
+        print("\nDeterministic script validations SKIPPED (--fast). "
+              "Every module's own validation case is unverified in this run.")
 
     print("\nExternal workflows not run:")
     for workflow in EXTERNAL_WORKFLOWS:

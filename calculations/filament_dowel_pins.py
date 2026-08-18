@@ -35,6 +35,7 @@ import sys
 
 import numpy as np
 from design_config import (
+    ELEVON_HINGE_XC,
     ARTICLE_V1_MASS_KG,
     G0,
     PETG_DENSITY_KG_M3,
@@ -109,10 +110,10 @@ def main():
         c = chord(y / 1000.0)
         tube_span = (0.25 * c - 0.006, 0.25 * c + 0.006)
         p1, p2 = 0.40 * c, 0.60 * c
-        ok = p1 > tube_span[1] + 0.005 and p2 < 0.72 * c - 0.005
+        ok = p1 > tube_span[1] + 0.005 and p2 < ELEVON_HINGE_XC * c - 0.005
         print(f"   y = {y} mm (c = {c*1000:.0f} mm): tube {tube_span[0]*1000:.0f}–"
               f"{tube_span[1]*1000:.0f} mm · pin1 {p1*1000:.0f} mm (x/c 0.40) · "
-              f"pin2 {p2*1000:.0f} mm (x/c 0.60) · hinge at {0.72*c*1000:.0f} mm"
+              f"pin2 {p2*1000:.0f} mm (x/c 0.60) · hinge at {ELEVON_HINGE_XC*c*1000:.0f} mm"
               f" → {'CLEAR' if ok else 'CONFLICT'}")
 
     # ---- 4. Mass and bearing ----

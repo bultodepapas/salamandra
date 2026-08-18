@@ -22,6 +22,7 @@ efficiency remains [E] until the D2 bench map is measured.
 """
 import argparse
 from dataclasses import dataclass
+from functools import cache
 from itertools import pairwise
 
 from design_config import (
@@ -45,7 +46,10 @@ O1_WH_PER_KM = O1_ENERGY_LIMIT_WH_PER_KM
 MOTOR_ESC_EFF = 0.85                # centre of declared 0.80--0.88 band [E]
 MOTOR_ESC_EFF_BAND = (0.80, 0.88)
 APC_MAX_RPM = 150_000.0 / 8.0       # Thin Electric rule [M]
-REFERENCE_HOTEL_LOAD_W = reference_hotel_load_w("O4 Air Unit")
+@cache
+def reference_hotel_load():
+    """Article #1 continuous hotel load [W] (lazy; see fpv_power_budget)."""
+    return reference_hotel_load_w("O4 Air Unit")
 
 # J, CT, CP, eta -- UIUC APC E 8x8, 6418-rpm wind-tunnel run [M].
 UIUC_CURVE = (
@@ -172,17 +176,24 @@ def solve_thrust(thrust_n, speed_kmh=CRUISE_KMH,
     raise ValueError("requested thrust is outside the measured positive-thrust curve")
 
 
-def o1_boundary(hotel_load_w=REFERENCE_HOTEL_LOAD_W,
+def o1_boundary(hotel_load_w=None,
                 motor_eff=MOTOR_ESC_EFF):
-    """Return the motor operating point at the total O1 battery-power limit."""
+    """Return the motor operating point at the total O1 battery-power limit.
+
+    ``hotel_load_w=None`` resolves the shared reference load at call time.
+    """
+    if hotel_load_w is None:
+        hotel_load_w = reference_hotel_load()
     total_limit = electrical_power_limit_w()
     if hotel_load_w < 0.0 or hotel_load_w >= total_limit:
         raise ValueError("hotel load must be non-negative and below O1 power")
     return solve_power(total_limit - hotel_load_w, motor_eff=motor_eff)
 
 
-def total_energy_wh_per_km(point, hotel_load_w=REFERENCE_HOTEL_LOAD_W):
+def total_energy_wh_per_km(point, hotel_load_w=None):
     """Total battery energy per distance, including the hotel load."""
+    if hotel_load_w is None:
+        hotel_load_w = reference_hotel_load()
     if hotel_load_w < 0.0:
         raise ValueError("hotel load cannot be negative")
     return (point.electrical_w + hotel_load_w) / CRUISE_KMH
@@ -194,11 +205,15 @@ def main():
         "--drag-n", type=float,
         help="accepted E2 aircraft drag at 95 km/h; prints its true equilibrium")
     parser.add_argument(
-        "--hotel-load-w", type=float, default=REFERENCE_HOTEL_LOAD_W,
+        "--hotel-load-w", type=float, default=None,
+        # None means "use the shared reference load", resolved after parsing.
         help="continuous avionics plus FPV load (default: Article #1 O4 Air Unit)")
     args = parser.parse_args()
 
     electrical_target = electrical_power_limit_w()
+    hotel_load_overridden = args.hotel_load_w is not None
+    if not hotel_load_overridden:
+        args.hotel_load_w = reference_hotel_load()
     propulsion_target = electrical_target - args.hotel_load_w
     point = o1_boundary(args.hotel_load_w)
     band = [o1_boundary(args.hotel_load_w, motor_eff=eff)
@@ -271,7 +286,7 @@ def main():
         "thrust solver reproduces the boundary point": abs(
             solve_thrust(point.thrust_n).rpm - point.rpm) < 0.1,
         "Article #1 two-servo battery hotel load is 11.54 W": (
-            args.hotel_load_w != REFERENCE_HOTEL_LOAD_W
+            hotel_load_overridden
             or abs(args.hotel_load_w
                    - 10.3875 / REFERENCE_BEC_EFFICIENCY) < 1e-12),
         "propeller has at least 1.5x RPM margin": APC_MAX_RPM / point.rpm >= 1.5,

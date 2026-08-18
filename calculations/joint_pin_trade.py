@@ -25,6 +25,7 @@ printed, same bench; pultruded carbon E 100-150 GPa band [M]); loads [E]
 import sys
 
 import numpy as np
+from design_config import PETG_DENSITY_KG_M3
 
 # --------------------------------------------------------------------------
 # Inputs
@@ -46,7 +47,7 @@ TAU_PETG = 30e6             # Pa, shear strength band [E]
 TAU_PLA = 40e6              # Pa, shear strength band [E]
 TAU_CARBON = 60e6           # Pa, interlaminar shear band [E]
 RHO_CARBON = 1600.0         # kg/m³
-RHO_PETG = 1270.0           # kg/m³
+RHO_PETG = PETG_DENSITY_KG_M3   # kg/m3, from the material contract
 
 
 def i_circle(d):

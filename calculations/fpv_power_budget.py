@@ -14,6 +14,7 @@ margin against the Matek 9V/2A and 5V/2A rails, and energy impact on the
 reference 6S1P P42A pack (90.7 Wh, I-16). Reference, not a verdict.
 """
 import sys
+from functools import cache
 
 from battery_pack_layout import CELLS as PACK_CELL_SPECS
 from design_config import REFERENCE_BEC_EFFICIENCY, electrical_power_limit_w
@@ -29,7 +30,16 @@ BEC_9V = (2.0, 3.0)      # A continuous / peak, Matek 9V BEC
 BEC_5V = (2.0, 3.0)      # A continuous / peak, Matek 5V BEC
 PACK_WH = 6.0 * PACK_CELL_SPECS["Molicel P42A"][5]
 CRUISE_W = electrical_power_limit_w()  # W, total O1 battery-power ceiling
-AVIONICS_W = avionics_power_budget()[2]
+
+@cache
+def reference_avionics_w():
+    """Shared avionics rail power [W] from the I-17 FC budget.
+
+    Lazy and cached: computing it at module scope charged every importer and
+    made an upstream failure an import crash rather than a reported check.
+    """
+    return avionics_power_budget()[2]
+
 
 # model : (measured voltage V, disarmed current A, {power_mW: current_A})
 UNITS = {
@@ -75,9 +85,16 @@ def model_power(name, v_input=None):
     return v, rows
 
 
-def reference_hotel_load_w(fpv_name="O4 Air Unit", avionics_w=AVIONICS_W,
+def reference_hotel_load_w(fpv_name="O4 Air Unit", avionics_w=None,
                            bec_efficiency=REFERENCE_BEC_EFFICIENCY):
-    """Continuous non-propulsion battery input for a selected FPV unit [W]."""
+    """Continuous non-propulsion battery input for a selected FPV unit [W].
+
+    ``avionics_w=None`` resolves to the shared budget at call time.  It is not
+    a default argument: a module constant bound at definition time cannot be
+    overridden by reassigning it, which silently defeats sensitivity studies.
+    """
+    if avionics_w is None:
+        avionics_w = reference_avionics_w()
     if avionics_w < 0.0 or not 0.0 < bec_efficiency <= 1.0:
         raise ValueError("avionics power must be non-negative and BEC eta in (0, 1]")
     _, rows = model_power(fpv_name)
@@ -139,9 +156,9 @@ def main():
     for name in ("O4 Air Unit Pro", "O4 Air Unit"):
         _, rows = model_power(name)
         max_w = max(r[1] for r in rows if r[0])
-        tot = AVIONICS_W + max_w
+        tot = reference_avionics_w() + max_w
         battery_w = tot / REFERENCE_BEC_EFFICIENCY
-        print(f"  {name} at max: avionics {AVIONICS_W:.1f} W + FPV {max_w:.1f} W "
+        print(f"  {name} at max: avionics {reference_avionics_w():.1f} W + FPV {max_w:.1f} W "
               f"= {tot:.1f} W rail / {battery_w:.1f} W battery "
               f"= {battery_w/CRUISE_W*100:.1f} % of O1 "
               f"({CRUISE_W:.0f} W)")

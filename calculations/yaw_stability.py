@@ -12,7 +12,7 @@ Methods (published methodology, cited in I-20 §Sources):
   - Rudder authority  : Cnδr  = −η_r·CLα_v·τ·(S_v/S)·(l_v/b)                  [DATCOM]
   - Yaw damping       : Cnr_v = −2·η·CLα_v·(S_v/S)·(l_v/b)² ; Cnr_w ≈ −CL/4   [DATCOM]
   - Yaw modes         : linear 2-DOF (β, r) eigenvalue check                  [E inputs]
-  - Fin bending       : cantilever at V_NE, CN = 1.0, slipstream q ratio      [D]
+  - Fin bending       : cantilever at V_STRUCTURAL, CN = 1.0, slipstream q ratio      [D]
   - Drag penalty      : flat-plate Cf + interference + slipstream             [Hoerner]
   - Stall impact      : V_stall ∝ sqrt(AUW)                                   [D]
 
@@ -22,8 +22,12 @@ before a modification is trusted (calculations/README.md).
 """
 import sys
 
+from functools import cache
+
 import numpy as np
-from balance_cg import CG_TARGET, solve_reference_layout
+
+import drag_model
+from balance_cg import cg_target, solve_reference_layout
 from design_config import (
     ARTICLE_CLEAN_MASS_KG,
     ARTICLE_V1_MASS_KG,
@@ -48,24 +52,39 @@ from design_config import (
 # --------------------------------------------------------------------------
 ARW = ASPECT_RATIO      # aspect ratio
 LAM_C4 = SWEEP_C4_DEG   # c/4 sweep, deg — negative = forward sweep (ADR-0040)
-CG = CG_TARGET           # target CG, m from root c/4 (ADR-0040)
+
 V_CRU = speed_mps(CRUISE_SPEED_KMH)
-V_NE = speed_mps(STRUCTURAL_DESIGN_SPEED_KMH)
+# NOT V_STRUCTURAL: this is the structural sizing speed (180 km/h), a different
+# quantity from the article V_STRUCTURAL (160 km/h) that `divergence.py` uses.  The
+# two modules previously both exported a module-level `V_STRUCTURAL` with different
+# values, so grepping the symbol gave two answers.
+V_STRUCTURAL = speed_mps(STRUCTURAL_DESIGN_SPEED_KMH)
 RHO = RHO_SL
 NU = NU_SL
 AUW_REF = ARTICLE_CLEAN_MASS_KG
 V1_FIN_CAP_G = V1_FIN_MASS_CAP_KG * 1000.0
 CL_CRU = lift_coefficient(AUW_REF, V_CRU)
 
-# Reporting-only clean drag decomposition. SPAN_EFFICIENCY applies only to the
-# induced term; it is not a single low-Re Oswald factor (ADR-0009).
-SPAN_EFFICIENCY = 0.85   # induced span efficiency [E]
-CD_PROFILE_CRUISE = 0.0136
+# Clean drag decomposition, from the SHARED polar.  These were local literals
+# here, which made this the only module in the project honouring ADR-0009 while
+# `launch_speed.py` used a single lumped coefficient.
+SPAN_EFFICIENCY = drag_model.SPAN_EFFICIENCY
+CD_PROFILE_CRUISE = drag_model.CD_PROFILE_CRUISE
 PETG_DENSITY = PETG_DENSITY_KG_M3
 FIN_SPAR_MASS_G = V1_FIN_SPAR_MASS_KG * 1000.0
 
 # Fuselage + nose boom (guide §7.6, OP-01): length nose tip → rear pod end
-L_F = 0.265 - solve_reference_layout()["bay_fwd"]  # nose support to rear pod
+REAR_POD_END = 0.265     # m from root c/4, rear pod end (guide 7.6) [E]
+
+
+@cache
+def fuselage_length():
+    """Nose-support-to-rear-pod length [m], from the solved balance layout.
+
+    Lazy for the same reason as elsewhere: module-scope solving made a broken
+    upstream mass contract surface as an import crash instead of a failed check.
+    """
+    return REAR_POD_END - solve_reference_layout()["bay_fwd"]
 S_FS = 0.040            # fuselage/boom projected side area (m²) [E, band]
 S_FS_BAND = (0.032, 0.048)
 K_FUS_BAND = (0.40, 0.96)   # DATCOM body factor band: 0.96 Raymer full-body,
@@ -74,17 +93,57 @@ K_FUS_BAND = (0.40, 0.96)   # DATCOM body factor band: 0.96 Raymer full-body,
 # Wing contribution band (FSW, AR 6): small vs the body; negative sign [E]
 CNB_W_BAND = (-0.00010, 0.00000)   # per degree
 
-# Fin installation (V1 proposal, I-20): rear-pod extension behind the prop disk
-L_V = 0.285 - CG        # CG → fin AC (m): fin AC ≈ +285 mm from root c/4
+# Fin installation (V1 proposal, I-20): rear-pod extension behind the prop disk.
+# One fin contract: the aerodynamic-centre station, the planform and the sweep
+# live here and every consumer reads them.  They used to be repeated as bare
+# literals inside `fin_area_for_target` and `main`, so a fin revision changed
+# some consumers and not others.
+FIN_AC_STATION_M = 0.285   # fin AC, m aft of the root c/4 [E]
+AR_FIN = 3.0               # fin aspect ratio [E]
+FIN_SWEEP_DEG = 12.0       # fin c/4 sweep, deg [E]
+FIN_TAPER = 0.6            # fin taper ratio [E]
+
+
+@cache
+def fin_moment_arm():
+    """CG-to-fin-AC lever arm [m], from the re-derived CG target."""
+    return FIN_AC_STATION_M - cg_target()
 ETA_FIN = 1.25          # dynamic-pressure ratio, fin in pusher slipstream [E]
 DSIGMA = 0.05           # sidewash factor (1+dσ/dβ) ≈ 1.05, centerline fin [E]
 ETA_RUD = 1.15          # rudder q-ratio [E]
 CLA_RE_FAC = (0.85, 1.00)  # low-Re lift-curve reduction on Helmbold [E]
 TAU_BAND = (0.25, 0.40)    # rudder flap effectiveness, ~30 % chord, low Re [E]
 
-# Yaw inertia (guide §8.1 masses, boom battery at x ≈ −0.42 m): I_z ≈ 0.28
-IZ = 0.28               # kg·m² [E, band]
-IZ_BAND = (0.23, 0.33)
+# Yaw inertia.  DERIVED from the released three-dimensional mass model, not
+# declared here.  This module used to carry a standalone I_z = 0.28 kg m2 [E]
+# with a (0.23, 0.33) band, while `equipment_layout` computed 0.159 kg m2 from
+# the same aircraft: a factor 1.76 disagreement, with the computed value
+# outside the declared band and nothing cross-checking the two.  The published
+# 2-DOF yaw mode is proportional to 1/sqrt(I_z), so the discrepancy was a 33 %
+# error in the reported natural frequency.
+#
+# The remaining uncertainty is the idealisation itself: `equipment_layout`
+# represents every part as an oriented cuboid, which captures the spanwise mass
+# stations but not the mass distribution inside each shell.  That is carried as
+# a declared band and PROPAGATED (see `yaw_mode_band`), instead of being folded
+# into a single quoted figure.
+IZ_MODEL_UNCERTAINTY = 0.15      # +/- fraction on the cuboid idealisation [E]
+
+
+@cache
+def yaw_inertia():
+    """Aircraft yaw inertia I_zz [kg m2] from the solved 3-D mass model [D]."""
+    import equipment_layout
+    layout, _ = equipment_layout.solve_battery_x(
+        equipment_layout.reference_layout("clean"))
+    return layout.inertia_kg_m2()[2][2]
+
+
+def yaw_inertia_band():
+    """Declared I_zz band [kg m2] from the cuboid-idealisation uncertainty."""
+    nominal = yaw_inertia()
+    return (nominal * (1.0 - IZ_MODEL_UNCERTAINTY),
+            nominal * (1.0 + IZ_MODEL_UNCERTAINTY))
 
 # In-service reference (I-20, [M]): TBS Mojito — FSW 1300 mm, FIXED vertical
 # stabilizer on the motor mount, 2 elevon servos only, no rudder servo
@@ -121,10 +180,16 @@ def cnb_fin(S_v, l_v, cla, eta=ETA_FIN, sw=1.0 + DSIGMA):
     return eta * sw * (S_v / S) * (l_v / B) * cla
 
 
-def fin_area_for_target(target, l_v=L_V):
-    """Fin area that closes a nominal Cn_beta target with current geometry."""
-    cnb_fus_nom = cnb_fuselage(0.70, S_FS, L_F)
-    cla_nom = sum(cla_fin_band(3.0, 12.0)) / 2.0
+def fin_area_for_target(target, l_v=None):
+    """Fin area that closes a nominal Cn_beta target with current geometry.
+
+    ``l_v=None`` resolves the released lever arm at call time; the fin lift
+    slope comes from the fin contract above, not from repeated literals.
+    """
+    if l_v is None:
+        l_v = fin_moment_arm()
+    cnb_fus_nom = cnb_fuselage(0.70, S_FS, fuselage_length())
+    cla_nom = sum(cla_fin_band(AR_FIN, FIN_SWEEP_DEG)) / 2.0
     wing_mean = sum(CNB_W_BAND) / 2.0
     need = target - cnb_fus_nom - wing_mean
     return need / (ETA_FIN * (1.0 + DSIGMA) * (1.0 / S) *
@@ -144,8 +209,8 @@ def cnr_wing():
 def fin_geometry(S_v, b_v):
     """Trapezoidal fin: root/tip chords for a given span, m."""
     c_mean = S_v / b_v
-    c_r = 1.25 * c_mean          # taper 0.6
-    c_t = 0.75 * c_mean
+    c_r = 2.0 * c_mean / (1.0 + FIN_TAPER)
+    c_t = FIN_TAPER * c_r
     h_c = (b_v / 3.0) * (c_r + 2.0 * c_t) / (c_r + c_t)   # centroid height
     return c_r, c_t, h_c
 
@@ -179,13 +244,24 @@ def stall_speed_kmh(auw):
 
 
 def yaw_state_matrix(cnb_per_deg, cnr, cyb=-0.15, cyr=0.25,
-                     mass=AUW_REF, iz=IZ, speed=V_CRU):
+                     mass=None, iz=None, speed=None):
     """Dimensional 2-DOF lateral-directional state matrix for (beta, r).
 
     Cnr and Cyr are derivatives with respect to normalized yaw rate r*b/(2V).
     The 1/(2V) conversion is therefore mandatory in Nr and Yr. Revision 2
     corrects the former omission of this factor.
+
+    ``mass``, ``iz`` and ``speed`` are ``None`` sentinels, not module constants
+    bound as defaults: a default argument freezes its value at definition time,
+    so reassigning the module constant to run a sensitivity study silently had
+    no effect at all.
     """
+    if mass is None:
+        mass = AUW_REF
+    if iz is None:
+        iz = yaw_inertia()
+    if speed is None:
+        speed = V_CRU
     if mass <= 0.0 or iz <= 0.0 or speed <= 0.0:
         raise ValueError("mass, yaw inertia and speed must be positive")
     q = 0.5 * RHO * speed**2
@@ -199,7 +275,8 @@ def yaw_state_matrix(cnb_per_deg, cnr, cyb=-0.15, cyr=0.25,
     ])
 
 
-def yaw_modes(cnb_per_deg, cnr, cyb=-0.15, cyr=0.25):
+def yaw_modes(cnb_per_deg, cnr, cyb=-0.15, cyr=0.25,
+              mass=None, iz=None, speed=None):
     """Simplified 2-DOF (beta, r) eigenvalues [1/s].
 
     [E] inputs: Cyβ ≈ −0.15 (finless), Cyr ≈ +0.25; I_z band. The finless
@@ -208,7 +285,20 @@ def yaw_modes(cnb_per_deg, cnr, cyb=-0.15, cyr=0.25):
     reduced pair is not a full Dutch-roll identification: roll rate and bank
     angle are omitted and remain in the E-series flight-test programme.
     """
-    return np.linalg.eigvals(yaw_state_matrix(cnb_per_deg, cnr, cyb, cyr))
+    return np.linalg.eigvals(
+        yaw_state_matrix(cnb_per_deg, cnr, cyb, cyr, mass, iz, speed))
+
+
+def yaw_mode_band(cnb_per_deg, cnr, cyb=-0.15, cyr=0.25):
+    """Eigenvalues across the declared I_zz band: (low, nominal, high).
+
+    The band used to be declared and never referenced anywhere, and `yaw_modes`
+    had no inertia parameter at all, so it could not have been propagated even
+    deliberately.
+    """
+    low, high = yaw_inertia_band()
+    return tuple(yaw_modes(cnb_per_deg, cnr, cyb, cyr, iz=iz)
+                 for iz in (low, yaw_inertia(), high))
 
 
 def rudder_delta_req(cnb_total, cndr, v_air, v_cw):
@@ -228,11 +318,11 @@ def main():
     print("=" * 74)
 
     # ---- 1. Finless baseline: Cn_beta budget ----
-    cnb_f = cnb_fuselage(K_FUS_BAND[1], S_FS, L_F)          # worst (0.96)
-    cnb_f_lo = cnb_fuselage(K_FUS_BAND[0], S_FS, L_F)       # best (0.40)
+    cnb_f = cnb_fuselage(K_FUS_BAND[1], S_FS, fuselage_length())          # worst (0.96)
+    cnb_f_lo = cnb_fuselage(K_FUS_BAND[0], S_FS, fuselage_length())       # best (0.40)
     print("\n1. FINLESS BASELINE — Cn_beta budget (/deg)")
     print(f"   Body (k=0.40 best / 0.96 worst): {cnb_f_lo:+.5f} / {cnb_f:+.5f}"
-          f"  (S_fs {S_FS:.3f} m², l_f {L_F:.3f} m)")
+          f"  (S_fs {S_FS:.3f} m², l_f {fuselage_length():.3f} m)")
     for tag, w in [("wing FSW band", CNB_W_BAND[0]), ("wing best", CNB_W_BAND[1])]:
         print(f"   Wing {tag:12s}: {w:+.5f}")
     WING_MEAN = (CNB_W_BAND[0] + CNB_W_BAND[1]) / 2.0
@@ -245,42 +335,40 @@ def main():
           f"  (divergence τ ≈ {1.0/max(lam.real):.2f} s [E])")
 
     # ---- 2. Fin sizing for stability tiers ----
-    print("\n2. FIN SIZING (centreline, rear-pod extension, l_v = %.0f mm)" % (L_V*1000))
+    print("\n2. FIN SIZING (centreline, rear-pod extension, l_v = %.0f mm)" % (fin_moment_arm()*1000))
     tiers = [
         ("V1a — marginal-stable (nominal ≥ 0.0005/deg)", 0.0005),
         ("V1b — robust (nominal ≥ 0.0010/deg)",          0.0010),
     ]
     # solve S_v at band centre, check band extremes
-    AR_FIN = 3.0
     tier_areas = []
     for tag, target in tiers:
         # nominal: k_fus = 0.70, S_fs centre, CLα band centre
-        cnb_fus_nom = cnb_fuselage(0.70, S_FS, L_F)
-        cla_nom = sum(cla_fin_band(AR_FIN, 12.0)) / 2.0
+        cnb_fus_nom = cnb_fuselage(0.70, S_FS, fuselage_length())
+        cla_nom = sum(cla_fin_band(AR_FIN, FIN_SWEEP_DEG)) / 2.0
         S_v = fin_area_for_target(target)
         tier_areas.append(S_v)
         # band propagation
-        cnb_case_a = cnb_fin(S_v, L_V, cla_fin_band(AR_FIN, 12.0)[0]) + \
-            cnb_fuselage(K_FUS_BAND[0], S_FS_BAND[0], L_F) + CNB_W_BAND[1]
-        cnb_case_b = cnb_fin(S_v, L_V, cla_fin_band(AR_FIN, 12.0)[1]) + \
-            cnb_fuselage(K_FUS_BAND[1], S_FS_BAND[1], L_F) + CNB_W_BAND[0]
+        cnb_case_a = cnb_fin(S_v, fin_moment_arm(), cla_fin_band(AR_FIN, FIN_SWEEP_DEG)[0]) + \
+            cnb_fuselage(K_FUS_BAND[0], S_FS_BAND[0], fuselage_length()) + CNB_W_BAND[1]
+        cnb_case_b = cnb_fin(S_v, fin_moment_arm(), cla_fin_band(AR_FIN, FIN_SWEEP_DEG)[1]) + \
+            cnb_fuselage(K_FUS_BAND[1], S_FS_BAND[1], fuselage_length()) + CNB_W_BAND[0]
         cnb_lo, cnb_hi = sorted((cnb_case_a, cnb_case_b))
         b_v = np.sqrt(S_v * AR_FIN)
         c_r, c_t, h_c = fin_geometry(S_v, b_v)
         m_lo, m_hi = fin_mass_band(S_v)
         dcd0, _ = fin_drag(S_v)
-        cd_tot = CD_PROFILE_CRUISE + CL_CRU**2 / (
-            np.pi * ARW * SPAN_EFFICIENCY)
+        cd_tot = sum(drag_model.clean_cd(CL_CRU))
         dwhkm = 100.0 * dcd0 / cd_tot
         auw_new = AUW_REF + (m_lo + m_hi) / 2.0 / 1000.0
         vs = stall_speed_kmh(auw_new)
-        V_v = S_v * L_V / (S * B)
+        V_v = S_v * fin_moment_arm() / (S * B)
         print(f"\n   {tag}")
         print(f"   S_v = {S_v*100:.2f} dm² · b_v = {b_v*1000:.0f} mm · "
               f"c_r = {c_r*1000:.0f} / c_t = {c_t*1000:.0f} mm · AR_v ≈ {AR_FIN:.1f}")
         print(f"   Cn_beta total band: {cnb_lo:+.5f} … {cnb_hi:+.5f} /deg "
-              f"(nominal ≈ {cnb_fin(S_v,L_V,cla_nom)+cnb_fus_nom+WING_MEAN:+.5f})")
-        print(f"   Fin Cn_beta     : {cnb_fin(S_v,L_V,cla_nom):+.5f} /deg")
+              f"(nominal ≈ {cnb_fin(S_v,fin_moment_arm(),cla_nom)+cnb_fus_nom+WING_MEAN:+.5f})")
+        print(f"   Fin Cn_beta     : {cnb_fin(S_v,fin_moment_arm(),cla_nom):+.5f} /deg")
         print(f"   Volume coeff V_v = {V_v:.3f} (tailless practice ≈ 0.02–0.05 [I])")
         print(f"   Mass complete   : {m_lo:.0f}–{m_hi:.0f} g "
               f"(1.2–2.0 mm PETG + mount + {FIN_SPAR_MASS_G:.1f} g spar)")
@@ -300,10 +388,10 @@ def main():
     S_v = tier_areas[0]
     b_v = np.sqrt(S_v * AR_FIN)
     c_r, c_t, h_c = fin_geometry(S_v, b_v)
-    q_ne = 0.5 * RHO * V_NE**2
+    q_ne = 0.5 * RHO * V_STRUCTURAL**2
     F = q_ne * S_v * 1.0 * ETA_FIN          # CN = 1.0, slipstream
     M = F * h_c
-    print("\n3. STRUCTURAL CHECK, recommended V1a fin at V_NE (cantilever)")
+    print("\n3. STRUCTURAL CHECK, recommended V1a fin at V_STRUCTURAL (cantilever)")
     print(f"   F = {F:.1f} N at centroid h = {h_c*1000:.0f} mm → M = {M:.2f} N·m")
     for t in (0.0015, 0.0025, 0.0030):
         I_pl = c_r * t**3 / 12.0
@@ -318,12 +406,12 @@ def main():
 
     # ---- 4. Rudder authority (movable option) ----
     print("\n4. MOVABLE RUDDER OPTION — authority vs mission need")
-    cla_nom = sum(cla_fin_band(AR_FIN, 12.0)) / 2.0
+    cla_nom = sum(cla_fin_band(AR_FIN, FIN_SWEEP_DEG)) / 2.0
     for tau in (TAU_BAND[0], 0.32, TAU_BAND[1]):
-        cndr = ETA_RUD * cla_nom * tau * (S_v / S) * (L_V / B)
+        cndr = ETA_RUD * cla_nom * tau * (S_v / S) * (fin_moment_arm() / B)
         print(f"   τ = {tau:.2f} → |Cnδr| = {cndr:.5f} /deg")
-    cndr_nom = ETA_RUD * cla_nom * 0.32 * (S_v / S) * (L_V / B)
-    cnb_v1 = cnb_fin(S_v, L_V, cla_nom) + cnb_fuselage(0.70, S_FS, L_F) + WING_MEAN
+    cndr_nom = ETA_RUD * cla_nom * 0.32 * (S_v / S) * (fin_moment_arm() / B)
+    cnb_v1 = cnb_fin(S_v, fin_moment_arm(), cla_nom) + cnb_fuselage(0.70, S_FS, fuselage_length()) + WING_MEAN
     print(f"   Steady-sideslip rudder demand (Cnβ = {cnb_v1:+.5f}/deg, "
           f"|Cnδr| = {cndr_nom:.5f}/deg):")
     for v_air, v_cw, name in [(12.5, 5.56, "stall 45 + 20 km/h x-wind"),
@@ -339,12 +427,22 @@ def main():
     # ---- 5. Yaw damping ----
     print("\n5. YAW DAMPING Cnr (1/rad)")
     cnr_w = cnr_wing()
-    cnr_f = cnr_fin(S_v, L_V, helmbold_cla(AR_FIN, 12.0))
+    cnr_f = cnr_fin(S_v, fin_moment_arm(), helmbold_cla(AR_FIN, FIN_SWEEP_DEG))
     print(f"   Wing ≈ {cnr_w:.3f} ; fin V1a ≈ {cnr_f:.3f} → total ≈ "
           f"{cnr_w+cnr_f:.3f} (damping doubled)")
     lam_f = yaw_modes(0.0005, cnr_w + cnr_f)
     print(f"   V1a 2-DOF modes: λ = {lam_f[0]:+.3f}, {lam_f[1]:+.3f} 1/s "
           f"(stable decay τ ≈ {1.0/abs(lam_f.real.max()):.1f} s) [E]")
+    iz_lo, iz_hi = yaw_inertia_band()
+    print(f"   I_zz = {yaw_inertia():.4f} kg·m² [D] from the 3-D mass model; "
+          f"band {iz_lo:.4f}–{iz_hi:.4f} (±{IZ_MODEL_UNCERTAINTY*100:.0f} % "
+          f"cuboid idealisation [E])")
+    for tag, band_modes in zip(("I_zz low ", "I_zz nom ", "I_zz high"),
+                               yaw_mode_band(0.0005, cnr_w + cnr_f)):
+        root = band_modes[0]
+        omega = abs(root)
+        print(f"     {tag}: λ = {root:+.3f} 1/s · ω_n = {omega:.3f} rad/s · "
+              f"ζ = {-root.real/omega:.3f}")
 
     # ---- 6. Validation cases ----
     print("\n6. VALIDATION CASES")
@@ -362,12 +460,12 @@ def main():
     c3 = cnb_fuselage(0.96, 2.0, 7.5, S_ref=16.2, b_ref=11.0)  # C172-like
     check(f"Raymer C172-like body: −0.0012…−0.0016/deg (got {c3:+.5f})",
           -0.0016 < c3 < -0.0012)
-    cnb_v1b = cnb_fin(fin_area_for_target(0.0010), L_V, cla_nom) + \
-        cnb_fuselage(0.70, S_FS, L_F) + WING_MEAN
+    cnb_v1b = cnb_fin(fin_area_for_target(0.0010), fin_moment_arm(), cla_nom) + \
+        cnb_fuselage(0.70, S_FS, fuselage_length()) + WING_MEAN
     check(f"V1b nominal Cnβ = +0.0010/deg (got {cnb_v1b:+.5f})",
           abs(cnb_v1b - 0.0010) < 1e-8)
-    check(f"Finless nominal Cnβ < 0 ({cnb_fuselage(0.70,S_FS,L_F):+.5f})",
-          cnb_fuselage(0.70, S_FS, L_F) < 0.0)
+    check(f"Finless nominal Cnβ < 0 ({cnb_fuselage(0.70,S_FS,fuselage_length()):+.5f})",
+          cnb_fuselage(0.70, S_FS, fuselage_length()) < 0.0)
     cndr_ref = ETA_RUD * 0.06 * 0.30 * 0.10 * 0.30
     check(f"Cnδr ref (τ 0.30, η 1.15): {cndr_ref:.6f}/deg",
           abs(cndr_ref - 0.000621) < 1e-5)
@@ -387,9 +485,18 @@ def main():
           max(finless_modes.real) > 0.0)
     check("corrected V1a reduced 2-DOF oscillatory pair is damped",
           np.all(finned_modes.real < 0.0) and np.any(abs(finned_modes.imag) > 0.0))
+    check("yaw inertia comes from the 3-D mass model, not a local estimate",
+          0.10 < yaw_inertia() < 0.25)
+    check("declared I_zz band is propagated and the mode stays damped "
+          "across it",
+          all(np.all(m.real < 0.0)
+              for m in yaw_mode_band(0.0005, cnr_w + cnr_f)))
+    band_modes = yaw_mode_band(0.0005, cnr_w + cnr_f)
+    check("I_zz band orders the natural frequency monotonically",
+          abs(band_modes[0][0]) > abs(band_modes[1][0]) > abs(band_modes[2][0]))
     a_ref = yaw_state_matrix(0.0005, -0.10)
     q_ref = 0.5 * RHO * V_CRU**2
-    expected_nr = q_ref * S * B**2 * -0.10 / (2.0 * V_CRU * IZ)
+    expected_nr = q_ref * S * B**2 * -0.10 / (2.0 * V_CRU * yaw_inertia())
     check("Cnr dimensionalization includes 1/(2V)",
           abs(a_ref[1, 1] - expected_nr) < 1e-12)
     print(f"\n   VALIDATION: {'ALL PASS' if ok else 'FAILURES PRESENT'}")

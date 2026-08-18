@@ -13,18 +13,20 @@ All calculations use SI units internally. Catalog torque is reported in
 kgf*cm; 1 N*m = 10.197 kgf*cm. Revision 2 corrects the former 1000x display
 error that labelled kgf*cm values as gf*cm.
 """
-import numpy as np
+from math import isclose
+
 from design_config import (
     ELEVON_CHORD_FRACTION,
     ELEVON_ETA_IN,
     ELEVON_ETA_OUT,
-    G0,
+    ELEVON_INBOARD_M,
+    ELEVON_OUTBOARD_M,
+    ELEVON_SPAN_M,
+    KGF_STANDARD_GRAVITY,
     RHO_SL,
-    ROOT_CHORD,
     STRUCTURAL_DESIGN_SPEED_KMH,
-    TAPER,
-    B,
     speed_mps,
+    taper_integrals,
 )
 
 ELEVON_CHORD_FRAC = ELEVON_CHORD_FRACTION
@@ -43,32 +45,20 @@ STRUCTURAL_SPEED_MPS = speed_mps(STRUCTURAL_DESIGN_SPEED_KMH)
 MAX_HINGE_COEFFICIENT = max(CH_RANGE)
 
 
-def elevon_chord_avg(samples=200):
-    """Arithmetic mean elevon chord [m] over the selected span interval."""
-    if samples < 2:
-        raise ValueError("at least two span samples are required")
-    eta = np.linspace(ETA_IN, ETA_OUT, samples)
-    local_chord = ROOT_CHORD * (1.0 - (1.0 - TAPER) * eta)
-    return ELEVON_CHORD_FRAC * float(local_chord.mean())
-
-
 def control_geometry():
     """Return aerodynamic mean chord, span and area of one elevon [SI].
 
     The aerodynamic mean chord is ``integral(c_e**2 dy) / S_e``. Thus
     ``S_e * c_bar_e`` is the exact tapered-surface hinge-moment reference.
+
+    Both integrals come from ``design_config.taper_integrals`` in closed form.
+    The former 1001-point trapezoid rule carried a 2.6e-8 relative error on the
+    mean chord because ``c_e**2`` is quadratic, and it re-derived the chord law
+    locally instead of reading the canonical one.
     """
-    eta = np.linspace(ETA_IN, ETA_OUT, 1001)
-    y = eta * B / 2.0
-    control_chord = ELEVON_CHORD_FRAC * ROOT_CHORD * (
-        1.0 - (1.0 - TAPER) * eta
-    )
-    span = B / 2.0 * (ETA_OUT - ETA_IN)
-    area = float(np.trapezoid(control_chord, y))
-    mean_aerodynamic_chord = float(
-        np.trapezoid(control_chord**2, y) / area
-    )
-    return mean_aerodynamic_chord, span, area
+    area, second = taper_integrals(
+        ELEVON_INBOARD_M, ELEVON_OUTBOARD_M, ELEVON_CHORD_FRAC)
+    return second / area, ELEVON_SPAN_M, area
 
 
 def hinge_moment(ch, speed=STRUCTURAL_SPEED_MPS):
@@ -80,14 +70,28 @@ def hinge_moment(ch, speed=STRUCTURAL_SPEED_MPS):
     return q * area * mean_chord * ch
 
 
-def servo_torque_nm(ch, speed=STRUCTURAL_SPEED_MPS):
-    """Ideal torque demand per servo [N*m] before efficiency and safety factor."""
-    return hinge_moment(ch, speed) * HORN_RADIUS_RATIO / N_SERVOS_PER_ELEVON
+def servo_torque_nm(ch, speed=STRUCTURAL_SPEED_MPS,
+                    horn_ratio=HORN_RADIUS_RATIO,
+                    n_servos=N_SERVOS_PER_ELEVON):
+    """Ideal torque demand per servo [N*m] before efficiency and safety factor.
+
+    The lever arms are parameters, not baked-in constants: the ratio and the
+    actuator count are exactly what a linkage revision changes, and the
+    validation case below exercises both.
+    """
+    if horn_ratio <= 0.0 or n_servos < 1:
+        raise ValueError("horn ratio must be positive and n_servos at least 1")
+    return hinge_moment(ch, speed) * horn_ratio / n_servos
 
 
 def nm_to_kgf_cm(torque_nm):
-    """Convert N*m to kgf*cm."""
-    return torque_nm / (G0 * 0.01)
+    """Convert N*m to kgf*cm.
+
+    Uses standard gravity, which defines the kilogram-force, rather than the
+    project's engineering G0: they are different physical constants and the
+    former is exact by definition.
+    """
+    return torque_nm / (KGF_STANDARD_GRAVITY * 0.01)
 
 
 def required_catalog_torque_kgf_cm(ch=MAX_HINGE_COEFFICIENT):
@@ -133,9 +137,19 @@ def main():
         "one elevon area is 0.0198--0.0200 m2": 0.0198 < area < 0.0200,
         "worst hinge moment is 0.085--0.087 N*m":
             0.085 < hinge_moment(max(CH_RANGE), speed) < 0.087,
-        "single actuator carries the complete elevon hinge moment": abs(
-            servo_torque_nm(max(CH_RANGE), speed)
-            - hinge_moment(max(CH_RANGE), speed)) < 1e-12,
+        # Exercises the lever-arm algebra rather than restating the current
+        # constants: doubling the actuators must halve the per-servo demand,
+        # and halving the horn ratio must halve it again.
+        "two actuators halve the per-servo torque": isclose(
+            servo_torque_nm(max(CH_RANGE), speed, n_servos=2),
+            0.5 * servo_torque_nm(max(CH_RANGE), speed, n_servos=1),
+            rel_tol=1e-12),
+        "halving the horn ratio halves the per-servo torque": isclose(
+            servo_torque_nm(max(CH_RANGE), speed, horn_ratio=0.5),
+            0.5 * servo_torque_nm(max(CH_RANGE), speed, horn_ratio=1.0),
+            rel_tol=1e-12),
+        "the released linkage puts the whole hinge moment on one servo":
+            N_SERVOS_PER_ELEVON == 1 and isclose(HORN_RADIUS_RATIO, 1.0),
         "MG90S exceeds the unfactored 180 km/h demand":
             MG90S_TORQUE_KGFCM / worst_ideal >= 1.8,
         "Article #1 Corona passes factored 180 km/h demand by at least 1.5x":

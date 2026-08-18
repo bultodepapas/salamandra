@@ -1,0 +1,15 @@
+# Salamandra calculation stack — pinned floor and ceiling.
+#
+# The floor is a hard requirement, not a preference: `servo_torque.py` and
+# `elevon_sizing.py` integrate with `numpy.trapezoid`, which exists only from
+# numpy 2.0 (the 1.x spelling was `numpy.trapz`).  `design_config.py` enforces
+# this floor at import time so the failure is a named error and not an
+# AttributeError three modules deep.
+#
+# The ceiling is a deliberate guard: a major numpy release must be validated
+# against the full contract suite before the project claims to support it.
+#
+#   python3 -m pip install -r calculations/requirements.txt
+#   python3 calculations/verify_calculations.py
+#
+numpy>=2.0,<3.0

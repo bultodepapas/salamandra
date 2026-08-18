@@ -11,6 +11,7 @@ from functools import cache
 
 import numpy as np
 from design_config import (
+    DESIGN_TWIST_DEG as SHARED_DESIGN_TWIST_DEG,
     ARTICLE_V1_ALLOCATION_MASS_KG,
     ARTICLE_V1_MASS_KG,
     CL_MAX_WING,
@@ -32,7 +33,7 @@ V_CRUISE = speed_mps(CRUISE_SPEED_KMH)
 V_STALL = speed_mps(STALL_SPEED_LIMIT_KMH)
 SECTION_CL_MAX = 0.65       # Ananda et al. section band [M]
 PROFILE_CM0 = 0.002095      # r1 root/tip integral, Ncrit 12 [D]
-DESIGN_TWIST_DEG = 3.0
+DESIGN_TWIST_DEG = SHARED_DESIGN_TWIST_DEG   # released wash-in
 ELEVON_EQUIVALENT_CAP_DEG = 0.6
 
 CL_CRUISE = lift_coefficient(DESIGN_REF_MASS, V_CRUISE)

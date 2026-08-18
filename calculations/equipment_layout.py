@@ -43,7 +43,13 @@ PACK_6S1P_CAD_ENVELOPE_MM = battery_pack_layout.reference_pack_cad_envelope(
     "6S1P", "P42A"
 )
 
-TARGET_CG_MM = balance_cg.CG_TARGET * 1000.0
+
+
+@cache
+def target_cg_mm() -> float:
+    """Longitudinal CG target [mm], re-derived through `aero_contract`."""
+    return balance_cg.cg_target() * 1000.0
+
 CG_TOLERANCE_MM = balance_cg.R_CG * 1000.0
 CRADLE_INNER_WIDTH_MM = 68.0
 CRADLE_INNER_HEIGHT_MM = 25.0
@@ -843,11 +849,11 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
         ),
         _component(
             "fc", "SpeedyBee F405 WING flight controller", "avionics",
-            8.9, (36.5, 36.5, 7.0), (TARGET_CG_MM, 0.0, 5.0), "[M]",
+            8.9, (36.5, 36.5, 7.0), (target_cg_mm(), 0.0, 5.0), "[M]",
             "SpeedyBee product data; CG-centred installation policy [I]",
             bounds=Bounds3D(
-                (TARGET_CG_MM - 5.0, -5.0, 2.0),
-                (TARGET_CG_MM + 5.0, 5.0, 10.0),
+                (target_cg_mm() - 5.0, -5.0, 2.0),
+                (target_cg_mm() + 5.0, 5.0, 10.0),
             ),
             mass_sigma_g=0.3, position_sigma_mm=(3.0, 2.0, 1.0),
         ),
@@ -998,7 +1004,7 @@ def reference_layout(variant: str = "clean") -> Layout3D:
 
 def required_battery_x(
     layout: Layout3D,
-    target_x_mm: float = TARGET_CG_MM,
+    target_x_mm: float = target_cg_mm(),
     battery_identifier: str = PRIMARY_CG_ADJUSTER,
 ) -> float:
     """Return the unconstrained pack station required for target x-CG."""
@@ -1018,7 +1024,7 @@ def required_battery_x(
 
 def solve_battery_x(
     layout: Layout3D,
-    target_x_mm: float = TARGET_CG_MM,
+    target_x_mm: float = target_cg_mm(),
     battery_identifier: str = PRIMARY_CG_ADJUSTER,
     *,
     clamp: bool = False,
@@ -1122,7 +1128,7 @@ def validation_checks() -> dict[str, bool]:
             abs_tol=1e-12,
         ),
         "battery solve reaches the longitudinal-CG target": isclose(
-            solved.cg_mm()[0], TARGET_CG_MM, abs_tol=1e-9
+            solved.cg_mm()[0], target_cg_mm(), abs_tol=1e-9
         ),
         "battery is the only automatic CG adjustment": all(
             before.position_mm == after.position_mm
@@ -1167,7 +1173,7 @@ def validation_checks() -> dict[str, bool]:
             for station in (SERVO_STATION_MM,)
         ),
         "FC reference station is the target CG": isclose(
-            clean.component("fc").position_mm[0], TARGET_CG_MM, abs_tol=1e-12
+            clean.component("fc").position_mm[0], target_cg_mm(), abs_tol=1e-12
         ) and isclose(clean.component("fc").position_mm[1], 0.0, abs_tol=1e-12),
         "reference equipment envelopes do not collide": not solved.collisions(),
         "O4 coax constraint passes": all(
@@ -1227,11 +1233,11 @@ def design_gates(layout: Layout3D) -> tuple[tuple[str, bool, str], ...]:
         ),
         (
             "longitudinal CG inside released band",
-            abs(cg[0] - TARGET_CG_MM) <= CG_TOLERANCE_MM,
+            abs(cg[0] - target_cg_mm()) <= CG_TOLERANCE_MM,
             (
                 f"xCG={cg[0]:+.2f} mm; band "
-                f"{TARGET_CG_MM-CG_TOLERANCE_MM:+.2f}.."
-                f"{TARGET_CG_MM+CG_TOLERANCE_MM:+.2f}"
+                f"{target_cg_mm()-CG_TOLERANCE_MM:+.2f}.."
+                f"{target_cg_mm()+CG_TOLERANCE_MM:+.2f}"
             ),
         ),
         (

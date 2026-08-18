@@ -28,16 +28,13 @@ from design_config import (
     NEGATIVE_LIMIT_LOAD_FACTOR,
     POSITIVE_LIMIT_LOAD_FACTOR,
     RHO_SL,
-    SWEEP_C4_DEG,
-    TAPER,
     ULTIMATE_SAFETY_FACTOR,
-    B,
     S,
     lift_coefficient,
     speed_mps,
     stall_speed,
 )
-from vlm_ala_volante import analiza
+import aero_contract
 
 # Legacy Part 23 sea-level reference values: 50 ft/s at VC and 25 ft/s at VD.
 REFERENCE_GUST_VC_MPS = 15.24
@@ -61,10 +58,14 @@ class EnvelopeCase:
 
 
 def project_lift_curve_slope():
-    """Return the released-wing CL-alpha [rad^-1] from the project VLM."""
-    return analiza(
-        B, S, TAPER, SWEEP_C4_DEG, 3.0, ny=40, nx=6, verbose=False
-    )["CLa"]
+    """Return the released-wing CL-alpha [rad^-1] at the canonical mesh.
+
+    Delegated to `aero_contract` so the mesh and the wash-in are the shared
+    ones.  The former call hardcoded both, and passed a twist that a linear
+    lifting-surface model cannot use: CL-alpha superposes and is a property of
+    the planform alone.
+    """
+    return aero_contract.lift_curve_slope()
 
 
 def wing_loading_pa(mass_kg, area=S):
@@ -173,6 +174,20 @@ def critical_reference_gust_speed(
     return min(vd, max(vc, stationary))
 
 
+def reference_gust_exceeds_limits(mass_kg, speed, lift_curve_slope):
+    """Diagnostic: does the reference gust cross the declared limit loads?
+
+    Reported, never asserted.  It answers an OPEN question (G11: dynamic gust
+    response of a very-low-wing-loading printed UAV), and the answer changing
+    is information, not a regression.
+    """
+    dn = gust_load_increment(
+        mass_kg, speed, REFERENCE_GUST_VC_MPS, lift_curve_slope)
+    return (1.0 + dn > POSITIVE_LIMIT_LOAD_FACTOR,
+            1.0 - dn < NEGATIVE_LIMIT_LOAD_FACTOR,
+            dn)
+
+
 def build_case(name, mass_kg, lift_curve_slope):
     """Build the coupled manoeuvre/gust properties for an aircraft mass."""
     mu = airplane_mass_ratio(mass_kg, lift_curve_slope)
@@ -232,9 +247,16 @@ def validation_checks(lift_curve_slope):
         ),
         "interior gust maximum is not missed by endpoint-only checking":
             critical_dn >= endpoint_dn,
-        "reference VC gust intentionally exposes the unresolved +6/-3 mismatch":
-            1.0 + dn_si > POSITIVE_LIMIT_LOAD_FACTOR
-            and 1.0 - dn_si < NEGATIVE_LIMIT_LOAD_FACTOR,
+        # The former check here ASSERTED that the reference gust breaches the
+        # declared limits.  A validation suite must assert correctness, never
+        # the current state of an open question: if the design improved so the
+        # breach disappeared, that check would have reported a failure for a
+        # good outcome.  The breach is now a printed diagnostic (see
+        # `reference_gust_exceeds_limits`) tracked under G11.
+        "the initial operational cap is below the manoeuvring speed":
+            speed_mps(INITIAL_SPEED_LIMIT_KMH) < manoeuvring_speed(mass),
+        "the screening speeds bracket the manoeuvring speed":
+            vc < manoeuvring_speed(mass) < vd,
         "ultimate loads are limit loads times 1.5":
             isclose(
                 POSITIVE_LIMIT_LOAD_FACTOR * ULTIMATE_SAFETY_FACTOR, 9.0
@@ -276,13 +298,17 @@ def print_case(case, lift_curve_slope, vc, vd):
     )
     print(
         f"  mu_g={case.mass_ratio:.3f}  K_g={case.gust_alleviation:.4f}  "
-        f"positive manoeuvre boundary at 105 km/h={n_manoeuvre:.2f} g"
+        f"positive manoeuvre boundary at the "
+        f"{INITIAL_SPEED_LIMIT_KMH:.0f} km/h cap={n_manoeuvre:.2f} g "
+        f"(VA={case.manoeuvring_kmh:.1f} km/h is ABOVE the cap: the cap is an "
+        f"operational limit, not a Part 23 V_C)"
     )
     print(
-        f"  inverse screen at 105 km/h: Ude(+6)={u_pos:.2f} m/s, "
-        f"Ude(-3)={u_neg:.2f} m/s -> negative limit controls"
+        f"  inverse screen at the {INITIAL_SPEED_LIMIT_KMH:.0f} km/h cap: "
+        f"Ude(+6)={u_pos:.2f} m/s, Ude(-3)={u_neg:.2f} m/s "
+        f"-> negative limit controls"
     )
-    for label, speed in (("VC screen", vc), ("VD screen", vd)):
+    for label, speed in (("cap screen", vc), ("V_NE screen", vd)):
         gust = reference_gust_velocity(speed, vc, vd)
         dn = gust_load_increment(
             case.mass_kg, speed, gust, lift_curve_slope
@@ -324,7 +350,10 @@ def main():
     )
     print(
         "Reference only: legacy Part 23 sea-level discrete gust 15.24 m/s at "
-        "the 105 km/h screen and 7.62 m/s at the 160 km/h screen."
+        f"the {INITIAL_SPEED_LIMIT_KMH:.0f} km/h operational-cap screen and "
+        f"7.62 m/s at the {ARTICLE_V_NE_KMH:.0f} km/h V_NE screen.  These are "
+        "SCREENING speeds: the cap is not a design cruising speed V_C, and VA "
+        "sits above it for every released mass."
     )
 
     for case in (
@@ -357,6 +386,17 @@ def main():
                 f"Negative manoeuvre intersection {name}: "
                 f"{v_neg*3.6:.1f} km/h for CLmin={args.cl_min:.3f}."
             )
+
+    for case_name, case_mass in (("CLEAN", ARTICLE_CLEAN_MASS_KG),
+                                 ("V1", ARTICLE_V1_MASS_KG)):
+        over_pos, under_neg, dn = reference_gust_exceeds_limits(
+            case_mass, vc, lift_curve_slope)
+        print(
+            f"Reference-gust diagnostic ({case_name}): dn={dn:+.2f} g -> "
+            f"positive limit {'EXCEEDED' if over_pos else 'respected'}, "
+            f"negative limit {'EXCEEDED' if under_neg else 'respected'} "
+            "(open question, tracked as G11; reported, not asserted)."
+        )
 
     print(
         "\nINTERPRETATION: +6/-3 are provisional MANOEUVRE LIMIT loads. +9/-4.5 "

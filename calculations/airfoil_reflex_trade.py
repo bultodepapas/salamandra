@@ -17,6 +17,7 @@ then check lift, drag and moment before the coordinates are written.
 """
 import argparse
 import math
+from functools import cache
 import os
 
 from b3_screening import (
@@ -31,6 +32,8 @@ from b3_screening import (
     write_dat,
 )
 from design_config import (
+    DESIGN_TWIST_DEG,
+    ELEVON_HINGE_XC,
     ARTICLE_V1_MASS_KG,
     CRUISE_SPEED_KMH,
     HALF_SPAN,
@@ -54,9 +57,9 @@ from elevon_authority import cm0_wing
 NU = NU_SL
 V_STALL = speed_mps(STALL_SPEED_LIMIT_KMH)
 V_CRUISE = speed_mps(CRUISE_SPEED_KMH)
-HINGE_X = 0.72
+HINGE_X = ELEVON_HINGE_XC
 DESIGN_MASS = ARTICLE_V1_MASS_KG
-TWIST_DEG = 3.0
+TWIST_DEG = DESIGN_TWIST_DEG   # released wash-in, from the design contract
 ELEVON_TRIM_CAP = 0.6
 ROOT_ANGLES = tuple(i * 0.5 for i in range(7))    # 0..3 deg
 TIP_ANGLES = tuple(i * 0.5 for i in range(17))    # 0..8 deg
@@ -70,8 +73,19 @@ ROOT_RE = (reynolds(ROOT_CHORD, V_STALL), reynolds(ROOT_CHORD, V_CRUISE))
 TIP_RE = (reynolds(TIP_CHORD, V_STALL), reynolds(TIP_CHORD, V_CRUISE))
 CL_CRUISE = lift_coefficient(DESIGN_MASS, V_CRUISE)
 CM_REQUIRED = CL_CRUISE * STATIC_MARGIN
-DCM_TWIST = cm0_wing(1.0, 0.0) - cm0_wing(0.0, 0.0)
-DCM_ELEVON = cm0_wing(0.0, 1.0) - cm0_wing(0.0, 0.0)
+
+
+@cache
+def pitch_yields():
+    """Wing Cm0 yields ``(per deg wash-in, per deg elevon)`` [1/deg].
+
+    Two 80x6 VLM solves.  They used to run at module scope, costing every
+    importer of this module about one second even when it needed no VLM at all.
+    """
+    reference = cm0_wing(0.0, 0.0)
+    return (cm0_wing(1.0, 0.0) - reference,
+            cm0_wing(0.0, 1.0) - reference)
+
 
 
 def moment_weights(n=10000):
@@ -167,8 +181,9 @@ def select_pair(root_trade, tip_trade):
                 cm_profile = (
                     ROOT_CM_WEIGHT * root_cases[ncrit]["cm0"]
                     + TIP_CM_WEIGHT * tip_cases[ncrit]["cm0"])
-                cm_total = cm_profile + TWIST_DEG * DCM_TWIST
-                elevon[ncrit] = (CM_REQUIRED - cm_total) / DCM_ELEVON
+                dcm_twist, dcm_elevon = pitch_yields()
+                cm_total = cm_profile + TWIST_DEG * dcm_twist
+                elevon[ncrit] = (CM_REQUIRED - cm_total) / dcm_elevon
                 drag.append(
                     ROOT_CM_WEIGHT * root_cases[ncrit]["cd_cruise"]
                     + TIP_CM_WEIGHT * tip_cases[ncrit]["cd_cruise"])
@@ -207,8 +222,9 @@ def main():
     print(f"tip  Re stall/cruise = {TIP_RE[0]:,}/{TIP_RE[1]:,}")
 
     print(f"c^2 moment weights root/tip = {ROOT_CM_WEIGHT:.4f}/{TIP_CM_WEIGHT:.4f}")
-    print(f"trim target Cm={CM_REQUIRED:+.5f}; wash-in yield={DCM_TWIST:+.5f}/deg; "
-          f"elevon yield={DCM_ELEVON:+.5f}/deg")
+    dcm_twist, dcm_elevon = pitch_yields()
+    print(f"trim target Cm={CM_REQUIRED:+.5f}; wash-in yield={dcm_twist:+.5f}/deg; "
+          f"elevon yield={dcm_elevon:+.5f}/deg")
 
     root_trade = screen_angles(
         "root", ROOT_TC, ROOT_ANGLES, max(ROOT_RE), args.xfoil)
@@ -256,7 +272,8 @@ def main():
         cm_profile = (ROOT_CM_WEIGHT * root_s["cm0"]
                       + TIP_CM_WEIGHT * tip_s["cm0"])
         full_elevon[ncrit] = (
-            CM_REQUIRED - cm_profile - TWIST_DEG * DCM_TWIST) / DCM_ELEVON
+            CM_REQUIRED - cm_profile - TWIST_DEG * pitch_yields()[0]
+        ) / pitch_yields()[1]
     checks["full-polar trim band"] = max(
         abs(value) for value in full_elevon.values()) <= ELEVON_TRIM_CAP
     print(f"  coupled neutral elevon at cruise: Ncrit 10/12 = "

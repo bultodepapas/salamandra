@@ -15,6 +15,7 @@ import argparse
 import numpy as np
 from balance_cg import solve_reference_layout
 from design_config import (
+    TWIST_STRUCTURAL_CAP_DEG,
     ARTICLE_V1_MASS_KG,
     CRUISE_SPEED_KMH,
     STALL_SPEED_LIMIT_KMH,
@@ -33,7 +34,7 @@ CANDIDATES = (-20.0, -16.0, -15.0, -12.0, -10.0)
 CL_CRUISE = lift_coefficient(
     ARTICLE_V1_MASS_KG, speed_mps(CRUISE_SPEED_KMH))
 PROFILE_CM0 = 0.002095     # conservative r1 root/tip integral, Ncrit 12 [D]
-TWIST_CAP = 3.0
+TWIST_CAP = TWIST_STRUCTURAL_CAP_DEG   # printable/structural wash-in cap
 ELEVON_EQUIV_CAP = 0.6
 SECTION_CL_MAX = 0.65
 MIN_SECTION_CL_MARGIN = 0.01

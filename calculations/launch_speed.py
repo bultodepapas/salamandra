@@ -27,7 +27,7 @@ launch 1850 and over-head techniques). If the configuration class launches at
 16.7 m/s stall, the Salamandra at 12.4 m/s is a strictly easier case.
 
 MODEL:
-  m dV/dt   = T - 0.5 rho V^2 S CD_launch, integrated with RK4; T is
+  m dV/dt   = T - 0.5 rho V^2 S CD_launch - m g sin(gamma), RK4; T is
                piecewise constant within the idle/delay/launch phases
   V_suelta  = propagated speed after the powered throw gesture
   gate      = V_suelta >= V_stall                 (release requirement)
@@ -51,6 +51,8 @@ Validation cases at the end.
 import sys
 
 import numpy as np
+
+import drag_model
 from design_config import (
     ARTICLE_CLEAN_MASS_KG,
     ARTICLE_V1_MASS_KG,
@@ -69,7 +71,14 @@ IDLE_FRAC = (0.60, 0.50, 0.67)  # nav_fw_launch_idle_thr, wing-throw band [D]
 T_GESTURE = (0.5, 0.4, 0.6)   # s: throw gesture with motor spinning [E]
 MOTOR_DELAY = 0.2             # s: nav_fw_launch_motor_delay (200 ms) [D]
 T_W_MAX = 1.5                 # torque-roll community risk threshold [I]
-CD_LAUNCH = 0.08              # high-lift/launch drag coefficient [E]
+# Launch drag now comes from the SHARED polar with its viscous and induced
+# terms separated (ADR-0009), not from a single lumped coefficient.  The gate
+# is judged on the conservative end of the declared allowance band, which
+# reproduces the retired 0.08 [E]: higher drag is what makes the release gate
+# harder, so adopting the lower attached-flow value would be an unwarranted
+# relaxation of a published conclusion.
+CD_LAUNCH = drag_model.launch_cd_band()[1]        # conservative end [E]
+CD_LAUNCH_NOMINAL = drag_model.launch_cd_band()[0]  # attached decomposition
 
 # Mojito configuration-class anchor [M] (docs/02 + community): 1300 mm,
 # ~1800 g, stall ~60 km/h reported (16.7 m/s), hand-launched
@@ -81,26 +90,47 @@ def v_stall(weight):
     return stall_speed(weight)
 
 
-def acceleration(speed, thrust, mass, cd=CD_LAUNCH):
-    """Axial acceleration [m/s2], including quadratic aerodynamic drag."""
+# Flight-path angle during the throw and the seconds after release.  Below
+# V_stall the wing cannot carry the weight by definition, so the trajectory is
+# NOT level and the along-path gravity component is not zero.  The model
+# previously omitted the term entirely and never declared a path angle, which
+# left the sign of its conservatism unstated.  Positive gamma is a climb.
+#
+# The released gate uses GAMMA_LAUNCH_DEG = 0: a level throw.  That is the
+# conservative choice for the release gate, because a descending throw would
+# ADD  g*sin|gamma|  to the acceleration and make the gate easier to pass.
+GAMMA_LAUNCH_DEG = 0.0            # declared launch path angle [E]
+GAMMA_LAUNCH_BAND_DEG = (-10.0, 0.0, +10.0)   # descend / level / climb [E]
+
+
+def acceleration(speed, thrust, mass, cd=CD_LAUNCH, gamma_deg=None):
+    """Along-path acceleration [m/s2]: thrust, quadratic drag and gravity.
+
+        m dV/dt = T - 0.5 rho V^2 S CD - m g sin(gamma)
+
+    ``gamma_deg=None`` uses the declared launch path angle.
+    """
+    if gamma_deg is None:
+        gamma_deg = GAMMA_LAUNCH_DEG
     if speed < 0.0 or thrust < 0.0 or mass <= 0.0 or cd < 0.0:
         raise ValueError("speed, thrust and CD must be non-negative; mass positive")
     drag = 0.5 * RHO_SL * speed**2 * S * cd
-    return (thrust - drag) / mass
+    return (thrust - drag) / mass - G0 * np.sin(np.radians(gamma_deg))
 
 
-def propagate_speed(speed, thrust, mass, duration, cd=CD_LAUNCH, dt=0.001):
-    """Integrate the axial equation with fourth-order Runge-Kutta."""
+def propagate_speed(speed, thrust, mass, duration, cd=CD_LAUNCH, dt=0.001,
+                    gamma_deg=None):
+    """Integrate the along-path equation with fourth-order Runge-Kutta."""
     if duration < 0.0 or dt <= 0.0:
         raise ValueError("duration must be non-negative and dt positive")
     steps = max(1, int(np.ceil(duration / dt)))
     h = duration / steps
     value = speed
     for _ in range(steps):
-        k1 = acceleration(value, thrust, mass, cd)
-        k2 = acceleration(value + 0.5 * h * k1, thrust, mass, cd)
-        k3 = acceleration(value + 0.5 * h * k2, thrust, mass, cd)
-        k4 = acceleration(value + h * k3, thrust, mass, cd)
+        k1 = acceleration(value, thrust, mass, cd, gamma_deg)
+        k2 = acceleration(value + 0.5 * h * k1, thrust, mass, cd, gamma_deg)
+        k3 = acceleration(value + 0.5 * h * k2, thrust, mass, cd, gamma_deg)
+        k4 = acceleration(value + h * k3, thrust, mass, cd, gamma_deg)
         value += h * (k1 + 2.0 * k2 + 2.0 * k3 + k4) / 6.0
     return value
 
@@ -216,6 +246,15 @@ def main():
           f"Salamandra ({MOJITO_W} kg, {MOJITO_STALL*3.6:.0f} km/h vs "
           f"{AUW[1]} kg, {vs_c*3.6:.1f} km/h)", MOJITO_W > AUW[1]
           and MOJITO_STALL > vs_c)
+    v_band = [propagate_speed(vh_r, t_idle_r, AUW[1], t_r, gamma_deg=angle)
+              for angle in GAMMA_LAUNCH_BAND_DEG]
+    check(f"Declared path-angle band is propagated and ordered "
+          f"(descend {v_band[0]:.2f} > level {v_band[1]:.2f} > "
+          f"climb {v_band[2]:.2f} m/s)",
+          v_band[0] > v_band[1] > v_band[2])
+    check(f"The released level throw is the conservative end against a "
+          f"descent ({v_band[1]:.2f} <= {v_band[0]:.2f} m/s)",
+          v_band[1] <= v_band[0])
     check(f"Biomechanics band: V_hand ref 10.5 in [8, 13] "
           f"({V_HAND[0]} in [{V_HAND[1]}, {V_HAND[2]}])",
           V_HAND[1] <= V_HAND[0] <= V_HAND[2])

@@ -24,7 +24,7 @@ from vlm_ala_volante import geom, solve
 
 CM0_WING_N10 = +0.003258
 CM0_WING_N12 = +0.002095
-DESIGN_TWIST_DEG = 3.0
+DESIGN_TWIST_DEG = design_config.DESIGN_TWIST_DEG   # released wash-in
 VLM_NY = 80
 VLM_NX = 6
 
@@ -82,16 +82,15 @@ FLAP_EFFECTIVENESS = thin_airfoil_flap_effectiveness(
 )
 
 
-def surface_geometry(surface: ElevonGeometry, samples: int = 2001) -> dict[str, float]:
-    """Return span, area, MAC and hinge proxy for one surface in SI units."""
-    if samples < 2:
-        raise ValueError("at least two span samples are required")
-    y = np.linspace(surface.inboard_m, surface.outboard_m, samples)
-    control_chord = np.array(
-        [surface.chord_fraction * design_config.chord(value) for value in y]
-    )
-    area = float(np.trapezoid(control_chord, y))
-    hinge_proxy = float(np.trapezoid(control_chord**2, y))
+def surface_geometry(surface: ElevonGeometry) -> dict[str, float]:
+    """Return span, area, MAC and hinge proxy for one surface in SI units.
+
+    Both integrals are closed-form (`design_config.taper_integrals`): the chord
+    law is linear, so the former 2001-point trapezoid rule bought nothing on
+    the area and carried a small quadrature error on the quadratic hinge proxy.
+    """
+    area, hinge_proxy = design_config.taper_integrals(
+        surface.inboard_m, surface.outboard_m, surface.chord_fraction)
     return {
         "span_m": surface.span_m,
         "area_m2": area,

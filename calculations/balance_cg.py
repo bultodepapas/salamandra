@@ -9,6 +9,8 @@ I-16 6S1P P42A pack (445 g), consistent with ``mass_budget.py``.
 Coordinates: x aft, origin at the root quarter chord. Outputs are [D] on [E]
 component locations until CAD mass properties replace the table in F2/P1-P3.
 """
+from functools import cache
+
 import numpy as np
 from battery_pack_layout import reference_pack_envelope
 from equipment_catalog import DJI_O4_CAMERA
@@ -23,9 +25,15 @@ from design_config import (
 )
 from mass_budget import build, pack_mass
 
-NP_VLM = -75.8e-3       # m, VLM 40x6, I-21 [D]
-NP_WL = -72.9e-3        # m, Weissinger-L ny=100, I-21 [D]
-CG_TARGET = NP_VLM - STATIC_MARGIN * MAC
+import aero_contract
+
+# The neutral point and the CG target are DERIVED, not declared: see
+# `aero_contract.py`.  They used to be hand-copied literals here, so any change
+# to span, area, taper or sweep moved the real neutral point and left the CG
+# target untouched, with no check comparing the two.
+np_vlm = aero_contract.neutral_point_vlm
+np_weissinger = aero_contract.neutral_point_weissinger
+cg_target = aero_contract.cg_target
 R_CG = 5e-3             # m, docs/00 section 3.3
 NOSE_POD_TIP = -132e-3  # unchanged root-geometry datum
 
@@ -47,16 +55,19 @@ CRADLE_LENGTH = 0.201
 CAMERA_FROM_BAY_FWD = 0.066  # reproduces the old -450 mm station
 
 
+@cache
 def reference_mass_breakdown():
-    """Return the canonical CLEAN mass rows in kilograms, keyed by part."""
+    """Return the canonical CLEAN mass rows in kilograms, keyed by part.
+
+    Cached and lazy on purpose.  Evaluating this at module scope meant a broken
+    mass contract raised during *import*, so the verification harness could not
+    even load to report which contract was broken.
+    """
     rows, totals = build("all_petg")
     masses = {row["part"]: row["m"] / 1000.0 for row in rows}
     if abs(totals["auw"] / 1000.0 - ARTICLE_CLEAN_MASS_KG) > 1e-8:
         raise RuntimeError("mass_budget default no longer matches the design contract")
     return masses
-
-
-REFERENCE_MASSES = reference_mass_breakdown()
 
 
 def pack_station(m_no_batt, moment_no_batt, m_pack, cg):
@@ -73,32 +84,40 @@ def component_table(sweep_deg, bay_fwd):
     boom_mass = CRADLE_MASS + tube_mass
     boom_station = (CRADLE_MASS * cradle_station + tube_mass * tube_station) / boom_mass
     camera_station = bay_fwd + CAMERA_FROM_BAY_FWD
-    printed_shell = sum(REFERENCE_MASSES[name]
+    reference_masses = reference_mass_breakdown()
+    printed_shell = sum(reference_masses[name]
                         for name in ("core", "wings", "tips", "elevons"))
     camera_mass = DJI_O4_CAMERA.mass_g / 1000.0
     return [
         ("PETG shell (ADR-0043 cap)", printed_shell,
          planform_centroid(sweep_deg)),
-        ("Carbon (mean c/4, y=195..585)", REFERENCE_MASSES["carbon"],
+        ("Carbon (mean c/4, y=195..585)", reference_masses["carbon"],
          x_c4(0.390, sweep_deg)),
         ("Motor + APC 8x8 assembly",
-         REFERENCE_MASSES["motor"] + REFERENCE_MASSES["prop"], +217e-3),
-        ("ESC", REFERENCE_MASSES["esc"], +40e-3),
-        ("Avionics (SpeedyBee FC+PDB etc.)", REFERENCE_MASSES["avionics"],
+         reference_masses["motor"] + reference_masses["prop"], +217e-3),
+        ("ESC", reference_masses["esc"], +40e-3),
+        ("Avionics (SpeedyBee FC+PDB etc.)", reference_masses["avionics"],
          -10e-3),
         ("Corona servos + elevon balance",
-         REFERENCE_MASSES["servos"] + REFERENCE_MASSES["balance"], -5e-3),
-        ("Hardware", REFERENCE_MASSES["hardware"], +50e-3),
+         reference_masses["servos"] + reference_masses["balance"], -5e-3),
+        ("Hardware", reference_masses["hardware"], +50e-3),
         ("FPV DJI O4 Air Unit - camera", camera_mass, camera_station),
         ("FPV DJI O4 Air Unit - VTX/antenna",
-         REFERENCE_MASSES["fpv"] - camera_mass, +10e-3),
+         reference_masses["fpv"] - camera_mass, +10e-3),
         ("Battery boom + cradle", boom_mass, boom_station),
     ]
 
 
-def solve_reference_layout(sweep_deg=SWEEP_C4_DEG, np_x=NP_VLM,
+def solve_reference_layout(sweep_deg=SWEEP_C4_DEG, np_x=None,
                            pack_mass=REFERENCE_PACK):
-    """Iterate boom mass/camera station and the 6S1P R-CG cradle envelope."""
+    """Iterate boom mass/camera station and the 6S1P R-CG cradle envelope.
+
+    ``np_x=None`` re-derives the released neutral point; a sweep study passes
+    its own.  It is a sentinel rather than a default value so that the
+    derivation is never frozen at import time.
+    """
+    if np_x is None:
+        np_x = np_vlm()
     cg_target = np_x - STATIC_MARGIN * MAC
     bay_fwd = -0.47
     for _ in range(100):
@@ -141,8 +160,8 @@ def main():
     print("SALAMANDRA MASS BALANCE - ADR-0043, 6S1P P42A REFERENCE")
     print("=" * 76)
     print(f"  sweep c/4 = {SWEEP_C4_DEG:+.1f} deg  MAC = {MAC*1000:.1f} mm")
-    print(f"  NP VLM / Weissinger = {NP_VLM*1000:+.1f} / {NP_WL*1000:+.1f} mm")
-    print(f"  target CG = {CG_TARGET*1000:+.1f} mm (SM {STATIC_MARGIN*100:.0f} % MAC)")
+    print(f"  NP VLM / Weissinger = {np_vlm()*1000:+.1f} / {np_weissinger()*1000:+.1f} mm (re-derived)")
+    print(f"  target CG = {cg_target()*1000:+.1f} mm (SM {STATIC_MARGIN*100:.0f} % MAC)")
 
     print("\n  Mass table without pack:")
     for name, mass, station in layout["components"]:
@@ -152,9 +171,9 @@ def main():
 
     print("\n  Required pack stations at target CG:")
     for name, mass in PACKS:
-        target = pack_station(m0, moment0, mass, CG_TARGET)
-        forward = pack_station(m0, moment0, mass, CG_TARGET - R_CG)
-        aft = pack_station(m0, moment0, mass, CG_TARGET + R_CG)
+        target = pack_station(m0, moment0, mass, cg_target())
+        forward = pack_station(m0, moment0, mass, cg_target() - R_CG)
+        aft = pack_station(m0, moment0, mass, cg_target() + R_CG)
         print(f"    {name:5s} {mass*1000:5.0f} g: x={target*1000:+7.1f} mm  "
               f"band {forward*1000:+7.1f}..{aft*1000:+7.1f} mm")
 
@@ -168,7 +187,7 @@ def main():
     print("\n  Envelope checks:")
     for name, mass in PACKS:
         auw = m0 + mass
-        target = pack_station(m0, moment0, mass, CG_TARGET)
+        target = pack_station(m0, moment0, mass, cg_target())
         physical = name in PACK_LEN
         fits = physical and (
             layout["bay_fwd"] + PACK_LEN[name] / 2.0 <= target
@@ -180,8 +199,11 @@ def main():
 
     checks = {
         "canonical shell centroid": abs(planform_centroid()*1000 + 21.17) < 0.2,
-        "VLM/Weissinger NP agreement < 5 mm": abs(NP_VLM - NP_WL) < 0.005,
-        "SM is 8 percent MAC": abs((NP_VLM - CG_TARGET) / MAC - 0.08) < 1e-12,
+        # These were tautologies: they compared two hardcoded literals, and
+        # the second reduced algebraically to abs(STATIC_MARGIN - 0.08).  The
+        # live derivation and its anchors are checked in `aero_contract`.
+        **{f"aero contract: {name}": passed
+           for name, passed in aero_contract.validation_checks().items()},
         "reference pack station is inside cradle": (
             layout["bay_fwd"] + PACK_LEN["6S1P"] / 2.0
             <= layout["pack_station"]

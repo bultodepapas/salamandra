@@ -35,6 +35,8 @@ at the end.
 """
 import sys
 
+from functools import cache
+
 import numpy as np
 from balance_cg import (
     CAMERA_FROM_BAY_FWD,
@@ -56,13 +58,22 @@ RHO_AL = 2700.0           # kg/m³
 D_T, T_T = 0.008, 0.001
 D_I = D_T - 2 * T_T
 
-# Geometry is solved by the same ADR-0040 balance model used by the guide.
-_LAYOUT = solve_reference_layout()
-X_TIP = _LAYOUT["bay_fwd"]
 X_CORE = NOSE_POD_TIP
-L = X_CORE - X_TIP
-X_PACK = _LAYOUT["pack_station"]
 M_PACK = REFERENCE_PACK
+
+
+@cache
+def boom_geometry():
+    """Solved boom stations [m]: (tip support, span, pack station).
+
+    Lazy: solving the balance layout at module scope made every importer pay
+    for it and turned a broken upstream contract into an import-time crash.
+    """
+    layout = solve_reference_layout()
+    x_tip = layout["bay_fwd"]
+    return x_tip, X_CORE - x_tip, layout["pack_station"]
+
+
 M_FORWARD_PAYLOAD = 0.015 # kg, conservative camera/wiring/connector allowance [E]
 M_CRADLE = CRADLE_MASS
 N_MAX = POSITIVE_LIMIT_LOAD_FACTOR
@@ -109,6 +120,7 @@ def simply_supported_response(length, point_loads, flexural_rigidity,
 
 
 def main():
+    X_TIP, L, X_PACK = boom_geometry()
     print("=" * 74)
     print("NOSE BOOM Ø8x1.0 ALUMINIUM + Ø3 AFT STIFFENER — ADR-0040/0043")
     print("=" * 74)

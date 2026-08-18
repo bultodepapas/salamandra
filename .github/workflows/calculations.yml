@@ -1,0 +1,65 @@
+name: Calculation contracts
+
+# The physics contract, guarded on every change that can move a number.
+# Before this workflow existed the only Python step in CI was the drawing
+# check, so `divergence.py` stayed unrunnable on POSIX with CI green.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'calculations/**'
+      - 'geometry/airfoils/**'
+      - 'geometry/drawings/**'
+      - '.github/workflows/calculations.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'calculations/**'
+      - 'geometry/airfoils/**'
+      - 'geometry/drawings/**'
+      - '.github/workflows/calculations.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: calculations-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Both ends of the declared support window. The floor catches an
+        # accidental dependency on a newer numpy API; the ceiling catches a
+        # removal. calculations/requirements.txt declares the same window.
+        include:
+          - python: '3.10'
+            numpy: 'numpy==1.24.4'
+          - python: '3.12'
+            numpy: 'numpy'
+    name: contracts (py${{ matrix.python }}, ${{ matrix.numpy }})
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install the numeric stack
+        run: python -m pip install --upgrade pip "${{ matrix.numpy }}"
+
+      - name: Cross-module contracts and every deterministic script
+        working-directory: calculations
+        run: python verify_calculations.py
+
+      - name: Drawing set and its published blocks are current
+        run: |
+          python calculations/generate_blueprints.py --check
+          python calculations/drawing_index.py --check

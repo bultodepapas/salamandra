@@ -9,8 +9,76 @@ invariant must pass before the Design Guide or CAD is released.
 
 Coordinate convention: x aft, y starboard, origin at the root quarter chord.
 Negative quarter-chord sweep is forward sweep.
+
+This module stays stdlib-only on purpose: it is the one import every other
+module makes, so it must never be the reason an environment fails to load.
 """
+from importlib.metadata import PackageNotFoundError, version
 from math import atan, degrees, isclose, radians, tan
+from pathlib import Path
+
+# ---------------------------------------------------------------------------
+# Repository anchors.  Every data file is resolved through these, never through
+# a hand-written relative string: a literal path separator is not portable and
+# `geometry\airfoils\...` silently became an unreadable filename on POSIX.
+# ---------------------------------------------------------------------------
+CALCULATIONS_DIR = Path(__file__).resolve().parent
+REPO_ROOT = CALCULATIONS_DIR.parent
+AIRFOIL_DIR = REPO_ROOT / "geometry" / "airfoils"
+DRAWINGS_DIR = REPO_ROOT / "geometry" / "drawings"
+
+# ---------------------------------------------------------------------------
+# Numeric-stack contract.  Checked here so an unsupported environment produces
+# one named, actionable error instead of an AttributeError raised deep inside
+# an integration call.  The check is metadata-only: it does not import numpy,
+# which keeps this module stdlib-only for the scripts that need no numerics.
+# The floor is a broadly available release, not the newest one: this is a
+# community repository and a distribution-packaged numpy must keep working.
+# ---------------------------------------------------------------------------
+NUMPY_MINIMUM = (1, 24)
+NUMPY_MAXIMUM_EXCLUSIVE = (3, 0)
+
+
+def _parse_version(text):
+    """Leading numeric release components of a PEP 440 version string."""
+    parts = []
+    for chunk in text.split(".")[:3]:
+        digits = ""
+        for character in chunk:
+            if not character.isdigit():
+                break
+            digits += character
+        if not digits:
+            break
+        parts.append(int(digits))
+    return tuple(parts)
+
+
+def check_numeric_stack():
+    """Return the installed numpy release, or raise a named contract error.
+
+    Returns ``None`` when numpy is absent: several modules in this repository
+    are deliberately stdlib-only and must keep working without it.
+    """
+    try:
+        installed = _parse_version(version("numpy"))
+    except PackageNotFoundError:
+        return None
+    if not installed:
+        return None
+    if not NUMPY_MINIMUM <= installed < NUMPY_MAXIMUM_EXCLUSIVE:
+        floor = ".".join(str(n) for n in NUMPY_MINIMUM)
+        ceiling = ".".join(str(n) for n in NUMPY_MAXIMUM_EXCLUSIVE)
+        found = ".".join(str(n) for n in installed)
+        raise RuntimeError(
+            f"unsupported numpy {found}: this repository requires "
+            f">={floor},<{ceiling}.  Install the pinned stack with "
+            "'python3 -m pip install -r calculations/requirements.txt'."
+        )
+    return installed
+
+
+NUMPY_VERSION = check_numeric_stack()
 
 B = 1.300
 S = 0.282
@@ -23,16 +91,42 @@ TIP_TC = 0.090
 # engineering value used by every released calculation; changing it is a
 # controlled numerical-contract revision, not a local cleanup.
 G0 = 9.81                     # m/s2
+# Standard gravity is a *unit definition*, not a local acceleration: the
+# kilogram-force is defined as exactly 9.80665 m/s2.  Keeping it separate from
+# G0 stops one symbol from serving as two different physical constants.
+KGF_STANDARD_GRAVITY = 9.80665   # m/s2, exact by definition [M]
 RHO_SL = 1.225                # kg/m3, ISA sea-level density [M]
 NU_SL = 1.50e-5               # m2/s, declared low-altitude value [E]
 
-# Mission and certification-like design points.  The operational article V_NE
-# and the higher structural sizing speed are different quantities by design.
-CRUISE_SPEED_KMH = 95.0
+# ---------------------------------------------------------------------------
+# The speed ladder.  Each entry has ONE role, and the roles are ordered; the
+# ordering is asserted in `validate_geometry`, because nothing previously
+# stopped an edit from inverting it.
+#
+#   STALL_SPEED_LIMIT_KMH        requirement ceiling on V_s (R-series)
+#   CRUISE_SPEED_KMH             the O1 energy point
+#   INITIAL_SPEED_LIMIT_KMH      operational cap for the first article
+#   ARTICLE_V_NE_KMH             article V_NE; the divergence criterion basis
+#   STRUCTURAL_DESIGN_SPEED_KMH  structural/hinge-moment sizing case
+#
+# INITIAL_SPEED_LIMIT_KMH is an OPERATIONAL CAP, not a Part 23 design cruising
+# speed V_C.  The distinction matters: the manoeuvring speed V_A at the +6 g
+# limit is 107.9 km/h (CLEAN) and 109.4 km/h (V1), i.e. ABOVE this cap, so
+# treating it as V_C would place the gust schedule's "V_C" below the manoeuvre
+# corner.  `flight_envelope.py` therefore labels it a screening speed and the
+# invariant below records the relationship instead of hiding it.
 STALL_SPEED_LIMIT_KMH = 45.0
+CRUISE_SPEED_KMH = 95.0
 INITIAL_SPEED_LIMIT_KMH = 105.0
 ARTICLE_V_NE_KMH = 160.0
 STRUCTURAL_DESIGN_SPEED_KMH = 180.0
+SPEED_LADDER_KMH = (
+    ("V_s requirement ceiling", STALL_SPEED_LIMIT_KMH),
+    ("cruise (O1 energy point)", CRUISE_SPEED_KMH),
+    ("initial operational cap", INITIAL_SPEED_LIMIT_KMH),
+    ("article V_NE", ARTICLE_V_NE_KMH),
+    ("structural sizing case", STRUCTURAL_DESIGN_SPEED_KMH),
+)
 O1_ENERGY_LIMIT_WH_PER_KM = 1.15
 REFERENCE_BEC_EFFICIENCY = 0.90   # battery-to-avionics rail efficiency [E]
 POSITIVE_LIMIT_LOAD_FACTOR = 6.0
@@ -43,6 +137,21 @@ PETG_DENSITY_KG_M3 = 1270.0    # 1.27 g/cm3, project material contract [M]/[E]
 # Aerodynamic and mass contract used by coupled performance calculations.
 CL_MAX_WING = 0.589           # I-07 wing value [D], pending E2
 STATIC_MARGIN = 0.08
+
+# Released printed wash-in (positive = tip at higher incidence).  This is a
+# first-order geometric parameter: it sets trim, Cm0, the tip-stall margin and
+# the torsion window.  It was previously declared independently in four modules
+# plus one bare literal, with nothing cross-checking them.
+DESIGN_TWIST_DEG = 3.0        # ADR-0041 / I-07 [D]
+TWIST_STRUCTURAL_CAP_DEG = 3.0  # printable/structural cap explored in I-21 [E]
+
+# Canonical analysis meshes.  Every released aerodynamic number is quoted at
+# these resolutions; a different mesh is a deliberate convergence study, never
+# an incidental call-site choice.  The published neutral point moved by 1.4 mm
+# across the meshes previously in use, which is 28 % of the +/-5 mm CG band.
+VLM_NY = 40                   # spanwise panels, half-cosine both tips
+VLM_NX = 6                    # chordwise panels
+WEISSINGER_NY = 100           # Weissinger-L spanwise stations
 ARTICLE_CLEAN_MASS_KG = 1.55325
 V1_FIN_MASS_CAP_KG = 0.03672          # allocation target retained by ADR-0043
 V1_FIN_SHELL_MOUNT_LOWER_KG = 0.03731 # current V1a analytical lower model [E]
@@ -102,6 +211,32 @@ def x_le(y, sweep_deg=SWEEP_C4_DEG):
 
 def x_te(y, sweep_deg=SWEEP_C4_DEG):
     return x_c4(y, sweep_deg) + 3.0 * chord(y) / 4.0
+
+
+def taper_integrals(y_inner, y_outer, chord_fraction=1.0):
+    """Exact ``(integral c dy, integral c**2 dy)`` over a starboard span band.
+
+    The chord law is linear in ``y``, so both integrals are closed-form and no
+    quadrature is required: the area is the trapezoid rule (exact for a linear
+    integrand) and the second integral is the exact rule for a quadratic,
+    ``(y2 - y1) * (c1**2 + c1*c2 + c2**2) / 3``.
+
+    ``chord_fraction`` scales the chord, so passing ``ELEVON_CHORD_FRACTION``
+    returns the control-surface area and its hinge-moment second moment.
+    ``area * mac`` with ``mac = second / area`` is the exact tapered-surface
+    hinge-moment reference.
+    """
+    if not 0.0 <= y_inner < y_outer <= HALF_SPAN + 1e-12:
+        raise ValueError(
+            f"require 0 <= y_inner < y_outer <= {HALF_SPAN} m")
+    if chord_fraction <= 0.0:
+        raise ValueError("chord fraction must be positive")
+    c_inner = chord_fraction * chord(y_inner)
+    c_outer = chord_fraction * chord(y_outer)
+    span = y_outer - y_inner
+    area = span * (c_inner + c_outer) / 2.0
+    second = span * (c_inner**2 + c_inner * c_outer + c_outer**2) / 3.0
+    return area, second
 
 
 def planform_centroid(sweep_deg=SWEEP_C4_DEG):
@@ -227,6 +362,26 @@ def validate_geometry():
             44.6, abs_tol=0.05),
         "two-servo analytical V1 remains below the 45 km/h ceiling":
             stall_speed(ARTICLE_V1_MASS_KG) * 3.6 < STALL_SPEED_LIMIT_KMH,
+        # The speed ladder must stay ordered.  Nothing enforced this before, so
+        # an edit to any single speed could silently invert two roles.
+        "the speed ladder is strictly ordered": all(
+            low[1] < high[1]
+            for low, high in zip(SPEED_LADDER_KMH, SPEED_LADDER_KMH[1:])),
+        "every released mass stalls below the requirement ceiling": all(
+            stall_speed(mass) * 3.6 < STALL_SPEED_LIMIT_KMH
+            for mass in (ARTICLE_CLEAN_MASS_KG, ARTICLE_V1_MASS_KG,
+                         ARTICLE_V1_ALLOCATION_MASS_KG)),
+        # V_A = V_s * sqrt(n_limit).  It sits ABOVE the initial operational cap
+        # for every released mass; the invariant records that relationship so
+        # the cap is never silently reinterpreted as a Part 23 V_C.
+        "manoeuvring speed exceeds the initial operational cap": all(
+            stall_speed(mass) * 3.6 * POSITIVE_LIMIT_LOAD_FACTOR**0.5
+            > INITIAL_SPEED_LIMIT_KMH
+            for mass in (ARTICLE_CLEAN_MASS_KG, ARTICLE_V1_MASS_KG)),
+        "manoeuvring speed stays below the article V_NE": all(
+            stall_speed(mass) * 3.6 * POSITIVE_LIMIT_LOAD_FACTOR**0.5
+            < ARTICLE_V_NE_KMH
+            for mass in (ARTICLE_CLEAN_MASS_KG, ARTICLE_V1_MASS_KG)),
     }
 
 
