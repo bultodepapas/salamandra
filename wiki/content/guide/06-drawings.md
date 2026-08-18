@@ -16,7 +16,9 @@ provisional. These are **technical sketches, not manufacturing drawings**.
 
 Use this sheet to review the whole-aircraft relationship: 1,300 mm controlled planform,
 modular stations, quarter-chord sweep, CG/NP, nose-boom battery station and rear-pusher
-envelope. The equipment outlines are amber and provisional.
+envelope. A continuous curved fuselage OML now connects the battery fairing, CORE and
+rear pod so the aircraft reads as one body. Its required stations are sourced, but its
+Bézier transitions remain `[I]`, amber and provisional until OP-21/F2 freezes native CAD.
 
 ### Right half-wing · SLM-WNG-001
 

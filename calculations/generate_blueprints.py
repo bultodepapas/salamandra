@@ -67,7 +67,8 @@ class DrawingContract:
     forward_support_m: float = -0.459
     tube_core_insertion_m: float = 0.050
     cradle_length_m: float = 0.201
-    cradle_width_m: float = 0.066
+    cradle_inner_width_m: float = 0.066
+    cradle_wall_m: float = 0.0012
     camera_station_m: float = -0.393
     motor_body_forward_m: float = 0.195
     motor_mount_m: float = 0.230
@@ -363,7 +364,7 @@ def draw_general_arrangement() -> SvgSheet:
     ox, oy = 210.0, 160.0
     sheet = SvgSheet(
         "Salamandra Article #1 general arrangement",
-        "Metric A3 top-view draft showing controlled forward-swept planform geometry, modular stations, calculated balance datums, and provisional battery and propulsion envelopes.",
+        "Metric A3 top-view draft showing controlled forward-swept planform geometry, modular stations, calculated balance datums, and a provisional continuous fuselage outer-mould concept around the battery boom and propulsion pod.",
         "SLM-GA-001",
     )
     title_block(
@@ -412,36 +413,114 @@ def draw_general_arrangement() -> SvgSheet:
             sheet.line(*plan_point(x_le(y), y, ox, oy, scale),
                        *plan_point(x_te(y), y, ox, oy, scale), "station")
 
-    # Provisional nose-boom/cradle and propulsion envelopes.
+    # Provisional continuous body OML.  Its longitudinal stations and required
+    # battery width come from the current Design Guide, but the Bezier control
+    # points are an [I] styling/packaging concept until OP-21 and F2 freeze CAD.
     layout = solve_reference_layout()
+    cradle_fwd = layout["bay_fwd"]
+    cradle_aft = cradle_fwd + CONTRACT.cradle_length_m
+    cradle_outer_half = (
+        CONTRACT.cradle_inner_width_m + 2.0 * CONTRACT.cradle_wall_m
+    ) / 2.0
+
+    def body_point(x_m: float, y_m: float) -> str:
+        x_svg, y_svg = plan_point(x_m, y_m, ox, oy, scale)
+        return f"{fmt(x_svg)} {fmt(y_svg)}"
+
+    def body_curve(
+        control_1: tuple[float, float],
+        control_2: tuple[float, float],
+        end: tuple[float, float],
+    ) -> str:
+        return (
+            f"C {body_point(*control_1)} {body_point(*control_2)} "
+            f"{body_point(*end)}"
+        )
+
+    body_path = " ".join([
+        f"M {body_point(cradle_fwd, 0.0)}",
+        body_curve(
+            (cradle_fwd + 0.006, 0.021),
+            (cradle_fwd + 0.015, cradle_outer_half),
+            (cradle_fwd + 0.026, cradle_outer_half),
+        ),
+        body_curve(
+            (cradle_fwd + 0.075, cradle_outer_half),
+            (cradle_aft - 0.030, cradle_outer_half),
+            (cradle_aft, 0.030),
+        ),
+        body_curve(
+            (cradle_aft + 0.050, 0.029),
+            (CONTRACT.nose_support_m - 0.040, 0.026),
+            (CONTRACT.nose_support_m, 0.026),
+        ),
+        body_curve((-0.050, 0.028), (0.090, 0.042), (0.170, 0.042)),
+        body_curve(
+            (0.205, 0.042),
+            (0.248, 0.032),
+            (CONTRACT.rear_pod_end_m, 0.024),
+        ),
+        body_curve(
+            (CONTRACT.rear_pod_end_m + 0.010, 0.016),
+            (CONTRACT.rear_pod_end_m + 0.010, -0.016),
+            (CONTRACT.rear_pod_end_m, -0.024),
+        ),
+        body_curve((0.248, -0.032), (0.205, -0.042), (0.170, -0.042)),
+        body_curve(
+            (0.090, -0.042),
+            (-0.050, -0.028),
+            (CONTRACT.nose_support_m, -0.026),
+        ),
+        body_curve(
+            (CONTRACT.nose_support_m - 0.040, -0.026),
+            (cradle_aft + 0.050, -0.029),
+            (cradle_aft, -0.030),
+        ),
+        body_curve(
+            (cradle_aft - 0.030, -cradle_outer_half),
+            (cradle_fwd + 0.075, -cradle_outer_half),
+            (cradle_fwd + 0.026, -cradle_outer_half),
+        ),
+        body_curve(
+            (cradle_fwd + 0.015, -cradle_outer_half),
+            (cradle_fwd + 0.006, -0.021),
+            (cradle_fwd, 0.0),
+        ),
+        "Z",
+    ])
+    sheet.path(
+        body_path,
+        "provisional-fill",
+        style=(
+            "fill:#f4c46a;fill-opacity:.22;stroke:#985b00;stroke-width:.62;"
+            "stroke-dasharray:3.4 1.6;stroke-linejoin:round"
+        ),
+    )
+
+    # Internal packaging remains visible through the OML: Ø8 boom, cradle
+    # envelope, pack station and the two structural support stations.
     boom_forward = layout["bay_fwd"]
     boom_aft = CONTRACT.nose_support_m + CONTRACT.tube_core_insertion_m
     boom_left = plan_point(boom_forward, -0.004, ox, oy, scale)
     boom_right = plan_point(boom_aft, 0.004, ox, oy, scale)
     sheet.rect(boom_left[0], boom_left[1], boom_right[0] - boom_left[0],
-               boom_right[1] - boom_left[1], "provisional-fill", rx=0.8)
+               boom_right[1] - boom_left[1], "provisional-line", rx=0.8)
 
-    cradle_fwd = layout["bay_fwd"]
-    cradle_aft = cradle_fwd + CONTRACT.cradle_length_m
-    c1 = plan_point(cradle_fwd, -CONTRACT.cradle_width_m / 2.0, ox, oy, scale)
-    c2 = plan_point(cradle_aft, CONTRACT.cradle_width_m / 2.0, ox, oy, scale)
+    c1 = plan_point(cradle_fwd, -cradle_outer_half, ox, oy, scale)
+    c2 = plan_point(cradle_aft, cradle_outer_half, ox, oy, scale)
     sheet.rect(c1[0], c1[1], c2[0] - c1[0], c2[1] - c1[1],
-               "provisional-fill", rx=1.2)
+               "provisional-line", rx=4.0)
     pack_station = layout["pack_station"]
     px1, py1 = plan_point(pack_station, -0.040, ox, oy, scale)
     px2, _ = plan_point(pack_station, 0.040, ox, oy, scale)
     sheet.line(px1, py1, px2, py1, "provisional-line")
-
-    pod_points_world = [
-        (CONTRACT.nose_support_m, -0.026),
-        (0.170, -0.042),
-        (CONTRACT.rear_pod_end_m, -0.024),
-        (CONTRACT.rear_pod_end_m, 0.024),
-        (0.170, 0.042),
+    for station, half_width in (
+        (cradle_aft, 0.030),
         (CONTRACT.nose_support_m, 0.026),
-    ]
-    sheet.polyline([plan_point(x, y, ox, oy, scale) for x, y in pod_points_world],
-                   "provisional-fill", close=True)
+        (CONTRACT.motor_mount_m, 0.034),
+    ):
+        sheet.line(*plan_point(station, -half_width, ox, oy, scale),
+                   *plan_point(station, half_width, ox, oy, scale), "station")
 
     motor_fwd = plan_point(CONTRACT.motor_body_forward_m, -0.0175, ox, oy, scale)
     motor_aft = plan_point(CONTRACT.motor_mount_m, 0.0175, ox, oy, scale)
@@ -501,6 +580,8 @@ def draw_general_arrangement() -> SvgSheet:
     sheet.leader(*camera, 185, 52, "CAMERA x −393 · PROVISIONAL", True, "end")
     sheet.leader(*plan_point(pack_station, 0.033, ox, oy, scale), 239, 73,
                  f"6S1P PACK x {pack_station*1000:+.1f} [D]/[E]", True)
+    sheet.leader(*plan_point(-0.180, -0.028, ox, oy, scale), 164, 86,
+                 "FUSELAGE OML · PROVISIONAL [I]", True, "end")
     sheet.leader(*plan_point(CONTRACT.prop_plane_m, 0.1016, ox, oy, scale), 265, 229,
                  "APC 8×8 DISK x +235 · PROVISIONAL", True)
     sheet.leader(*chord_fraction_point(0.44, CONTRACT.hinge_fraction, ox, oy, scale),

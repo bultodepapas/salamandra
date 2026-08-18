@@ -9,13 +9,18 @@ open.
 
 | Drawing | Purpose | Scale | Authority |
 |---|---|---:|---|
-| [`SLM-GA-001-general-arrangement.svg`](SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and provisional equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]` |
+| [`SLM-GA-001-general-arrangement.svg`](SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and continuous provisional fuselage/equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]` |
 | [`SLM-WNG-001-half-wing-layout.svg`](SLM-WNG-001-half-wing-layout.svg) | Right half-wing: printed segments, cells, spar/pin, elevon, exact y195 profile and polyhedral inset | A3 · plan 1:2 | Planform/profile `[D]`; structure/polyhedral `[E]`/`[I]` |
 
 Both sheets state **DRAFT — NOT FOR MANUFACTURE**. Amber dashed geometry is provisional
 and must not be reverse-engineered into a released part. The black/blue planform is
 traceable, but a printed part still requires native CAD, tolerances, mass properties and
 the applicable fit/structural test.
+
+The general-arrangement fuselage is a smooth **top-view OML concept `[I]`**. Its battery,
+support and propulsion stations are sourced, but the Bézier transitions are packaging
+geometry only. OP-21 and F2 must freeze the native CAD surface before it can become an
+interface or manufacturing reference.
 
 ## Reproduce
 
