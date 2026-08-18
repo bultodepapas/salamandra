@@ -98,6 +98,7 @@ V_LIMIT_INCREMENT = 5.0    # km/h; operational limits always round down
 # ---------------------------------------------------------------------------
 # Real-section geometry (guide §7.1 + geometry/airfoils/mh60-135.dat)
 # ---------------------------------------------------------------------------
+@cache
 def load_profile():
     """Loads the MH60->13.5 % coordinates (x/c, z/c), UIUC order
     (TE->LE upper, LE->TE lower). Returns x, z arrays."""
@@ -124,42 +125,42 @@ def section_geometry(tc_scale=1.0):
         return (np.interp(xq, upper[::-1, 0], upper[::-1, 1]) * tc_scale,
                 np.interp(xq, lower[:, 0], lower[:, 1]) * tc_scale)
 
+    # Vectorised shoelace.  These were Python loops over ~200 vertices, called
+    # once per spanwise station: `grid(401)` spent 0.29 s here.  The @cache on
+    # this function was keyed on a continuously varying float and measured
+    # hits=0, misses=401, so it never removed any of that cost.
+    def _shoelace(poly):
+        x, z = poly[:, 0], poly[:, 1]
+        cross = x * np.roll(z, -1) - np.roll(x, -1) * z
+        return cross
+
     def poly_area(poly):
-        n = len(poly)
-        s = 0.0
-        for i in range(n):
-            x1, y1 = poly[i]
-            x2, y2 = poly[(i + 1) % n]
-            s += x1 * y2 - x2 * y1
-        return abs(s) / 2.0
+        return abs(_shoelace(poly).sum()) / 2.0
 
     def poly_len(seg):
         return np.sum(np.hypot(np.diff(seg[:, 0]), np.diff(seg[:, 1])))
 
     def poly_centroid(poly):
-        n = len(poly)
-        cx = cy = 0.0
-        A = 0.0
-        for i in range(n):
-            x1, y1 = poly[i]
-            x2, y2 = poly[(i + 1) % n]
-            cr = x1 * y2 - x2 * y1
-            A += cr
-            cx += (x1 + x2) * cr
-            cy += (y1 + y2) * cr
-        A *= 0.5
-        return cx / (6 * A), cy / (6 * A)
+        x, z = poly[:, 0], poly[:, 1]
+        cross = _shoelace(poly)
+        area2 = cross.sum()
+        cx = np.dot(x + np.roll(x, -1), cross)
+        cz = np.dot(z + np.roll(z, -1), cross)
+        return cx / (3.0 * area2), cz / (3.0 * area2)
 
     xs_all = np.sort(np.unique(np.concatenate([upper[:, 0], lower[:, 0]])))
 
     def cell(xa, xb, close_aft):
         xs = xs_all[(xs_all >= xa) & (xs_all <= xb)]
         zu, zl = interp_profile(xs)
-        p = np.array(list(zip(xs, zu)) + [(xb, zl[-1])]
-                     + list(zip(xs[::-1], zl[::-1])))
+        p = np.concatenate((
+            np.column_stack((xs, zu)),
+            np.array([[xb, zl[-1]]]),
+            np.column_stack((xs[::-1], zl[::-1])),
+        ))
         A = poly_area(p)
-        s = poly_len(np.array(list(zip(xs, zu)))) \
-            + poly_len(np.array(list(zip(xs[::-1], zl[::-1])))) \
+        s = poly_len(np.column_stack((xs, zu))) \
+            + poly_len(np.column_stack((xs, zl))) \
             + abs(zu[0] - zl[0])          # front closure (LE arc / web)
         if close_aft:
             s += abs(zu[-1] - zl[-1])     # aft closure (hinge line)
@@ -174,9 +175,59 @@ def section_geometry(tc_scale=1.0):
     return A1, A2, s1, s2, s12, x_cell_area
 
 
+@cache
+def _section_scaling_basis():
+    """Thickness-independent pieces of the two-cell section geometry.
+
+    Under a pure z-scaling of the profile the enclosed AREAS, the web length
+    and the cell-area centroid are exactly linear in `tc_scale` (verified to
+    machine precision), while the two cell PERIMETERS are not: they need
+    ``sum(hypot(dx, tc_scale*dz))`` re-evaluated.  Caching the dx/dz arrays
+    once turns each subsequent station into two vectorised reductions.
+    """
+    upper, lower = load_profile()
+    xs_all = np.sort(np.unique(np.concatenate([upper[:, 0], lower[:, 0]])))
+
+    def cell_segments(xa, xb):
+        xs = xs_all[(xs_all >= xa) & (xs_all <= xb)]
+        zu = np.interp(xs, upper[::-1, 0], upper[::-1, 1])
+        zl = np.interp(xs, lower[:, 0], lower[:, 1])
+        return (np.diff(xs), np.diff(zu), np.diff(zl),
+                abs(zu[0] - zl[0]), abs(zu[-1] - zl[-1]))
+
+    unit = section_geometry(1.0)
+    return cell_segments(0.0, X_DBOX), cell_segments(X_DBOX, X_BOX), unit
+
+
+def scaled_section_geometry(tc_scale):
+    """`section_geometry` for an arbitrary t/c, without re-integrating.
+
+    Equivalent to `section_geometry(tc_scale)` to machine precision; it exists
+    because `section_geometry` is keyed on a continuously varying float, so its
+    cache measured hits=0 / misses=401 on a single `grid(401)` call and removed
+    no cost at all.
+    """
+    (dx1, dzu1, dzl1, front1, aft1), \
+        (dx2, dzu2, dzl2, front2, aft2), unit = _section_scaling_basis()
+    a1_u, a2_u, _, _, s12_u, x_cell = unit
+
+    def perimeter(dx, dzu, dzl, front, aft, close_aft):
+        total = (np.hypot(dx, tc_scale * dzu).sum()
+                 + np.hypot(dx, tc_scale * dzl).sum()
+                 + tc_scale * front)
+        if close_aft:
+            total += tc_scale * aft
+        return float(total)
+
+    s12 = tc_scale * s12_u
+    s1 = perimeter(dx1, dzu1, dzl1, front1, aft1, False) + s12
+    s2 = perimeter(dx2, dzu2, dzl2, front2, aft2, True)
+    return (tc_scale * a1_u, tc_scale * a2_u, s1, s2, s12, x_cell)
+
+
 def j_section(c, tc, t, area_factor=1.0):
     """J of the real two-cell section scaled to chord c, local t/c tc."""
-    A1, A2, s1, s2, s12, _ = section_geometry(tc / ROOT_TC)
+    A1, A2, s1, s2, s12, _ = scaled_section_geometry(tc / ROOT_TC)
     return j_bredt(A1 * c ** 2 * area_factor, A2 * c ** 2 * area_factor,
                    s1 * c, s2 * c, s12 * c, t)
 
@@ -228,11 +279,52 @@ def gj_shell(j, g=G_PETG):
 # ---------------------------------------------------------------------------
 # Divergence: smallest eigenvalue of (GJ·th')' + q·c·e·a·th = 0
 # ---------------------------------------------------------------------------
+def _sturm_count_below(diag, off, value):
+    """Number of eigenvalues of a symmetric tridiagonal matrix below `value`.
+
+    Standard Sturm sequence on the leading principal minors, with the usual
+    guard against an exact zero pivot.
+    """
+    count = 0
+    pivot = diag[0] - value
+    if pivot < 0.0:
+        count += 1
+    for i in range(1, len(diag)):
+        if pivot == 0.0:
+            pivot = np.finfo(float).tiny
+        pivot = (diag[i] - value) - off[i - 1] ** 2 / pivot
+        if pivot < 0.0:
+            count += 1
+    return count
+
+
+def _smallest_tridiagonal_eigenvalue(diag, off, tol=1e-12):
+    """Smallest eigenvalue of a symmetric tridiagonal matrix, by bisection.
+
+    The FEM matrix here IS tridiagonal, but it used to be assembled dense and
+    handed to `np.linalg.eigh`, which computes the whole spectrum in O(n^3):
+    0.9 s per call on the n = 401 grid, 13.6 s of a 15 s run, for one number.
+    Sturm bisection costs O(n) per step and returns the same value.
+    """
+    radius = float(np.max(np.abs(diag))
+                   + 2.0 * (np.max(np.abs(off)) if off.size else 0.0))
+    lo, hi = -radius, radius
+    while hi - lo > tol * max(1.0, abs(hi)):
+        mid = 0.5 * (lo + hi)
+        if _sturm_count_below(diag, off, mid) >= 1:
+            hi = mid
+        else:
+            lo = mid
+    return 0.5 * (lo + hi)
+
+
 def q_divergence(ys, c, j, g, a, e_frac, k_joint=K_JOINT, joint=True):
     """Smallest divergence dynamic pressure via the WEAK FORM (FEM, linear
     elements, lumped mass): K·th = q·M·th, K symmetric tridiagonal,
-    M diagonal -> symmetric definite eigenproblem solved with np.linalg.eigh
-    (robust for the fundamental mode, unlike QR on the non-symmetric ODE).
+    M diagonal -> symmetric definite eigenproblem whose SMALLEST eigenvalue is
+    obtained by Sturm bisection on the tridiagonal bands (robust for the
+    fundamental mode, unlike QR on the non-symmetric ODE, and O(n) per step
+    instead of the O(n^3) full spectrum a dense `eigh` would compute).
 
     Boundary conditions: th(0) = 0 (root fixed — node removed); tip free
     (natural: GJ·th'(L) = 0). R-JOINT (ADR-0032): discrete torsional spring
@@ -243,28 +335,34 @@ def q_divergence(ys, c, j, g, a, e_frac, k_joint=K_JOINT, joint=True):
     n = len(ys)
     dy = ys[1] - ys[0]
     gj = j * g
-    e = e_frac * c
-    m = c * e * a                      # m(y) = c·e·a, q·m·th coupling
-    K = np.zeros((n - 1, n - 1))
+    m = c * (e_frac * c) * a           # m(y) = c·e·a, q·m·th coupling
     M = m[1:] * dy
     j0 = int(np.argmin(np.abs(ys - JOINT_Y)))
     k_s = k_joint * gj[j0] / L if joint else None
-    for elem in range(1, n):               # element between nodes elem-1, elem
-        gje = 0.5 * (gj[elem - 1] + gj[elem])   # edge stiffness
-        if k_s is not None and elem == j0 + 1:
-            gje = 1.0 / (1.0 / gje + 1.0 / (k_s * dy))   # series compliance
-        if elem == 1:
-            K[0, 0] += gje / dy            # root element: node 0 fixed
-        else:
-            r = elem - 1                   # reduced index of original node
-            K[r - 1, r - 1] += gje / dy
-            K[r - 1, r] -= gje / dy
-            K[r, r - 1] -= gje / dy
-            K[r, r] += gje / dy
-    D = np.sqrt(M)
-    B = K / np.outer(D, D)             # symmetric: B (D·th) = q (D·th)
-    w = np.linalg.eigh(B)[0]
-    return w[0] if w[0] > 0 else np.inf
+
+    # Element stiffnesses, vectorised.  The joint contributes series compliance
+    # to the single element that spans it.
+    gje = 0.5 * (gj[:-1] + gj[1:])
+    if k_s is not None:
+        idx = j0                       # element (j0, j0+1) in 0-based edges
+        gje = gje.copy()
+        gje[idx] = 1.0 / (1.0 / gje[idx] + 1.0 / (k_s * dy))
+
+    # Assemble K directly as the two bands of a symmetric tridiagonal matrix
+    # instead of a dense (n-1)x(n-1) array: node 0 is fixed and removed.
+    k_edge = gje / dy
+    diag = np.empty(n - 1)
+    diag[:-1] = k_edge[:-1] + k_edge[1:]
+    diag[-1] = k_edge[-1]
+    off = -k_edge[1:]                  # length n-2
+
+    # B = D^-1 K D^-1 with D = sqrt(M) preserves symmetry and tridiagonality.
+    d_scale = np.sqrt(M)
+    diag = diag / d_scale**2
+    off = off / (d_scale[:-1] * d_scale[1:])
+
+    smallest = _smallest_tridiagonal_eigenvalue(diag, off)
+    return smallest if smallest > 0 else np.inf
 
 
 def v_from_q(q):
@@ -276,33 +374,70 @@ def q_uniform(gj, c_ref, a, e_frac):
     return np.pi ** 2 * gj / (4.0 * L ** 2 * c_ref * e_frac * c_ref * a)
 
 
-def q_divergence_shooting(ys, c, j, g, a, e_frac, nq=40000, qmax=2e5):
+def _tip_torque(q, ys, c, j, g, a, e_frac):
+    """Tip torque T(L) after marching from th(0)=0, T(0)=1, for each q.
+
+    Vectorised over ``q``: the march is sequential in span but independent
+    across dynamic pressures, so all candidates advance in lockstep.  The
+    divergence eigenvalue is the smallest positive q with T(L) = 0.
+    """
+    q = np.atleast_1d(np.asarray(q, dtype=float))
+    m = c * (e_frac * c) * a
+    theta = np.zeros_like(q)
+    torque = np.ones_like(q)
+    for i in range(len(ys) - 1):
+        dy = ys[i + 1] - ys[i]
+        gj = j[i] * g
+        k = np.sqrt(q * m[i] / gj)
+        kdy = k * dy
+        # Exact piecewise-constant solution, with the k -> 0 series limit:
+        # sin(k dy)/k -> dy and gj k sin(k dy) -> q m dy.  Without it the
+        # transfer matrix divides by gj*k and is singular at vanishing q or
+        # vanishing eccentricity.
+        small = kdy < 1e-8
+        sin_over_k = np.where(small, dy, np.sin(kdy) / np.where(small, 1.0, k))
+        gjk_sin = np.where(small, q * m[i] * dy, gj * k * np.sin(kdy))
+        cos_kdy = np.cos(kdy)
+        theta, torque = (theta * cos_kdy + torque * sin_over_k / gj,
+                         -theta * gjk_sin + torque * cos_kdy)
+    return torque
+
+
+def q_divergence_shooting(ys, c, j, g, a, e_frac, nq=400, qmax=2e5,
+                          tol=1e-10):
     """INDEPENDENT method (C2 discipline): shooting with transfer matrices in
     FLUX form — state (th, T = GJ·th'), T continuous across interfaces (the
     correct condition for varying GJ; matching th' instead is a
     non-consistent discretization: it drops the GJ'·th' term of the ODE
     (GJ·th')' + q·m·th = 0 — the piecewise-constant k march converges to the
     WRONG equation). Piecewise-constant coefficients per segment (exact local
-    solution); root-find the smallest q with T(L) = 0 for th(0) = 0."""
-    e = e_frac * c
-    m = c * e * a
-    q_prev, sign_prev = None, None
-    for iq in range(1, nq):
-        q = qmax * iq / nq
-        th, t = 0.0, 1.0                    # th(0)=0, unit torque at the root
-        for i in range(len(ys) - 1):
-            dy = ys[i + 1] - ys[i]
-            gj = j[i] * g
-            k = np.sqrt(q * m[i] / gj)
-            ck, sk = np.cos(k * dy), np.sin(k * dy)
-            th_new = th * ck + t * sk / (gj * k)
-            t = -th * gj * k * sk + t * ck
-            th = th_new
-        sign = np.sign(t)
-        if sign_prev is not None and sign != sign_prev and sign_prev != 0:
-            return q_prev
-        q_prev, sign_prev = q, sign
-    return np.inf
+    solution); root-find the smallest q with T(L) = 0 for th(0) = 0.
+
+    The bracket is found with ONE vectorised coarse sweep and then closed by
+    bisection to ``tol`` relative.  The previous implementation swept 40 000
+    dynamic pressures in a pure-Python double loop and returned ``q_prev``, the
+    LOWER bracket rather than the root: 3.9 s per call for a 5 Pa resolution
+    carrying a systematic low bias.
+    """
+    if nq < 2 or qmax <= 0.0 or tol <= 0.0:
+        raise ValueError("nq >= 2, qmax > 0 and tol > 0 are required")
+    grid_q = np.linspace(qmax / nq, qmax, nq)
+    torque = _tip_torque(grid_q, ys, c, j, g, a, e_frac)
+    sign_change = np.nonzero(np.sign(torque[:-1]) * np.sign(torque[1:]) < 0.0)[0]
+    if sign_change.size == 0:
+        return np.inf
+    lo, hi = grid_q[sign_change[0]], grid_q[sign_change[0] + 1]
+    f_lo = float(_tip_torque(lo, ys, c, j, g, a, e_frac)[0])
+    while hi - lo > tol * hi:
+        mid = 0.5 * (lo + hi)
+        f_mid = float(_tip_torque(mid, ys, c, j, g, a, e_frac)[0])
+        if f_mid == 0.0:
+            return mid
+        if f_lo * f_mid < 0.0:
+            hi = mid
+        else:
+            lo, f_lo = mid, f_mid
+    return 0.5 * (lo + hi)
 
 
 # ---------------------------------------------------------------------------
@@ -511,6 +646,18 @@ def main():
     q_num = q_divergence(ys_u, c_ref * np.ones_like(ys_u), j_uniform,
                          G_PETG, a_ref, e_nom, joint=False)
     q_cl = q_uniform(gj_ref, c_ref, a_ref, e_nom)
+    # The tridiagonal eigensolver replaced a dense eigh.  Prove the
+    # substitution, do not assume it: rebuild the same matrix densely and
+    # compare the smallest eigenvalue.
+    rng = np.random.default_rng(20260818)
+    d_test = rng.uniform(1.0, 5.0, 40)
+    o_test = rng.uniform(-1.0, 1.0, 39)
+    dense = np.diag(d_test) + np.diag(o_test, 1) + np.diag(o_test, -1)
+    check(f"Sturm bisection reproduces dense eigh on a random tridiagonal "
+          f"(rel {abs(_smallest_tridiagonal_eigenvalue(d_test, o_test) - np.linalg.eigvalsh(dense)[0]) / abs(np.linalg.eigvalsh(dense)[0]):.2e})",
+          abs(_smallest_tridiagonal_eigenvalue(d_test, o_test)
+              - np.linalg.eigvalsh(dense)[0])
+          <= 1e-9 * abs(np.linalg.eigvalsh(dense)[0]))
     check(f"Discretized solver reproduces uniform closed form "
           f"(q {q_num:.1f} vs {q_cl:.1f} Pa, {100*abs(q_num-q_cl)/q_cl:.2f} %)",
           abs(q_num - q_cl) / q_cl < 0.02)

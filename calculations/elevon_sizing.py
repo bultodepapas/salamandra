@@ -20,7 +20,7 @@ import numpy as np
 import design_config
 import equipment_layout
 import servo_torque
-from vlm_ala_volante import geom, solve
+from vlm_ala_volante import geom_cached, solve
 
 CM0_WING_N10 = +0.003258
 CM0_WING_N12 = +0.002095
@@ -120,7 +120,7 @@ def cm0_wing(
     surface: ElevonGeometry = ARTICLE_1,
 ) -> float:
     """Linear-VLM wing Cm at CL=0 for physical symmetric elevon deflection."""
-    g = geom(
+    g = geom_cached(
         design_config.B,
         design_config.S,
         design_config.TAPER,
@@ -174,7 +174,7 @@ def _roll_coefficient(g: dict, strip_lift: np.ndarray) -> float:
 
 def roll_derivatives(surface: ElevonGeometry) -> dict[str, float]:
     """Return Cl_delta_a and Cl_p per radian from linear VLM."""
-    g = geom(
+    g = geom_cached(
         design_config.B,
         design_config.S,
         design_config.TAPER,

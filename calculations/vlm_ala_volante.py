@@ -66,6 +66,30 @@ def geom(b, S, taper, sweep_c4_deg, tip_twist_deg, ny=40, nx=6):
                 "cr": cr, "ny": ny, "nx": nx, "b": b, "S": S, "cbar": cbar, "x_le_mac": x_le_mac}
 
 
+def geom_cached(b, S, taper, sweep_c4_deg, tip_twist_deg, ny=40, nx=6):
+    """`geom` with the aerodynamic influence matrix shared across calls.
+
+    The matrix depends only on the mesh, not on twist or angle of attack, and
+    building it is the O(N^2) Biot-Savart cost.  Callers that sweep twist or
+    control deflection over one mesh (elevon_sizing, ventana_torsion) rebuilt
+    it every time.  A shallow copy with its own `eps` keeps mutation safe.
+    """
+    key = (b, S, taper, sweep_c4_deg, ny, nx)
+    template = _GEOM_CACHE.get(key)
+    if template is None:
+        template = geom(b, S, taper, sweep_c4_deg, 0.0, ny, nx)
+        solve(template, 0.0)              # populates '_influence_matrix'
+        _GEOM_CACHE[key] = template
+    fresh = dict(template)
+    half = b / 2.0
+    fresh['eps'] = np.radians(tip_twist_deg) * np.abs(
+        fresh['cps'][:, 1]) / half
+    return fresh
+
+
+_GEOM_CACHE = {}
+
+
 def vortex_line(p, a, b_):
     """Velocity induced by a unit-circulation finite vortex segment."""
     r1, r2 = p - a, p - b_
@@ -145,8 +169,8 @@ def mac(b, S, taper):
 
 
 def analiza(b, S, taper, sweep, twist, ny=40, nx=6, verbose=True):
-    g = geom(b, S, taper, sweep, twist, ny, nx)
-    cbar = mac(b, S, taper)
+    g = geom_cached(b, S, taper, sweep, twist, ny, nx)
+    cbar = g['cbar']            # already computed by `geom`; `mac` duplicated it
 
     CL1, Cm1, _, _ = solve(g, 0.0)
     CL2, Cm2, _, _ = solve(g, 4.0)
@@ -179,24 +203,93 @@ def cl_local(g, dL, q=0.5):
 
 
 def validation_checks():
-    """Return the independent straight-wing VLM validation checks."""
+    """Independent checks the solver must pass exactly or within a stated band.
+
+    The former suite accepted the lift slope "within 8 percent of Helmbold" and
+    the straight-wing neutral point "within 1.5 percent MAC".  Neither could
+    discriminate: Helmbold is itself an approximation, and 8 percent is wider
+    than any error the discretisation actually makes.  Correction C17 (a missing
+    MAC normalisation) is exactly the class of defect they would have missed, so
+    the checks below are the ones that catch it: exact linear-model identities,
+    exact symmetry, and a bounded mesh-convergence statement.
+    """
     result = analiza(B, S, 1.0, 0.0, 0.0, verbose=False)
     ar = B * B / S
-    theory = 2 * np.pi * ar / (2 + np.sqrt(ar**2 + 4))
+    helmbold = 2 * np.pi * ar / (2 + np.sqrt(ar**2 + 4))
+
+    # Vectorised Biot-Savart against the scalar reference.
     p = np.array([[0.7, 0.1, 0.2], [0.8, -0.3, 0.4]])
     a = np.array([0.1, -0.2, 0.0])
     b_ = np.array([0.2, 0.4, 0.0])
     vectorized = vortex_line_many(p, a, b_)
     scalar = np.array([vortex_line(row, a, b_) for row in p])
+
+    # Exact linearity: the model is linear, so CL and Cm must be affine in
+    # alpha to machine precision.  A non-linear residual means the boundary
+    # condition or the influence matrix is being rebuilt inconsistently.
+    g = geom_cached(B, S, TAPER, SWEEP_C4_DEG, 0.0)
+    cl = np.array([solve(g, alpha)[0] for alpha in (0.0, 2.0, 4.0)])
+    cm = np.array([solve(g, alpha)[1] for alpha in (0.0, 2.0, 4.0)])
+    linear_cl = abs((cl[2] - cl[1]) - (cl[1] - cl[0]))
+    linear_cm = abs((cm[2] - cm[1]) - (cm[1] - cm[0]))
+
+    # Superposition in twist: alpha and wash-in enter the same linear boundary
+    # condition, so their effects must add exactly.
+    g_twist = geom_cached(B, S, TAPER, SWEEP_C4_DEG, 3.0)
+    cl_both = solve(g_twist, 4.0)[0]
+    cl_alpha_only = solve(g, 4.0)[0]
+    cl_twist_only = solve(g_twist, 0.0)[0]
+    cl_zero = solve(g, 0.0)[0]
+    superposition = abs(cl_both - (cl_alpha_only + cl_twist_only - cl_zero))
+
+    # Spanwise symmetry of an untwisted symmetric wing.
+    _, _, strip_lift, _ = solve(g, 4.0)
+    y_strip, cl_strip, _ = cl_local(g, strip_lift)
+    asymmetry = float(np.max(np.abs(cl_strip - cl_strip[::-1])))
+
+    # THE C17 GUARD.  Re-take the pitching moment about the computed neutral
+    # point: by definition dCm/dCL there must be zero.  A missing or wrong MAC
+    # normalisation breaks this identity immediately, whereas comparing a lift
+    # slope against an approximate formula does not.
+    released = analiza(B, S, TAPER, SWEEP_C4_DEG, 0.0, verbose=False)
+    x_np = released["x_np"]
+    g_ref = geom_cached(B, S, TAPER, SWEEP_C4_DEG, 0.0)
+    residuals = []
+    for alpha in (0.0, 4.0):
+        cl_a, _, strip, _ = solve(g_ref, alpha)
+        moment_about_np = -((strip * (g_ref["xv"] - x_np)).sum()) / (
+            0.5 * g_ref["S"] * g_ref["cbar"])
+        residuals.append((cl_a, moment_about_np))
+    (cl0, cm0), (cl1, cm1) = residuals
+    dcm_dcl_at_np = abs((cm1 - cm0) / (cl1 - cl0))
+
+    # Mesh convergence, stated as a bound instead of left unmeasured.
+    coarse = analiza(B, S, TAPER, SWEEP_C4_DEG, 0.0, ny=40, nx=6,
+                     verbose=False)["x_np"]
+    fine = analiza(B, S, TAPER, SWEEP_C4_DEG, 0.0, ny=80, nx=12,
+                   verbose=False)["x_np"]
+
     return {
-        "straight-wing NP is within 1.5 percent MAC of quarter chord":
-            abs(result['x_np']) / result['cbar'] < 0.015,
-        "straight-wing lift slope is within 8 percent of Helmbold":
-            abs(result['CLa'] - theory) / theory < 0.08,
+        "CL is exactly linear in alpha": linear_cl < 1e-12,
+        "Cm is exactly linear in alpha": linear_cm < 1e-12,
+        "alpha and twist superpose exactly": superposition < 1e-12,
+        "an untwisted symmetric wing carries a symmetric load":
+            asymmetry < 1e-12,
+        "C17 guard: dCm/dCL vanishes about the computed neutral point":
+            dcm_dcl_at_np < 1e-9,
+        "canonical mesh is converged to better than 0.4 mm in x_NP":
+            abs(coarse - fine) < 0.4e-3,
+        "straight untwisted wing puts the NP just aft of the quarter chord":
+            0.005 < abs(result['x_np']) / result['cbar'] < 0.015,
         "influence matrix is cached after a solve":
             '_influence_matrix' in result['g'],
         "vectorized Biot-Savart matches scalar reference":
             np.allclose(vectorized, scalar, rtol=1e-12, atol=1e-12),
+        # Helmbold is an APPROXIMATION, not a reference solution: the residual
+        # difference is the classical lifting-line/lifting-surface gap, so this
+        # stays a wide sanity band and is never the discriminating check.
+        "lift slope is within the lifting-surface/Helmbold gap":
+            abs(result['CLa'] - helmbold) / helmbold < 0.08,
     }
 
 
