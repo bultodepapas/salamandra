@@ -25,6 +25,7 @@ from itertools import pairwise
 from math import sqrt
 from pathlib import Path
 
+import equipment_layout
 from balance_cg import CG_TARGET, NP_VLM, NP_WL, solve_reference_layout
 from design_config import (
     ASPECT_RATIO,
@@ -88,6 +89,30 @@ class DrawingContract:
 
 
 CONTRACT = DrawingContract()
+
+MASS_SKELETON_COMPONENT_IDS = (
+    "battery_6s1p",
+    "servo_left_195",
+    "servo_right_195",
+    "servo_left_390",
+    "servo_right_390",
+    "motor",
+    "prop_adapter",
+    "propeller",
+    "esc",
+    "fc",
+    "pdb",
+    "gps_mag",
+    "receiver",
+    "receiver_antenna",
+    "pitot_sensor",
+    "pitot_probe_tube",
+    "buzzer",
+    "o4_camera",
+    "o4_vtx",
+    "o4_antenna",
+    "avionics_installation_reserve",
+)
 
 
 @dataclass(frozen=True)
@@ -1006,6 +1031,354 @@ def draw_side_elevations() -> SvgSheet:
     return sheet
 
 
+def draw_equipment_mass_skeleton() -> SvgSheet:
+    """Draw the equipment-only mass skeleton from the 3D component ledger."""
+    scale = 4.0
+    top_origin = (137.0, 137.0)
+    side_origin = (330.0, 73.0)
+    clean, clean_battery_x = equipment_layout.solve_battery_x(
+        equipment_layout.reference_layout("clean")
+    )
+    v1, v1_battery_x = equipment_layout.solve_battery_x(
+        equipment_layout.reference_layout("v1"), clamp=True
+    )
+    components = tuple(
+        clean.component(identifier) for identifier in MASS_SKELETON_COMPONENT_IDS
+    )
+    reference_by_id = {
+        component.identifier: f"E{index:02d}"
+        for index, component in enumerate(components, start=1)
+    }
+
+    def top_point(x_mm: float, y_mm: float) -> tuple[float, float]:
+        return (
+            top_origin[0] + x_mm / scale,
+            top_origin[1] + y_mm / scale,
+        )
+
+    def side_mass_point(x_mm: float, z_mm: float) -> tuple[float, float]:
+        return (
+            side_origin[0] + x_mm / scale,
+            side_origin[1] - z_mm / scale,
+        )
+
+    def top_box(component: equipment_layout.Component3D) -> tuple[float, ...]:
+        minimum, maximum = component.aabb()
+        x0, y0 = top_point(minimum[0], minimum[1])
+        return x0, y0, (maximum[0] - minimum[0]) / scale, (
+            maximum[1] - minimum[1]
+        ) / scale
+
+    def side_box(component: equipment_layout.Component3D) -> tuple[float, ...]:
+        minimum, maximum = component.aabb()
+        x0, y0 = side_mass_point(minimum[0], maximum[2])
+        return x0, y0, (maximum[0] - minimum[0]) / scale, (
+            maximum[2] - minimum[2]
+        ) / scale
+
+    top_reference_offsets = {
+        "motor": (-4.0, -7.0),
+        "prop_adapter": (3.5, 7.0),
+        "propeller": (5.0, -5.0),
+        "fc": (-8.0, -8.0),
+        "pdb": (7.0, 7.0),
+        "receiver": (-4.0, -7.0),
+        "receiver_antenna": (0.0, -8.0),
+        "pitot_sensor": (-5.0, 7.0),
+        "buzzer": (6.0, -7.0),
+        "avionics_installation_reserve": (20.0, 11.0),
+    }
+    side_reference_offsets = {
+        "battery_6s1p": (0.0, 8.0),
+        "servo_left_195": (4.0, -24.0),
+        "servo_left_390": (-11.0, -15.0),
+        "motor": (-8.0, 7.0),
+        "prop_adapter": (0.0, -8.0),
+        "propeller": (8.0, 0.0),
+        "esc": (-17.5, 13.5),
+        "fc": (-12.0, -24.0),
+        "pdb": (-15.0, 6.5),
+        "gps_mag": (-13.0, 10.0),
+        "receiver": (-8.0, -15.0),
+        "receiver_antenna": (-9.5, -23.0),
+        "pitot_sensor": (-14.0, 10.0),
+        "pitot_probe_tube": (-17.0, -15.5),
+        "buzzer": (5.0, 8.5),
+        "o4_camera": (-2.0, 8.0),
+        "o4_vtx": (0.0, -8.0),
+        "o4_antenna": (5.0, -11.0),
+        "avionics_installation_reserve": (4.0, -24.5),
+    }
+    side_reference_overrides = {
+        "servo_left_195": "E02/03",
+        "servo_left_390": "E04/05",
+    }
+    side_projection_duplicates = {"servo_right_195", "servo_right_390"}
+
+    def draw_mass_reference(
+        point: tuple[float, float],
+        reference: str,
+        prefix: str,
+        identifier: str,
+        offset: tuple[float, float],
+    ) -> None:
+        """Draw the true mass centre and a legible offset schedule reference."""
+        label_point = (point[0] + offset[0], point[1] + offset[1])
+        sheet.circle(
+            *point,
+            0.55,
+            "datum-dot",
+            id=f"mass-centre-{prefix}-{identifier}",
+        )
+        if offset != (0.0, 0.0):
+            sheet.line(*point, *label_point, "leader")
+        label_width = max(7.0, len(reference) * 1.65)
+        sheet.rect(
+            label_point[0] - label_width / 2.0,
+            label_point[1] - 2.45,
+            label_width,
+            4.9,
+            "medium",
+            rx=2.0,
+            id=f"mass-reference-{prefix}-{identifier}",
+            style="fill:#fffdf8;stroke:#17202a;stroke-width:.3",
+        )
+        sheet.text(
+            label_point[0],
+            label_point[1] + 0.82,
+            reference,
+            "micro",
+            "middle",
+        )
+
+    sheet = SvgSheet(
+        "Salamandra equipment mass skeleton",
+        "Metric A3 equipment-only orthographic drawing generated from the three-dimensional component ledger. It shows CLEAN component envelopes and mass centres, the battery travel and V1 battery-stop overlay, without an airframe, outer mould line or manufacturing geometry.",
+        "SLM-EQP-001",
+    )
+    title_block(
+        sheet,
+        "EQUIPMENT MASS SKELETON",
+        "SLM-EQP-001",
+        "TOP / SIDE 1:4",
+        "SOURCE: equipment_layout.py · mass_budget.py · P42A MAX CAD ENVELOPE",
+        title_font_size=3.55,
+    )
+    sheet.text(
+        210,
+        249,
+        "DRAFT · EQUIPMENT ONLY · NO AIRFRAME / OML",
+        "watermark",
+        "middle",
+    )
+
+    # Orthographic datums.  Forward is negative x and starboard is positive y.
+    sheet.text(18, 20, "A · TOP VIEW · CLEAN", "sheet-subtitle")
+    sheet.text(18, 25, "x/y ENVELOPES + COMPONENT MASS CENTRES", "micro")
+    sheet.line(*top_point(-485.0, 0.0), *top_point(255.0, 0.0), "centre")
+    sheet.line(*top_point(0.0, -420.0), *top_point(0.0, 420.0), "centre")
+    sheet.line(52, 31, 29, 31, "medium", marker_end="url(#arrow-end)")
+    sheet.text(55, 32, "FORWARD · −x", "label")
+    sheet.line(18, 38, 18, 53, "medium", marker_end="url(#arrow-end)")
+    sheet.text(21, 49, "STARBOARD · +y", "micro")
+
+    sheet.text(214, 20, "B · SIDE VIEW · CLEAN", "sheet-subtitle")
+    sheet.text(214, 25, "x/z ENVELOPES · POSITIVE z UP", "micro")
+    sheet.line(*side_mass_point(-485.0, 0.0), *side_mass_point(255.0, 0.0), "centre")
+    sheet.line(*side_mass_point(0.0, -115.0), *side_mass_point(0.0, 115.0), "centre")
+    sheet.line(244, 31, 221, 31, "medium", marker_end="url(#arrow-end)")
+    sheet.text(247, 32, "FORWARD · −x", "label")
+
+    # The complete possible pack region is shown before the actual CLEAN pack.
+    battery = clean.component(equipment_layout.PRIMARY_CG_ADJUSTER)
+    battery_half = tuple(value / 2.0 for value in battery.size_mm)
+    travel_min_x = battery.bounds.minimum_mm[0] - battery_half[0]
+    travel_max_x = battery.bounds.maximum_mm[0] + battery_half[0]
+    travel_top_start = top_point(travel_min_x, -battery_half[1])
+    travel_top_end = top_point(travel_max_x, battery_half[1])
+    sheet.rect(
+        travel_top_start[0],
+        travel_top_start[1],
+        travel_top_end[0] - travel_top_start[0],
+        travel_top_end[1] - travel_top_start[1],
+        "hidden",
+        rx=1.0,
+        id="battery-travel-top",
+        style="fill:none;stroke:#146e9b;stroke-width:.32;stroke-dasharray:5 1 1 1",
+    )
+    travel_side_start = side_mass_point(
+        travel_min_x, battery.position_mm[2] + battery_half[2]
+    )
+    travel_side_end = side_mass_point(
+        travel_max_x, battery.position_mm[2] - battery_half[2]
+    )
+    sheet.rect(
+        travel_side_start[0],
+        travel_side_start[1],
+        travel_side_end[0] - travel_side_start[0],
+        travel_side_end[1] - travel_side_start[1],
+        "hidden",
+        rx=1.0,
+        id="battery-travel-side",
+        style="fill:none;stroke:#146e9b;stroke-width:.32;stroke-dasharray:5 1 1 1",
+    )
+
+    # Component envelopes are status-coded.  Any estimated input remains
+    # amber/dashed; measured envelopes are solid blue.  E## is the mass centre.
+    for component in components:
+        provisional = (
+            "[E]" in component.authority
+            or "[I]" in component.authority
+            or component.reserve
+            or not component.budgeted
+        )
+        css = "provisional-fill" if provisional else "derived"
+        style = None if provisional else (
+            "fill:#dcecf4;fill-opacity:.58;stroke:#146e9b;stroke-width:.45"
+        )
+        top_rect = top_box(component)
+        side_rect = side_box(component)
+        sheet.rect(
+            *top_rect,
+            css,
+            rx=0.7,
+            id=f"equipment-top-{component.identifier}",
+            style=style,
+        )
+        reference = reference_by_id[component.identifier]
+        top_mass_point = top_point(
+            component.position_mm[0], component.position_mm[1]
+        )
+        draw_mass_reference(
+            top_mass_point,
+            reference,
+            "top",
+            component.identifier,
+            top_reference_offsets.get(component.identifier, (0.0, 0.0)),
+        )
+        if component.identifier not in side_projection_duplicates:
+            sheet.rect(
+                *side_rect,
+                css,
+                rx=0.7,
+                id=f"equipment-side-{component.identifier}",
+                style=style,
+            )
+            side_reference = side_reference_overrides.get(
+                component.identifier, reference
+            )
+            side_point_value = side_mass_point(
+                component.position_mm[0], component.position_mm[2]
+            )
+            draw_mass_reference(
+                side_point_value,
+                side_reference,
+                "side",
+                component.identifier,
+                side_reference_offsets.get(component.identifier, (0.0, 0.0)),
+            )
+
+    # V1 uses the same equipment but drives the battery to the forward stop.
+    v1_battery = v1.component(equipment_layout.PRIMARY_CG_ADJUSTER)
+    for prefix, box in (("top", top_box(v1_battery)), ("side", side_box(v1_battery))):
+        sheet.rect(
+            *box,
+            "provisional-line",
+            rx=1.0,
+            id=f"v1-battery-stop-{prefix}",
+            style=(
+                "fill:none;stroke:#7c4b00;stroke-width:.7;"
+                "stroke-dasharray:6 1.5 1.2 1.5"
+            ),
+        )
+
+    # CLEAN CG markers are derived from every installed component, including
+    # the small unbudgeted O4 antenna mass.
+    clean_cg = clean.cg_mm()
+    top_cg = top_point(clean_cg[0], clean_cg[1])
+    side_cg = side_mass_point(clean_cg[0], clean_cg[2])
+    for prefix, point in (("top", top_cg), ("side", side_cg)):
+        sheet.path(
+            f"M {fmt(point[0])} {fmt(point[1]-3.2)} l -3 5.4 h 6 z",
+            "derived-fill",
+            id=f"clean-cg-{prefix}",
+        )
+    sheet.leader(
+        *top_cg,
+        97,
+        112,
+        f"CLEAN CG ({clean_cg[0]:+.1f}, {clean_cg[1]:+.1f}) [D]",
+    )
+    sheet.leader(
+        *side_cg,
+        291,
+        43,
+        f"CG z {clean_cg[2]:+.1f} [D]",
+        anchor="end",
+    )
+
+    battery_min_x = top_point(battery.bounds.minimum_mm[0], 0.0)[0]
+    battery_max_x = top_point(battery.bounds.maximum_mm[0], 0.0)[0]
+    sheet.horizontal_dimension(
+        battery_min_x,
+        battery_max_x,
+        242.0,
+        top_origin[1],
+        top_origin[1],
+        f"BATTERY CG TRAVEL {battery.bounds.axis_span(0):.1f} mm [D]/[E]",
+    )
+    sheet.leader(
+        *top_point(v1_battery.position_mm[0], -battery_half[1]),
+        24,
+        161,
+        "V1 BATTERY AT FORWARD STOP",
+        True,
+    )
+
+    # Component schedule.  It deliberately includes the unresolved avionics
+    # reserve so the visible skeleton closes to the current mass allocation.
+    table_left = 214.0
+    table_top = 118.0
+    sheet.text(table_left, table_top, "COMPONENT MASS / POSITION SCHEDULE", "label")
+    sheet.text(215, 124, "REF", "micro")
+    sheet.text(228, 124, "COMPONENT", "micro")
+    sheet.text(314, 124, "g", "micro", "end")
+    sheet.text(334, 124, "x", "micro", "end")
+    sheet.text(354, 124, "y", "micro", "end")
+    sheet.text(374, 124, "z", "micro", "end")
+    sheet.text(405, 124, "STATUS", "micro", "end")
+    sheet.line(214, 126, 406, 126, "thin")
+    row_y = 130.0
+    for component in components:
+        reference = reference_by_id[component.identifier]
+        status = component.authority
+        if component.reserve:
+            status += " R"
+        if not component.budgeted:
+            status += " U"
+        sheet.text(215, row_y, reference, "mono")
+        sheet.text(228, row_y, component.identifier, "micro")
+        sheet.text(314, row_y, f"{component.mass_g:.2f}", "mono", "end")
+        sheet.text(334, row_y, f"{component.position_mm[0]:+.1f}", "mono", "end")
+        sheet.text(354, row_y, f"{component.position_mm[1]:+.1f}", "mono", "end")
+        sheet.text(374, row_y, f"{component.position_mm[2]:+.1f}", "mono", "end")
+        sheet.text(405, row_y, status, "micro", "end")
+        row_y += 4.05
+    sheet.line(214, row_y - 2.1, 406, row_y - 2.1, "thin")
+
+    shown_mass = sum(component.mass_g for component in components)
+    excluded_mass = clean.mass_g() - shown_mass
+    sheet.multiline(214, 219, [
+        f"SHOWN EQUIPMENT: {shown_mass:.2f} g · CLEAN INSTALLED: {clean.mass_g():.2f} g",
+        f"NOT SHOWN: structure, elevons/balances and hardware = {excluded_mass:.2f} g",
+        f"BATTERY: CLEAN x {clean_battery_x:+.2f}; V1 required {v1_battery_x:+.2f}, placed {v1_battery.position_mm[0]:+.2f} mm.",
+        "R = unresolved reserve · U = outside released budget · dimensions are envelopes.",
+        "NO FUSELAGE, WING SKIN, FAIRING OR MANUFACTURING SURFACE IS DEFINED HERE.",
+    ], "micro", 4.1)
+    provenance_legend(sheet, 214, 103)
+    return sheet
+
+
 def polyhedral_z(y_m: float) -> float:
     """Piecewise-flat provisional dihedral schedule from Design Guide section 3."""
     if not 0.0 <= y_m <= HALF_SPAN:
@@ -1200,6 +1573,20 @@ def validate_contract() -> dict[str, bool]:
     fin_area = fin_area_for_target(0.0005)
     fin_span = sqrt(fin_area * CONTRACT.fin_aspect_ratio)
     fin_root_chord, fin_tip_chord, _ = fin_geometry(fin_area, fin_span)
+    equipment_clean, _ = equipment_layout.solve_battery_x(
+        equipment_layout.reference_layout("clean")
+    )
+    equipment_v1, equipment_v1_required_x = equipment_layout.solve_battery_x(
+        equipment_layout.reference_layout("v1"), clamp=True
+    )
+    equipment_components = tuple(
+        equipment_clean.component(identifier)
+        for identifier in MASS_SKELETON_COMPONENT_IDS
+    )
+    equipment_ids = set(MASS_SKELETON_COMPONENT_IDS)
+    equipment_battery = equipment_clean.component(
+        equipment_layout.PRIMARY_CG_ADJUSTER
+    )
     return {
         "canonical geometry validation passes": all(validate_geometry().values()),
         "drawing half-span matches design contract": abs(CONTRACT.segment_joints_m[-1] - HALF_SPAN) < 1e-12,
@@ -1235,6 +1622,45 @@ def validate_contract() -> dict[str, bool]:
         ) < 1e-12,
         "side cradle envelope contains the declared 24 mm height": (
             CONTRACT.cradle_inner_height_m >= 0.024
+        ),
+        "equipment-layout numerical validation passes": all(
+            equipment_layout.validation_checks().values()
+        ),
+        "equipment skeleton component references are unique": (
+            len(MASS_SKELETON_COMPONENT_IDS) == len(equipment_ids)
+        ),
+        "equipment skeleton contains the primary installed systems": {
+            "battery_6s1p",
+            "motor",
+            "fc",
+            "pdb",
+            "esc",
+            "o4_camera",
+            "o4_vtx",
+            "servo_left_195",
+            "servo_right_390",
+        } <= equipment_ids,
+        "equipment skeleton excludes airframe and control-surface masses": all(
+            component.category not in {"structure", "stability", "control"}
+            for component in equipment_components
+        ),
+        "equipment skeleton shown mass reproduces the current ledger": abs(
+            sum(component.mass_g for component in equipment_components) - 846.85
+        ) < 1e-9,
+        "CLEAN and V1 pack stations remain inside physical battery travel": (
+            equipment_battery.bounds.contains(
+                equipment_clean.component(
+                    equipment_layout.PRIMARY_CG_ADJUSTER
+                ).position_mm
+            )
+            and equipment_battery.bounds.contains(
+                equipment_v1.component(
+                    equipment_layout.PRIMARY_CG_ADJUSTER
+                ).position_mm
+            )
+        ),
+        "equipment skeleton exposes unreachable exact V1 battery station": (
+            equipment_v1_required_x < equipment_battery.bounds.minimum_mm[0]
         ),
     }
 
@@ -1310,6 +1736,11 @@ def build_drawings() -> tuple[DrawingOutput, ...]:
     drawings = (
         ("SLM-GA-001-general-arrangement.svg", "SLM-GA-001", draw_general_arrangement()),
         ("SLM-GA-002-side-elevations.svg", "SLM-GA-002", draw_side_elevations()),
+        (
+            "SLM-EQP-001-equipment-mass-skeleton.svg",
+            "SLM-EQP-001",
+            draw_equipment_mass_skeleton(),
+        ),
         ("SLM-WNG-001-half-wing-layout.svg", "SLM-WNG-001", draw_half_wing_layout()),
     )
     return tuple(

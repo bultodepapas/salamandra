@@ -11,6 +11,7 @@ open.
 |---|---|---:|---|
 | [`SLM-GA-001-general-arrangement.svg`](SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and continuous provisional fuselage/equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]` |
 | [`SLM-GA-002-side-elevations.svg`](SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
+| [`SLM-EQP-001-equipment-mass-skeleton.svg`](SLM-EQP-001-equipment-mass-skeleton.svg) | Equipment-only top and side mass skeleton: component envelopes, true mass centres, x/y/z schedule, CLEAN CG and V1 battery-stop overlay; deliberately excludes the airframe and OML | A3 · 1:4 | Mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority |
 | [`SLM-WNG-001-half-wing-layout.svg`](SLM-WNG-001-half-wing-layout.svg) | Right half-wing: printed segments, cells, spar/pin, elevon, exact y195 profile and polyhedral inset | A3 · plan 1:2 | Planform/profile `[D]`; structure/polyhedral `[E]`/`[I]` |
 
 All sheets state **DRAFT — NOT FOR MANUFACTURE**. Amber dashed geometry is provisional
@@ -49,6 +50,8 @@ The generator imports:
 - planform, chord and sweep from `calculations/design_config.py`;
 - CG, VLM NP, independent Weissinger NP and solved pack station from
   `calculations/balance_cg.py`;
+- component masses, oriented envelopes, x/y/z stations, installation status and
+  battery-only CG trim from `calculations/equipment_layout.py`;
 - the released local section from
   `geometry/airfoils/salamandra-r1-y195.dat`;
 - the released root section from `geometry/airfoils/salamandra-root-r1.dat` and the
