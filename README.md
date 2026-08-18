@@ -279,9 +279,10 @@ a defined job, from research to flight:
 | **Manufacturing** | Bambu Studio · 256 mm printer (P1S class) · **PETG** | Printability is a hard requirement (O3/O4), not an afterthought |
 | **Avionics** | INAV 9.1+ / ArduPlane · pitot + blackbox | Flight control and the measuring instruments of the whole test program |
 
-Every quantitative claim in this repository comes from scripts that anyone can rerun.
-The full guide (versions, commands, batch quirks, validation discipline) is in
-[`calculations/README.md`](calculations/README.md).
+Every **derived** quantitative claim is tied to a rerunnable analysis. Measured inputs
+retain their source and test conditions; estimates and inferences retain their declared
+assumptions and closure gates. The full guide (versions, commands, batch quirks and
+validation discipline) is in [`calculations/README.md`](calculations/README.md).
 
 The current high-value results reproduce with:
 

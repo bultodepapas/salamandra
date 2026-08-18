@@ -21,7 +21,7 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BASE, REPO } from '../base.mjs';
+import { BASE, REPO, SITE } from '../base.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WIKI = path.resolve(HERE, '..');
@@ -51,24 +51,121 @@ const writeOut = (dest, content) => {
 };
 
 const clean = (s) =>
-  s.replace(/\*\*/g, '').replace(/\[|\]/g, '').replace(/\s+/g, ' ').trim();
+  s
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/^>\s?/gm, '')
+    .replace(/\*\*|__|`/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const tableCell = (s) => clean(s).replace(/\|/g, '\\|');
 
 const extractTitle = (md) => {
   const m = md.match(/^#\s+(.+?)\s*$/m);
   return m ? m[1].trim() : null;
 };
 
-const extractDescription = (md) => {
-  const st = md.match(/\*\*Status:\*\*\s*([^\n]+)/);
-  if (st) return clean(st[1]);
-  const p = md.match(/\n\n\s*([^\n#|][^\n]{20,320})/);
-  return p ? clean(p[1]) : '';
+// Starlight renders the frontmatter title as the page H1. Canonical documents
+// already begin with an H1. Some older research documents also use H1 for major
+// sections, so their complete heading tree must move down one level at publish
+// time. Code fences are left byte-for-byte unchanged.
+const withoutSourceTitle = (md) => {
+  const lines = md.split(/\r?\n/);
+  let inFence = false;
+  let firstTitleRemoved = false;
+  let h1Count = 0;
+
+  for (const line of lines) {
+    if (!inFence && /^#\s+/.test(line)) h1Count += 1;
+    if (/^\s*(?:```|~~~)/.test(line)) inFence = !inFence;
+  }
+
+  inFence = false;
+  const normalized = lines.flatMap((line) => {
+    if (/^\s*(?:```|~~~)/.test(line)) {
+      inFence = !inFence;
+      return [line];
+    }
+    if (!inFence && /^#\s+/.test(line) && !firstTitleRemoved) {
+      firstTitleRemoved = true;
+      return [];
+    }
+    if (!inFence && h1Count > 1 && /^(#{1,5})\s+/.test(line)) return [`#${line}`];
+    return [line];
+  });
+
+  return normalized.join('\n').replace(/^\s*\n/, '');
 };
+
+const extractLeadParagraph = (md) => {
+  const paragraph = md
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .find(
+      (p) =>
+        p.length >= 40 &&
+        !/^(?:#|\||---|```|>|\*\*[^*\n]+:\*\*)/.test(p),
+    );
+  return paragraph ? clean(paragraph).slice(0, 320) : '';
+};
+
+const extractDescription = (md) => {
+  const status = extractField(md, 'Status');
+  return status ? clean(status) : extractLeadParagraph(md);
+};
+
+function extractField(md, labelPattern) {
+  const re = new RegExp(
+    `\\*\\*(?:${labelPattern}):\\*\\*\\s*([\\s\\S]*?)(?=` +
+      `\\s*(?:·\\s*)?\\*\\*[A-Z][^*\\n]*:\\*\\*|\\n\\s*\\n|\\n---|\\n#{1,6}\\s|$)`,
+    'i',
+  );
+  return md.match(re)?.[1]?.trim() || '';
+}
 
 const frontmatter = (title, description, editUrl) =>
   `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(
     description || '',
   )}\neditUrl: ${JSON.stringify(editUrl)}\n---\n\n`;
+
+// ---------------------------------------------------------------------------
+// release metadata, derived from canonical sources to prevent wiki-only drift
+
+const DESIGN_GUIDE_SOURCE = 'design/Salamandra-Design-Guide-v0.1.md';
+const designGuideMd = readAbs(DESIGN_GUIDE_SOURCE);
+const GUIDE_VERSION = designGuideMd.match(/\*\*Version\s+([0-9.]+)\*\*/)?.[1] || 'unknown';
+
+const releaseDocs = readdirSync(path.join(ROOT, 'docs'))
+  .filter((f) => /release-v[0-9.]+\.md$/i.test(f))
+  .map((file) => {
+    const md = readAbs(`docs/${file}`);
+    const tag = md.match(/\*\*Tag:\*\*\s*`(v\d+\.\d+\.\d+)`/)?.[1];
+    return tag ? { file, md, tag, version: tag.slice(1).split('.').map(Number) } : null;
+  })
+  .filter(Boolean)
+  .sort((a, b) => {
+    for (let i = 0; i < 3; i += 1) {
+      if (a.version[i] !== b.version[i]) return b.version[i] - a.version[i];
+    }
+    return 0;
+  });
+
+if (!releaseDocs.length) throw new Error('No tagged release document found in docs/.');
+const CURRENT_RELEASE = releaseDocs[0];
+
+const correctionNumbers = [...readAbs('CHANGELOG.md').matchAll(/\bC(\d{1,3})\b/g)].map(
+  (m) => Number(m[1]),
+);
+const LATEST_CORRECTION = correctionNumbers.length ? Math.max(...correctionNumbers) : 0;
+const ADR_FILE_COUNT = readdirSync(path.join(ROOT, 'decisions')).filter((f) =>
+  /^ADR-\d{4}.*\.md$/.test(f),
+).length;
+const RESEARCH_FILE_COUNT = readdirSync(path.join(ROOT, 'research')).filter((f) =>
+  /^I-\d{2}.*\.md$/.test(f),
+).length;
+const SCRIPT_FILE_COUNT = readdirSync(path.join(ROOT, 'calculations')).filter((f) =>
+  f.endsWith('.py'),
+).length;
 
 // ---------------------------------------------------------------------------
 // mount table: canonical source (repo-relative posix path) -> destination
@@ -77,7 +174,7 @@ const mounted = new Map(); // srcRel -> { dest }
 
 const add = (srcRel, dest) => mounted.set(srcRel, { dest });
 
-add('design/Salamandra-Design-Guide-v0.1.md', 'salamandra/design-guide.md');
+add(DESIGN_GUIDE_SOURCE, 'salamandra/design-guide.md');
 add('design/Design-Guide-Justification-v0.1.md', 'salamandra/design-guide-justification.md');
 add('design/Design-Guide-Open-Points-v0.1.md', 'salamandra/design-guide-open-points.md');
 
@@ -118,10 +215,39 @@ add('LICENSE-docs.md', 'platform/license-docs.md');
 
 const destToUrl = (dest) => {
   const dir = path.posix.dirname(dest);
-  const baseName = path.posix.basename(dest).replace(/\.(md|mdx)$/, '');
+  // Starlight removes dots from generated slugs (e.g. release-v0.4 -> release-v04).
+  // Mirror that normalization here so generated cross-links match built routes.
+  const baseName = path.posix
+    .basename(dest)
+    .replace(/\.(md|mdx)$/, '')
+    .replace(/\./g, '');
   const slug = baseName === 'index' ? '' : baseName + '/';
   return BASE + (dir === '.' ? '' : dir + '/') + slug;
 };
+
+const CURRENT_RELEASE_DEST = `reference/${CURRENT_RELEASE.file.toLowerCase()}`;
+const CURRENT_RELEASE_PAGE = destToUrl(CURRENT_RELEASE_DEST)
+  .slice(BASE.length)
+  .replace(/\/+$/, '');
+const metadataTokens = new Map([
+  ['GUIDE_VERSION', GUIDE_VERSION],
+  ['RELEASE_TAG', CURRENT_RELEASE.tag],
+  ['CURRENT_RELEASE_URL', destToUrl(CURRENT_RELEASE_DEST)],
+  ['LATEST_CORRECTION', String(LATEST_CORRECTION)],
+  ['ADR_FILE_COUNT', String(ADR_FILE_COUNT)],
+  ['RESEARCH_FILE_COUNT', String(RESEARCH_FILE_COUNT)],
+  ['SCRIPT_FILE_COUNT', String(SCRIPT_FILE_COUNT)],
+]);
+
+function expandTokens(md) {
+  return md.replace(/\{\{([A-Z0-9_]+)\}\}/g, (match, key) => {
+    if (!metadataTokens.has(key)) {
+      warn(`Unknown wiki metadata token ${match}`);
+      return match;
+    }
+    return metadataTokens.get(key);
+  });
+}
 
 const urlMap = new Map(); // canonical srcRel -> served URL
 for (const [srcRel, spec] of mounted) urlMap.set(srcRel, destToUrl(spec.dest));
@@ -220,7 +346,7 @@ function buildMounted() {
     const md = rewriteLinks(readAbs(srcRel), path.posix.dirname(srcRel));
     const title = extractTitle(md) || path.posix.basename(spec.dest).replace(/\.md$/, '');
     const desc = extractDescription(md);
-    writeOut(spec.dest, frontmatter(title, desc, EDIT + srcRel) + md);
+    writeOut(spec.dest, frontmatter(title, desc, EDIT + srcRel) + withoutSourceTitle(md));
   }
 }
 
@@ -245,7 +371,8 @@ function buildContent() {
   }
   for (const relFull of files) {
     const siteDir = path.posix.dirname(relFull); // 'guide' or '.'
-    const md = rewriteLinks(readFileSync(path.join(CONTENT, ...relFull.split('/')), 'utf8').replace(/^\uFEFF/, ''), siteDir);
+    const source = readFileSync(path.join(CONTENT, ...relFull.split('/')), 'utf8').replace(/^\uFEFF/, '');
+    const md = rewriteLinks(expandTokens(source), siteDir);
     const dest = relFull === 'home.md' ? 'index.md' : relFull;
     writeOut(dest, md);
   }
@@ -257,18 +384,14 @@ function buildContent() {
 function parseHeader(srcRel) {
   const md = readAbs(srcRel);
   const title = extractTitle(md) || '';
-  const statusLine = md.match(/\*\*Status:\*\*\s*([^\n]+)/)?.[1] || '';
-  const status =
-    statusLine.match(
-      /(✅ Active|🔄 Provisional|⬜ Superseded|❌ Cancelled|⚠️ Under dispute)/,
-    )?.[1] || '';
-  const confidence = statusLine.match(/Confidence:\*\*\s*([^·\n]+)/)?.[1]?.trim() || '';
-  const reversible = statusLine.match(/Reversible:\*\*\s*([^·\n]+)/)?.[1]?.trim() || '';
+  const status = extractField(md, 'Status');
+  const confidence = extractField(md, 'Confidence');
+  const reversible = extractField(md, 'Reversible');
   return { title, status, confidence, reversible };
 }
 
 const indexPage = (title, desc, body) =>
-  frontmatter(title, desc, EDIT + 'wiki/scripts/gen-site.mjs') + body;
+  frontmatter(title, desc, EDIT + 'wiki/scripts/gen-site.mjs') + withoutSourceTitle(body);
 
 // ---------------------------------------------------------------------------
 // generated index pages
@@ -286,20 +409,23 @@ function genDecisionsIndex() {
   const table = rows
     .map(
       (r) =>
-        `| [ADR-${r.num}](${r.url}) | ${r.title.replace(/^ADR-\d{4}\s*—\s*/, '')} | ${r.status} | ${r.confidence} | ${r.reversible} |`,
+        `| [ADR-${r.num}](${r.url}) | ${tableCell(r.title.replace(/^ADR-\d{4}\s*—\s*/, ''))} | ${tableCell(r.status) || '—'} | ${tableCell(r.confidence) || '—'} | ${tableCell(r.reversible) || '—'} |`,
     )
     .join('\n');
   writeOut(
     'decisions/index.md',
     indexPage(
-      'Decision record (ADR)',
-      `Auto-generated index of all ${rows.length} ADRs. Cannot drift from the source files.`,
+      'Engineering decisions (ADR)',
+      `Auto-generated index of ${rows.length} published decision records, including their current status and confidence.`,
       `# Decision record (ADR)
 
-One decision, one file. Each ADR declares **context, alternatives considered, decision, consequences and confidence**.
+Use this index when the question is **“Why did the design adopt this choice?”** Each
+record states the context, alternatives, decision, consequences, confidence and review
+trigger. A provisional or disputed record is not equivalent to an active, high-confidence
+decision.
 
-> This table is **generated at build time** from the files in \`decisions/\` — it cannot drift.
-> The maintained manual table, including superseded and cancelled ADRs, lives in the [overview](./overview/).
+> Generated from \`decisions/\` at build time. The [record overview](./overview/)
+> also lists intentionally missing historical numbers and superseded decisions.
 
 | # | Decision | Status | Confidence | Reversible |
 |---|---|---|---|---|
@@ -317,17 +443,16 @@ function genResearchIndex() {
       const src = `research/${f}`;
       const md = readAbs(src);
       const title = extractTitle(md) || f;
-      const status = md.match(/\*\*Status:\*\*\s*([^\n]+)/)?.[1] || '';
-      const closes =
-        md.match(/\*\*(?:Partially )?closes?:\*\*\s*([^\n]+)/i)?.[1] || '';
-      const feeds = md.match(/\*\*Feeds:\*\*\s*([^\n]+)/)?.[1] || '';
+      const status = extractField(md, 'Status');
+      const closes = extractField(md, '(?:Partially )?Closes');
+      const feeds = extractField(md, 'Feeds');
       const num = f.match(/^I-(\d{2})/)?.[1] || '';
       return {
         num,
-        title: title.replace(/^I-\d{2}\s*—\s*/, ''),
-        status: clean(status),
-        closes: clean(closes),
-        feeds: clean(feeds),
+        title: tableCell(title.replace(/^I-\d{2}\s*—\s*/, '')),
+        status: tableCell(status),
+        closes: tableCell(closes),
+        feeds: tableCell(feeds),
         url: destToUrl(`research/${f.toLowerCase()}`),
       };
     });
@@ -344,7 +469,12 @@ function genResearchIndex() {
       `Auto-generated index of ${rows.length} research threads (I-XX).`,
       `# Research threads
 
-What was searched, what was found, with what sources — **not** what was decided (that is the [ADR index](../decisions/)). Generated at build time.
+Use this index when the question is **“What evidence and analysis support the record?”**
+A research thread documents its question, method, sources, findings and limitations. It
+does not make the final design decision; that belongs in the [ADR index](../decisions/).
+
+> Generated from \`research/\` at build time. Status, closure and downstream consumers
+> are parsed from each thread's metadata block.
 
 | Thread | Topic | Status | Closes | Feeds |
 |---|---|---|---|---|
@@ -358,21 +488,28 @@ See also: [first investigation](./first-investigation/).
 
 function genSalamandraIndex() {
   const items = [
-    ['design-guide', 'design-guide', 'Salamandra Design Guide v0.1 — the CAD-ready specification handed to the designer.'],
-    ['design-guide-justification', 'design-guide-justification', 'Why every number in the guide is what it is — the justification and its sources.'],
-    ['design-guide-open-points', 'design-guide-open-points', 'The open points that still constrain the design.'],
+    ['Design guide', 'design-guide', `Version ${GUIDE_VERSION}: controlling CAD geometry, interfaces, limits and load definitions.`],
+    ['Justification', 'design-guide-justification', 'Derivations, evidence and sources behind the controlling values.'],
+    ['Open points', 'design-guide-open-points', 'Unresolved assumptions, physical acceptance gates and the trigger for each change.'],
   ];
   const table = items
-    .map(([slug, _src, desc]) => `| [${slug}](${slug}/) | ${desc} |`)
+    .map(([label, slug, desc]) => `| [${label}](${slug}/) | ${desc} |`)
     .join('\n');
   writeOut(
     'salamandra/index.md',
     indexPage(
       'Salamandra — reference design',
       'The forward-swept flying wing, first platform design.',
-      `# Salamandra
+      `# Salamandra reference design
 
-The first reference design on the platform: a **PETG forward-swept flying wing**, modular and configurable (CORE center module + interchangeable PANEL wings). Target: **≤ 1.15 Wh/km** at 95 km/h, falsifiable with tests E2/E3.
+Salamandra is the platform's first reference aircraft: a modular PETG forward-swept
+flying wing with a common CORE and interchangeable PANEL wings. The current controlled
+baseline is **${CURRENT_RELEASE.tag} / Design Guide v${GUIDE_VERSION}**. Its mission target
+is **≤ 1.15 Wh/km at 95 km/h**, to be tested through the E2/D2/E3 evidence chain.
+
+> This release is an engineering baseline, **not flight qualification**. Use the
+> [current release notes](${destToUrl(CURRENT_RELEASE_DEST)}) before CAD, structural
+> sizing or test planning, and keep all physical gates in the open-points register.
 
 | Document | Content |
 |---|---|
@@ -393,24 +530,42 @@ function genReferenceIndex() {
       const md = readAbs(src);
       const title = extractTitle(md) || f;
       const url = destToUrl(`reference/${f.toLowerCase()}`);
-      const first =
-        md.match(/\n\n\s*([^\n#|][^\n]{20,200})/)?.[1]?.trim() || '';
-      return { name: f.replace(/\.md$/, ''), title, url, desc: clean(first) };
+      const isRelease = /release-v/i.test(f);
+      const role = f === CURRENT_RELEASE.file
+        ? 'Current release'
+        : isRelease
+          ? 'Historical release'
+          : f.toLowerCase() === 'readme.md'
+            ? 'Directory map'
+            : 'Project reference';
+      return {
+        title: tableCell(title),
+        url,
+        role,
+        // A document's status belongs in its body; the index summary should say
+        // what the document contains. This is especially important for releases,
+        // where a summary of merely "RELEASED" is not useful navigation.
+        desc: tableCell(extractLeadParagraph(md) || extractDescription(md)),
+      };
     });
   const table = rows
-    .map((r) => `| [${r.name}](${r.url}) | ${r.desc} |`)
+    .map((r) => `| [${r.title}](${r.url}) | ${r.role} | ${r.desc || '—'} |`)
     .join('\n');
   writeOut(
     'reference/index.md',
     indexPage(
       'Reference documents',
-      'Specification, phase plan, conventions and master plan.',
+      `The ${CURRENT_RELEASE.tag} baseline, specifications, conventions, plans and release history.`,
       `# Reference documents
 
-Specification and project planning documents. Generated at build time.
+Controlled specifications, conventions, plans and release history. Start with the
+**current release**; older release notes are audit records and must not be mixed with the
+current numerical baseline.
 
-| Document | Content |
-|---|---|
+> Generated from \`docs/\` at build time.
+
+| Document | Role | Summary |
+|---|---|---|
 ${table}
 `,
     ),
@@ -418,19 +573,32 @@ ${table}
 }
 
 function genCalculationsIndex() {
+  const reproductionGuide = readAbs('calculations/README.md');
+  const descriptionFromGuide = (file) => {
+    const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const description = reproductionGuide.match(
+      new RegExp('^\\| `' + escaped + '` \\| ([^|]+) \\|', 'm'),
+    )?.[1];
+    return description ? clean(description) : '';
+  };
   const scripts = readdirSync(path.join(ROOT, 'calculations'))
     .filter((f) => f.endsWith('.py'))
     .sort()
     .map((f) => {
       const abs = path.join(ROOT, 'calculations', f);
       const src = readFileSync(abs, 'utf8');
-      const doc = src.match(/^\s*"""(.*?)"""/s)?.[1] || '';
+      const doc = src.match(/^(?:#![^\n]*\n)?\s*"""([\s\S]*?)"""/)?.[1] || '';
       const summary =
         doc
           .split('\n')
           .map((l) => l.trim())
           .filter(Boolean)[0] || '';
-      return { f, summary: clean(summary).slice(0, 180) };
+      return {
+        f,
+        // The reproduction guide is the maintained English catalog. Fall back
+        // to the Python module docstring for a newly added, not-yet-documented tool.
+        summary: tableCell(descriptionFromGuide(f) || clean(summary)),
+      };
     });
   const table = scripts
     .map((s) => `| \`${s.f}\` | ${s.summary} |`)
@@ -438,22 +606,36 @@ function genCalculationsIndex() {
   writeOut(
     'calculations/index.md',
     indexPage(
-      'Calculations',
+      'Reproducible calculations',
       `Auto-generated index of ${scripts.length} validated, rerunnable analysis scripts.`,
-      `# Calculations
+      `# Reproducible calculations
 
-Every quantitative claim in this repository comes from a script that anyone can rerun. Each script carries a **validation case against a known analytical solution** and must pass it before use.
+Derived values in the released design are produced by rerunnable Python analyses.
+Measured inputs retain source provenance; estimates remain explicitly tagged and are not
+made more certain merely because a script propagates them.
 
-> Generated at build time from \`calculations/\`. The full reproduction guide — versions, commands, batch quirks, validation discipline — is in the [reproduction guide](./reproduction-guide/).
+> Generated from \`calculations/\` at build time. Read the [reproduction guide](./reproduction-guide/)
+> for tool versions, inputs, external XFOIL gates and validation discipline.
 
-## Reproducing the Phase-1 results
+## Start with the system contract
 
 \`\`\`bash
-python3 calculations/vlm_ala_volante.py       # NP (I-07)
-python3 calculations/weissinger_np.py         # C2 independent NP check (I-15 §6.3)
-python3 calculations/b3_screening.py --xfoil /path/to/xfoil.exe   # B3 screening (I-15 §6)
-python3 calculations/balance_cg.py            # OP-01 balance / nose-boom sizing (guide §8.2)
-python3 calculations/elevon_authority.py      # elevon control power (guide §5.3)
+python calculations/verify_calculations.py
+python calculations/verify_calculations.py --all-scripts
+\`\`\`
+
+The first command checks cross-module equality for geometry, mass, balance, stall,
+power, propulsion, controls, stability and loads. The second executes every deterministic
+local command-line analysis. XFOIL and physical tests remain explicit external gates.
+
+## High-value entry points
+
+\`\`\`bash
+python calculations/design_config.py          # canonical shared inputs and invariants
+python calculations/flight_envelope.py        # manoeuvre and gust-reference screen
+python calculations/mass_budget.py --config all
+python calculations/balance_cg.py
+python calculations/propulsion_match.py
 \`\`\`
 
 ## Scripts
@@ -469,7 +651,7 @@ ${table}
 function genPlatformIndex() {
   const items = [
     ['readme', 'Project readme'],
-    ['changelog', 'Change log (corrections C1–C21)'],
+    ['changelog', `Change log (corrections through C${LATEST_CORRECTION})`],
     ['contributing', 'How to contribute'],
     ['ai-context', 'AI working rules'],
     ['license-docs', 'Documentation licence (CC BY-SA 4.0)'],
@@ -502,7 +684,8 @@ function genLlmsTxt() {
     return ['', `## ${title}`, ''].concat(
       items.map(([label, page, note]) => {
         const url = pagePaths.get(page);
-        return url ? `- [${label}](${url})${note ? `: ${note}` : ''}` : null;
+        const absoluteUrl = url ? new URL(url, new URL(SITE).origin).href : null;
+        return absoluteUrl ? `- [${label}](${absoluteUrl})${note ? `: ${note}` : ''}` : null;
       }).filter(Boolean),
     );
   };
@@ -510,8 +693,8 @@ function genLlmsTxt() {
     '# Salamandra',
     '',
     '> Open, community-driven 3D-printed FPV aircraft platform. The reasoning is the product:',
-    '> every decision carries its rationale, its source and its confidence level (`[M]`/`[D]`/`[E]`/`[I]`),',
-    '> and every published number can be reproduced from a validated script.',
+    '> every decision carries its rationale, source and provenance tag (`[M]`/`[D]`/`[E]`/`[I]`).',
+    '> Derived values are rerunnable; measured inputs retain provenance; unresolved assumptions remain visible.',
     ...section('Getting started', [
       ['Getting started', 'guide/01-getting-started', 'The shortest path from zero to a working model'],
       ['How to read this repository', 'guide/02-how-to-read', 'Folder map and traceability flow'],
@@ -521,7 +704,7 @@ function genLlmsTxt() {
     ]),
     ...section('Design', [
       ['Salamandra design', 'salamandra', 'The forward-swept flying wing reference design'],
-      ['Design guide v0.1', 'salamandra/design-guide', 'The CAD-ready specification'],
+      [`Design guide v${GUIDE_VERSION}`, 'salamandra/design-guide', `The ${CURRENT_RELEASE.tag} controlling CAD and engineering specification`],
       ['Design guide justification', 'salamandra/design-guide-justification', 'Why every number is what it is'],
       ['Open points', 'salamandra/design-guide-open-points', 'What still constrains the design'],
     ]),
@@ -533,11 +716,12 @@ function genLlmsTxt() {
       ['Calculations', 'calculations', 'Validated, rerunnable analysis scripts'],
       ['Reproduction guide', 'calculations/reproduction-guide', 'Commands and validation discipline'],
       ['Objectives and requirements', 'reference/00-objectives-and-requirements', 'The Phase-0 specification'],
-      ['Phase-1 plan', 'reference/03-phase-1-plan', 'What is due now'],
+      [`Current release ${CURRENT_RELEASE.tag}`, CURRENT_RELEASE_PAGE, 'Authority, migration rules, released values and remaining gates'],
+      ['Phase-1 plan', 'reference/03-phase-1-plan', 'Geometry and stability work plan'],
     ]),
     ...section('Platform', [
       ['Project readme', 'platform/readme', 'Status and full navigation'],
-      ['Changelog', 'platform/changelog', 'Corrections C1–C21'],
+      ['Changelog', 'platform/changelog', `Correction record through C${LATEST_CORRECTION}`],
       ['Contributing', 'platform/contributing', 'Full contribution guide'],
     ]),
     ...section('Optional', [

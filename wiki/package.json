@@ -14,7 +14,9 @@
     "preview": "astro preview",
     "gen": "node scripts/gen-site.mjs",
     "check": "astro check",
-    "check:refs": "node scripts/check-refs.mjs"
+    "check:refs": "node scripts/check-refs.mjs --strict",
+    "check:site": "node scripts/check-built-links.mjs",
+    "lint": "markdownlint-cli2 --config ../.markdownlint.json \"content/**/*.md\" \"content/**/*.mdx\""
   },
   "dependencies": {
     "@astrojs/starlight": "^0.41.7",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "markdownlint-cli2": "^0.23.2",
     "typescript": "^6.0.3"
   }
 }

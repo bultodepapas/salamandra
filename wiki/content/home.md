@@ -1,47 +1,71 @@
 ---
-title: Salamandra
-description: Open 3D-printed FPV aircraft platform — the reasoning is the product. Design guide, ADRs, research threads, gaps and reproducible calculations.
+title: Open aircraft engineering you can audit
+description: Salamandra is an open 3D-printed FPV aircraft platform with a traceable design record, reproducible analyses and explicit physical acceptance gates.
 template: splash
+editUrl: https://github.com/bultodepapas/salmandra/edit/main/wiki/content/home.md
 hero:
   title: Salamandra
-  tagline: An open, community-driven 3D-printed FPV aircraft platform. Every decision carries its rationale, its source and its confidence level — and every number can be reproduced from a script.
+  tagline: Open aircraft engineering you can audit. Derived values are rerunnable, measured inputs retain provenance, and unresolved assumptions stay visible.
+  image:
+    file: ../../assets/salamandra-planform.svg
+    alt: Technical top-view diagram of Salamandra's 1,300 mm forward-swept wing, showing the quarter-chord line, center module, neutral point and target center of gravity.
   actions:
-    - text: Start here
-      link: guide/01-getting-started/
+    - text: Read the current release
+      link: '{{CURRENT_RELEASE_URL}}'
       icon: right-arrow
       variant: primary
-    - text: GitHub
-      link: https://github.com/bultodepapas/salmandra
-      icon: external
+    - text: Start in five minutes
+      link: guide/01-getting-started/
+      icon: open-book
+      variant: minimal
 ---
 
-## The reasoning is the product
+## Current engineering baseline
 
-There are dozens of open-source printed wings. Almost none of them publish **why** they have the geometry they have — and most are a single, finished design. This project is different in two ways:
+**{{RELEASE_TAG}} · Design Guide v{{GUIDE_VERSION}} · Phase 1 in progress.** The current
+release connects the Article #1 geometry, mass, propulsion and flight-load definitions
+to one numerical contract. It is suitable for continued CAD and analysis within the
+published gates; it is **not flight qualification**.
 
-1. **Reasoning-first.** Every decision carries its rationale, its source and its confidence tag (`[M]`, `[D]`, `[E]`, `[I]`), and the mistakes made along the way are recorded instead of erased. Anyone can trace where each number and shape comes from.
-2. **A platform, not a part.** The goal is a continuously evolving, community-driven library of airframes, parts, adapters and experiments. The current reference design — the PETG forward-swept flying wing **Salamandra** — is only the first member.
+| Control item | Released value | Authority |
+|---|---|---|
+| Planform | 1,300 mm span · 0.282 m² · AR 6.0 · −15° quarter-chord sweep | [Design guide](salamandra/design-guide/) · ADR-0040 |
+| Article #1 mass | 1,583.5 g CLEAN · 1,626.5 g V1 lower model | ADR-0043 · correction C32 |
+| Operating speeds | 95 km/h cruise · 105 km/h initial limit · 160 km/h article V_NE | [Current release]({{CURRENT_RELEASE_URL}}) |
+| Structural cases | +6/−3 g manoeuvre limit · +9/−4.5 g ultimate | ADR-0044 · I-24 |
 
-## Where to go
+The gates that matter now are physical: E2 aerodynamic acceptance, F2 CAD and measured
+mass, S3 printed-wing torsion and elastic axis, G11/E9 dynamic gust response, and D2/E3
+propulsion and energy measurement. See the [open-points register](salamandra/design-guide-open-points/)
+before using a provisional value.
 
-| I want to ... | Go to |
-|---|---|
-| Understand the project in 5 minutes | [Getting started](guide/01-getting-started/) |
-| Read the design as a CAD-ready spec | [Design guide v0.1](salamandra/design-guide/) |
-| See what was decided and why | [Decisions (ADR)](decisions/) |
-| See what we researched and the sources | [Research threads](research/) |
-| See what we do **not** know yet | [Gap register](gaps/) |
-| Reproduce any published number | [Calculations](calculations/) |
-| Know the experimental program | [Tests](tests/) |
+## Choose your route
 
-## Current status
+| If you are… | Start here | Then verify with… |
+|---|---|---|
+| Building CAD | [Design Guide v{{GUIDE_VERSION}}](salamandra/design-guide/) | [Open points](salamandra/design-guide-open-points/) and the current release migration rules |
+| Reviewing a decision | [ADR index](decisions/) | The linked research thread, calculation and reversal trigger |
+| Reproducing a number | [Calculation index](calculations/) | The [reproduction guide](calculations/reproduction-guide/) and system verifier |
+| Planning a test | [Gap register](gaps/) | The [experimental programme](tests/) and required configuration metadata |
+| Contributing a part or correction | [Contribution path](guide/05-contributing/) | The affected ADR, gap and confidence tag |
 
-- **Phase 0 (specification): closed.** Phase 1 (geometry and stability) in progress — see the [phase-1 plan](reference/03-phase-1-plan/).
-- **Current blocker:** airfoil selection (gap [G2](gaps/)). The root section must be **designed, not selected**.
-- Neutral point (G8) is largely closed: **NP = 26.7 % MAC** by in-house VLM, cross-checked by an independent Weissinger-L method (28.0 % MAC, 3 mm agreement).
+## How the record works
 
-## The hard rule
+1. **Inputs keep their provenance.** Published or project measurements are `[M]`;
+   estimates and inferences remain visibly `[E]` or `[I]`.
+2. **Derived results are rerunnable.** Python analyses turn declared inputs into `[D]`
+   results and validate internal invariants.
+3. **Research and decisions stay separate.** Research threads document what the evidence
+   says; ADRs record what the project chose and what would reverse that choice.
+4. **Unknowns have owners.** Gaps name the missing evidence, and tests define how it will
+   be measured.
+5. **Corrections are never hidden.** The [changelog](platform/changelog/) records the
+   correction chain through C{{LATEST_CORRECTION}}.
 
-> Every quantitative claim carries a confidence tag. **No `[E]` or `[I]` datum supports an irreversible decision without prior verification.** Numbers without a source are not accepted, even if correct.
+## The governing rule
 
-This is the project's central rule — see the [glossary](guide/04-glossary/).
+> No `[E]` or `[I]` datum supports an irreversible decision without prior verification.
+
+The tags describe **provenance**, not a cosmetic confidence score. Read
+[How to read this repository](guide/02-how-to-read/) before combining values from
+different documents or releases.

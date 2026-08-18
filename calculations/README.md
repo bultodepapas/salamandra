@@ -1,12 +1,14 @@
 # Calculations — analysis tools and reproduction guide
 
-This repository's quantitative claims come from scripts that are **self-contained,
-validated, and rerunnable by anyone**. This document explains the tools, their versions,
-the data they consume, and exactly how to reproduce the published results.
+This repository's derived quantitative claims come from scripts that are
+**self-contained, validated and rerunnable**. Measured inputs retain source provenance;
+estimates retain their assumptions and physical closure gates. This document explains
+the tools, their versions, the data they consume and how to reproduce the published
+derived results.
 
-**Confidence rule:** every script output is tagged. The scripts compute `[D]` values
-(derived by calculation from `[M]` data). They never invent inputs, and their validation
-cases must pass before a modification is trusted.
+**Confidence rule:** every script output is tagged. Scripts compute `[D]` values from
+declared `[M]`, `[E]` or `[I]` inputs; reproducibility does not raise the provenance of an
+estimated input. Validation cases must pass before a modification is trusted.
 
 ---
 

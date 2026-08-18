@@ -1,71 +1,103 @@
 ---
 title: Getting started
-description: The shortest path to understanding Salamandra — what it is, how the wiki is organized, and how to verify any number.
+description: A five-minute path to the current Salamandra baseline, its evidence model, its tools and the physical gates that remain open.
 editUrl: https://github.com/bultodepapas/salmandra/edit/main/wiki/content/guide/01-getting-started.md
 ---
 
-# Getting started
+This page gives you a working model of Salamandra in about five minutes. The most
+important habit is simple: **identify the release before using a number**.
 
-Welcome. This page is the shortest path from zero to a working mental model of the project. It takes about five minutes.
+## 1. Know what you are reading
 
-## What this project is
+Salamandra is an open platform for 3D-printed fixed-wing FPV aircraft. Its first
+reference design is a modular PETG forward-swept flying wing:
 
-**Salamandra** is an open, community-driven platform for 3D-printed fixed-wing FPV aircraft — not a single finished design. Its current reference design is a PETG **forward-swept flying wing**, modular and configurable: a standard center module (CORE) and interchangeable wing panels (PANEL).
+- **CORE** — common center module, battery cradle, avionics and pusher mount.
+- **PANEL** — removable wing panels designed against a common neutral-point rule.
+- **SALAMANDRA-CLEAN** — finless efficiency configuration.
+- **SALAMANDRA-V1** — fixed-fin test configuration, conditional on closing its mass gate.
 
-The platform's defining trait is that **the reasoning is the product**:
+The current controlled baseline is **{{RELEASE_TAG}} / Design Guide v{{GUIDE_VERSION}}**.
+It supports continued CAD and analysis within explicit limits; it does not claim flight
+qualification.
 
-- Every decision carries its rationale, its source and its confidence level.
-- Every number is backed by a calculation or a source.
-- Mistakes are recorded (in the changelog) instead of erased.
+## 2. Follow the authority stack
 
-## The wiki map
+When two documents appear to disagree, use this order:
 
-| Section | Contains | Read it when ... |
+1. [Current release notes]({{CURRENT_RELEASE_URL}}) — scope, migration rules and released
+   limitations.
+2. [Design Guide v{{GUIDE_VERSION}}](../salamandra/design-guide/) — controlling geometry,
+   interfaces, mass targets, operating limits and load definitions.
+3. `calculations/design_config.py` — numerical source of truth for values shared by
+   multiple analyses.
+4. [ADRs](../decisions/) — decisions and reversal triggers.
+5. [Research threads](../research/) — evidence, methods, sources and limitations.
+6. [Open points](../salamandra/design-guide-open-points/) — provisional values and the
+   event that may change each one.
+
+Never average conflicting releases or combine a historical input with the current
+baseline. Raise the conflict instead.
+
+## 3. Choose the shortest route
+
+| Your task | First page | Follow with |
 |---|---|---|
-| [Salamandra](../salamandra/) | The design guide v0.1 (the CAD-ready spec), its justification and open points | You want the design itself |
-| [Decisions (ADR)](../decisions/) | One file per decision: context, alternatives, consequences | You ask "why?" about any design choice |
-| [Research](../research/) | What was searched, what was found, with what sources | You want the evidence behind a decision |
-| [Gaps](../gaps/) | What we do **not** know, and how it gets closed | You want the honest limitations |
-| [Tests](../tests/) | The experimental program that closes gaps | You want to know how claims get measured |
-| [Calculations](../calculations/) | Validated, rerunnable analysis scripts | You want to verify a number yourself |
+| Model the aircraft | [Design guide](../salamandra/design-guide/) | [Open points](../salamandra/design-guide-open-points/) |
+| Understand a design choice | [ADR index](../decisions/) | The ADR's linked research and calculation |
+| Check what remains unknown | [Gap register](../gaps/) | [Test programme](../tests/) |
+| Reproduce a result | [Calculation index](../calculations/) | [Reproduction guide](../calculations/reproduction-guide/) |
+| Add a part, test or correction | [Contributing](./05-contributing/) | The affected ADR and gap |
 
-## A 3-click path
+## 4. Read provenance tags correctly
 
-1. **Read this page** and the [current status](../platform/readme/).
-2. **Skim the [design guide v0.1](../salamandra/design-guide/)** — it is the specification that a designer turns into CAD.
-3. **Open the [ADR index](../decisions/)** and follow any decision that caught your attention.
+| Tag | Meaning | What it permits |
+|---|---|---|
+| `[M]` | Measured, with a published or project source | Use within the stated test conditions and uncertainty |
+| `[D]` | Derived from declared inputs by calculation | Rerun the method and inspect input provenance |
+| `[E]` | Estimated on explicit assumptions | Use for reversible work; verify before an irreversible choice |
+| `[I]` | Reasoned inference not yet verified | Treat as a hypothesis or design direction |
 
-From there, the [architecture page](./03-architecture/) explains how all these pieces feed each other.
+These are **provenance classes**, not a four-step ranking. A derived result can still be
+limited by an estimated input. The [glossary](./04-glossary/) explains the notation and
+the difference between section, wing and aircraft quantities.
 
-## The confidence convention
+## 5. Verify a derived number
 
-Every quantitative claim carries a tag:
-
-| Tag | Meaning |
-|---|---|
-| `[M]` | Measured and published by a primary source |
-| `[D]` | Derived by calculation from `[M]` data |
-| `[E]` | Estimated on declared assumptions |
-| `[I]` | Reasoned inference, not verified |
-
-**Hard rule:** no `[E]` or `[I]` datum supports an irreversible decision without prior verification.
-
-The tone of a claim must carry its tag: an `[E]` is not communicated like an `[M]`. See the [glossary](./04-glossary/).
-
-## How to verify any number
-
-1. Find the claim and its tag — e.g. **NP = 26.7 % MAC `[D]`**.
-2. The `[D]` traces to a script in [`calculations/`](../calculations/) (`vlm_ala_volante.py` in this case).
-3. Run it. Every script ships its **validation case** and must pass it before it is trusted:
+Run the cross-module contract before an individual analysis:
 
 ```bash
-python3 calculations/vlm_ala_volante.py
+python calculations/verify_calculations.py
+python calculations/verify_calculations.py --all-scripts
 ```
 
-A modification that breaks the validation is not accepted.
+Then run the owning model. For the released planform and shared invariants:
 
-## Next steps
+```bash
+python calculations/design_config.py
+```
 
-- [How to read this repo](./02-how-to-read/) — the folder map and the traceability flow.
-- [Architecture](./03-architecture/) — how research, decisions, gaps, tests and calculations feed each other.
-- [Contributing](./05-contributing/) — how to help, and what is worth most.
+For the Article #1 manoeuvre and gust-reference screen:
+
+```bash
+python calculations/flight_envelope.py
+```
+
+The verifier checks that geometry, mass, battery, CG, stall, power, propulsion, controls,
+stability and structural models describe the same aircraft. XFOIL workflows and physical
+tests remain explicit external gates; they are never silently reported as complete.
+
+## 6. Know what remains open
+
+The current high-value physical gates are:
+
+- **E2 / G2:** measured lift, drag, moment and stall acceptance for Salamandra r1.
+- **F2 / OP-24:** CAD mass properties and complete-aircraft scale measurement; the V1
+  lower model exceeds its 45 km/h stall allocation by about 6.3 g.
+- **S3 / OP-29–30:** printed `GXY`, wing torsional stiffness and elastic-axis measurement
+  before expanding the 105 km/h initial speed limit.
+- **G11 / E9:** nonlinear dynamic gust response and a defensible negative-lift branch.
+- **D2 / E3:** motor–ESC–propeller bench map and measured 95 km/h energy consumption.
+
+Next: [How to read this repository](./02-how-to-read/) explains the record structure;
+[Architecture](./03-architecture/) explains how the tools and evidence connect.

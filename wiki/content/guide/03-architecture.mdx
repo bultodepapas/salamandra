@@ -1,65 +1,119 @@
 ---
-title: Architecture
-description: How research, decisions, gaps, tests and calculations feed each other — the reasoning ecosystem behind Salamandra.
+title: Engineering and documentation architecture
+description: The source-of-truth layers, calculation contracts, evidence loop and publication checks behind Salamandra.
 editUrl: https://github.com/bultodepapas/salmandra/edit/main/wiki/content/guide/03-architecture.mdx
 ---
 
 import Mermaid from '@components/Mermaid.astro';
 
-# Architecture
+Salamandra separates human authority, numerical authority, model-specific assumptions
+and physical evidence. That separation is deliberate: it makes a conflict visible before
+it reaches CAD or a test article.
 
-The project is built as a closed loop of evidence. A claim does not enter the design guide until it can be traced back to a source and, whenever possible, to a script anyone can rerun.
-
-## The reasoning ecosystem
-
-<Mermaid diagram={`
-accTitle: The reasoning ecosystem
-accDescr: Research threads feed the ADRs and the gap register. ADRs feed the design guide, which is realized as community CAD parts. Tests close gaps and feed measured data back to research.
-flowchart LR
-  SRC["[M] primary sources<br/>UIUC · aerodesign.de · flight data"] --> CALC["Calculations<br/>validated scripts"]
-  CALC --> RES["Research threads (I-XX)"]
-  RES --> ADR["ADRs — decisions"]
-  RES --> GAP["Gap register (G-XX)"]
-  ADR --> DG["Design guide v0.1"]
-  GAP --> TESTS["Test program (E-XX)"]
-  TESTS --> RES
-  TESTS --> GAP
-  DG --> CAD["CAD / STL<br/>community parts"]
-  CAD --> TESTS
-`} />
-
-Every arrow is a **traceability link**: a research thread names the sources and the decisions it feeds; an ADR names the research and the gap it closes; a gap names the test that will close it.
-
-## The confidence chain
-
-A number earns its place through four levels:
+## Source-of-truth layers
 
 <Mermaid diagram={`
-accTitle: The confidence chain
-accDescr: A number starts as a measured datum, is turned into a derived value by calculation, or is declared as an estimate or an unverified inference.
-flowchart LR
-  M["[M] Measured<br/>primary source"] --> D["[D] Derived by calculation<br/>from [M] data"]
-  D --> E["[E] Estimated<br/>declared assumptions"]
-  I["[I] Reasoned inference<br/>not verified"]
+flowchart TB
+  accTitle: Salamandra source-of-truth layers
+  accDescr: Release notes and the Design Guide control the human-readable baseline. Shared numbers live in design_config. Model scripts consume that contract. The verifier checks cross-module consistency. The wiki publishes canonical records without editing them.
+  REL["Release notes<br/>scope and migration"] --> GUIDE["Design Guide v{{GUIDE_VERSION}}<br/>human-readable authority"]
+  GUIDE <--> CONFIG["design_config.py<br/>shared numerical contract"]
+  CONFIG --> MODELS["Model scripts<br/>local assumptions + validation"]
+  MODELS --> VERIFY["verify_calculations.py<br/>cross-module contracts"]
+  RESEARCH["Research · ADRs · gaps · tests"] --> GUIDE
+  RESEARCH --> MODELS
+  GUIDE --> CAD["CAD / test article"]
+  CAD --> TEST["Measured evidence"]
+  TEST --> RESEARCH
+  WIKI["gen-site.mjs<br/>publication projection"] -. reads .-> GUIDE
+  WIKI -. reads .-> RESEARCH
 `} />
 
-- **`[M]`** — measured and published by a primary source (e.g. the UIUC polar database, or the project's own flight tests).
-- **`[D]`** — derived by calculation from `[M]` data. This is what the scripts in [`calculations/`](../calculations/) produce.
-- **`[E]`** — estimated on declared assumptions; carries an uncertainty band and must be declared.
-- **`[I]`** — reasoned inference, not yet verified.
+The Design Guide and `design_config.py` must agree. The guide provides meaning, units,
+scope and instructions; the Python module provides exact shared constants and executable
+invariants. A model-specific estimate belongs in its owning script, not in the shared
+contract.
 
-**The hard rule** is that `[E]` and `[I]` data never support an irreversible decision without prior verification. When better data overturn a conclusion, it is recorded as a correction in the [changelog](../platform/changelog/).
+## Evidence is a loop, not a ladder
 
-## How a design parameter is born
+The four tags classify where a claim comes from. They do not say that every claim moves
+from `[M]` to `[D]` to `[E]` to `[I]`, and they are not interchangeable confidence scores.
 
-1. **A gap opens** — e.g. G8: "the neutral point is unknown".
-2. **Research bounds it** — I-07 runs the in-house VLM; I-15 cross-checks it with an independent Weissinger-L method (NP = 26.7 % vs 28.0 % MAC, 3 mm agreement).
-3. **A decision is made** — the ADR records what was chosen, what was discarded, and *what datum would make the team reconsider*.
-4. **The guide states it** — the parameter enters the CAD-ready specification with its tag and its source.
-5. **A test will verify it** — E8 (yaw perturbation) or E7 (Southwell in flight) turns `[E]`/`[D]` into `[M]`.
+<Mermaid diagram={`
+flowchart LR
+  accTitle: Provenance classes and verification loop
+  accDescr: Measurements can feed derived calculations. Estimates and inferences remain separate declared inputs. Tests can replace them with measurements or trigger corrections.
+  M["[M] measured input<br/>source + conditions"] --> D["[D] derived result<br/>method + validation"]
+  E["[E] estimate<br/>declared assumptions"] --> D
+  I["[I] inference<br/>unverified reasoning"] --> DEC["reversible decision<br/>or research direction"]
+  D --> DEC
+  DEC --> GAP["gap + closure criterion"]
+  GAP --> TEST["controlled test"]
+  TEST --> M
+  TEST --> CORR["correction if contradicted"]
+`} />
 
-## Design principles that shape the work
+A derived value can inherit uncertainty from an estimated input. Reproducible arithmetic
+does not convert `[E]` into `[M]`; only evidence does.
 
-- **Falsifiable objectives.** The target is measurable (≤ 1.15 Wh/km at 95 km/h, measured with tests E2/E3) — not a wish.
-- **Phases with gates.** Phase 1 (geometry and stability) must close before any detail geometry is designed.
-- **The correction register is part of the product.** 21 corrections so far; documenting them is what allows trust in what remains standing.
+## How a parameter enters the design
+
+The current neutral-point chain is a useful example:
+
+1. The planform contract fixes span, area, taper and −15° quarter-chord sweep.
+2. The panel VLM calculates **NP = −75.8 mm / 25.72 % MAC**.
+3. A structurally independent Weissinger-L method gives **−72.9 mm / 27.0 % MAC**;
+   the difference is **2.9 mm**.
+4. I-21 records the trade, assumptions and central-body limitation.
+5. ADR-0040 adopts the sweep, neutral point and **−93.8 mm** target CG.
+6. Design Guide v{{GUIDE_VERSION}} publishes the CAD control values.
+7. Balance and flight identification remain the physical closure path.
+
+The calculation is closed enough for controlled CAD work, while the unmeasured
+central-body and flight effects remain visible. “Closed” is always scoped.
+
+## Toolchain responsibilities
+
+| Layer | Tool | Responsibility | Must not claim |
+|---|---|---|---|
+| Shared inputs | `design_config.py` | Geometry, atmosphere, mission points, speed roles, loads and released masses | Model-specific physics |
+| Aerodynamics | In-house VLM, Weissinger-L, XFOIL 6.99 | Potential-flow checks, independent NP check, section-polar generation | Measured printed-aircraft performance |
+| Coupled sizing | Balance, mass, propulsion, control, yaw, divergence and load scripts | Propagate declared inputs and expose sensitivities | Flight qualification |
+| System verification | `verify_calculations.py` | Cross-module equality and deterministic CLI execution | External XFOIL or physical-gate completion |
+| Publication | Astro Starlight, `gen-site.mjs`, `check-refs.mjs` | Mount canonical records, build indexes, rewrite links and check references | New engineering authority |
+| Physical closure | E-, F-, S- and D-series work | Convert assumptions into measured evidence | A pass outside the tested configuration |
+
+## Publication architecture
+
+The website does not maintain a second copy of the engineering record:
+
+```text
+canonical Markdown and Python
+        ↓ read only
+wiki/scripts/gen-site.mjs
+        ↓ generated content + normalized links + indexes
+Astro Starlight
+        ↓
+static site + Pagefind search + sitemap + llms.txt
+```
+
+At build time, the generator derives the current release, guide version, correction
+number and record counts from canonical sources. It also generates indexes for
+{{ADR_FILE_COUNT}} published ADR files, {{RESEARCH_FILE_COUNT}} research threads and
+{{SCRIPT_FILE_COUNT}} Python tools. Wiki-only onboarding pages use those generated values
+instead of hand-maintained release labels.
+
+## Gates that protect the record
+
+- `check-refs.mjs --strict` rejects broken local Markdown/MDX links and unknown ADR, I,
+  G or E identifiers.
+- `gen-site.mjs --strict` rejects unresolved publication links except declared forward
+  references.
+- `astro check` validates the content schema and components.
+- Markdown lint protects structural consistency in the committed onboarding pages.
+- The production build creates Pagefind search and the sitemap from the same content CI
+  will deploy.
+- The calculation verifier proves that model boundaries share one released aircraft.
+
+Corrections through **C{{LATEST_CORRECTION}}** remain part of the product: a correction
+updates current authority while preserving the historical claim that was overturned.

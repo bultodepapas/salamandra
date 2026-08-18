@@ -3,12 +3,12 @@
 // Two guarantees:
 //  1. Every inline markdown link in the repo that targets a local `.md` file
 //     must resolve to a real file. Broken traceability links are errors.
-//  2. Every bare mention of a record identifier (`ADR-XXXX`, `I-XX`, `GX`)
-//     must resolve to an existing record. Unknown identifiers are warnings.
+//  2. Every bare mention of a record identifier (`ADR-XXXX`, `I-XX`, `GX`, `EX`)
+//     must resolve to an existing record. Unknown identifiers fail in strict mode.
 //
 // Exit code 1 when there are broken links, so CI can gate on it.
 //
-// Usage: node wiki/scripts/check-refs.mjs   (also wired as `npm run check:refs`)
+// Usage: node wiki/scripts/check-refs.mjs [--strict]
 
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import path from 'node:path';
@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const posix = (p) => p.split(path.sep).join('/');
+const STRICT = process.argv.includes('--strict');
 
 const SKIP_DIRS = new Set([
   '.git',
@@ -48,7 +49,7 @@ const tableIds = (rel, re) => {
   return out;
 };
 const G_IDS = tableIds('gaps/README.md', /\*\*G(\d{1,2})\*\*/g);
-const E_IDS = tableIds('tests/README.md', /\*\*E(\d)\*\*/g);
+const E_IDS = tableIds('tests/README.md', /\*\*E(\d{1,2})\*\*/g);
 
 // historical records that are intentionally fileless (kept for the record):
 // superseded ADR numbers (decisions/README "Superseded or cancelled") and
@@ -62,7 +63,7 @@ const listCells = (rel, re) => {
   return out;
 };
 for (const n of listCells('decisions/README.md', /^\| ([0-9,\s]+) \|/gm)) ADR_IDS.add(n);
-for (const n of tableIds('tests/README.md', /^\| (E\d) \|/gm)) E_IDS.add(n.replace('E', ''));
+for (const n of tableIds('tests/README.md', /^\| (E\d{1,2}) \|/gm)) E_IDS.add(n.replace('E', ''));
 
 // ---------------------------------------------------------------------------
 // scan
@@ -93,7 +94,7 @@ for (const rel of files) {
   const dir = path.posix.dirname(posix(rel));
 
   // 1. inline links to local .md files
-  for (const m of md.matchAll(/\]\(([^()\s]+\.md)(#[^)]*)?\)/g)) {
+  for (const m of md.matchAll(/\]\(([^()\s]+\.(?:md|mdx))(#[^)]*)?\)/g)) {
     const href = m[1];
     if (/^(https?:|mailto:|#|\/)/.test(href)) continue;
     const resolved = path.resolve(ROOT, dir, href);
@@ -112,7 +113,7 @@ for (const rel of files) {
   for (const m of md.matchAll(/\bG(\d{1,2})\b/g)) {
     if (!G_IDS.has(m[1])) warnings.push(`unknown G${m[1]} in ${rel}`);
   }
-  for (const m of md.matchAll(/\bE(\d)\b/g)) {
+  for (const m of md.matchAll(/\bE(\d{1,2})\b/g)) {
     if (!E_IDS.has(m[1])) warnings.push(`unknown E${m[1]} in ${rel}`);
   }
 }
@@ -125,12 +126,17 @@ console.log(
 );
 
 if (warnings.length) {
-  console.warn(`[check-refs] ${warnings.length} unknown identifier warning(s):`);
+  console.warn(
+    `[check-refs] ${warnings.length} unknown identifier warning(s)` +
+      `${STRICT ? ' (strict mode: blocking)' : ''}:`,
+  );
   for (const w of [...new Set(warnings)].slice(0, 40)) console.warn(`  - ${w}`);
 }
 if (errors.length) {
   console.error(`[check-refs] ${errors.length} broken link(s):`);
   for (const e of errors) console.error(`  - ${e}`);
+  process.exitCode = 1;
+} else if (STRICT && warnings.length) {
   process.exitCode = 1;
 } else {
   console.log('[check-refs] no broken local links.');

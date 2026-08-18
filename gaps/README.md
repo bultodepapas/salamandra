@@ -6,16 +6,16 @@ It is as important as the decision register: the project rule is that **no `[E]`
 
 | # | Gap | Impact | Status | Closes with |
 |---|---|---|---|---|
-| **G1** | Reference geometry: area, airfoil, twist | All calculations depend on S ≈ 0.282 m² `[E]` | 🔄 **Partial** — t/c measured `[M]`, planform missing | E1 |
+| **G1** | Reference-aircraft geometry: area, airfoil, twist | Limits validation against the Peregrine precedent; Salamandra's 0.282 m² area is a controlled design input, not this measurement | 🔄 **Partial** — reference t/c measured `[M]`; complete reference planform remains unavailable | E1 |
 | **G2** | No measured polars of the released r1 printed sections at local Re 1.2–5.1×10⁵ | Blocks flight-envelope acceptance, not CAD | 🔄 **Computational/CAD closure:** Salamandra r1 selected and generated (ADR-0041, I-15 §8); measured lift/drag/moment/stall remain open | E2 |
 | **G3** | C_D0 breakdown by component | Prevents prioritizing parasitic-drag reduction | ⬜ Open | E2 |
-| **G4** | Real torsional stiffness | ADR-0002 unverified | 🔄 `[E]` ±35 %, anchored to measured reference; printed-shell torsion bounds proposed (I-12) | E5, E7 |
+| **G4** | Real torsional stiffness | ADR-0002 and the divergence margin remain physically unverified | 🔄 Model bounded; representative printed-section and complete-wing measurements remain open | S3/E5, then E7 correlation |
 | **G5** | Propeller wash effect on a thin airfoil at Re 4×10⁵ | ADR-0006 under dispute | ⬜ Open; literature bounds proposed (I-13) | I-13, comparative in-flight test |
-| **G6** | **Sweep factor for divergence** | **Weakest link of the structural calculation** | ⬜ Open; X-29 data and theory bounds proposed (I-12) | **I-12 (bounds), E7** |
+| **G6** | **Absolute divergence margin** | **Weakest structural chain: sweep transfer, printed GJ and elastic axis are not measured** | 🔄 **Bounded, physically open** — released-r1 model gives 327.2 km/h nominal / 129.6 km/h conservative; initial V_limit remains 105 km/h | **S3 GXY/GJ/elastic axis, E7 correlation** |
 | **G7** | Flutter | Unverified. Sudden onset, no warning | ⬜ Open | E5 |
-| **G8** | Neutral point and static margin | Blocks Phase 1 | 🔄 **Partial** — NP = 26.7 % MAC `[D]` by in-house VLM, **cross-checked by an independent Weissinger-L (28.0 % MAC, 3 mm agreement — I-15 §6.3)**; central-body effect still unquantified | I-07, I-15, C2 (body model) |
+| **G8** | Neutral point and static margin | Controls CG, trim and modular-panel acceptance | 🔄 **Largely closed computationally** — −15° panel VLM gives **25.72 % MAC / −75.8 mm**; Weissinger-L gives **27.0 % / −72.9 mm** (2.9 mm spread); central-body and flight identification remain open | I-21; central-body model; measured flight NP |
 | **G9** | Altitude-loop coupling with pitch (*porpoising*) | **Threatens the validity of E7** | ⬜ Open | PID adjustment before testing |
-| **G10** | **Directional stability Cnβ** — finless baseline estimated negative (FSW + nose boom); the fin/no-fin choice is an assumption, not a measured decision | The finless config is FC-dependent in yaw; the fin costs ≈ +10 % energy `[E]` | 🔄 **Bounded by calculation (I-20 `[D]`, `[E]` bands)** — finless −0.0006…−0.0015/deg; fin tiers V1a/V1b restore stability | **E-flight yaw test** (perturbation, Dutch-roll decay) + CAD side-area check (OP-21) |
+| **G10** | **Directional stability Cnβ** — finless baseline estimated negative (FSW + nose boom); the fin/no-fin choice is not yet measured | CLEAN is FC-dependent in yaw; the V1 fin costs ≈ +10 % energy `[E]` | 🔄 **Bounded by calculation (I-20 `[D]`, `[E]` bands)** — finless −0.0006…−0.0014/deg; V1a/V1b fin tiers improve stability | **E8 yaw perturbation/modal identification** + CAD side-area check (OP-21) |
 | **G11** | **Dynamic gust loads and negative lift boundary** — rigid Part 23 transfer leaves the linear/stall domain; printed-aircraft CLmin is unknown | Blocks a complete V-n/gust envelope and traceable sizing of shell/attachments | 🔄 **Partial:** I-24 closes +6/−3 manoeuvre limit vs +9/−4.5 ultimate semantics and the positive V-n branch; gust screen is not an adopted load | Nonlinear unsteady gust model after S3 mass/stiffness data; validated B3 negative-polar extension/section evidence for CLmin; E9 blackbox `n_z(V)` correlation |
 
 ---

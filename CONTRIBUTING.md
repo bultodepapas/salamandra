@@ -62,9 +62,10 @@ Irreversible decisions supported by `[E]` or `[I]` must be explicitly declared.
 
 ## About corrections
 
-**The correction register is part of the product, not a list of embarrassments.** There are
-21, several of them errors of the original analysis corrected by later data. Documenting
-them is what allows trust in what remains standing.
+**The correction register is part of the product, not a list of embarrassments.** The
+current record runs through C34; several entries correct errors in earlier analysis after
+better data or integration checks. Documenting them is what allows trust in what remains
+standing.
 
 If you find an error, **do not silence it by editing the text**: fix it and record it.
 

@@ -118,7 +118,9 @@ Update the index of `decisions/README.md` with the status.
 
 **Do not silence it by editing the text.** Fix it **and** add an entry to the [`CHANGELOG.md`](CHANGELOG.md) with a `C` number. Someone who read the previous version needs to know that it changed and why.
 
-There are 21 corrections so far. Several are errors of the original analysis overturned by later data. **Documenting them is what allows trust in what remains standing.**
+The current record runs through C34. Several corrections overturn earlier analysis with
+better data or integration checks. **Documenting them is what allows trust in what remains
+standing.**
 
 ### When cancelling a decision
 

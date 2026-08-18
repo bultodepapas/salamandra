@@ -6,11 +6,16 @@ interface Props {
 const { diagram } = Astro.props;
 ---
 
-<pre class="mermaid">{diagram.trim()}</pre>
+<figure class="mermaid-diagram" data-mermaid-source={diagram.trim()}>
+  <pre class="mermaid">{diagram.trim()}</pre>
+</figure>
 
 <script>
-  // Mermaid is lazy-loaded and re-rendered when the Starlight theme changes,
-  // so diagrams stay legible in both light and dark mode.
+  // Mermaid is lazy-loaded and re-rendered from the preserved source whenever
+  // Starlight changes theme, so SVG colors and accessible descriptions stay current.
+
+  let renderSequence = 0;
+  let rendering = false;
 
   function isDark() {
     const theme = document.documentElement.dataset.theme;
@@ -20,21 +25,39 @@ const { diagram } = Astro.props;
   }
 
   async function renderAll() {
-    const nodes = document.querySelectorAll('pre.mermaid');
+    if (rendering) return;
+    const nodes = document.querySelectorAll<HTMLElement>('figure.mermaid-diagram');
     if (!nodes.length) return;
-    const { default: mermaid } = await import('mermaid');
-    mermaid.initialize({
-      startOnLoad: false,
-      securityLevel: 'strict',
-      theme: isDark() ? 'dark' : 'default',
-    });
-    for (const [i, el] of Array.from(nodes).entries()) {
-      try {
-        const { svg } = await mermaid.render(`mermaid-svg-${i}`, el.textContent || '');
-        el.outerHTML = svg;
-      } catch (err) {
-        console.warn('Mermaid render failed:', err);
+    rendering = true;
+    try {
+      const { default: mermaid } = await import('mermaid');
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'strict',
+        theme: isDark() ? 'dark' : 'default',
+      });
+      for (const [i, el] of Array.from(nodes).entries()) {
+        const source = el.dataset.mermaidSource || '';
+        if (!source) continue;
+        try {
+          const { svg, bindFunctions } = await mermaid.render(
+            `mermaid-svg-${renderSequence}-${i}`,
+            source,
+          );
+          el.innerHTML = svg;
+          bindFunctions?.(el);
+        } catch (err) {
+          el.innerHTML = '';
+          const fallback = document.createElement('pre');
+          fallback.className = 'mermaid';
+          fallback.textContent = source;
+          el.append(fallback);
+          console.warn('Mermaid render failed:', err);
+        }
       }
+      renderSequence += 1;
+    } finally {
+      rendering = false;
     }
   }
 
@@ -43,6 +66,8 @@ const { diagram } = Astro.props;
   } else {
     renderAll();
   }
+
+  document.addEventListener('astro:page-load', renderAll);
 
   // Re-render when Starlight toggles the theme (data-theme attribute).
   new MutationObserver(() => renderAll()).observe(document.documentElement, {

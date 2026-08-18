@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" role="img" aria-labelledby="title desc">
+  <title id="title">Salamandra Article #1 planform</title>
+  <desc id="desc">Technical top view of the 1,300 millimeter forward-swept wing with the quarter-chord line, center module, neutral point, and target center of gravity.</desc>
+  <defs>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#8490a3" stroke-opacity="0.13" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="wingFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2c14b" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#d69e2e" stop-opacity="0.09"/>
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="960" height="620" rx="28" fill="#12161d"/>
+  <rect x="18" y="18" width="924" height="584" rx="20" fill="url(#grid)" stroke="#8490a3" stroke-opacity="0.24"/>
+
+  <g fill="none" stroke="#95a0b5" stroke-width="1.5" stroke-opacity="0.72">
+    <path d="M70 86H890"/>
+    <path d="M70 76V96M480 76V96M890 76V96"/>
+    <path d="M70 110V130M890 110V130" stroke-dasharray="4 6"/>
+  </g>
+  <text x="480" y="72" fill="#d7dde8" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="17" text-anchor="middle">b = 1300 mm</text>
+
+  <path d="M480 238 L890 148 L890 248 L480 440 L70 248 L70 148 Z"
+        fill="url(#wingFill)" stroke="#f2bd3e" stroke-width="3" filter="url(#softGlow)"/>
+
+  <path d="M480 260 L890 150 M480 260 L70 150" fill="none" stroke="#f2bd3e" stroke-width="2" stroke-dasharray="9 8"/>
+  <text x="741" y="176" fill="#f2cf6a" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="14" transform="rotate(-15 741 176)">c/4 · −15°</text>
+
+  <path d="M357 211 L357 408 Q357 432 381 440 H579 Q603 432 603 408 L603 211"
+        fill="#151b25" fill-opacity="0.78" stroke="#9ca7ba" stroke-width="2" stroke-dasharray="7 7"/>
+  <path d="M451 195V111 Q451 90 472 90 H488 Q509 90 509 111V446"
+        fill="#171d27" stroke="#9ca7ba" stroke-width="2"/>
+  <circle cx="480" cy="471" r="31" fill="none" stroke="#9ca7ba" stroke-width="2" stroke-dasharray="7 7"/>
+  <path d="M480 440V502M448 471H512" stroke="#9ca7ba" stroke-width="1.5" stroke-opacity="0.65"/>
+
+  <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+    <path d="M480 207h-22l22-13 22 13z" fill="#7dd3a7"/>
+    <text x="512" y="200" fill="#ccebdc" font-size="14">CG −93.8 mm</text>
+    <path d="M480 220h-18l18-10 18 10z" fill="#76b9e8"/>
+    <text x="512" y="226" fill="#c9e4f6" font-size="14">NP −75.8 mm</text>
+    <text x="480" y="310" fill="#d7dde8" font-size="14" text-anchor="middle">CORE</text>
+    <text x="480" y="330" fill="#95a0b5" font-size="12" text-anchor="middle">common module</text>
+    <text x="170" y="272" fill="#d7dde8" font-size="14" text-anchor="middle">PANEL</text>
+    <text x="790" y="272" fill="#d7dde8" font-size="14" text-anchor="middle">PANEL</text>
+  </g>
+
+  <g fill="#95a0b5" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="13">
+    <text x="46" y="544">ARTICLE #1 · TOP VIEW</text>
+    <text x="46" y="567">S 0.282 m² · AR 6.0 · taper 0.50</text>
+    <text x="914" y="544" text-anchor="end">CONTROLLED PLANFORM</text>
+    <text x="914" y="567" text-anchor="end">outer CORE mold remains provisional</text>
+  </g>
+</svg>

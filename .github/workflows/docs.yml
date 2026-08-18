@@ -67,17 +67,21 @@ jobs:
 
       - name: Check referential integrity
         working-directory: wiki
-        run: node scripts/check-refs.mjs
+        run: npm run check:refs
 
       - name: Lint wiki markdown
         working-directory: wiki
-        run: npx --yes markdownlint-cli2 --config ../.markdownlint.json "content/**/*.md" "content/**/*.mdx"
+        run: npm run lint
 
       - name: Generate site content (strict) and build
         working-directory: wiki
         run: |
           node scripts/gen-site.mjs --strict
           npm run build
+
+      - name: Check built navigation
+        working-directory: wiki
+        run: npm run check:site
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

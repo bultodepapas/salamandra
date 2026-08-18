@@ -1,31 +1,255 @@
-/* Salamandra theme — aviation amber accents over the Starlight defaults. */
+/* Salamandra — flight-test notebook: graphite surfaces and instrument amber. */
 
 :root {
-  --sl-color-accent-low: #4a3512;
-  --sl-color-accent: #d69e2e;
-  --sl-color-accent-high: #f2cf6a;
-  --sl-color-text-accent: #e8b83e;
+  --sl-color-accent-low: #3a2c0f;
+  --sl-color-accent: #efb72e;
+  --sl-color-accent-high: #ffe087;
+  --sl-color-text-accent: #f2bd3e;
+  --sl-color-bg: #11151b;
+  --sl-color-bg-nav: #171c24;
+  --sl-color-bg-sidebar: #131820;
+  --sl-color-hairline-light: #303846;
+  --sl-color-hairline-shade: #0c0f14;
+  --sl-content-width: 54rem;
+  --sl-text-body: 1rem;
+  --sl-text-body-sm: 0.9375rem;
+  --sl-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --sl-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
 :root[data-theme='light'] {
-  --sl-color-accent-low: #f5e2b8;
-  --sl-color-accent: #9c6500;
-  --sl-color-accent-high: #5c3a00;
-  --sl-color-text-accent: #8a5b00;
+  --sl-color-accent-low: #f7e8bf;
+  --sl-color-accent: #8b5a00;
+  --sl-color-accent-high: #4e3200;
+  --sl-color-text-accent: #795000;
+  --sl-color-bg: #fbfaf6;
+  --sl-color-bg-nav: #fffdf8;
+  --sl-color-bg-sidebar: #f5f2e9;
+  --sl-color-hairline-light: #ded9cc;
+  --sl-color-hairline-shade: #ebe7dc;
 }
 
-/* Keep tables readable on narrow content */
+::selection {
+  color: #16120a;
+  background: #f2bd3e;
+}
+
+header.header {
+  border-bottom: 1px solid var(--sl-color-hairline-light);
+  box-shadow: 0 1px 0 rgb(0 0 0 / 12%);
+}
+
+.site-title {
+  font-weight: 760;
+  letter-spacing: -0.025em;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(3.5rem, 8vw, 7rem);
+  border-bottom: 1px solid var(--sl-color-hairline-light);
+}
+
+.hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image:
+    linear-gradient(rgb(239 183 46 / 5%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(239 183 46 / 5%) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(90deg, #000 0%, transparent 72%);
+  content: '';
+}
+
+.hero h1 {
+  max-width: 10ch;
+  font-size: clamp(3.5rem, 9vw, 7.6rem);
+  font-weight: 760;
+  letter-spacing: -0.065em;
+  line-height: 0.88;
+}
+
+.hero .tagline {
+  max-width: 40rem;
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+  line-height: 1.65;
+}
+
+.hero img {
+  width: min(100%, 44rem);
+  max-height: 34rem;
+  filter: drop-shadow(0 1.5rem 3rem rgb(0 0 0 / 32%));
+}
+
+.sl-link-button {
+  min-height: 2.75rem;
+  transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.sl-link-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.65rem 1.5rem rgb(0 0 0 / 18%);
+}
+
+:where(a, button, summary, select, input, textarea):focus-visible {
+  outline: 3px solid var(--sl-color-accent);
+  outline-offset: 3px;
+  border-radius: 0.2rem;
+}
+
+/* The shortcut remains available through aria-keyshortcuts. Hiding the nested
+   kbd keeps the visible label consistent with the accessible name. */
+button[data-open-modal] > kbd {
+  display: none !important;
+}
+
+.sl-markdown-content {
+  line-height: 1.72;
+}
+
+.sl-markdown-content :is(h2, h3) {
+  text-wrap: balance;
+  letter-spacing: -0.025em;
+}
+
+.sl-markdown-content h2 {
+  margin-top: 3.5rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--sl-color-hairline-light);
+}
+
+.sl-markdown-content > p:first-of-type {
+  font-size: 1.06rem;
+}
+
+.sl-markdown-content blockquote {
+  margin-inline: 0;
+  padding: 1rem 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 38%, transparent);
+  border-left: 0.28rem solid var(--sl-color-accent);
+  border-radius: 0 0.45rem 0.45rem 0;
+  background: color-mix(in srgb, var(--sl-color-accent-low) 46%, transparent);
+}
+
 .sl-markdown-content table {
-  font-size: var(--sl-text-xs);
+  width: 100%;
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
-/* Mermaid diagrams fit their container */
+.sl-markdown-content th {
+  color: var(--sl-color-white);
+  font-size: 0.76rem;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+:root[data-theme='light'] .sl-markdown-content th {
+  color: #25221b;
+}
+
+.sl-markdown-content :not(pre) > code {
+  border: 1px solid var(--sl-color-hairline-light);
+}
+
+.sl-markdown-content a:not(.sl-anchor-link) {
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+
+.sl-markdown-content a:not(.sl-anchor-link):hover {
+  text-decoration-thickness: 0.14em;
+}
+
+figure.mermaid-diagram {
+  overflow-x: auto;
+  margin: 1.75rem 0 2.25rem;
+  padding: 1.25rem;
+  border: 1px solid var(--sl-color-hairline-light);
+  border-radius: 0.55rem;
+  background:
+    linear-gradient(rgb(132 144 163 / 6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(132 144 163 / 6%) 1px, transparent 1px),
+    color-mix(in srgb, var(--sl-color-bg) 92%, var(--sl-color-gray-6));
+  background-size: 24px 24px;
+}
+
+figure.mermaid-diagram svg {
+  display: block;
+  width: 100%;
+  min-width: 38rem;
+  height: auto;
+  margin-inline: auto;
+}
+
 pre.mermaid {
+  margin: 0;
+  color: var(--sl-color-gray-2);
   background: transparent;
   text-align: center;
 }
 
-pre.mermaid svg {
-  max-width: 100%;
-  height: auto;
+@media (prefers-reduced-motion: no-preference) {
+  .hero .copy {
+    animation: salamandra-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .hero .actions {
+    animation: salamandra-rise 520ms 100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .hero img {
+    animation: salamandra-planform 760ms 80ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes salamandra-rise {
+  from { opacity: 0; transform: translateY(0.8rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes salamandra-planform {
+  from { opacity: 0; transform: translateX(1.5rem) scale(0.975); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@media (max-width: 50rem) {
+  .hero {
+    padding-block: 2.75rem 3.5rem;
+  }
+
+  .hero::before {
+    mask-image: linear-gradient(#000 0%, transparent 78%);
+  }
+
+  .hero h1 {
+    font-size: clamp(3.25rem, 18vw, 5rem);
+  }
+
+  .hero img {
+    max-height: 22rem;
+  }
+
+  .sl-markdown-content table {
+    font-size: 0.82rem;
+  }
+
+  figure.mermaid-diagram {
+    margin-inline: -0.5rem;
+    padding: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

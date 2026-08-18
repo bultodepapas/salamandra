@@ -5,7 +5,7 @@
 **Confidence:** High / Medium / Low · `[M]` `[D]` `[E]` `[I]`
 **Reversible:** Yes / Partial / No
 **Related gaps:** GX
-**Supporting research:** [I-XX](../research/...)
+**Supporting research:** I-XX — replace this text with the real research-record link
 
 ## Context
 
