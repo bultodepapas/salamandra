@@ -170,14 +170,14 @@ boom mass with its required length. At Λc/4 = −15°, xNP = −75.8 mm and xCG
 | Pack | Mass (g) | AUW (g) | Required station (mm) | ±5 mm CG band | One-layer cradle |
 |---|---:|---:|---:|---:|---|
 | 4S1P P42A | 305 | 1443 | −481.7 | −505.3…−458.0 | No: separate module |
-| **6S1P P42A** | **445** | **1558.5** | **−355.1** | **−372.6…−337.6** | **Yes** |
+| **6S1P P42A** | **445** | **1559.25** | **−355.2 aggregate / −341.3 component layout** | **−372.8…−337.6** | **Yes** |
 | 4S2P P42A | 585 | 1723 | −296.0 | −310.8…−281.3 | No: separate module |
 | 6S2P P42A | 865 | 2003 | −230.6 | −242.1…−219.0 | No: separate module |
 
 The manufactured cradle is 201 mm long at approximately −460…−259 mm and the forward
 support span from x ≈ −132 is 327 mm; the tube includes another 50 mm of CORE insertion.
-The coupled hybrid estimate is 37.4 g. With two servos ADR-0043 budgets 1558.5 g CLEAN
-and 1595.2 g V1 allocation; the connected V1 lower model is 1601.5 g including the
+The coupled hybrid estimate is 37.4 g. With two servos ADR-0043 budgets 1559.25 g CLEAN
+and 1595.97 g V1 allocation; the connected V1 lower model is 1602.26 g including the
 mandatory spar. Both analytically pass C16; F2 must verify complete-aircraft mass.
 
 ## 4. Airfoil
@@ -237,15 +237,15 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 | PETG shell **≤550 g** | Lower end of the established 550–650 g estimate is now a binding CAD acceptance cap: CORE 150 + wings 310 + tips 40 + elevons 50 | ADR-0043 `[E]` |
 | Battery **445 g** (6S1P P42A) | I-16 cell/pack model, 6×70 + 25 g packaging | `[D]` |
 | Boom structure **37.4 g** | 327 mm support span + 50 mm CORE insertion, Al Ø8/int6 + printed cradle. Corrected point-load superposition: 56 MPa, FS 4.96, δ 1.7 mm, 31.4 Hz | `[D]`/`[E]` |
-| Motor 170 / ESC 35 / servos 25 / avionics 112.9 / O4 Lite 8.2 / prop assembly 25 g | Motor/ESC remain class estimates; 2× Corona servo, SpeedyBee FC+PDB, O4 Lite and APC blade use catalog masses; adapter remains `[E]` | ADR-0043 `[M]`/`[E]` |
-| Article #1 **1558.5 g CLEAN / 1601.5 g V1 lower model** | `mass_budget.py`; complete fin is 37.31 g shell/mount + 5.70 g mandatory spar. The two-servo V1 remains about 18.9 g below the exact C16 ceiling | ADR-0043 `[D]`/`[E]` |
+| Motor 170 / ESC 35 / servos 25 / avionics 112.9 / O4 Air Unit 8.95 / prop assembly 25 g | Motor/ESC remain class estimates; 2× Corona servo, SpeedyBee FC+PDB, O4 Air Unit and APC blade use catalog masses; adapter remains `[E]` | ADR-0043 `[M]`/`[E]` |
+| Article #1 **1559.25 g CLEAN / 1602.26 g V1 lower model** | `mass_budget.py`; complete fin is 37.31 g shell/mount + 5.70 g mandatory spar. The two-servo V1 remains about 18.1 g below the exact C16 ceiling | ADR-0043 `[D]`/`[E]` |
 
 ## 7. Propulsion
 
 | Value | Basis | Tag |
 |---|---|---|
-| APC-E 8×8 (P/D 1.0) | Peak η is retained only for comparison. O1 total power is 109.25 W; after the 14.04 W avionics/O4 Lite battery load, the motor boundary is J 0.923, 8,443 rpm, maximum allowable drag 2.06 N and η_prop 0.671. A unique equilibrium requires E2 drag. | ADR-0042/C29 `[M]`/`[D]`/`[E]` |
-| Motor 28-class, 500–550 Kv, 6S | Boundary rpm is 69–76 % of nominal no-load. The same motor on 4S cannot reach 8,443 rpm unloaded; a 4S module needs ~713 Kv at an estimated 80 % loaded ratio | ADR-0042 `[D]`/`[E]` |
+| APC-E 8×8 (P/D 1.0) | Peak η is retained only for comparison. O1 total power is 109.25 W; after the 11.54 W two-servo avionics/O4 Air Unit battery load, the motor boundary is J 0.918, 8,484 rpm, maximum allowable drag 2.12 N and η_prop 0.674. A unique equilibrium requires E2 drag. | ADR-0042/C29 `[M]`/`[D]`/`[E]` |
+| Motor 28-class, 500–550 Kv, 6S | Boundary rpm is 69–76 % of nominal no-load. The same motor on 4S cannot reach 8,484 rpm unloaded; a 4S module needs ~717 Kv at an estimated 80 % loaded ratio | ADR-0042 `[D]`/`[E]` |
 | ESC 30 A | Cruise ≈ 5 A (≈ 110 W at 22.2 V), peak ≈ 20 A (≈ 450 W) | `[D]` |
 | 0.8° upthrust | Peregrine datasheet `[M]` (0.8° up); ADR-0034 keeps mount angle a design parameter | `[M]` |
 | Motor station, prop disk | **Corrected (C25).** v0.1 placed motor+prop at x = +190 — inside the planform (root TE at +216.9), impossible for a pusher. v0.2: prop disk plane at x ≈ +235 (≥ 10 mm aft of the root TE), mount face +230, motor body ≈ +195…+230, motor+prop centroid ≈ +217. Feeds the OP-01 balance (§3.1) | `[D]` |
@@ -258,9 +258,9 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 - Cruise CL at the V1 lower model: CL = 2W/(ρV²S) =
   2×15.96/(1.225×26.39²×0.282) = **0.1327**
 - Stall speed: V = √(2W/(ρ·S·CL_max)) with wing CL_max = 0.589 (I-07). The exact
-  45 km/h mass ceiling is **1620.4 g**. CLEAN is **1558.5 g → 44.1 km/h**. The
-  two-servo V1 allocation is **1595.2 g → 44.7 km/h** and the complete-fin lower model
-  is **1601.5 g → 44.7 km/h**, about 18.9 g below the ceiling. Measured mass and E2
+  45 km/h mass ceiling is **1620.4 g**. CLEAN is **1559.25 g → 44.1 km/h**. The
+  two-servo V1 allocation is **1595.97 g → 44.7 km/h** and the complete-fin lower model
+  is **1602.26 g → 44.7 km/h**, about 18.1 g below the ceiling. Measured mass and E2
   CLmax still govern release.
 - Required CL_max (wing): 0.589 (I-07) vs section cl_max 0.65 `[M]`
 - Cruise electrical power: 1.15 Wh/km × 95 km/h ≈ **110 W**
@@ -278,8 +278,8 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 | Value | Basis | Tag |
 |---|---|---|
 | 200 × 70 × 32 mm (historical) | Fits the finished 6S1P pack 153 × 64.5 × 22.2 mm (2×3, orient. A, I-16 `[D]`) with the ±5 mm R-CG slide (36.5 mm) and end clearances; 4S1P (153 × 43 × 22) also fits. 4S2P/6S2P (8/12 cells) fit no single-layer arrangement — I-16 | `[D]` |
-| Cradle 155 × 66 × 24 mm (v0.14) | Same pack envelope + 0.5 mm clearance; the cradle is a structural element (transmits the pack load to the two boom supports, `boom_flexion.py`) and replaces the bay as the pack carrier; ≤ 15 g, 2 halves, Ø8.2 grip channel | `[D]`/`[E]` |
-| Cradle 155 × 66 × 24 mm | Current manufactured x envelope **≈−460…−259 mm**; 6S1P band −377.4…−341.9; center −359.6 | `[D]` |
+| Cradle 155 × 66 × 24 mm (v0.14) | **Superseded:** maximum P42A tolerance left only 0.3 mm total lateral clearance and failed the 2 mm installation gate. | `[D]`/`[E]` |
+| Current cradle | **201 mm overall**, inner cross-section **68 × 25 mm** around E01 max **153.0 × 65.7 × 22.6 mm**; 2.3 mm total lateral and 2.4 mm total vertical clearance; component-level pack center −341.3 mm inside −372.8…−337.6 mm travel. | `[D]`/`[E]` |
 | Nose boom | CORE support x ≈ −132 to forward support x ≈ −459, **327 mm span + 50 mm insertion**; aluminium **Ø8 / int Ø6** + cradle = 37.4 g. Two-support architecture mandatory | `[D]`/`[E]` |
 
 ## 10. References
@@ -308,7 +308,7 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 | Fin root t ≥ **3.0 mm** | V1a at VNE: F 40.7 N, h 116 mm, M 4.72 N·m; 2.5 mm gives FS 1.16, rejected; 3.0 mm gives **FS 1.67** without crediting the Al spar; mode ≈ 7.9 Hz | `[D]` |
 | Fin mass target **≤36.72 g**; lower model **43.01 g** | C32: the 37.31 g PETG shell/mount lower estimate excluded the mandatory 5.70 g spar. The complete-model gap is 6.29 g; F2 must reduce the assembly/CLEAN mass before V1 satisfies C16 | `[E]` |
 | ΔCD0 ≈ +0.0014 (V1a) → +9.8 % energy | Updated area; Wh/km ≈ 1.26 `[E]` | `[D]`/`[E]` |
-| V_stall V1a **44.7 km/h — analytical PASS** | 1601.5 g lower model versus exact C16 mass ceiling 1620.4 g; measured F2 mass remains mandatory | ADR-0043 `[D]` |
+| V_stall V1a **44.7 km/h — analytical PASS** | 1602.26 g lower model versus exact C16 mass ceiling 1620.4 g; measured F2 mass remains mandatory | ADR-0043 `[D]` |
 
 **Why two published configurations and not one:** the O1 efficiency target (≤ 1.15
 Wh/km) lives at the clean end of the drag budget — only SALAMANDRA-CLEAN can carry it;

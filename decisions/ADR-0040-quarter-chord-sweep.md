@@ -8,8 +8,8 @@
 
 > **v0.3 update:** the sweep selection remains active. Its provisional profile/mass
 > inputs in the trade table are superseded by ADR-0041, ADR-0043 and C32; current trim
-> at the V1 lower mass is −0.04°…+0.41° neutral elevon and the CLEAN 6S1P station is
-> −359.6 mm.
+> at the V1 lower mass is −0.04°…+0.41° neutral elevon and the CLEAN component-layout
+> 6S1P station is −341.3 mm.
 
 ## Context
 
@@ -71,7 +71,7 @@ coupon/wing measurements close E7.
 - With the released r1 family and C32 V1 lower mass, 3.0° printed wash-in leaves
   −0.04°…+0.41° neutral-elevon trim across Ncrit 10/12. E2 still owns measured
   aerodynamic acceptance.
-- Under the current ADR-0043 allocation, the 6S1P P42A pack station is −359.6 mm and
+- Under the current ADR-0043 allocation, the component-layout 6S1P P42A pack station is −341.3 mm and
   lies inside the one-layer cradle. Other packs require separate module closure.
 - The conservative unmeasured divergence case supports an initial limit of **105 km/h**.
   If the Gxy-plane stiffness coupon validates the corresponding model, the calculated

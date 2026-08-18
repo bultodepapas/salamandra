@@ -232,14 +232,15 @@ Phase-1 status (2026-08-17):
   ([ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md)); E2 remains mandatory.
 - **ADR-0040/0043 — coupled planform, mass and balance resolved.** The −15° planform
   and target CG **−93.8 mm** remain. With Article #1 hardware and the 550 g PETG-shell
-  cap and two-servo baseline, CLEAN is **1558.5 g** and the 6S1P P42A pack balances at
-  approximately **−355.1 mm** in a 327 mm two-support nose boom. Current stations and acceptance gates in the
+  cap and two-servo baseline, CLEAN is **1559.25 g**. The aggregate balance ledger gives
+  a 6S1P station of **−355.2 mm**; the component-level packaging solution used by the
+  drawings gives **−341.3 mm** inside the current cradle travel. Current stations and acceptance gates in the
   [guide §7.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
 - **Two-servo correction closes the analytical V1 mass gap.** The complete fin remains
   **43.01 g**, including its mandatory 5.7 g aluminium spar. With 25 g removed from
-  actuation, V1 is **1601.5 g / 44.7 km/h**, about 18.9 g below the exact 45 km/h
+  actuation, V1 is **1602.26 g / 44.7 km/h**, about 18.1 g below the exact 45 km/h
   mass ceiling. CAD and scale mass verification remain mandatory.
 - **OP-29 (divergence) — operationally bounded, structurally open.** Revision 4 uses
   the released r1 profile. Nominal Vdiv is 327.2 km/h, but the conservative unmeasured

@@ -35,9 +35,9 @@ require approximately 230 W electrical, versus O1's 109.25 W total battery ceili
 
 Post-release audit C29 found a second error: the first v0.3 calculation allocated all
 109.25 W to motor+ESC and called the resulting propeller point an aircraft equilibrium
-without an aircraft drag input. The corrected chain reserves 14.04 W for avionics,
-O4 Lite and BEC loss, leaving 95.21 W. It produces an O1 boundary at J 0.923,
-8,443 rpm, maximum drag 2.06 N and ηprop 0.671. E2 drag is required for a unique
+without an aircraft drag input. The corrected two-servo chain reserves 11.54 W for
+avionics, O4 Air Unit and BEC loss, leaving 97.71 W. It produces an O1 boundary at
+J 0.918, 8,484 rpm, maximum drag 2.12 N and ηprop 0.674. E2 drag is required for a unique
 equilibrium. The full derivation and optional drag solve are executable in
 `propulsion_match.py`; I-23 records the system-level correction.
 
@@ -54,8 +54,9 @@ the tempting but structurally rejected LW-PLA path. `mass_budget.py` preserves t
 case and validates CLEAN at 1,583.5 g. Post-release C32 found that the 36.72 g V1a fin
 row omitted its mandatory 5.70 g aluminium spar: the connected complete-fin lower
 model is 43.01 g and V1 becomes 1,626.5 g / 45.1 km/h. The 1,620.2 g value remains an
-allocation target and F2 is reopened by 6.29 g. The coupled balance solution
-moves the 6S1P pack to −359.6 mm and shortens the forward support span to 327 mm.
+allocation target and F2 remains open by 6.29 g. The current balance chain reports
+−355.2 mm in the aggregate ledger and −341.3 mm in the component-level layout; the
+current support geometry is about 322 mm.
 
 The result is a design allocation, not a measured mass claim. F2 must report CAD mass
 properties, remove or compensate the V1 gap, and weigh the complete aircraft before

@@ -41,7 +41,8 @@ UNITS = {
 
 ALIASES = {"O4 Lite": "O4 Air Unit"}
 
-# model : (input range V, weight g, VTX size, camera size, sensor)  [M]
+# model : (input range V, installed weight g, VTX size, camera size, sensor)
+# Body/input data are [M]; installed mass is [D] when antennas are added.
 DIMS = {
     "O4 Air Unit Pro": ((7.4, 26.4), 36.2, "33.5x33.5x13", "25.55x20x23.30", "1/1.3 in"),
     "O4 Air Unit": (
@@ -89,7 +90,7 @@ def main():
     print("FPV SYSTEM POWER BUDGET — DJI O4 AIR UNIT SERIES")
     print("=" * 76)
     for name, (vr, w, vt, cam, sen) in DIMS.items():
-        print(f"\n{name}  [M]: weight {w} g | VTX {vt} mm | camera {cam} mm | "
+        print(f"\n{name}  [M]/[D]: installed weight {w} g | VTX {vt} mm | camera {cam} mm | "
               f"sensor {sen} | input {vr[0]}-{vr[1]} V")
     print("\nMeasured draw anchors [M]: O4 Air Unit Pro and lightweight "
           "O4 Air Unit armed+recording.")

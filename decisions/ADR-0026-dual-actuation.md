@@ -29,9 +29,9 @@ at 4.8 V `[M]`: 1.36× factored margin at 180 km/h and about 4.0× at the initia
 
 ## Consequences
 
-- Servo mass falls from 50.0 to **25.0 g**. CLEAN AUW becomes **1558.5 g** and the
-  current V1 lower model becomes **1601.5 g** `[D]`.
-- V1 remains about 18.9 g below the exact 45 km/h mass ceiling; CAD mass and measured
+- Servo mass falls from 50.0 to **25.0 g**. CLEAN AUW becomes **1559.25 g** and the
+  current V1 lower model becomes **1602.26 g** `[D]`.
+- V1 remains about 18.1 g below the exact 45 km/h mass ceiling; CAD mass and measured
   E2 `CLmax` remain release gates.
 - Two actuators remove inter-servo fighting on a shared surface and halve the linkage,
   connector and actuator counts.

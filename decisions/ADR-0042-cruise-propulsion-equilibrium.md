@@ -19,20 +19,21 @@ alone does not determine rpm; aircraft drag and shaft power do.
 ## Decision
 
 Retain the APC E 8×8. At 95 km/h, O1 permits total battery power
-`P_bat = 1.15 × 95 = 109.25 W`. The Article #1 avionics plus O4 Lite consume 12.64 W
-at their rails and **14.04 W from the battery** at the declared BEC efficiency 0.90.
-The motor+ESC therefore receives at most **95.21 W**. With motor+ESC efficiency 0.85,
+`P_bat = 1.15 × 95 = 109.25 W`. The Article #1 two-servo avionics plus O4 Air Unit
+consume 10.39 W at their rails and **11.54 W from the battery** at the declared BEC
+efficiency 0.90. The motor+ESC therefore receives at most **97.71 W**. With
+motor+ESC efficiency 0.85,
 the UIUC curve gives the following acceptance boundary:
 
 | Quantity | O1 power-limited boundary |
 |---|---:|
-| J | **0.923** |
-| RPM | **8,443** |
-| Maximum allowable aircraft drag | **2.06 N** |
-| Propeller efficiency | **0.671** |
+| J | **0.918** |
+| RPM | **8,484** |
+| Maximum allowable aircraft drag | **2.12 N** |
+| Propeller efficiency | **0.674** |
 | Shaft / motor electrical power | **80.9 / 95.2 W** |
 | Total battery power | **109.25 W** |
-| Aerodynamic acceptance at 95 km/h | **CD ≤ 0.01711; CLEAN L/D ≥ 7.55** |
+| Aerodynamic acceptance at 95 km/h | **CD ≤ 0.01765; CLEAN L/D ≥ 7.21** |
 
 This is **not a predicted equilibrium**. For any accepted E2 drag `D`, the actual
 operating point is obtained by solving `T(J) = D`; `propulsion_match.py --drag-n D`
@@ -49,7 +50,7 @@ rpm with the same 500–550 Kv motor even unloaded; a 4S variant needs approxima
 
 - `J_opt` remains useful for propeller comparison, but is not a commanded cruise point.
 - **E2 drag is now an explicit prerequisite for claiming a unique cruise rpm or
-  equilibrium.** The 2.06 N value is an upper acceptance boundary, not predicted drag.
+  equilibrium.** The 2.12 N value is an upper acceptance boundary, not predicted drag.
 - O1 accounting is total battery power: propulsion, avionics, FPV and conversion losses.
 - O2 means a platform can host 4S and 6S modules; it no longer requires one motor and
   one cradle to accept all four historical pack configurations.

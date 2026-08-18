@@ -18,7 +18,7 @@ value stands.
 
 | # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
-| **OP-01** | **CG reachability** | **Re-derived for ADR-0043:** target CG −93.8 mm; 6S1P P42A at −359.6 mm (band −377.4…−341.9) in a 155×66×24 cradle from approximately −460 to −259 mm. | Real mass properties and central-body NP | F2/P1–P3; first-print balance |
+| **OP-01** | **CG reachability** | **Re-derived for ADR-0043:** target CG −93.8 mm. Aggregate ledger station = −355.2 mm; component-level E01 solution = −341.3 mm within travel −372.8…−337.6 mm. Cradle inner section 68×25 mm; overall length 201 mm. | Real mass properties and central-body NP | F2/P1–P3; first-print balance |
 | **OP-02** | **Measured airfoil acceptance** | **CAD coordinate closure complete (ADR-0041):** Salamandra r1, 13.5/9 % t/c, +1.0°/+0.5° added reflex. Real-Re XFOIL endpoints pass; integrated cruise Cm0 +0.00326/+0.00209 and neutral elevon −0.04°/+0.41° at the C32 V1 lower mass and 3.0° wash-in. | Printed-section/flight polar, drag and gentle root-first stall may revise exposed profile/twist parameters | **E2**; computational/CAD part closed |
 
 ### Geometry and stability
@@ -44,8 +44,8 @@ value stands.
 
 | # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
-| OP-12 | Motor | 28-class 500–550 Kv, **6S only**; O1-boundary 8,443 rpm is 69–76 % of no-load. 4S needs a separate ~713 Kv module. | D2 measured efficiency/current/thermal map | ADR-0042; D2/E3 |
-| OP-13 | Propeller / aircraft match | APC-E 8×8 O1 boundary **J 0.923 / 8,443 rpm / maximum drag 2.06 N**, not J_opt and not a predicted equilibrium. E2 must supply aircraft drag. | E2 drag polar; D2 thrust/RPM map; E3 energy | ADR-0042/C29; D2/E3 |
+| OP-12 | Motor | 28-class 500–550 Kv, **6S only**; two-servo O1-boundary 8,484 rpm is 69–76 % of no-load. 4S needs a separate ~717 Kv module. | D2 measured efficiency/current/thermal map | ADR-0042; D2/E3 |
+| OP-13 | Propeller / aircraft match | APC-E 8×8 O1 boundary **J 0.918 / 8,484 rpm / maximum drag 2.12 N**, not J_opt and not a predicted equilibrium. E2 must supply aircraft drag. | E2 drag polar; D2 thrust/RPM map; E3 energy | ADR-0042/C29; D2/E3 |
 | OP-14 | Pusher vs twin tractor | Single pusher (disputed ADR-0006) | Comparative wake data at Re 4×10⁵; literature bounds | G5; thread I-13 |
 | OP-15 | Thrust angle | 0.8° up (Peregrine precedent) | Flight trimming | First flights, E7 |
 
@@ -53,13 +53,13 @@ value stands.
 
 | # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
-| OP-16 | Battery carrier (cradle) | Printed 2 halves, inner 155×66×24 mm, x ≈ **−460…−259**, 6S1P P42A center −359.6; Ø8.2 channel gripping the boom | R-CG verification in CAD with real packs | F2/P3 |
+| OP-16 | Battery carrier (cradle) | Printed 2 halves, **201 mm overall**, inner cross-section **68×25 mm**, 6S1P P42A E01 envelope 153.0×65.7×22.6 mm and solved center −341.3 mm; Ø8.2 channel gripping the boom | R-CG verification in CAD with real packs | F2/P3 |
 | OP-17 | Pitot probe position | y ≈ 260 mm LE; lines cross the CORE↔PANEL joint (dedicated channel) | Install/test convenience | D1/D2 |
 | OP-18 | FC pitot input | SpeedyBee F405 WING (not MINI) must be verified. **I-17 catalog check (v0.5):** the F405-WING-V2 and SpeedyBee F405 WING meet the full requirement set (I2C for the MS4525 pitot included); H7A3-WING excluded (no INAV target) | Bench check before buying | D1 |
 | OP-19 | Cradle position (nose) | Forward support x ≈ **−459**, CORE support x ≈ −132, 327 mm span + 50 mm insertion; pack between supports | OP-01 final validation | F2 |
 | **OP-23** | **Battery variants** | **CLOSED for Article #1:** 6S1P only. O2 now means separate 4S/6S platform power modules; 4S needs ~713 Kv at the current boundary and a different carrier/CG solution; 2P needs another outer carrier. | Each future module must close its own propulsion, fit and CG chain | ADR-0042; future variant ADR |
-| **OP-24** | **Measured mass acceptance** | Two-servo baseline: CLEAN **1558.5 g / 44.1 km/h**; V1 allocation 1595.2 g and connected lower model **1601.5 g / 44.7 km/h** including the complete 43.01 g fin. Analytical margin to the exact C16 ceiling is about 18.9 g. | CAD mass properties and complete-aircraft scale measurement; reject V1 >1620.4 g unless E2 re-derives CLmax | F2/P3; first complete assembly |
-| **OP-25** | **FPV system selection / integration** | DJI O4 series reference (I-19 `[M]`): camera in the nose boom (2× M2, 16 mm, O4 25.55×20×23.3 mm), VTX in the CORE with airflow (33.5×33.5×13, 20×20/25.5×25.5 M2), antennas ≥ 5 cm at 90°; power: Pro on the 9 V/2 A rail (≥13.5 W), Lite on 5 V. Including avionics and 90 % BEC: Pro **18.93 W battery / 20.9 % pack·h⁻¹**; Article #1 Lite **14.04 W / 15.5 % pack·h⁻¹**. **Legacy O3 Air Unit (I-19 §2.4 `[M]`)** fits the mounts (module 32.5×30.5×14.5, camera 21.2×20×19.5); camera hole spacing and measured current pending | Model choice (O4 vs Pro vs Lite; O3 legacy accepted with verifications), camera FOV/lens for the mission, CE legal power, real current measurement | D-series bench; O1 energy re-check |
+| **OP-24** | **Measured mass acceptance** | Two-servo baseline: CLEAN **1559.25 g / 44.1 km/h**; V1 allocation 1595.97 g and connected lower model **1602.26 g / 44.7 km/h** including the complete 43.01 g fin. Analytical margin to the exact C16 ceiling is about 18.1 g. | CAD mass properties and complete-aircraft scale measurement; reject V1 >1620.4 g unless E2 re-derives CLmax | F2/P3; first complete assembly |
+| **OP-25** | **FPV system selection / integration** | DJI O4 series reference (I-19 `[M]`): Article #1 camera 13.44×12.36×16.50 in the nose boom; 30×30×6 VTX in the CORE with airflow; attached antenna mass lumped into E19 and 80 mm route retained. Power: Pro on the 9 V/2 A rail (≥13.5 W), Article #1 O4 Air Unit on 5 V. Including two-servo avionics and 90 % BEC: Pro **16.48 W battery / 18.2 % pack·h⁻¹**; Article #1 **11.54 W / 12.7 % pack·h⁻¹**. **Legacy O3 Air Unit (I-19 §2.4 `[M]`)** requires its own camera-mount and power checks. | Camera FOV/lens for the mission, CE legal power, real current measurement | D-series bench; O1 energy re-check |
 | **OP-26** | **Fin variant V1 verification (ADR-0038, I-20)** | V1a **2.13 dm²**, 253/105/63 mm; V1b **2.83 dm²**, 291/121/73 mm. Root **3.0 mm solid** gives FS 1.67 without spar credit; mode ≈7.9 Hz. Ø3 mm Al LE spar retained. C32 complete lower mass 43.01 g exceeds its 36.72 g allocation by 6.29 g. V1a lower uncertainty corner is slightly negative; V1b stays positive. | CAD side area, fin flutter/wake test, **mass reduction/compensation**, E8 yaw perturbation/full modal identification | F2/F4-S8; E8 |
 
 ### Added in v0.2

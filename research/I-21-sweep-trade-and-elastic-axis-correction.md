@@ -9,7 +9,7 @@
 
 > **v0.3 supersession note:** the −15° sweep and aeroelastic conclusions remain
 > controlling. ADR-0041/0043 replace this trade's provisional profile moment, mass and
-> battery station with Salamandra r1, 1583.5 g CLEAN and x_pack = −359.6 mm.
+> battery station with Salamandra r1, 1559.25 g CLEAN and component-layout x_pack = −341.3 mm.
 
 ## 1. Questions
 
@@ -81,8 +81,8 @@ passes all constraints. The result is −15°, not the locally attractive −12�
 ## 5. Revised balance and divergence results
 
 At −15°, `balance_cg.py` gives a VLM target CG of −93.8 mm. After ADR-0043, the Article
-#1 6S1P P42A pack balances at −359.6 mm inside the approximately −460 to −259 mm
-one-layer cradle. CLEAN AUW is 1.5835 kg and calculated stall speed is 44.5 km/h. The
+#1 6S1P P42A pack balances at −341.3 mm inside its −372.8 to −337.6 mm travel.
+CLEAN AUW is 1.55925 kg and calculated stall speed is 44.1 km/h. The
 V1 allocation is 1.6202 kg / 45.0 km/h, while C32's connected lower model is
 1.6265 kg / 45.1 km/h and remains open at F2. Other packs are future power modules,
 not Article #1 options.

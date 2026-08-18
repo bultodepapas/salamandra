@@ -82,20 +82,21 @@ Controlling coordinate files:
 
 ### 3.2 Propulsion power/drag boundary
 
-At O1, 95 km/h × 1.15 Wh/km gives **109.25 W total battery power**. Article #1 avionics,
-O4 Lite and BEC losses require **14.04 W**, leaving **95.21 W** for motor+ESC.
+At O1, 95 km/h × 1.15 Wh/km gives **109.25 W total battery power**. Article #1
+two-servo avionics, O4 Air Unit and BEC losses require **11.54 W**, leaving
+**97.71 W** for motor+ESC.
 Interpolation of the measured UIUC APC E 8×8 curve, with motor+ESC efficiency 0.85,
 then gives:
 
 | Quantity | Corrected O1 boundary |
 |---|---:|
-| Advance ratio J | **0.923** |
-| Propeller speed | **8,443 rpm** |
-| Maximum allowable aircraft drag | **2.06 N** |
-| Propeller efficiency | **0.671** |
-| Shaft / motor electrical power | **80.9 / 95.21 W** |
+| Advance ratio J | **0.918** |
+| Propeller speed | **8,484 rpm** |
+| Maximum allowable aircraft drag | **2.12 N** |
+| Propeller efficiency | **0.674** |
+| Shaft / motor electrical power | **83.1 / 97.71 W** |
 | Total battery power | **109.25 W** |
-| Aerodynamic acceptance | **CD ≤ 0.01711; CLEAN L/D ≥ 7.55** |
+| Aerodynamic acceptance | **CD ≤ 0.01765; CLEAN L/D ≥ 7.21** |
 
 The efficient boundary band is J 0.917–0.933, 8,347–8,499 rpm and 1.91–2.14 N. The
 former peak-efficiency point, J = 0.762, would require approximately 230 W and 5.46 N
@@ -104,29 +105,30 @@ exists until E2 supplies aircraft drag at 95 km/h; `propulsion_match.py --drag-n
 performs that closure.
 
 Article #1 is **6S1P, 500–550 Kv, APC E 8×8**. The required rpm is 71–78 % of nominal
-no-load speed. A 4S installation needs approximately **713 Kv** at an assumed 80 % loaded
-ratio and is a separate power module. The 8,443 rpm point has 2.22× margin to APC's
+no-load speed. A 4S installation needs approximately **717 Kv** at an assumed 80 % loaded
+ratio and is a separate power module. The 8,484 rpm point has 2.21× margin to APC's
 published 18,750 rpm Thin Electric limit. D2 bench data and E3 flight energy remain
 the hardware/mission acceptance tests.
 
 ### 3.3 Article #1 mass, stall and CG allocation — C32 status
 
 Conventional PETG is retained. The Article #1 defaults are a ≤550 g PETG shell,
-SpeedyBee F405 WING FC+PDB, DJI O4 Lite, four Corona DS-939MG servos and a 25 g APC
+SpeedyBee F405 WING FC+PDB, DJI O4 Air Unit, two Corona DS-939MG servos and a 25 g APC
 E 8×8 assembly. The allocation results are:
 
 | Configuration | AUW | Wing loading | Predicted stall | Exact mass margin to 45 km/h |
 |---|---:|---:|---:|---:|
-| SALAMANDRA-CLEAN | **1,583.5 g** | 56.2 g/dm² | **44.5 km/h** | 36.9 g |
-| SALAMANDRA-V1 allocation target | **≤1,620.2 g** | 57.5 g/dm² | **45.0 km/h** | 0.2 g |
-| SALAMANDRA-V1 lower model (C32) | **1,626.5 g** | 57.7 g/dm² | **45.1 km/h — FAIL** | **−6.1 g** |
+| SALAMANDRA-CLEAN | **1,559.25 g** | 55.3 g/dm² | **44.1 km/h** | 61.2 g |
+| SALAMANDRA-V1 allocation target | **1,595.97 g** | 56.6 g/dm² | **44.7 km/h** | 24.4 g |
+| SALAMANDRA-V1 lower model (C32) | **1,602.26 g** | 56.8 g/dm² | **44.7 km/h — analytical PASS** | **18.1 g** |
 
 The exact mass ceiling is 1,620.4 g. The original 36.72 g complete-fin allocation
 omitted the selected 5.70 g aluminium spar. The current lower model is 37.31 g for the
 PETG shell/mount plus the spar, or 43.01 g total. F2 must save/compensate at least
-6.3 g before V1 meets its allocation; otherwise E2 must justify a different CLmax. The coupled
-balance solution moves the 6S1P pack to **x = −359.6 mm**, uses an approximate
-−460…−259 mm cradle and a **327 mm** structural support span. The hybrid boom becomes
+6.3 g before V1 meets its allocation target; the analytical aircraft still remains below
+the exact stall ceiling, but F2 mass verification is mandatory. The aggregate balance
+ledger gives **x = −355.2 mm**, while the component-level drawing solution gives
+**x = −341.3 mm** inside the 201 mm cradle. The hybrid boom becomes
 37.4 g and passes the exact multi-load two-support +6 g check at **56 MPa, FS 4.96,
 1.7 mm deflection and 31.4 Hz**.
 
@@ -139,12 +141,12 @@ The following dependent data do:
 |---|---:|---:|
 | Profile | provisional scaled candidate | **Salamandra r1 station DAT family** |
 | Printed wash-in / neutral trim | +3.0° / adverse +1.9° provisional reflex | **+3.0° / −0.04°…+0.41° elevon** |
-| Cruise propeller command | peak η, J ≈ 0.762 / ≈9,900 rpm | **power/drag boundary J 0.923 / 8,443 rpm / D ≤2.06 N** |
+| Cruise propeller command | peak η, J ≈ 0.762 / ≈9,900 rpm | **power/drag boundary J 0.918 / 8,484 rpm / D ≤2.12 N** |
 | Article #1 electrical architecture | pack options not closed | **6S1P, 500–550 Kv** |
-| CLEAN / V1 AUW | 1,685.2 / 1,722–1,747 g | **1,583.5 / 1,626.5 g lower model**; target ≤1,620.2 g open |
-| 6S1P pack station | −372.7 mm | **−359.6 mm** |
-| Cradle | −473.3…−272.2 mm | **approximately −460…−259 mm** |
-| Boom assembly / support span | 38.2 g / 341 mm | **37.4 g / 327 mm** |
+| CLEAN / V1 AUW | 1,685.2 / 1,722–1,747 g | **1,559.25 / 1,602.26 g lower model**; F2 measurement open |
+| 6S1P pack station | −372.7 mm | **−355.2 mm aggregate / −341.3 mm component layout** |
+| Cradle | −473.3…−272.2 mm | **201 mm overall; 68×25 mm inner section** |
+| Boom assembly / support span | 38.2 g / 341 mm | **37.4 g / ≈322 mm current geometry** |
 
 Any existing v0.2 wing loft must be regenerated from the r1 coordinates. Any v0.2
 cradle or forward support must be re-positioned. Do not modify the unchanged planform

@@ -419,7 +419,7 @@
 <text x="334" y="194.8" class="mono" text-anchor="end">-418.0</text>
 <text x="354" y="194.8" class="mono" text-anchor="end">+0.0</text>
 <text x="374" y="194.8" class="mono" text-anchor="end">+31.5</text>
-<text x="405" y="194.8" class="micro" text-anchor="end">[M]</text>
+<text x="405" y="194.8" class="micro" text-anchor="end">[D]</text>
 <text x="215" y="198.85" class="mono" text-anchor="start" style="fill:#626b73;font-weight:700">E21</text>
 <text x="228" y="198.85" class="micro" text-anchor="start">avionics_installation_reserve</text>
 <text x="314" y="198.85" class="mono" text-anchor="end">72.88</text>

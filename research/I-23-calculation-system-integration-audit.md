@@ -27,20 +27,21 @@ P_battery,total = 1.15 Wh/km × 95 km/h = 109.25 W
 ```
 
 as motor+ESC input. Article #1 also powers its flight controller, receivers, sensors
-and O4 Lite from that battery. With 6.6375 W of avionics rail load, 6.0 W of O4 Lite
+and O4 Air Unit from that battery. With 4.3875 W of two-servo avionics rail load and
+6.0 W of O4 Air Unit
 rail load and the declared 0.90 BEC efficiency:
 
 ```text
-P_hotel,battery = (6.6375 + 6.0) / 0.90 = 14.0417 W
-P_motor+ESC     = 109.25 - 14.0417       = 95.2083 W
+P_hotel,battery = (4.3875 + 6.0) / 0.90 = 11.5417 W
+P_motor+ESC     = 109.25 - 11.5417      = 97.7083 W
 ```
 
 Interpolation of the measured UIUC APC E 8×8 data at 95 km/h and motor+ESC efficiency
-0.85 then gives J = 0.92294, 8,443 rpm, thrust = 2.058 N, propeller efficiency 0.6711
-and shaft power 80.93 W. The identity `T V = ηprop Pshaft` is verified numerically.
+0.85 then gives J = 0.91839, 8,484 rpm, thrust = 2.123 N, propeller efficiency 0.6744
+and shaft power 83.05 W. The identity `T V = ηprop Pshaft` is verified numerically.
 
 Thrust is the **maximum allowable aircraft drag** under O1, not a predicted drag. The
-acceptance condition is CD ≤ 0.01711 and CLEAN L/D ≥ 7.55. A unique equilibrium is
+acceptance condition is CD ≤ 0.01765 and CLEAN L/D ≥ 7.21. A unique equilibrium is
 computed only after E2 supplies drag, via `propulsion_match.py --drag-n D`.
 
 ### 2.2 C30 — servo torque carried a factor-1000 label error

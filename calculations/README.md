@@ -475,7 +475,9 @@ the V1 fin near the trailing edge; carbon optimisation deferred (ADR-0015).
 
 - **Pure cantilever REJECTED** (`[D]`): +6 g with the 445 g pack →
   σ 266 MPa vs 276 (6061-T6), δ 34 mm.
-- **Two-support arrangement ADOPTED** (`[D]`): pack at −359.6 mm between the forward
+- **Two-support arrangement ADOPTED** (`[D]`): the structural check conservatively
+  retains the pack load at −359.6 mm; the current component-level balance station is
+  −341.3 mm between the forward
   support (x ≈ −459) and CORE support (x ≈ −132), with pack, forward payload allowance
   and cradle represented as separate loads → σ **56 MPa** (FS **4.96**),
   δ **1.7 mm**, mode **31.4 Hz**. The cradle is a structural requirement, not

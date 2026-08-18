@@ -912,7 +912,7 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
             "o4_vtx", "DJI O4 Air Unit VTX + attached antenna", "fpv",
             equipment_catalog.DJI_O4_TRANSMISSION_ASSEMBLY_MASS_G,
             equipment_catalog.DJI_O4_TRANSMISSION_MODULE.envelope_mm,
-            (-418.0, 0.0, 31.5), "[M]",
+            (-418.0, 0.0, 31.5), "[D]",
             (
                 "30 x 30 x 6 mm VTX body [M]; 0.75 g antenna mass lumped at "
                 "the VTX station [D]; 80 mm antenna route remains an assembly note"
