@@ -1,17 +1,19 @@
 # Salamandra — Design Guide
 
-**Version 0.20** · 17 August 2026 · Status: **RELEASED — v0.3.0 CAD baseline,
-post-release load-envelope correction.**
+**Version 0.21** · 17 August 2026 · Status: **RELEASED — v0.4.0 flight-load-envelope
+baseline.**
 Planform, airfoil coordinates, twist, propulsion reference and mass allocation are
 controlling. Values still flagged `PROVISIONAL` (principally the CORE outer shape and
 unmeasured structural properties) retain an explicit trigger in the open-points register.
 
-> **AUTHORITATIVE RELEASE DOCUMENT:** this guide v0.20 is the controlling CAD
-> specification for release `v0.3.0`. It supersedes the v0.2.0 airfoil, propulsion and
+> **AUTHORITATIVE RELEASE DOCUMENT:** this guide v0.21 is the controlling CAD and
+> engineering specification for release `v0.4.0`. It supersedes the v0.3.0 load
+> terminology while retaining its airfoil, propulsion, mass, planform and interface
+> geometry. It also supersedes the v0.2.0 airfoil, propulsion and
 > mass allocations as well as the complete v0.1.0 planform and
 > balance baseline. Do not reuse or mix v0.1.0 wing sketches, panel solids, CORE wing
 > interfaces or battery-cradle coordinates with this release. See §1.1 and
-> [`docs/10-release-v0.3.md`](../docs/10-release-v0.3.md).
+> [`docs/11-release-v0.4.md`](../docs/11-release-v0.4.md).
 
 This document is the working specification handed to the **CAD designer**. It defines the
 reference configuration (Cruise, Article #1) of the Salamandra modular 3D-printed FPV
@@ -40,12 +42,12 @@ version live in `design/prompts/` (the site generator intentionally excludes the
 | | |
 |---|---|
 | Designation | Salamandra — Design Guide |
-| Version | 0.20 |
+| Version | 0.21 |
 | Date | 2026-08-17 |
-| Release | **v0.3.0 — airfoil, propulsion and mass allocation; C32 reopens V1** |
-| Status | **RELEASED**; supersedes v0.2.0 airfoil/propulsion/mass values; E2, D2, F2, S3 and G11 remain physical acceptance gates |
+| Release | **v0.4.0 — Article #1 flight-load envelope and terminology** |
+| Status | **RELEASED**; +6/−3 g are manoeuvre limit loads and +9/−4.5 g are ultimate structural cases; E2, D2, F2, S3 and G11 remain physical acceptance gates |
 | Reference configuration | **Cruise — Article #1** |
-| Inputs | ADR-0001…ADR-0044, I-01…I-24, docs/00, docs/02…docs/07, docs/10 |
+| Inputs | ADR-0001…ADR-0044, I-01…I-24, docs/00, docs/02…docs/07, docs/10…docs/11 |
 | Intended reader | CAD designer (Fusion 360 or equivalent) |
 
 **How this guide evolves.** The design is expected to change as Phase 1 closes (airfoil
@@ -92,6 +94,20 @@ inputs:
 | APC 8×8 cruise point | 9,900 rpm at peak η | **O1 power boundary: 8,443 rpm, maximum allowable drag 2.06 N; equilibrium requires E2 drag** |
 | Article #1 battery | four-config requirement unresolved | **6S1P reference; 4S is a separate motor module** |
 | CLEAN / V1 mass | 1685.2 g / 1722–1747 g | **1583.5 g CLEAN; V1 lower model 1626.5 g** (1620.2 g allocation target reopened by C32) |
+
+The v0.3.0 → v0.4.0 migration changes the interpretation and traceability of the
+flight-load envelope, not the aircraft geometry:
+
+| Driver | v0.3.0 wording/state | v0.4.0 controlling value |
+|---|---|---|
+| Manoeuvre / strength load | `+6/−3 g, later +9` | **+6/−3 g manoeuvre limit; +9/−4.5 g structural ultimate** |
+| Positive manoeuvre corner | not calculated | **VA 109.0/110.4 km/h CLEAN/V1; 5.57/5.42 g at 105 km/h** |
+| Gust statement | `gust-dominated` without a model | **Legacy Part 23 result is a screen only; G11/E9 control adoption** |
+| Maximum-lift coefficient | section and aircraft notation mixed | **section `clmax = 0.65`; 3-D wing `CLmax = 0.589`** |
+
+No planform coordinate, airfoil coordinate, twist, material, component mass, CG station,
+propulsion boundary or speed limit changes in this migration. Existing v0.3 CAD remains
+geometrically current, but structural substantiation must use the v0.4 load definitions.
 
 ---
 
@@ -725,6 +741,7 @@ out of scope for this version.
 | Conventions | [`docs/04-conventions.md`](../docs/04-conventions.md) |
 | Material variants | [`docs/06-material-mass-variants.md`](../docs/06-material-mass-variants.md) (`mass_budget.py`) |
 | Divergence | [`docs/07-divergence-margin.md`](../docs/07-divergence-margin.md) (`divergence.py`) |
+| Current release | [`docs/11-release-v0.4.md`](../docs/11-release-v0.4.md) |
 
 > ✅ **All ADRs cited in this guide have published files** (OP-22 closed 2026-08-06).
 
@@ -734,6 +751,7 @@ out of scope for this version.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.21 | 2026-08-17 | **Released in v0.4.0.** Packages the C33–C34/I-24/ADR-0044 flight-load correction as the controlling baseline: +6/−3 g manoeuvre limit, +9/−4.5 g ultimate, positive V-n/VA results, section-versus-wing `clmax`/`CLmax`, and an explicit non-adoption of the legacy rigid gust screen. Existing v0.3 CAD geometry remains current; G11/E9 and the negative `CLmin` branch remain open. Release notes: [`docs/11-release-v0.4.md`](../docs/11-release-v0.4.md). |
 | 0.20 | 2026-08-17 | **Load-envelope corrections (C33–C34, I-24, ADR-0044).** Separates +6/−3 manoeuvre limit from +9/−4.5 ultimate structural loads; computes the positive V-n branch (VA 109.0/110.4 km/h CLEAN/V1); adds the unit-checked regulatory-reference gust screen and explicitly rejects its nonlinear result as an adopted design load. C34 distinguishes local section `clmax ≥ 0.65` from wing design `CLmax = 0.589`. G11/E9 retain dynamic gust and CLmin closure. No geometry or speed limit changed. |
 | 0.19 | 2026-08-17 | **Post-release calculation-system correction (C29–C32, I-23).** Unified shared inputs and added `verify_calculations.py`; corrected O1 total-power boundary, servo units/margin and dimensional yaw modes; divergence now uses r1, launch includes drag and boom uses exact static load superposition. C32 found the mandatory 5.70 g V1 spar missing from the mass chain: the 1620.2 g allocation remains the target, while the connected lower model is 1626.5 g / 45.1 km/h and F2 is reopened. No planform, airfoil-coordinate or CLEAN CG change. |
 | 0.18 | 2026-08-17 | **Released in v0.3.0.** Salamandra r1 coordinate family and +3.0° twist fixed for CAD (ADR-0041); original APC 8×8 O1 calculation published (its equilibrium interpretation and hotel-load omission are superseded by v0.19/C29); 6S1P-only Article #1 and the 1583.5/1620.2 g CLEAN/V1 mass allocation adopted (ADR-0043). |

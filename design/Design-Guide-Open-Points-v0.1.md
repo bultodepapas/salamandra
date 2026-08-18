@@ -1,13 +1,13 @@
 # Salamandra — Design Guide: Open Points and Evolution
 
-**Version 0.15** · 17 August 2026 · **v0.3.0 release companion** to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.20)
+**Version 0.16** · 17 August 2026 · **v0.4.0 release companion** to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.21)
 
 This document lists everything in the Design Guide that is **not yet fixed**: assumptions
 that need verification, values that will change when the corresponding research closes,
 and the revision process. It is the "what to watch" map for the designer and for Phase 1.
 
-Every open point names the trigger that resolves it. Until a trigger fires, the v0.3
+Every open point names the trigger that resolves it. Until a trigger fires, the v0.4
 value stands.
 
 ---
@@ -16,14 +16,14 @@ value stands.
 
 ### Critical
 
-| # | Item | v0.3 value | What changes it | Trigger |
+| # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
 | **OP-01** | **CG reachability** | **Re-derived for ADR-0043:** target CG −93.8 mm; 6S1P P42A at −359.6 mm (band −377.4…−341.9) in a 155×66×24 cradle from approximately −460 to −259 mm. | Real mass properties and central-body NP | F2/P1–P3; first-print balance |
 | **OP-02** | **Measured airfoil acceptance** | **CAD coordinate closure complete (ADR-0041):** Salamandra r1, 13.5/9 % t/c, +1.0°/+0.5° added reflex. Real-Re XFOIL endpoints pass; integrated cruise Cm0 +0.00326/+0.00209 and neutral elevon −0.04°/+0.41° at the C32 V1 lower mass and 3.0° wash-in. | Printed-section/flight polar, drag and gentle root-first stall may revise exposed profile/twist parameters | **E2**; computational/CAD part closed |
 
 ### Geometry and stability
 
-| # | Item | v0.3 value | What changes it | Trigger |
+| # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
 | OP-03 | Twist ε | **CLOSED FOR CAD:** +3.0° printed wash-in; r1 needs −0.04°…+0.41° neutral elevon over Ncrit 10–12 at the V1 lower mass | E2 may refine the exposed parameter before production | ADR-0041 / E2 |
 | OP-04 | Dihedral Γ | 2.0° total, piecewise-polyhedral (kinks at y = 195/347/498; 0 / 1.07 / 1.53 / 2.0°) | Roll-stability verification; may be revised by the stability analysis | Phase 1 stability (C-series), first flights |
@@ -33,7 +33,7 @@ value stands.
 
 ### Structure and materials
 
-| # | Item | v0.3 value | What changes it | Trigger |
+| # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
 | OP-08 | Carbon tube Ø12×1.0 | Provisional (bending only) | Real GJ/EI verification on the section; final sizing | S3/F4 (G4 closure) |
 | OP-09 | D-box web at x/c 0.30 | Provisional | Section optimization (cell layout) | S3 |
@@ -42,7 +42,7 @@ value stands.
 
 ### Propulsion
 
-| # | Item | v0.3 value | What changes it | Trigger |
+| # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
 | OP-12 | Motor | 28-class 500–550 Kv, **6S only**; O1-boundary 8,443 rpm is 69–76 % of no-load. 4S needs a separate ~713 Kv module. | D2 measured efficiency/current/thermal map | ADR-0042; D2/E3 |
 | OP-13 | Propeller / aircraft match | APC-E 8×8 O1 boundary **J 0.923 / 8,443 rpm / maximum drag 2.06 N**, not J_opt and not a predicted equilibrium. E2 must supply aircraft drag. | E2 drag polar; D2 thrust/RPM map; E3 energy | ADR-0042/C29; D2/E3 |
@@ -51,7 +51,7 @@ value stands.
 
 ### Systems and integration
 
-| # | Item | v0.3 value | What changes it | Trigger |
+| # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
 | OP-16 | Battery carrier (cradle) | Printed 2 halves, inner 155×66×24 mm, x ≈ **−460…−259**, 6S1P P42A center −359.6; Ø8.2 channel gripping the boom | R-CG verification in CAD with real packs | F2/P3 |
 | OP-17 | Pitot probe position | y ≈ 260 mm LE; lines cross the CORE↔PANEL joint (dedicated channel) | Install/test convenience | D1/D2 |
@@ -64,7 +64,7 @@ value stands.
 
 ### Added in v0.2
 
-| # | Item | v0.3 value | What changes it | Trigger |
+| # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
 | **OP-20** | Wing tips | Flat end caps at y = ±650, no winglet | Winglet option (drag/recovery); not required for the O1 cruise claim | First flights, F3 polar |
 | **OP-21** | CORE outer mold | Nose support to x ≈ **−459**, cradle 155×66×24, camera x ≈ −393, rear pod to +265 with belly ≤ −111.6 at the prop plane; body shape remains open | Real CORE geometry + mass | F2 (P1–P3) |
@@ -109,6 +109,7 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.16 | 2026-08-17 | **Released with v0.4.0 / guide v0.21.** The open-gate state is intentionally unchanged: OP-31/G11/E9 still require dynamic gust and negative-`CLmin` evidence, while F2, E2 and S3 retain the mass, aerodynamic and structural physical acceptance work. |
 | 0.15 | 2026-08-17 | Guide v0.20/I-24 propagated: C33 separates manoeuvre limit from ultimate load, adds positive V-n/VA results and OP-31 for the dynamic gust and negative-CL closure; C34 distinguishes local section `clmax` from wing `CLmax`. No false gust load or CAD change is adopted. |
 | 0.14 | 2026-08-17 | Guide v0.19/I-23 propagated: C29–C32 correct power, servo, yaw and complete-fin mass chains; OP-24 reopens V1 because its 1626.5 g lower model exceeds the 1620.2 g allocation target. |
 | 0.13 | 2026-08-17 | **Released with v0.3.0 / guide v0.18.** OP-02/03 close computationally on Salamandra r1; OP-12/13 use the aircraft-equilibrium propeller point; OP-23 closes Article #1 at 6S1P; OP-24 becomes a measured acceptance gate against the 1583.5/1620.2 g allocation. |

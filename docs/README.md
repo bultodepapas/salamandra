@@ -17,7 +17,8 @@ define the reference design and the platform's conventions. See the
 | [`07-divergence-margin.md`](07-divergence-margin.md) | **Absolute divergence speed (G6, rev. 4)** — released r1 section and elastic-axis uncertainty at −15°: nominal 327.2 km/h, conservative 129.6 (**FAIL**), AERO 91.6; combined GXY+gyroid+1.1 mm wall 207; released initial **V_limit 105 km/h**, 150 only after S3 validates GXY (`calculations/divergence.py`) |
 | [`08-release-v0.1.md`](08-release-v0.1.md) | **First release (tag v0.1.0)** — the design package (CAD baseline): contents, verification status, frozen vs open items, binding constraints |
 | [`09-release-v0.2.md`](09-release-v0.2.md) | **Historical release (tag v0.2.0)** — safety-corrected −15° CAD baseline and audit record |
-| [`10-release-v0.3.md`](10-release-v0.3.md) | **Current release (tag v0.3.0)** — Salamandra r1 coordinates and Article #1 allocation; C29–C34 post-release corrections reopen V1 mass and dynamic-gust closure |
+| [`10-release-v0.3.md`](10-release-v0.3.md) | **Historical release (tag v0.3.0)** — Salamandra r1 coordinates and Article #1 allocation; its post-release corrections are packaged by v0.4.0 |
+| [`11-release-v0.4.md`](11-release-v0.4.md) | **Current release (tag v0.4.0)** — connected calculation baseline and Article #1 manoeuvre/ultimate-load envelope; dynamic gust and negative-`CLmin` closure remain open |
 | `first_investigation.md` | Rev. 1.0, initial research *(add manually)* |
 
 **Decisions** live in [`../decisions/`](../decisions/), the **why** in [`../research/`](../research/), what we do **not know** in [`../gaps/`](../gaps/).

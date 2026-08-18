@@ -3,7 +3,7 @@
 **Status:** Partial closure — manoeuvre/ultimate semantics and positive V-n branch
 calculated; dynamic gust loads and negative stall branch remain open  
 **Date:** 2026-08-17  
-**Feeds:** C33–C34, ADR-0044, Design Guide v0.20, F4/S1–S2, G11, E9,
+**Feeds:** C33–C34, ADR-0044, Design Guide v0.21, F4/S1–S2, G11, E9,
 `calculations/flight_envelope.py`
 
 ## 1. Question

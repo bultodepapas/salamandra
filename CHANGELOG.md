@@ -4,6 +4,29 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.33] — 2026-08-17
+
+**Release v0.4.0 — the connected calculation baseline and Article #1 flight-load
+definitions become the controlling engineering package.**
+
+- Design Guide **v0.21**, justification/open points **v0.16** and
+  `docs/11-release-v0.4.md` are the released record.
+- C29–C34 are no longer post-release amendments to v0.3.0: the corrected propulsion,
+  servo, yaw, V1 mass, load-factor and maximum-lift semantics are packaged together.
+- The released structural convention is **+6/−3 g manoeuvre limit** and
+  **+9/−4.5 g ultimate**. The positive V-n branch is reproducible; the negative branch
+  remains open pending traceable `CLmin` data.
+- The legacy rigid-aircraft gust calculation remains a conservative screen, not an
+  adopted design load. G11/E9 must close the nonlinear dynamic response before a gust
+  envelope can control structure or operations.
+- The package passes 51 cross-module contracts, all 20 deterministic calculation CLIs,
+  Python static/compile checks, documentation reference checks and the production wiki
+  build.
+- **Engineering delta from guide v0.20:** none. No planform, airfoil, twist, material,
+  mass, CG, propulsion, CAD dimension, 105 km/h initial limit or 160 km/h V_NE changed.
+
+---
+
 ## [1.32] — 2026-08-17
 
 **Flight-load envelope correction — manoeuvre, ultimate and gust loads are now

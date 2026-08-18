@@ -43,7 +43,8 @@ The released document hierarchy is:
 
 Do not average conflicting values. Do not combine the v0.2 provisional profile,
 battery station or component budget with v0.3 geometry. The stable Design Guide
-filename is retained; its current post-release revision is **0.19**.
+filename is retained; its final post-release revision is **0.20**. Release v0.4.0
+supersedes this corrected state as the current authority.
 
 ## 2. Why these three changes have the highest ROI
 

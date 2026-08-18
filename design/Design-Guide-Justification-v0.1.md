@@ -1,7 +1,7 @@
 # Salamandra — Design Guide: Justification
 
-**Version 0.15** · 17 August 2026 · **v0.3.0 release companion** to
-[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.20)
+**Version 0.16** · 17 August 2026 · **v0.4.0 release companion** to
+[`Salamandra-Design-Guide-v0.1.md`](Salamandra-Design-Guide-v0.1.md) (v0.21)
 
 This document records **why** every value in the Design Guide is what it is: the source,
 the confidence tag, and — where the repository has no datum — the assumption and its

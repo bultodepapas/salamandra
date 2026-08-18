@@ -9,7 +9,7 @@ forward-swept flying wing, but that is only the first design. The repository is 
 grow into a whole family of airframes, parts, adapters and experiments — contributed by
 the community.
 
-**Revision 1.16** · 17 August 2026 · **Release v0.3.0 · Phase 1 in progress**
+**Revision 1.17** · 17 August 2026 · **Release v0.4.0 · Phase 1 in progress**
 
 > 📖 **Read this project as a website:** <https://bultodepapas.github.io/salmandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
@@ -90,18 +90,18 @@ The aircraft is designed as a **modular platform**:
 
 This is the first, reference design on the platform, named **Salamandra**. Its current
 specification for the designer is the
-[**Salamandra Design Guide v0.20**](design/Salamandra-Design-Guide-v0.1.md), with the
+[**Salamandra Design Guide v0.21**](design/Salamandra-Design-Guide-v0.1.md), with the
 justification in [`design/`](design/). The baseline is a PETG forward-swept flying wing,
 **modular and configurable**: a standard center module and interchangeable wing panels.
 Efficient FPV cruise flight, with electronics chosen by the builder.
 
-**📦 Current release — `v0.3.0`: airfoil, propulsion and mass allocation.** The Design
-Guide is the authoritative entry point. This release supplies the Salamandra r1 CAD
-coordinate family and a binding 6S1P mass/CG allocation. Post-release calculation
-audit C29–C34 corrects the propulsion boundary, servo units, yaw modes, omitted V1
-fin-spar mass, manoeuvre/ultimate-load distinction and section/wing CLmax terminology. Read the
-[**v0.3.0 release notes**](docs/10-release-v0.3.md)
-before continuing v0.2.0 CAD. Historical v0.1.0/v0.2.0 notes remain audit records.
+**📦 Current release — `v0.4.0`: Article #1 flight-load envelope.** The Design Guide
+is the authoritative entry point. This release promotes C29–C34 into one controlled
+baseline and fixes the structural meaning of the load cases: +6/−3 g are provisional
+manoeuvre limits, while +9/−4.5 g are their ultimate structural cases. It also publishes
+the positive V-n branch and keeps the nonlinear dynamic-gust response explicitly open.
+Read the [**v0.4.0 release notes**](docs/11-release-v0.4.md) before structural sizing.
+Historical v0.1.0–v0.3.0 notes remain audit records.
 The wiki renders the package at
 <https://bultodepapas.github.io/salmandra/>.
 
@@ -171,7 +171,7 @@ configuration contributed to the platform.
 
 | Folder | What it contains |
 |---|---|
-| [`design/`](design/) | **Salamandra Design Guide v0.20** — the authoritative v0.3.0 CAD specification plus C29–C34 corrections, its justification, and the open points |
+| [`design/`](design/) | **Salamandra Design Guide v0.21** — the authoritative v0.4.0 CAD and engineering specification, its justification, and the open points |
 | [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |
