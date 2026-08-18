@@ -8,7 +8,7 @@ mirrored so that no human has to re-type it.
 
 Single source of truth::
 
-    SHEETS  ->  geometry/drawings/manifest.json  ->  README.md
+    SHEETS  ->  geometry/drawings/manifest.json  ->  README.md (hero + index)
                                                  ->  geometry/drawings/README.md
                                                  ->  wiki (gen-site.mjs reads the manifest)
 
@@ -47,14 +47,27 @@ GENERATOR = "calculations/generate_blueprints.py"
 INDEXER = "calculations/drawing_index.py"
 SHEET_SIZE = "A3 · 420 × 297 mm · 1 SVG user unit = 1 mm"
 
-BLOCK_BEGIN = (
-    "<!-- BEGIN GENERATED: drawing-index · calculations/drawing_index.py · "
-    "do not edit by hand -->"
-)
-BLOCK_END = "<!-- END GENERATED: drawing-index -->"
-BLOCK_RE = re.compile(
-    re.escape(BLOCK_BEGIN) + r".*?" + re.escape(BLOCK_END), re.DOTALL
-)
+# Published blocks are named: `drawing-hero` is the single lead sheet that opens
+# the repository README, `drawing-index` is the gallery and index table.
+HERO_BLOCK = "drawing-hero"
+INDEX_BLOCK = "drawing-index"
+
+
+def block_begin(block: str) -> str:
+    return (
+        f"<!-- BEGIN GENERATED: {block} · calculations/drawing_index.py · "
+        "do not edit by hand -->"
+    )
+
+
+def block_end(block: str) -> str:
+    return f"<!-- END GENERATED: {block} -->"
+
+
+def block_re(block: str) -> re.Pattern[str]:
+    return re.compile(
+        re.escape(block_begin(block)) + r".*?" + re.escape(block_end(block)), re.DOTALL
+    )
 
 
 @dataclass(frozen=True)
@@ -244,7 +257,30 @@ def render_gallery(manifest: dict, href: str, level: int = 3) -> str:
     return "\n\n".join(blocks)
 
 
+def repo_hero_block(manifest: dict) -> str:
+    """Lead sheet, published directly under the README title.
+
+    The reader should see the aircraft before reading anything about it, so the
+    first sheet in the registry opens the file. It is generated like every other
+    published block: it cannot drift from the drawing it shows.
+    """
+    sheet = manifest["sheets"][0]
+    target = f"geometry/drawings/{sheet['file']}"
+    return (
+        f"[![{sheet['description']}]({target})]({target})\n\n"
+        f"<sub>**{sheet['number']} · {sheet['heading']}** — {sheet['scale']} · "
+        f"generated from the calculations, **DRAFT — NOT FOR MANUFACTURE**. "
+        f"The complete set is [below](#drawing-set--generated-design-review-sheets).</sub>"
+    )
+
+
 def repo_readme_block(manifest: dict) -> str:
+    """Index table, then the gallery.
+
+    The hero block already opened the file with the lead sheet, so the table
+    separates that first impression from the same drawing appearing again at the
+    head of the gallery.
+    """
     href = "geometry/drawings/"
     return (
         f"{render_table(manifest, href)}\n\n"
@@ -260,14 +296,15 @@ def drawings_readme_block(manifest: dict) -> str:
 # block replacement
 
 
-def replace_block(text: str, body: str, where: Path) -> str:
-    if not BLOCK_RE.search(text):
+def replace_block(text: str, block: str, body: str, where: Path) -> str:
+    pattern = block_re(block)
+    if not pattern.search(text):
         raise SystemExit(
-            f"{where.relative_to(ROOT)} has no generated drawing-index block; "
-            f"add the {BLOCK_BEGIN!r} / {BLOCK_END!r} markers"
+            f"{where.relative_to(ROOT)} has no generated {block} block; "
+            f"add the {block_begin(block)!r} / {block_end(block)!r} markers"
         )
-    replacement = f"{BLOCK_BEGIN}\n\n{body.strip()}\n\n{BLOCK_END}"
-    return BLOCK_RE.sub(lambda _: replacement, text, count=1)
+    replacement = f"{block_begin(block)}\n\n{body.strip()}\n\n{block_end(block)}"
+    return pattern.sub(lambda _: replacement, text, count=1)
 
 
 def targets(manifest: dict) -> tuple[tuple[Path, str], ...]:
@@ -277,7 +314,13 @@ def targets(manifest: dict) -> tuple[tuple[Path, str], ...]:
         (
             REPO_README,
             replace_block(
-                REPO_README.read_text(encoding="utf-8"),
+                replace_block(
+                    REPO_README.read_text(encoding="utf-8"),
+                    HERO_BLOCK,
+                    repo_hero_block(manifest),
+                    REPO_README,
+                ),
+                INDEX_BLOCK,
                 repo_readme_block(manifest),
                 REPO_README,
             ),
@@ -286,6 +329,7 @@ def targets(manifest: dict) -> tuple[tuple[Path, str], ...]:
             DRAWINGS_README,
             replace_block(
                 DRAWINGS_README.read_text(encoding="utf-8"),
+                INDEX_BLOCK,
                 drawings_readme_block(manifest),
                 DRAWINGS_README,
             ),

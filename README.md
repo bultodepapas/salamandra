@@ -1,5 +1,13 @@
 # 3D-printed FPV aircraft platform — open, modular, AI-assisted
 
+<!-- BEGIN GENERATED: drawing-hero · calculations/drawing_index.py · do not edit by hand -->
+
+[![Metric A3 top-view draft showing controlled forward-swept planform geometry, modular stations, calculated balance datums, and a provisional continuous fuselage outer-mould concept around the battery boom and propulsion pod.](geometry/drawings/SLM-GA-001-general-arrangement.svg)](geometry/drawings/SLM-GA-001-general-arrangement.svg)
+
+<sub>**SLM-GA-001 · General arrangement** — A3 · 1:4 · generated from the calculations, **DRAFT — NOT FOR MANUFACTURE**. The complete set is [below](#drawing-set--generated-design-review-sheets).</sub>
+
+<!-- END GENERATED: drawing-hero -->
+
 A completely free, community-driven platform for 3D-printed fixed-wing FPV aircraft.
 The core design principles are developed largely through **AI-assisted research**, while the
 **final aircraft and its 3D models are created collaboratively by humans and AI**.
@@ -13,6 +21,74 @@ the community.
 
 > 📖 **Read this project as a website:** <https://bultodepapas.github.io/salmandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
+
+---
+
+## Drawing set — generated design-review sheets
+
+The complete Article #1 set. These A3 metric sheets are **generated, not drawn**:
+[`calculations/generate_blueprints.py`](calculations/generate_blueprints.py) renders them
+from the canonical planform, the calculated balance solution, the equipment ledger and the
+released airfoil coordinates.
+
+<!-- BEGIN GENERATED: drawing-index · calculations/drawing_index.py · do not edit by hand -->
+
+| Drawing | Purpose | Sheet | Authority |
+|---|---|---:|---|
+| [`SLM-GA-001`](geometry/drawings/SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and continuous provisional fuselage/equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]` |
+| [`SLM-GA-002`](geometry/drawings/SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
+| [`SLM-EQP-001`](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg) | Top and side mass skeleton: component envelopes, true mass centres, x/y/z schedule, CLEAN CG and V1 battery-stop overlay. The top view includes the controlled exterior wing planform as spatial context but no wing construction, fuselage or OML. | A3 · top 1:6.5 / side 1:4 | Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority |
+| [`SLM-WNG-001`](geometry/drawings/SLM-WNG-001-half-wing-layout.svg) | Right half-wing: printed segments, cells, spar/pin, ADR-0045 elevon/fixed-root bridge, exact y195 profile and polyhedral inset | A3 · plan 1:2 | Planform/profile/elevon bounds `[D]`; structure/polyhedral `[E]`/`[I]` |
+
+### SLM-GA-001 · General arrangement
+
+[![Metric A3 top-view draft showing controlled forward-swept planform geometry, modular stations, calculated balance datums, and a provisional continuous fuselage outer-mould concept around the battery boom and propulsion pod.](geometry/drawings/SLM-GA-001-general-arrangement.svg)](geometry/drawings/SLM-GA-001-general-arrangement.svg)
+
+Use this sheet to review the whole-aircraft relationship: 1,300 mm controlled planform, modular stations, quarter-chord sweep, CG/NP, nose-boom battery station and rear-pusher envelope. A continuous curved fuselage OML connects the battery fairing, CORE and rear pod so the aircraft reads as one body. Its required stations are sourced, but its Bézier transitions remain `[I]`, amber and provisional until OP-21/F2 freezes native CAD.
+
+**Sheet** A3 · 1:4 · **Authority** Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]`.
+
+### SLM-GA-002 · Side elevations
+
+[![Metric A3 side-elevation draft comparing the common root airfoil, battery boom, continuous provisional fuselage OML and local propeller-clearance skid for SALAMANDRA-CLEAN with the V1a fixed centreline-fin variant. The V1a fin is passive and has no movable rudder.](geometry/drawings/SLM-GA-002-side-elevations.svg)](geometry/drawings/SLM-GA-002-side-elevations.svg)
+
+Use this sheet to compare the two published directional configurations without changing the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds a passive fixed centreline fin. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The drawing also flags the open 105 mm fin-root versus x = +295 mm pod-extension interface for native CAD resolution.
+
+**Sheet** A3 · 1:4 · **Authority** Root/fin `[D]`/`[E]`; side OML/install `[I]`.
+
+### SLM-EQP-001 · Equipment mass skeleton
+
+[![Metric A3 orthographic mass-skeleton drawing generated from the three-dimensional component ledger. The top view places CLEAN component envelopes and mass centres over the controlled wing planform for spatial context; the side view shows the battery travel and V1 battery-stop overlay. No fuselage outer mould line, wing construction or manufacturing geometry is defined.](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg)](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg)
+
+Use this sheet to review mass and packaging rather than shape: component envelopes, true mass centres, the x/y/z schedule, the CLEAN CG and the V1 battery-stop overlay. Envelope fill colour identifies system function while outline style continues to identify maturity. The controlled exterior wing planform appears only as spatial context: the sheet defines no fuselage outer mould line, no wing construction and no manufacturing geometry.
+
+**Sheet** A3 · top 1:6.5 / side 1:4 · **Authority** Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority.
+
+### SLM-WNG-001 · Right half-wing layout
+
+[![Metric A3 plan-view draft of the right half-wing showing the common center module, three printed segments, structural cell boundaries, removable joiner, spar, anti-rotation pin, elevon and a vertically exaggerated polyhedral inset.](geometry/drawings/SLM-WNG-001-half-wing-layout.svg)](geometry/drawings/SLM-WNG-001-half-wing-layout.svg)
+
+Use this sheet to review PANEL segmentation and interfaces. It shows the exact y195 Salamandra r1 coordinate section, but the spar/channel, servo zones, D-box web and polyhedral construction retain their provisional status.
+
+**Sheet** A3 · plan 1:2 · **Authority** Planform/profile/elevon bounds `[D]`; structure/polyhedral `[E]`/`[I]`.
+
+<!-- END GENERATED: drawing-index -->
+
+They are **technical sketches, not manufacturing drawings**. Dark and blue linework is
+traceable geometry, amber dashed linework is provisional, and every sheet states
+**DRAFT — NOT FOR MANUFACTURE**. For a scale check, print on A3 at 100 %; browser and wiki
+widths are responsive and are not scale references. The full source, graphic and print
+contract is in [`geometry/drawings/README.md`](geometry/drawings/README.md); the method is
+[I-25](research/I-25-svg-technical-drawing-workflow.md) and the toolchain
+[I-26](research/I-26-codex-svg-agent-toolchain.md).
+
+Regenerate after any upstream change; the same run republishes this section, the drawing
+index and the wiki from one manifest:
+
+```bash
+python3 calculations/generate_blueprints.py           # render the sheets and republish them
+python3 calculations/generate_blueprints.py --check    # read-only staleness gate, also run in CI
+```
 
 ---
 
@@ -168,73 +244,6 @@ recommended for the test programme). The fin is a CORE component; panels are unt
 ⚠️ See [ADR-0032](decisions/ADR-0032-modularity.md): the panels **are not arbitrary**. Each
 set is designed against a common neutral point. The same discipline applies to every new
 configuration contributed to the platform.
-
----
-
-## Drawing set — generated design-review sheets
-
-These A3 metric sheets are **generated, not drawn**:
-[`calculations/generate_blueprints.py`](calculations/generate_blueprints.py) renders them
-from the canonical planform, the calculated balance solution, the equipment ledger and the
-released airfoil coordinates, and then republishes this section,
-[`geometry/drawings/README.md`](geometry/drawings/README.md) and the wiki from one manifest.
-Regenerate after any upstream change:
-
-```bash
-python3 calculations/generate_blueprints.py           # render the sheets and republish them
-python3 calculations/generate_blueprints.py --check    # read-only staleness gate, also run in CI
-```
-
-They are **technical sketches, not manufacturing drawings**. Dark and blue linework is
-traceable geometry, amber dashed linework is provisional, and every sheet states
-**DRAFT — NOT FOR MANUFACTURE**. For a scale check, print on A3 at 100 %; browser and wiki
-widths are responsive and are not scale references. The full source, graphic and print
-contract is in [`geometry/drawings/README.md`](geometry/drawings/README.md); the method is
-[I-25](research/I-25-svg-technical-drawing-workflow.md) and the toolchain
-[I-26](research/I-26-codex-svg-agent-toolchain.md).
-
-<!-- BEGIN GENERATED: drawing-index · calculations/drawing_index.py · do not edit by hand -->
-
-| Drawing | Purpose | Sheet | Authority |
-|---|---|---:|---|
-| [`SLM-GA-001`](geometry/drawings/SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and continuous provisional fuselage/equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]` |
-| [`SLM-GA-002`](geometry/drawings/SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
-| [`SLM-EQP-001`](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg) | Top and side mass skeleton: component envelopes, true mass centres, x/y/z schedule, CLEAN CG and V1 battery-stop overlay. The top view includes the controlled exterior wing planform as spatial context but no wing construction, fuselage or OML. | A3 · top 1:6.5 / side 1:4 | Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority |
-| [`SLM-WNG-001`](geometry/drawings/SLM-WNG-001-half-wing-layout.svg) | Right half-wing: printed segments, cells, spar/pin, ADR-0045 elevon/fixed-root bridge, exact y195 profile and polyhedral inset | A3 · plan 1:2 | Planform/profile/elevon bounds `[D]`; structure/polyhedral `[E]`/`[I]` |
-
-### SLM-GA-001 · General arrangement
-
-[![Metric A3 top-view draft showing controlled forward-swept planform geometry, modular stations, calculated balance datums, and a provisional continuous fuselage outer-mould concept around the battery boom and propulsion pod.](geometry/drawings/SLM-GA-001-general-arrangement.svg)](geometry/drawings/SLM-GA-001-general-arrangement.svg)
-
-Use this sheet to review the whole-aircraft relationship: 1,300 mm controlled planform, modular stations, quarter-chord sweep, CG/NP, nose-boom battery station and rear-pusher envelope. A continuous curved fuselage OML connects the battery fairing, CORE and rear pod so the aircraft reads as one body. Its required stations are sourced, but its Bézier transitions remain `[I]`, amber and provisional until OP-21/F2 freezes native CAD.
-
-**Sheet** A3 · 1:4 · **Authority** Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]`.
-
-### SLM-GA-002 · Side elevations
-
-[![Metric A3 side-elevation draft comparing the common root airfoil, battery boom, continuous provisional fuselage OML and local propeller-clearance skid for SALAMANDRA-CLEAN with the V1a fixed centreline-fin variant. The V1a fin is passive and has no movable rudder.](geometry/drawings/SLM-GA-002-side-elevations.svg)](geometry/drawings/SLM-GA-002-side-elevations.svg)
-
-Use this sheet to compare the two published directional configurations without changing the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds a passive fixed centreline fin. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The drawing also flags the open 105 mm fin-root versus x = +295 mm pod-extension interface for native CAD resolution.
-
-**Sheet** A3 · 1:4 · **Authority** Root/fin `[D]`/`[E]`; side OML/install `[I]`.
-
-### SLM-EQP-001 · Equipment mass skeleton
-
-[![Metric A3 orthographic mass-skeleton drawing generated from the three-dimensional component ledger. The top view places CLEAN component envelopes and mass centres over the controlled wing planform for spatial context; the side view shows the battery travel and V1 battery-stop overlay. No fuselage outer mould line, wing construction or manufacturing geometry is defined.](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg)](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg)
-
-Use this sheet to review mass and packaging rather than shape: component envelopes, true mass centres, the x/y/z schedule, the CLEAN CG and the V1 battery-stop overlay. Envelope fill colour identifies system function while outline style continues to identify maturity. The controlled exterior wing planform appears only as spatial context: the sheet defines no fuselage outer mould line, no wing construction and no manufacturing geometry.
-
-**Sheet** A3 · top 1:6.5 / side 1:4 · **Authority** Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority.
-
-### SLM-WNG-001 · Right half-wing layout
-
-[![Metric A3 plan-view draft of the right half-wing showing the common center module, three printed segments, structural cell boundaries, removable joiner, spar, anti-rotation pin, elevon and a vertically exaggerated polyhedral inset.](geometry/drawings/SLM-WNG-001-half-wing-layout.svg)](geometry/drawings/SLM-WNG-001-half-wing-layout.svg)
-
-Use this sheet to review PANEL segmentation and interfaces. It shows the exact y195 Salamandra r1 coordinate section, but the spar/channel, servo zones, D-box web and polyhedral construction retain their provisional status.
-
-**Sheet** A3 · plan 1:2 · **Authority** Planform/profile/elevon bounds `[D]`; structure/polyhedral `[E]`/`[I]`.
-
-<!-- END GENERATED: drawing-index -->
 
 ---
 
