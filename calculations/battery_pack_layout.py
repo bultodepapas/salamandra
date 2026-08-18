@@ -45,6 +45,12 @@ CELLS = {
 AVG = tuple(sum(v) / 2 for v in zip(*CELLS.values()))  # (69.0, 4.6, 3.6, 27.4, 6.65, 16.56)
 HARDWARE = 25.0    # g, pack hardware (nickel, wires, XT60, wrap) [E]
 CELL_ALIASES = {"P42A": "Molicel P42A", "50E": "Samsung 50E"}
+# Maximum sleeved cell envelope for CAD packaging.  This is deliberately
+# separate from the nominal generic-21700 model above: fit decisions must use
+# manufacturer maxima, while concept enumeration may retain nominal geometry.
+CELL_MAX_DIMENSIONS_MM = {
+    "Molicel P42A": (70.2, 21.7),  # (length, diameter) [M]
+}
 REFERENCE_LAYOUTS = {
     "4S1P": (2, 2, 1, "A"),
     "6S1P": (2, 3, 1, "A"),
@@ -142,6 +148,35 @@ def reference_pack_envelope(configuration):
     return assemble(envelope(nx, ny, nz, orientation))
 
 
+def reference_pack_cad_envelope(configuration, cell="P42A"):
+    """Finished reference envelope from manufacturer maximum cell dimensions.
+
+    The datasheet maximum already includes the individual cell sleeve, so the
+    nominal-model ``WRAP`` allowance is not added a second time.  Pack-level
+    wrap, nickel and lead allowances remain explicit estimates.
+    """
+    if configuration not in REFERENCE_LAYOUTS:
+        raise ValueError(f"no released one-layer layout for {configuration!r}")
+    canonical = CELL_ALIASES.get(cell, cell)
+    if canonical not in CELL_MAX_DIMENSIONS_MM:
+        raise ValueError(f"no maximum CAD dimensions for cell {cell!r}")
+    cell_length, cell_diameter = CELL_MAX_DIMENSIONS_MM[canonical]
+    nx, ny, nz, orientation = REFERENCE_LAYOUTS[configuration]
+    if orientation == "A":
+        block = (
+            nx * cell_length + max(0, nx - 1) * GAP,
+            ny * cell_diameter + max(0, ny - 1) * GAP,
+            nz * cell_diameter + max(0, nz - 1) * GAP,
+        )
+    else:
+        block = (
+            nx * cell_diameter + max(0, nx - 1) * GAP,
+            ny * cell_length + max(0, ny - 1) * GAP,
+            nz * cell_diameter + max(0, nz - 1) * GAP,
+        )
+    return assemble(block)
+
+
 def _invalid_pack_is_rejected():
     try:
         cell_count("not-a-pack")
@@ -162,6 +197,12 @@ def main():
     print("  note: bay height 32 mm accommodates a single 21 mm layer (n_z = 1).")
     print("  A pack taller than the bay is possible only if the bay is resized "
           "by the designer; this is a reference, not a verdict.\n")
+    cad_envelope = reference_pack_cad_envelope("6S1P", "P42A")
+    print(
+        "P42A maximum-dimension CAD envelope [M]/[E]: "
+        + " x ".join(f"{value:.1f}" for value in cad_envelope)
+        + " mm\n"
+    )
 
     for N in (4, 6):
         print("-" * 74)
@@ -237,6 +278,13 @@ def main():
             abs(got - expected) < 0.05
             for got, expected in zip(
                 reference_pack_envelope("6S1P"), (153.2, 64.5, 22.2))),
+        "6S1P P42A maximum CAD envelope is 153.0 x 65.7 x 22.6 mm": all(
+            abs(got - expected) < 0.05
+            for got, expected in zip(
+                reference_pack_cad_envelope("6S1P", "P42A"),
+                (153.0, 65.7, 22.6),
+            )
+        ),
         "released 4S1P and 6S1P layouts fit the bay": all(
             fits(reference_pack_envelope(name), BAY)
             for name in REFERENCE_LAYOUTS),

@@ -12,11 +12,11 @@ estimated input. Validation cases must pass before a modification is trusted.
 
 ---
 
-## Tools and versions used (updated 2026-08-17)
+## Tools and versions used (updated 2026-08-18)
 
 | Tool | Version | Used for | Where to get it |
 |---|---|---|---|
-| Python | 3.11 (Windows) | All harnesses below | python.org (any ≥ 3.8 works) |
+| Python | 3.11 (Windows) | All harnesses below | python.org (any ≥ 3.10 works) |
 | numpy | 1.2x | VLM, Weissinger-L, screening harness | `pip install numpy` |
 | **XFOIL** | **6.99** (official MIT Windows console build) | Airfoil polar generation | <https://web.mit.edu/drela/Public/web/xfoil/> → `XFOIL6.99.zip` (GPL; the source ships in the zip too) |
 | PowerShell 7 / cmd | Windows | Batch driving (see the Fortran stdin note below) | Built into Windows |
@@ -50,6 +50,7 @@ Data sources consumed (all `[M]`):
 | `airfoil_reflex_trade.py` | **Salamandra r1 profile generator** — screens coupled root/tip reflex at the actual local Reynolds numbers, integrates section moment with c² weights, verifies trim, and writes every CAD station coordinate file | ADR-0041, guide §5, OP-02/03 | numpy + XFOIL |
 | `propulsion_match.py` | **Propeller match and O1 drag boundary** — reserves avionics/FPV/BEC power, interpolates the UIUC APC E 8×8 curve, reports maximum allowable drag, and solves equilibrium only when `--drag-n` is supplied | ADR-0042/C29, guide §9, E2/D2/E3 | stdlib only |
 | `balance_cg.py` | **OP-01: mass/CG balance** — pack-station solver for the CG target; planform-centroid self-check; bay sizing for the nose boom; envelope checks (AUW, V_stall) | OP-01, justification §3.1–3.2 | numpy |
+| `equipment_layout.py` | **Three-dimensional equipment and mass-properties model** — one x/y/z station, oriented envelope, movement authority and uncertainty per physical component; derives total CG/inertia, fixed servo stations from the released r1 sections, cable/separation/collision gates and the battery-only CG solution for CLEAN/V1 | CAD packaging source, future SVG sheets, OP-01/P1/F1 | stdlib + released airfoil DAT files |
 | `elevon_authority.py` | **Elevon control power** — ΔCm per degree of elevon deflection (step incidence over 30–90 % half-span) via the VLM; trim closure and control margin at SM 8 % | Guide §5.3/§6.1, C6 (partial) | numpy |
 | `battery_pack_layout.py` | **I-16: pack envelope** — enumerates every rectangular (n_x,n_y,n_z) layout of the 4S/6S 21700 pack, computes finished envelope (wrapper, nickel, leads) and fit-checks against the pack carrier (guide §8; the 200×70×32 bay is superseded by the cradle) | I-16, guide §8, OP-23 | stdlib only |
 | `inav_fc_match.py` | **I-17: FC compatibility** — cross-checks the popular INAV boards (Matek WING, SpeedyBee, Foxeer) against the Salamandra avionics requirements (≥5 PWM, ≥2 UART, ≥1 I2C, blackbox, current, baro, 6S voltage); footprint summary + power budget | I-17, guide §10, CORE avionics | stdlib only |
@@ -167,6 +168,54 @@ station **−359.6 mm**, allowable CG-band station −377.4…−341.9 mm, cradl
 approximately −460…−259 mm, and support span **327 mm**. Diagnostic stations for
 future modules are 4S1P −481.7 / 4S2P −296.0 / 6S2P −230.6 mm; they are not Article #1.
 
+### 3.1 Three-dimensional component layout and battery trim
+
+```bash
+python3 equipment_layout.py
+python3 equipment_layout.py --variant v1
+python3 equipment_layout.py --json
+python3 equipment_layout.py --move receiver=5,-60,3
+```
+
+This is the pre-CAD packaging authority. Every physical item has an identifier, mass,
+rectangular envelope, x/y/z centre, allowed-position box, uncertainty and evidence tag.
+The coordinate system is x aft, y starboard and z up, with the root quarter-chord as
+origin. It computes the three-dimensional CG, a full cuboid-plus-parallel-axis inertia
+tensor, first-order CG uncertainty, AABB interference, cable length and required
+equipment separation.
+
+Movement authority is intentionally asymmetric:
+
+- Printed frame allocations, carbon, boom, cradle and the optional **fixed** V1 fin are
+  fixed masses. They are never moved to force a CG result.
+- The FC reference centre is x = −93.797 mm, y = 0, directly at the longitudinal target;
+  its three-dimensional distance from the solved CLEAN CG is 0.42 mm.
+- Servo locations are derived once, then fixed. The solver lays the 22.5 × 24.6 ×
+  11.5 mm DS-939MG body flat and moves it as far aft as the released r1 airfoil permits,
+  while retaining 1.5 mm to both external surfaces and a projected pushrod run of at
+  least 20 mm to the x/c = 0.72 hinge. Results per half-wing are y = 195 mm,
+  x/c = 0.6386, 20.0 mm rod; and y = 390 mm, x/c = 0.5455, 35.3 mm rod. The outboard
+  servo must sit farther forward because the section is thinner.
+- Low-mass avionics may be repositioned only inside their declared packaging bounds.
+  The O4 camera/VTX stations are governed by the 50 mm coax and envelope clearance,
+  not used as CG ballast.
+- The 445 g battery is the **only automatic CG-trim variable**. After an allowed manual
+  equipment movement, the analytical solver recomputes only battery x; use
+  `--hold-battery` solely to inspect an untrimmed candidate.
+
+Current candidate results `[D]`: CLEAN closes 1583.50 g at xCG = −93.797 mm with the
+battery at x = **−348.38 mm**. V1 adds the complete fixed-fin lower model; the exact
+target would require x = **−384.54 mm**, beyond the current −377.54 mm forward stop.
+At that stop V1 remains inside the released band at xCG = −91.88 mm. These values differ
+from the aggregate `balance_cg.py` station because individual masses now occupy their
+explicit spatial locations.
+
+Open CAD gates are not hidden: the maximum-dimension P42A pack has only 0.30 mm total
+lateral clearance in the 66 mm cradle, longitudinal one-sigma CG uncertainty is about
+7.7 mm versus a 5 mm half-band, 92.88 g remains unresolved reserve mass, and the O4
+antenna adds 0.75 g beyond the released budget. Therefore this layout guides CAD but is
+not yet a manufacturing release.
+
 ### 4. Elevon authority (guide §5.3/§6.1)
 
 ```bash
@@ -231,7 +280,7 @@ python3 battery_pack_layout.py
 
 Self-validating by construction: it prints the full enumeration of cell
 arrangements (12 envelopes for 4S, 18 for 6S) with a fit check against the
-`200 × 70 × 32 mm` reference bay (guide §9), plus per-cell and per-pack mass /
+`190 × 70 × 32 mm` provisional reference bay (guide §8), plus per-cell and per-pack mass /
 energy / discharge for the two reference cells (Molicel P42A, Samsung 50E) and
 their average. Published results (I-16 §4–§5, §6.1):
 **6S1P = 2×3 orient. A → 153.2 × 64.5 × 22.2 mm**,
@@ -239,6 +288,12 @@ their average. Published results (I-16 §4–§5, §6.1):
 provisional bay (all others are buildable with a resized bay). Pack masses:
 6S1P P42A 445 g / 50E 433 g / avg 439 g; 4S1P 305 / 297 / 301 g. A change to the
 fit test, assembly allowances, or cell specs must reproduce these values.
+
+Those values are the nominal generic-21700 enumeration. CAD fit uses the separate
+manufacturer-maximum P42A path: **153.0 × 65.7 × 22.6 mm** for the same 2×3 layout.
+The maximum datasheet dimensions already include the cell sleeve, so the script does
+not add the nominal wrapper twice; it adds only the declared pack-level wrap, nickel
+and lead allowances. `equipment_layout.py` imports this maximum envelope directly.
 
 ### 7.1 Servo hinge moment (I-18)
 

@@ -16,6 +16,7 @@ import subprocess
 import sys
 import time
 from dataclasses import dataclass
+from math import dist
 from pathlib import Path
 
 import airfoil_reflex_trade
@@ -25,6 +26,7 @@ import battery_pack_layout
 import design_config
 import divergence
 import elevon_authority
+import equipment_layout
 import flight_envelope
 import fpv_power_budget
 import inav_fc_match
@@ -46,6 +48,7 @@ LOCAL_SCRIPTS = (
     "battery_pack_layout.py",
     "mass_budget.py",
     "balance_cg.py",
+    "equipment_layout.py",
     "vlm_ala_volante.py",
     "weissinger_np.py",
     "sweep_trade.py",
@@ -142,6 +145,75 @@ def contract_checks():
             battery_pack_layout.reference_pack_envelope("6S1P")[0] / 1000.0,
         ),
         f"{balance_cg.PACK_LEN['6S1P']*1000:.1f} mm",
+    )
+    add(
+        "battery: 3D packaging uses the centralized maximum P42A envelope",
+        all(
+            close(actual, expected, 1e-12)
+            for actual, expected in zip(
+                equipment_layout.PACK_6S1P_CAD_ENVELOPE_MM,
+                battery_pack_layout.reference_pack_cad_envelope(
+                    "6S1P", "P42A"
+                ),
+            )
+        ),
+        " x ".join(
+            f"{value:.1f}"
+            for value in equipment_layout.PACK_6S1P_CAD_ENVELOPE_MM
+        ) + " mm",
+    )
+
+    equipment_clean = equipment_layout.reference_layout("clean")
+    equipment_clean, clean_battery_required = equipment_layout.solve_battery_x(
+        equipment_clean
+    )
+    equipment_v1 = equipment_layout.reference_layout("v1")
+    equipment_v1, v1_battery_required = equipment_layout.solve_battery_x(
+        equipment_v1, clamp=True
+    )
+    for name, passed in equipment_layout.validation_checks().items():
+        add(f"equipment layout: {name}", passed, "3D packaging invariant")
+    add(
+        "equipment layout: CLEAN mass and x-CG close simultaneously",
+        close(
+            equipment_clean.mass_g(budgeted_only=True), clean["auw"], 1e-8
+        )
+        and close(
+            equipment_clean.cg_mm()[0], equipment_layout.TARGET_CG_MM, 1e-9
+        ),
+        f"{equipment_clean.mass_g(budgeted_only=True):.2f} g; "
+        f"battery x={clean_battery_required:+.2f} mm",
+    )
+    add(
+        "equipment layout: FC is colocated with the CLEAN three-dimensional CG",
+        dist(
+            equipment_clean.component("fc").position_mm,
+            equipment_clean.cg_mm(),
+        ) <= 5.0,
+        f"distance={dist(equipment_clean.component('fc').position_mm, equipment_clean.cg_mm()):.2f} mm",
+    )
+    add(
+        "equipment mass risk: O4 antenna is explicit outside released budget",
+        close(
+            equipment_clean.mass_g()
+            - equipment_clean.mass_g(budgeted_only=True),
+            equipment_layout.O4_ANTENNA_MASS_G,
+            1e-12,
+        ),
+        f"installed delta={equipment_clean.mass_g() - equipment_clean.mass_g(budgeted_only=True):+.2f} g",
+    )
+    v1_battery = equipment_v1.component(equipment_layout.PRIMARY_CG_ADJUSTER)
+    add(
+        "equipment risk: V1 exact target exceeds current battery travel",
+        v1_battery_required < v1_battery.bounds.minimum_mm[0],
+        f"required={v1_battery_required:+.2f} mm; "
+        f"forward limit={v1_battery.bounds.minimum_mm[0]:+.2f} mm",
+    )
+    add(
+        "equipment layout: V1 at battery stop remains inside released CG band",
+        abs(equipment_v1.cg_mm()[0] - equipment_layout.TARGET_CG_MM)
+        <= equipment_layout.CG_TOLERANCE_MM,
+        f"xCG={equipment_v1.cg_mm()[0]:+.2f} mm",
     )
 
     v1_cl = design_config.lift_coefficient(
