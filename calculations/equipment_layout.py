@@ -20,7 +20,7 @@ import json
 from dataclasses import dataclass, replace
 from functools import cache
 from itertools import pairwise
-from math import cos, dist, isclose, radians, sin, sqrt
+from math import atan2, cos, degrees, dist, hypot, isclose, radians, sin, sqrt
 from pathlib import Path
 
 import balance_cg
@@ -963,11 +963,29 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
     ])
 
     if variant_key == "v1":
+        # Local import avoids a module cycle: yaw_stability obtains I_zz from
+        # this layout lazily, while the layout consumes its single-source fin
+        # planform only when the V1 variant is requested.
+        from yaw_stability import FIN_ROOT_Z_M, fin_area_for_target, fin_geometry
+
+        fin = fin_geometry(fin_area_for_target(0.0005))
+        fin_shell_x_mm = (fin.root_te_x_m - 0.5 * fin.mac_m) * 1000.0
+        fin_shell_z_mm = (FIN_ROOT_Z_M + fin.centroid_height_m) * 1000.0
+        spar_dx_m = fin.tip_le_x_m - fin.root_le_x_m
+        spar_length_mm = hypot(fin.span_m, spar_dx_m) * 1000.0
+        spar_pitch_deg = degrees(atan2(spar_dx_m, fin.span_m))
+        spar_x_mm = 0.5 * (fin.root_le_x_m + fin.tip_le_x_m) * 1000.0
+        spar_z_mm = (FIN_ROOT_Z_M + 0.5 * fin.span_m) * 1000.0
         components.extend([
             _component(
                 "v1_fin_shell_mount", "V1a fin shell and mount lower model",
                 "stability", design_config.V1_FIN_SHELL_MOUNT_LOWER_KG * 1000.0,
-                (105.0, 3.0, 253.0), (285.0, 0.0, 130.0),
+                (
+                    fin.root_chord_m * 1000.0,
+                    3.0,
+                    fin.span_m * 1000.0,
+                ),
+                (fin_shell_x_mm, 0.0, fin_shell_z_mm),
                 "[E]", "yaw_stability.py / C32; installation unresolved",
                 mass_sigma_g=8.0, position_sigma_mm=(25.0, 2.0, 15.0),
                 collidable=False,
@@ -975,8 +993,10 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
             _component(
                 "v1_fin_spar", "V1a aluminium leading-edge spar", "stability",
                 design_config.V1_FIN_SPAR_MASS_KG * 1000.0,
-                (3.0, 3.0, 253.0), (250.0, 0.0, 140.0),
+                (3.0, 3.0, spar_length_mm),
+                (spar_x_mm, 0.0, spar_z_mm),
                 "[D]/[E]", "yaw_stability.py / C32",
+                orientation_deg=(0.0, spar_pitch_deg, 0.0),
                 mass_sigma_g=1.0, position_sigma_mm=(20.0, 2.0, 15.0),
                 collidable=False,
             ),

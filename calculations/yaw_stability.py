@@ -22,6 +22,7 @@ before a modification is trusted (calculations/README.md).
 """
 import sys
 
+from dataclasses import dataclass
 from functools import cache
 
 import numpy as np
@@ -100,15 +101,30 @@ CNB_W_BAND = (-0.00010, 0.00000)   # per degree
 # some consumers and not others.
 FIN_AC_STATION_M = 0.285   # fin AC, m aft of the root c/4 [E]
 AR_FIN = 3.0               # fin aspect ratio [E]
-FIN_SWEEP_DEG = 12.0       # fin c/4 sweep, deg [E]
 FIN_TAPER = 0.6            # fin taper ratio [E]
+
+# The V1a concept has a vertical trailing edge.  For a trapezoid this fixes the
+# quarter-chord sweep from AR and taper; keeping a separate 12 degree literal
+# made the aerodynamic model disagree with the generated drawing (7.125 deg).
+FIN_SWEEP_DEG = float(np.degrees(np.arctan(
+    1.5 / AR_FIN * (1.0 - FIN_TAPER) / (1.0 + FIN_TAPER)
+)))
+
+FIN_ROOT_THICKNESS_M = 0.0030   # maximum plate thickness at root [E]
+FIN_TIP_THICKNESS_M = 0.0015    # maximum plate thickness at tip [E]
+FIN_TE_THICKNESS_M = 0.0008     # printable trailing edge [E]
+FIN_SPAR_DIAMETER_M = 0.0030    # aluminium rod forming the LE nose [D]/[E]
+FIN_SPAR_SEAT_DIAMETER_M = 0.0032  # open rear-facing C-seat, not enclosed [I]
+FIN_ROOT_Z_M = 0.014            # carrier/fin vertical interface [I]
 
 
 @cache
 def fin_moment_arm():
     """CG-to-fin-AC lever arm [m], from the re-derived CG target."""
     return FIN_AC_STATION_M - cg_target()
-ETA_FIN = 1.25          # dynamic-pressure ratio, fin in pusher slipstream [E]
+ETA_FIN_POWER_OFF = 1.00   # free-stream reference, propeller not energising fin [E]
+ETA_FIN_POWER_ON = 1.25    # whole-fin equivalent q ratio used by released screen [E]
+ETA_FIN = ETA_FIN_POWER_ON # compatibility alias; report both power states below
 DSIGMA = 0.05           # sidewash factor (1+dσ/dβ) ≈ 1.05, centerline fin [E]
 ETA_RUD = 1.15          # rudder q-ratio [E]
 CLA_RE_FAC = (0.85, 1.00)  # low-Re lift-curve reduction on Helmbold [E]
@@ -180,6 +196,27 @@ def cnb_fin(S_v, l_v, cla, eta=ETA_FIN, sw=1.0 + DSIGMA):
     return eta * sw * (S_v / S) * (l_v / B) * cla
 
 
+def cnb_total_band(S_v, eta=ETA_FIN):
+    """Independent-corner Cnβ band for one fin area and q-ratio.
+
+    The former implementation paired favourable and unfavourable inputs, which
+    did not bound the independent uncertainty space.  Directional stability is
+    monotonic in every term here, so the true extrema are explicit.
+    """
+    cla_lo, cla_hi = cla_fin_band(AR_FIN, FIN_SWEEP_DEG)
+    low = (
+        cnb_fin(S_v, fin_moment_arm(), cla_lo, eta=eta)
+        + cnb_fuselage(K_FUS_BAND[1], S_FS_BAND[1], fuselage_length())
+        + CNB_W_BAND[0]
+    )
+    high = (
+        cnb_fin(S_v, fin_moment_arm(), cla_hi, eta=eta)
+        + cnb_fuselage(K_FUS_BAND[0], S_FS_BAND[0], fuselage_length())
+        + CNB_W_BAND[1]
+    )
+    return low, high
+
+
 def fin_area_for_target(target, l_v=None):
     """Fin area that closes a nominal Cn_beta target with current geometry.
 
@@ -206,13 +243,58 @@ def cnr_wing():
     return -CL_CRU / 4.0
 
 
-def fin_geometry(S_v, b_v):
-    """Trapezoidal fin: root/tip chords for a given span, m."""
+@dataclass(frozen=True)
+class FinGeometry:
+    """Single-source trapezoidal V1 fin planform, SI units.
+
+    The vertical trailing edge is an explicit provisional packaging decision.
+    All consumers use these vertices, so the aerodynamic sweep, AC station and
+    generated SVG cannot silently diverge.
+    """
+
+    area_m2: float
+    span_m: float
+    root_chord_m: float
+    tip_chord_m: float
+    centroid_height_m: float
+    mac_m: float
+    ac_x_m: float
+    root_le_x_m: float
+    root_te_x_m: float
+    tip_le_x_m: float
+    tip_te_x_m: float
+    quarter_chord_sweep_deg: float
+
+
+def fin_geometry(S_v, b_v=None, ac_x=FIN_AC_STATION_M):
+    """Return the complete vertical-TE trapezoidal fin geometry."""
+    if b_v is None:
+        b_v = np.sqrt(S_v * AR_FIN)
     c_mean = S_v / b_v
     c_r = 2.0 * c_mean / (1.0 + FIN_TAPER)
     c_t = FIN_TAPER * c_r
-    h_c = (b_v / 3.0) * (c_r + 2.0 * c_t) / (c_r + c_t)   # centroid height
-    return c_r, c_t, h_c
+    h_c = (b_v / 3.0) * (c_r + 2.0 * c_t) / (c_r + c_t)
+    mac = c_r + (c_t - c_r) * h_c / b_v
+    trailing_edge_x = ac_x + 0.75 * mac
+    root_le_x = trailing_edge_x - c_r
+    tip_le_x = trailing_edge_x - c_t
+    root_qc_x = root_le_x + 0.25 * c_r
+    tip_qc_x = tip_le_x + 0.25 * c_t
+    sweep = float(np.degrees(np.arctan2(tip_qc_x - root_qc_x, b_v)))
+    return FinGeometry(
+        area_m2=S_v,
+        span_m=b_v,
+        root_chord_m=c_r,
+        tip_chord_m=c_t,
+        centroid_height_m=h_c,
+        mac_m=mac,
+        ac_x_m=ac_x,
+        root_le_x_m=root_le_x,
+        root_te_x_m=trailing_edge_x,
+        tip_le_x_m=tip_le_x,
+        tip_te_x_m=trailing_edge_x,
+        quarter_chord_sweep_deg=sweep,
+    )
 
 
 def fin_shell_mount_mass_band(S_v):
@@ -230,7 +312,7 @@ def fin_mass_band(S_v):
 
 def fin_drag(S_v):
     """ΔCD0 of the fin at cruise: Cf (printed, Re 1.5–3e5) + interference + wake."""
-    c_ref = np.sqrt(S_v / 0.8)                     # mean chord of the fin
+    c_ref = fin_geometry(S_v).mac_m                # actual trapezoidal MAC
     re = V_CRU * c_ref / NU
     cf = 0.005 + 0.0011 / np.sqrt(re / 1e5)        # turbulent flat plate [E]
     swet = 2.0 * S_v
@@ -311,6 +393,8 @@ def rudder_delta_req(cnb_total, cndr, v_air, v_cw):
 # Main
 # --------------------------------------------------------------------------
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     print("=" * 74)
     print("SALAMANDRA — DIRECTIONAL STABILITY (Cn_beta) AND FIN OPTIONS")
     print("Configuration: FSW 1300 mm · nose boom · pusher · elevons only")
@@ -338,7 +422,7 @@ def main():
     print("\n2. FIN SIZING (centreline, rear-pod extension, l_v = %.0f mm)" % (fin_moment_arm()*1000))
     tiers = [
         ("V1a — marginal-stable (nominal ≥ 0.0005/deg)", 0.0005),
-        ("V1b — robust (nominal ≥ 0.0010/deg)",          0.0010),
+        ("V1b — higher powered nominal margin (≥ 0.0010/deg)", 0.0010),
     ]
     # solve S_v at band centre, check band extremes
     tier_areas = []
@@ -348,14 +432,14 @@ def main():
         cla_nom = sum(cla_fin_band(AR_FIN, FIN_SWEEP_DEG)) / 2.0
         S_v = fin_area_for_target(target)
         tier_areas.append(S_v)
-        # band propagation
-        cnb_case_a = cnb_fin(S_v, fin_moment_arm(), cla_fin_band(AR_FIN, FIN_SWEEP_DEG)[0]) + \
-            cnb_fuselage(K_FUS_BAND[0], S_FS_BAND[0], fuselage_length()) + CNB_W_BAND[1]
-        cnb_case_b = cnb_fin(S_v, fin_moment_arm(), cla_fin_band(AR_FIN, FIN_SWEEP_DEG)[1]) + \
-            cnb_fuselage(K_FUS_BAND[1], S_FS_BAND[1], fuselage_length()) + CNB_W_BAND[0]
-        cnb_lo, cnb_hi = sorted((cnb_case_a, cnb_case_b))
-        b_v = np.sqrt(S_v * AR_FIN)
-        c_r, c_t, h_c = fin_geometry(S_v, b_v)
+        # Independent-corner propagation; power-off is reported separately.
+        cnb_lo, cnb_hi = cnb_total_band(S_v, eta=ETA_FIN_POWER_ON)
+        cnb_off_lo, cnb_off_hi = cnb_total_band(S_v, eta=ETA_FIN_POWER_OFF)
+        fin = fin_geometry(S_v)
+        b_v = fin.span_m
+        c_r = fin.root_chord_m
+        c_t = fin.tip_chord_m
+        h_c = fin.centroid_height_m
         m_lo, m_hi = fin_mass_band(S_v)
         dcd0, _ = fin_drag(S_v)
         cd_tot = sum(drag_model.clean_cd(CL_CRU))
@@ -366,8 +450,11 @@ def main():
         print(f"\n   {tag}")
         print(f"   S_v = {S_v*100:.2f} dm² · b_v = {b_v*1000:.0f} mm · "
               f"c_r = {c_r*1000:.0f} / c_t = {c_t*1000:.0f} mm · AR_v ≈ {AR_FIN:.1f}")
-        print(f"   Cn_beta total band: {cnb_lo:+.5f} … {cnb_hi:+.5f} /deg "
+        print(f"   Planform        : vertical TE · Λc/4 = "
+              f"{fin.quarter_chord_sweep_deg:.3f}° · MAC {fin.mac_m*1000:.1f} mm")
+        print(f"   Cn_beta power-on  : {cnb_lo:+.5f} … {cnb_hi:+.5f} /deg "
               f"(nominal ≈ {cnb_fin(S_v,fin_moment_arm(),cla_nom)+cnb_fus_nom+WING_MEAN:+.5f})")
+        print(f"   Cn_beta power-off : {cnb_off_lo:+.5f} … {cnb_off_hi:+.5f} /deg [E]")
         print(f"   Fin Cn_beta     : {cnb_fin(S_v,fin_moment_arm(),cla_nom):+.5f} /deg")
         print(f"   Volume coeff V_v = {V_v:.3f} (tailless practice ≈ 0.02–0.05 [I])")
         print(f"   Mass complete   : {m_lo:.0f}–{m_hi:.0f} g "
@@ -386,8 +473,11 @@ def main():
 
     # ---- 3. Recommended geometry (V1a) — structural check ----
     S_v = tier_areas[0]
-    b_v = np.sqrt(S_v * AR_FIN)
-    c_r, c_t, h_c = fin_geometry(S_v, b_v)
+    fin = fin_geometry(S_v)
+    b_v = fin.span_m
+    c_r = fin.root_chord_m
+    c_t = fin.tip_chord_m
+    h_c = fin.centroid_height_m
     q_ne = 0.5 * RHO * V_STRUCTURAL**2
     F = q_ne * S_v * 1.0 * ETA_FIN          # CN = 1.0, slipstream
     M = F * h_c
@@ -473,10 +563,25 @@ def main():
     sig_root_3 = M * 0.0015 / i_root_3
     check(f"V1a 3.0 mm root FS >= 1.5 without spar credit "
           f"(got {50e6/sig_root_3:.2f})", 50e6 / sig_root_3 >= 1.5)
+    check("V1a vertical-TE geometry reproduces the aerodynamic sweep",
+          abs(fin.quarter_chord_sweep_deg - FIN_SWEEP_DEG) < 1e-12)
+    check("V1a geometry reproduces area, AR, taper and AC",
+          abs(0.5 * (fin.root_chord_m + fin.tip_chord_m) * fin.span_m
+              - fin.area_m2) < 1e-12
+          and abs(fin.span_m**2 / fin.area_m2 - AR_FIN) < 1e-12
+          and abs(fin.tip_chord_m / fin.root_chord_m - FIN_TAPER) < 1e-12
+          and abs(
+              fin.root_te_x_m - 0.75 * fin.mac_m - fin.ac_x_m
+          ) < 1e-12)
+    check("independent-corner Cn_beta band is ordered and contains nominal",
+          cnb_total_band(S_v)[0] < cnb_v1 < cnb_total_band(S_v)[1])
+    check("power-off is no more stabilizing than the power-on screen",
+          cnb_total_band(S_v, ETA_FIN_POWER_OFF)[0]
+          <= cnb_total_band(S_v, ETA_FIN_POWER_ON)[0])
     v1a_lo = fin_mass_band(tier_areas[0])[0]
-    check(f"C32 complete-fin mass gap is explicit and 6--7 g "
+    check(f"C32 complete-fin mass gap is explicit and 5.5--6.2 g "
           f"({V1_FIN_CAP_G:.2f} cap vs {v1a_lo:.2f} g lower assembly)",
-          6.0 <= v1a_lo - V1_FIN_CAP_G <= 7.0)
+          5.5 <= v1a_lo - V1_FIN_CAP_G <= 6.2)
     check("V1 analytical lower assembly matches the shared mass contract within 0.2 g",
           abs(AUW_REF + v1a_lo / 1000.0 - ARTICLE_V1_MASS_KG) < 2e-4)
     finless_modes = yaw_modes(cnb_no_hi, cnr_wing())

@@ -4,6 +4,34 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.38] — 2026-08-19
+
+**C46 — the V1 fin drawing and yaw model described different planforms, and the
+published stability band did not span independent uncertainty corners.**
+
+- Replaced the separate 12° aerodynamic sweep and vertical-TE SVG construction with one
+  `FinGeometry` object. The retained vertical trailing edge derives Λc/4 = 7.125° and
+  supplies area, AR, taper, MAC, AC and all four vertices to aerodynamics, equipment and
+  drawings. Validation now checks every invariant instead of area/AR only.
+- The V1a root LE/TE are x = +244.4/+349.1 mm. The corrected root requires an 84.1 mm
+  carrier beyond the current x = +265 pod; the former +30 mm / x = +295 concept is
+  geometrically insufficient and retired.
+- Replaced paired uncertainty cases with independent extrema and separated powered
+  η = 1.25 from motor-off η = 1.00. V1a is −0.00029…+0.00119/deg powered and
+  −0.00057…+0.00087/deg motor-off. V1b has higher powered margin but also retains a
+  negative full motor-off lower corner; neither is flight-test closure.
+- `fin_drag()` now uses the actual 85.5 mm trapezoidal MAC instead of an unrelated
+  163 mm chord surrogate. V1a becomes ΔCD0 ≈ +0.0015 and +10.2 % energy `[E]`.
+- Corrected the impossible enclosed Ø3.2 mm channel inside a 3.0→1.5 mm plate: the Ø3 mm
+  aluminium rod is now explicitly an external leading-edge nose in an open seat `[I]`.
+- The revised lower fin model is 42.55 g and V1 is 1595.80 g before the still-open carrier
+  mass. Corrected fin mass centres move the required pack station to −375.48 mm, 4.28 mm
+  beyond current travel; the stopped solution remains inside the released CG band.
+- Added generated A3 sheet `SLM-FIN-001`, strengthened semantic/geometry checks and made
+  the relevant Windows CLIs configure UTF-8 output explicitly.
+
+---
+
 ## [1.37] — 2026-08-19
 
 **I-28 Revision 3 — rejected the box-derived lifting saddle and replaced it with a

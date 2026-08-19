@@ -38,6 +38,7 @@ released airfoil coordinates.
 | [`SLM-GA-001`](geometry/drawings/SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and continuous provisional fuselage/equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]` |
 | [`SLM-FUS-001`](geometry/drawings/SLM-FUS-001-fuselage-oml-review.svg) | Common-source plan, side and transverse body views with inflated central skeleton envelopes, containment margins and gross mesh diagnostics | A3 · views 1:4 / sections 1:1.5 | OML `[I]`; envelopes `[D]`/`[E]`/`[I]`; metrics `[D]` on `[I]` |
 | [`SLM-GA-002`](geometry/drawings/SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
+| [`SLM-FIN-001`](geometry/drawings/SLM-FIN-001-fixed-fin-review.svg) | Dedicated V1a fixed-fin planform, aerodynamic datum, external leading-edge spar concept, thickness schedule, carrier stations and directional-stability screen | A3 · planform 1:1.5 / details NTS | Planform `[D]` on `[E]`; section/install `[E]`/`[I]`; no rudder authority |
 | [`SLM-EQP-001`](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg) | Top and side mass skeleton: component envelopes, true mass centres, x/y/z schedule, CLEAN CG and V1 battery-stop overlay. The top view includes the controlled exterior wing planform as spatial context but no wing construction, fuselage or OML. | A3 · top 1:6.5 / side 1:4 | Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority |
 | [`SLM-WNG-001`](geometry/drawings/SLM-WNG-001-half-wing-layout.svg) | Right half-wing: printed segments, cells, spar/pin, ADR-0045 elevon/fixed-root bridge, exact y195 profile and polyhedral inset | A3 · plan 1:2 | Planform/profile/elevon bounds `[D]`; structure/polyhedral `[E]`/`[I]` |
 
@@ -61,9 +62,17 @@ Use this sheet to interrogate the fuselage generator itself. Plan and side outli
 
 [![Metric A3 side-elevation draft comparing the common root airfoil, battery boom, continuous provisional fuselage OML and local propeller-clearance skid for SALAMANDRA-CLEAN with the V1a fixed centreline-fin variant. The V1a fin is passive and has no movable rudder.](geometry/drawings/SLM-GA-002-side-elevations.svg)](geometry/drawings/SLM-GA-002-side-elevations.svg)
 
-Use this sheet to compare the two published directional configurations without changing the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds a passive fixed centreline fin. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The drawing also flags the open 105 mm fin-root versus x = +295 mm pod-extension interface for native CAD resolution.
+Use this sheet to compare the two published directional configurations without changing the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds a passive fixed centreline fin. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The drawing now uses the same vertical-trailing-edge planform as the yaw model and exposes the carrier station near x = +349 mm; the obsolete x = +295 mm concept is not geometrically sufficient.
 
 **Sheet** A3 · 1:4 · **Authority** Root/fin `[D]`/`[E]`; side OML/install `[I]`.
+
+### SLM-FIN-001 · V1a fixed-fin geometry review
+
+[![Metric A3 engineering-review sheet for the passive V1a centreline fin. It shows the single-source trapezoidal planform, aerodynamic datum, external leading-edge spar concept, thickness schedule and provisional carrier interface. The sheet defines no movable rudder and is not manufacturing authority.](geometry/drawings/SLM-FIN-001-fixed-fin-review.svg)](geometry/drawings/SLM-FIN-001-fixed-fin-review.svg)
+
+Use this sheet to review the passive V1a centreline fin as a component rather than inferring it from the general side elevation. The planform vertices, area, taper, vertical trailing edge, derived quarter-chord sweep and AC marker come from one Python geometry object. Root/tip section sketches explain that the Ø3 mm aluminium rod forms an external leading-edge nose in an open seat; they do not claim an impossible enclosed Ø3.2 mm bore inside the 3.0→1.5 mm plate. Mount detail, carrier OML, hole positions, print compensation, measured mass and E8 flight closure remain provisional. No movable rudder is defined.
+
+**Sheet** A3 · planform 1:1.5 / details NTS · **Authority** Planform `[D]` on `[E]`; section/install `[E]`/`[I]`; no rudder authority.
 
 ### SLM-EQP-001 · Equipment mass skeleton
 
@@ -227,7 +236,7 @@ comes from the propulsion chain, which is where the data say the gap is.
 | Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
 | Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
 | Elevons | **0.28 c, y 227.5…585 mm (35–90 %), 357.5 mm; fixed 32.5 mm root bridge and 65 mm tip; servo y ±406.25 mm** | [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
-| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; V1 lower model 1596.05 g / 44.7 km/h** | [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md), [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
+| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; V1 lower model 1595.80 g / 44.7 km/h before open carrier mass** | [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md), [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
 | Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; two-servo O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
 | Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | V_NE article #1 | **160 km/h** (design 180) | — |
@@ -328,14 +337,14 @@ Phase-1 status (2026-08-18):
 - **ADR-0040/0043/0045 — coupled planform, control surface, mass and balance updated.** The −15° planform
   and target CG **−93.8 mm** remain. With Article #1 hardware and the 550 g PETG-shell
   cap and two-servo baseline, CLEAN is **1553.25 g**. Its component-level pack solution
-  is **−337.74 mm** inside current travel. V1 requires −373.73 mm, 2.53 mm beyond the
+  is **−337.74 mm** inside current travel. V1 requires −375.48 mm, 4.28 mm beyond the
   forward stop, although its CG remains inside the released band. Current stations and acceptance gates are in the
   [guide §7.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
 - **Two-servo correction closes the analytical V1 mass gap.** The complete fin remains
-  **42.80 g**, including its mandatory 5.7 g aluminium spar. With 25 g removed from
-  actuation and ADR-0045 balance allocation, V1 is **1596.05 g / 44.7 km/h**, about 24.4 g below the exact 45 km/h
+  **42.55 g**, including its mandatory 5.7 g aluminium spar; the corrected 84.1 mm carrier mass remains open. With 25 g removed from
+  actuation and ADR-0045 balance allocation, V1 is **1595.80 g / 44.7 km/h**, about 24.6 g below the exact 45 km/h
   mass ceiling. CAD and scale mass verification remain mandatory.
 - **OP-29 (divergence) — operationally bounded, structurally open.** Revision 4 uses
   the released r1 profile. Nominal Vdiv is 327.2 km/h, but the conservative unmeasured
@@ -352,8 +361,8 @@ Phase-1 status (2026-08-18):
   `[E]`, FSW + nose boom); the platform now publishes two configurations:
   **SALAMANDRA-CLEAN** (finless, O1 efficiency build) and **SALAMANDRA-V1** (fixed
   centreline fin, no rudder — first platform variant, recommended for the test
-  programme after F2 mass closure): S_v 2.13–2.83 dm², **43–88 g complete**, ΔCD0
-  +0.0014–0.0019 `[D]`/`[E]`
+  programme after F2 mass closure): S_v 2.1025–2.80 dm², **42.55–87 g complete** before the open carrier mass, ΔCD0
+  +0.0015–0.0020 `[D]`/`[E]`
   (`calculations/yaw_stability.py`). A movable rudder is **rejected with numbers**
   (I-20 §5.4; Mojito `[M]` flies a fixed stabilizer with elevons only). Closure by
   flight test **E8** (yaw perturbation).

@@ -263,6 +263,8 @@ def print_config(name, rows, tot):
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     ap = argparse.ArgumentParser(description="Salamandra mass budget (F2-class)")
     ap.add_argument("--config", default="all",
                     choices=list(POLICIES) + ["all", "matrix"],

@@ -27,7 +27,7 @@ Keep conventional PETG and make the following masses binding CAD/procurement lim
 | FPV | DJI O4 Air Unit **8.95 g installed** | E18 camera 3.10 g + E19 VTX/attached-antenna assembly 5.85 g `[M]`/`[D]`; I-19 |
 | Servos | 2× Corona DS-939MG **25.0 g** | one per elevon, 12.5 g each `[M]`; 1.52× factored torque margin at 180 km/h |
 | Propeller assembly | **25 g** | APC blade 15 g `[M]` + adapter/collet allowance 10 g `[E]` |
-| V1a complete fin | **≤36.72 g target** | Current lower model: 37.10 g shell/mount + 5.70 g mandatory spar = **42.80 g**; 6.08 g gap `[E]` |
+| V1a complete fin | **≤36.72 g target** | Current vertical-TE lower model: 36.85 g shell/mount + 5.70 g mandatory spar = **42.55 g**; 5.83 g gap, corrected carrier mass still open `[E]` |
 
 All other v0.2 rows remain unchanged. The reproducible totals are:
 

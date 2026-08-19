@@ -8,12 +8,12 @@
 > **C31/C32 update:** `yaw_stability.py` consumes the −15° geometry and solved
 > −93.8 mm CG. It also corrects an internal inconsistency: structure/rudder/damping now
 > use the calculated fin area instead of a stale fixed 2.0 dm². With the v0.3 boom,
-> current V1a is 2.12 dm² with a 3.0 mm solid root; V1b is 2.82 dm². C32 adds the
+> current vertical-TE V1a is 2.1025 dm² with a 3.0 mm solid root; V1b is 2.80 dm². C32 adds the
 > mandatory 5.70 g spar to both complete-fin mass bands.
 
 > **ADR-0045 mass update (2026-08-18):** the selected elevon/balance allocation makes
-> current CLEAN 1553.25 g and V1a lower model 1596.05 g / 44.7 km/h. The 42.80 g fin
-> still exceeds its internal 36.72 g allocation by 6.08 g, but no longer causes an
+> current CLEAN 1553.25 g and V1a lower model 1595.80 g / 44.7 km/h. The 42.55 g fin
+> still exceeds its internal 36.72 g allocation by 5.83 g, but no longer causes an
 > analytical C16 stall-speed failure. Physical F2 mass and E2 CLmax remain gates.
 
 ---
@@ -74,7 +74,7 @@ Cnβ_total = Cnβ_fin(η, sidewash, S_v, l_v, CLα_v) + Cnβ_body(−k_f·S_fs·
 
 | Term | Formula | Source |
 |---|---|---|
-| Fin | Cnβ_v = η·(1+dσ/dβ)·(S_v/S)·(l_v/b)·CLα_v | DATCOM/Roskam |
+| Fin | Cnβ_v = η·(1+dσ/dβ)·(S_v/S)·(l_v/b)·CLα_v; independent uncertainty corners, η = 1.25 powered screen / 1.00 motor-off | DATCOM/Roskam; q-ratio `[E]` |
 | CLα_v | Helmbold-Diederich: 2πA/(2+√(A²(1+tan²Λ)/η²+4)) × low-Re factor 0.85–1.00 `[E]` | DATCOM form |
 | Body | Cnβ_f = −k_f·(S_fs·l_f)/(S·b), k_f = 0.40…0.96 (slender boom → full-body Raymer) | Raymer/DATCOM; Munk lower bound |
 | Wing | Small at AR 6 (|Cnβ_w| ≤ 1e-4/deg); **negative** for forward sweep | band `[E]` |
@@ -84,8 +84,11 @@ Cnβ_total = Cnβ_fin(η, sidewash, S_v, l_v, CLα_v) + Cnβ_body(−k_f·S_fs·
 | Structure | Cantilever bending at V_NE, CN = 1.0, slipstream q-ratio 1.25 | `[D]` |
 | Drag | ΔCD0 = η·k_int·Cf·(2S_v/S), Cf turbulent flat plate, k_int 1.35 | Hoerner |
 
-Fin installation (V1): centreline, on a **rear-pod extension** behind the prop disk
-(fin AC ≈ +285 mm from root c/4; l_v = 0.379 m from the CG at −93.8 mm). The dorsal
+Fin installation (V1): centreline, on a **rear-pod extension** behind the prop disk.
+The single-source vertical-TE planform has Λc/4 = 7.125°, root LE/TE x =
++244.4/+349.1 mm and fin AC ≈ +285 mm from root c/4 (l_v = 0.379 m from the CG at
+−93.8 mm). It therefore requires an 84.1 mm carrier extension beyond the current
+x = +265 mm pod, not the retired +30 mm concept. The dorsal
 alternative (on the wing, ahead of the prop) needs ≈ 1.7× the area for the same Cnβ
 (shorter arm, no slipstream η) — rejected on drag before running it.
 
@@ -114,27 +117,28 @@ pusher — carries a fin.
 
 ## 5.2 Fin sizing (centreline, rear-pod, l_v = 379 mm, AR_v = 3.0)
 
-| | **V1a — marginal** | **V1b — robust** |
+| | **V1a — marginal** | **V1b — higher nominal margin** |
 |---|---|---|
-| S_v | **2.12 dm²** | **2.82 dm²** |
-| b_v / c_r / c_t | 253 / 105 / 63 mm | 291 / 121 / 73 mm |
-| Cnβ_total band | −0.00006 … +0.00096 (nominal **+0.0005**) | +0.00048 … +0.00142 (nominal **+0.0010**) |
+| S_v | **2.1025 dm²** | **2.80 dm²** |
+| b_v / c_r / c_t | 251.1 / 104.6 / 62.8 mm | 290 / 121 / 72 mm |
+| Cnβ_total power-on | **−0.00029 … +0.00119** (nominal **+0.0005**) | **+0.00017 … +0.00173** (nominal **+0.0010**) |
+| Cnβ_total motor-off | **−0.00057 … +0.00087** | **−0.00020 … +0.00130** |
 | V_v = S_v·l_v/(S·b) | 0.022 | 0.030 (tailless practice ≈ 0.02–0.05 `[I]`) |
-| Complete mass (distributed thickness + mount + spar) | **42.80–67.88 g** | **55.32–88.39 g** |
-| ΔCD0 | +0.0014 | +0.0019 |
-| Drag / Wh/km impact | **+9.8 % → ≈ 1.26** `[E]` | +12.9 % → ≈ 1.30 `[E]` |
-| AUW & V_stall | Lower model **1596.05 g / 44.7 km/h analytical PASS**; allocation target 1589.97 g / 44.6 km/h | Heavier option; recompute after V1b CAD mass |
+| Complete mass (distributed thickness + mount + spar) | **42.55–67.11 g** | **55–87 g** |
+| ΔCD0 | +0.0015 | +0.0020 |
+| Drag / Wh/km impact | **+10.2 % → ≈ 1.27** `[E]` | +13.4 % → ≈ 1.30 `[E]` |
+| AUW & V_stall | Lower model **1595.80 g / 44.7 km/h analytical PASS**; allocation target 1589.97 g / 44.6 km/h | Heavier option; recompute after V1b CAD mass |
 
 C16 is analytically closed for the V1a lower model with 24.1 g margin to the exact
 45 km/h mass ceiling. The former 36.72 g V1a value is still an internal allocation
-target, not a physical lower bound; the connected fin model misses it by 6.08 g and
-the V1 battery target is 2.72 mm beyond travel — both are **flagged to F2/OP-24**.
+target, not a physical lower bound; the connected fin model misses it by 5.83 g and
+the corrected V1 battery target is 4.28 mm beyond travel — both are **flagged to F2/OP-24**.
 
 ## 5.3 Structure (V1a at V_NE 180 km/h, cantilever)
 
-- Side load F = 40.7 N at the centroid (116 mm) → M = 4.72 N·m.
+- Side load F = 40.2 N at the centroid (115 mm) → M = 4.63 N·m.
 - Root thickness: 1.5 mm → σ ≈ 121 MPa (**fails**); 2.5 mm → σ ≈ 43.6 MPa,
-  **FS 1.16 (rejected)**; **3.0 mm → σ 29.9 MPa, FS 1.67** without spar credit.
+  **FS 1.18 (rejected)**; **3.0 mm → σ 29.5 MPa, FS 1.69** without spar credit.
 - **Spec: root t ≥ 3.0 mm solid, trapezoidal, swept tip.**
 - First bending mode ≈ 7.9 Hz — flutter/strength verification in F2 (G7 discipline).
 
@@ -165,12 +169,14 @@ damped lateral-directional oscillation in this reduced model.
 # 6. Recommendation (engineering)
 
 1. **V1 = fixed centreline fin, no rudder — first platform variant (O14), recommended
-   build for the Article #1 test programme.** Size V1a (S_v = 2.12 dm², b_v ≈ 252 mm,
-   c_r ≈ 105 / c_t ≈ 63 mm, AR_v ≈ 3.0, root t ≥ 3.0 mm) on a ≈ 30 mm rear-pod extension
-   behind the prop disk, fin AC ≈ +285 mm, slipstream-mounted (η ≈ 1.25 — the fin is
-   *most* effective at low speed, exactly where launch and stall handling need it).
-   Complete lower mass 42.80 g against a 36.72 g allocation target, ΔCD0 ≈ +0.0014.
-   V1b (+0.0010/deg nominal) if F2 allows its 55.32–88.39 g complete mass.
+   build for the Article #1 test programme only as a measured build-up configuration.**
+   Size V1a (S_v = 2.1025 dm², b_v = 251.1 mm, c_r = 104.6 / c_t = 62.8 mm,
+   AR_v = 3.0, vertical TE, Λc/4 = 7.125°, root t ≥ 3.0 mm) on the calculated
+   84.1 mm carrier extension behind the current pod, fin AC +285 mm. The powered
+   η = 1.25 and motor-off η = 1.00 screens are both reported; neither substitutes for
+   the partial-wake measurement. Complete lower mass 42.55 g against a 36.72 g allocation
+   target, ΔCD0 ≈ +0.0015. V1b (+0.0010/deg powered nominal) is not robust in the full
+   motor-off independent-corner envelope and remains an F2/E8 trade.
 2. **The finless configuration remains the O1-efficiency baseline** (≤ 1.15 Wh/km needs
    the cleanest build; the fin costs ≈ +10 % energy `[E]`). It is documented here as
    directionally unstable and FC-dependent — a declared risk, not a silent assumption.
@@ -184,7 +190,7 @@ damped lateral-directional oscillation in this reduced model.
 
 - The fin is a **CORE component** (ADR-0032): panels, elevons, mass balance and the
   flight controller are untouched. It is a pure additive variant — the platform's first.
-- Rear-pod geometry: extension +30 mm aft of x ≈ +265, motor-mount screw pattern
+- Rear-pod geometry: carrier to x = +349.1 mm, **84.1 mm aft of the current x = +265 pod**, motor-mount screw pattern
   (Mojito precedent `[M]`), optional antenna/ESC housing (Mojito practice `[M]`).
 - INAV/ArduPilot: no config change required (passive surface); fw_p_yaw is already
   present for the finless case.
@@ -197,6 +203,8 @@ damped lateral-directional oscillation in this reduced model.
 |---|---|
 | Real Mojito fin dimensions (photos downloaded, model cannot process images) | Human measurement of the 5 gallery files in session cache |
 | Exact CORE/boom side area S_fs from the CAD (affects the band midpoint) | OP-21 (CORE outer mold) |
+| Area-weighted propeller-wake q-ratio over the fin, power-on and motor-off | F2 bench flow survey / E8 system identification |
+| Carrier mass and stiffness for the corrected 84.1 mm extension | F2 CAD mass properties and structural test |
 | Fin flutter/strength at the 8.0 Hz mode, wake buffeting | F2 (loads and structure) |
 | **E-flight falsification:** yaw perturbation test (rudder-kick analog via aileron impulse, Dutch roll decay in blackbox) | E-series — the only `[M]` closure of §5 |
 | C16 (stall) with the fin mass at the declared lever | F2 mass arbitration (OP-24 extension) |
@@ -206,8 +214,9 @@ damped lateral-directional oscillation in this reduced model.
 - All magnitudes carry `[E]` bands on: S_fs and the body factor k_f (the two methods,
   Munk-slim vs Raymer-full, differ ≈ 3× — the band brackets both), low-Re CLα of a
   printed surface, slipstream η, yaw inertia, and the simplified 2-DOF dynamics. The
-  *sign* conclusions (finless negative; fin restores stability; rudder not needed) are
-  robust to the band; the *sizes* (2.13 vs 2.83 dm²) are not — hence the two tiers.
+  finless-negative conclusion is robust, but neither V1 tier stays positive over the full
+  independent-corner motor-off envelope. The powered nominal conclusions and the sizes
+  (2.1025 vs 2.80 dm²) remain `[E]`; E8 is the release gate.
 - The 2-DOF (β, r) model estimates reduced lateral-directional modes, not a full
   Dutch-roll identification (p and φ are omitted) — declared `[E]`, flight data to close.
 - Mojito practice is one data point from a single manufacturer `[M]` (same limitation

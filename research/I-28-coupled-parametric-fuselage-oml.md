@@ -879,7 +879,7 @@ These values initialize the programme but do not validate a surface:
 | VLM neutral point | approximately `−75.8 mm` | `[D]`, first coupled iteration |
 | Target CG | approximately `−93.8 mm` | `[D]`, 8 % MAC static margin |
 | CLEAN component-level battery x | `−337.74 mm` | `[D]/[E]` |
-| V1 exact required battery x | `−373.73 mm` | `[D]/[E]`, outside current stop |
+| V1 exact required battery x | `−375.48 mm` | `[D]/[E]`, 4.28 mm outside current stop after corrected fin mass centres |
 | V1 forward battery stop | `−371.20 mm` | `[D]/[E]` |
 | Camera lens plane | `−452.70 mm` | `[D]`, aperture datum—not full nose plane |
 | Prior aft pod extent | approximately `+265 mm` | `[I]`, must be re-solved |

@@ -51,7 +51,7 @@ Example option combinations (all validated runs of `mass_budget.py`):
 |---|---:|---:|
 | ALL PETG · Article #1 CLEAN | 1553.25 | 44.1 |
 | ALL PETG · V1 allocation target | 1589.97 | 44.6 |
-| **ALL PETG · V1 current lower model** | **1596.05** | **44.7 — analytical PASS** |
+| **ALL PETG · V1 current lower model** | **1595.80** | **44.7 — analytical PASS; carrier mass open** |
 
 Per-part × material matrix (mass, g, from the PETG base):
 
@@ -109,7 +109,7 @@ python3 calculations/mass_budget.py --config all_petg --fc F765-WING --fpv O4-Ai
 
 Validation preserves the v0.2 1685.2 g / 45.9 km/h regression and checks the current
 CLEAN and V1 target/model separation, pack masses, material scaling and balance rule.
-The V1 analytical lower model is 6.08 g above the allocation target yet remains 24.4 g
+The V1 analytical lower model is 5.83 g above the allocation target yet remains 24.6 g
 below the exact 45 km/h mass limit. Its exact battery target is 2.72 mm outside the
 allowed travel, while the achieved CG remains inside the R-CG band; that physical
 closure remains open.

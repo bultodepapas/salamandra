@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import sys
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from html import escape
@@ -55,7 +56,25 @@ from design_config import (
     x_le,
     x_te,
 )
-from yaw_stability import fin_area_for_target, fin_geometry
+from yaw_stability import (
+    AR_FIN,
+    FIN_AC_STATION_M,
+    FIN_ROOT_THICKNESS_M,
+    FIN_ROOT_Z_M,
+    FIN_SPAR_DIAMETER_M,
+    FIN_SPAR_SEAT_DIAMETER_M,
+    FIN_SWEEP_DEG,
+    FIN_TAPER,
+    FIN_TE_THICKNESS_M,
+    FIN_TIP_THICKNESS_M,
+    ETA_FIN_POWER_OFF,
+    ETA_FIN_POWER_ON,
+    cnb_total_band,
+    fin_area_for_target,
+    fin_drag,
+    fin_geometry,
+    fin_mass_band,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "geometry" / "drawings"
@@ -95,11 +114,7 @@ class DrawingContract:
     prop_diameter_m: float = 0.2032
     rear_pod_end_m: float = 0.265
     rear_pod_lower_prop_m: float = -0.1116
-    rear_pod_v1_end_m: float = 0.295
     motor_diameter_m: float = 0.028
-    fin_ac_m: float = 0.285
-    fin_aspect_ratio: float = 3.0
-    fin_root_thickness_m: float = 0.003
     equipment_top_scale: float = 6.5
     equipment_side_scale: float = 4.0
 
@@ -779,22 +794,17 @@ def draw_side_elevations() -> SvgSheet:
         ROOT / "geometry" / "airfoils" / "salamandra-root-r1.dat"
     )
     fin_area = fin_area_for_target(0.0005)
-    fin_span = sqrt(fin_area * CONTRACT.fin_aspect_ratio)
-    fin_root_chord, fin_tip_chord, fin_centroid_z = fin_geometry(
-        fin_area, fin_span
-    )
-    # Place the provisional trapezoid so its quarter-chord at the area-centroid
-    # height is x=+285 mm.  A vertical TE gives a buildable, swept-LE concept and
-    # exposes the minimum aft carrier length instead of floating the fin in space.
-    centroid_fraction = fin_centroid_z / fin_span
-    centroid_chord = (
-        fin_root_chord
-        + (fin_tip_chord - fin_root_chord) * centroid_fraction
-    )
-    fin_te = CONTRACT.fin_ac_m + 0.75 * centroid_chord
-    fin_root_le = fin_te - fin_root_chord
-    fin_tip_le = fin_te - fin_tip_chord
-    fin_root_z = 0.014  # Carrier/fin vertical interface remains an OP-21 CAD choice [I].
+    fin = fin_geometry(fin_area)
+    fin_span = fin.span_m
+    fin_root_chord = fin.root_chord_m
+    fin_tip_chord = fin.tip_chord_m
+    fin_centroid_z = fin.centroid_height_m
+    fin_te = fin.root_te_x_m
+    fin_root_le = fin.root_le_x_m
+    fin_tip_le = fin.tip_le_x_m
+    fin_root_z = FIN_ROOT_Z_M
+    cnb_on = cnb_total_band(fin_area, ETA_FIN_POWER_ON)
+    cnb_off = cnb_total_band(fin_area, ETA_FIN_POWER_OFF)
 
     sheet = SvgSheet(
         "Salamandra CLEAN and V1a side elevations",
@@ -1075,10 +1085,8 @@ def draw_side_elevations() -> SvgSheet:
                 ),
             ]
             sheet.polyline(fin_points, "provisional-fill", close=True)
-            sheet.line(fin_points[0][0], fin_points[0][1], fin_points[1][0],
-                       fin_points[1][1], "provisional-line", stroke_dasharray="none")
             fin_ac = side_point(
-                CONTRACT.fin_ac_m,
+                fin.ac_x_m,
                 fin_root_z + fin_centroid_z,
                 origin_x,
                 origin_y,
@@ -1109,7 +1117,12 @@ def draw_side_elevations() -> SvgSheet:
                 fin_points[0][0],
                 f"b_v {fin_span*1000:.0f} [D]",
             )
-            sheet.leader(*fin_ac, 300, 140, "FIN AC x +285 [D]/[E]")
+            sheet.leader(
+                *fin_ac,
+                300,
+                140,
+                f"FIN AC x +{fin.ac_x_m*1000:.0f} [D]/[E]",
+            )
 
     draw_variant(73.0, with_fin=False)
     draw_variant(185.0, with_fin=True)
@@ -1117,7 +1130,12 @@ def draw_side_elevations() -> SvgSheet:
     sheet.text(20, 23, "A · SALAMANDRA-CLEAN", "sheet-subtitle")
     sheet.text(20, 28, "FINLESS · O1 EFFICIENCY BASELINE · YAW RISK [E]", "micro")
     sheet.text(20, 126, "B · SALAMANDRA-V1a", "sheet-subtitle")
-    sheet.text(20, 131, "FIXED CENTRELINE FIN · NO MOVABLE RUDDER", "micro")
+    sheet.text(
+        20,
+        131,
+        "FIXED CENTRELINE FIN · NO MOVABLE RUDDER · MARGINAL [E]",
+        "micro",
+    )
     sheet.line(51, 38, 32, 38, "medium", marker_end="url(#arrow-end)")
     sheet.text(54, 39, "FORWARD", "label")
 
@@ -1165,7 +1183,7 @@ def draw_side_elevations() -> SvgSheet:
                     fin_root_z + 0.55 * fin_span, origin_x, 185.0, scale),
         300,
         153,
-        "V1a FIXED FIN · NO HINGE / SERVO",
+        f"V1a FIXED FIN · S_v {fin_area*100:.2f} dm² · NO HINGE / SERVO",
         True,
     )
     sheet.horizontal_dimension(
@@ -1182,7 +1200,281 @@ def draw_side_elevations() -> SvgSheet:
         "Shared [D]/[E]: root r1, Ø8 boom/socket, pack envelope, Ø28 motor and V1a fin sizing.",
         "Side OML, equipment vertical placement, local skid and V1a carrier interface remain [I].",
         f"O4: CAMERA FRONT/CENTRELINE [D]; COAX STRAIGHT-LINE LOWER BOUND {o4_coax_distance_mm:.1f}/50.0 mm [D]/[M].",
-        f"CAD OPEN: fin AC placement requires carrier to x +{fin_te*1000:.0f}; the guide's x +295 concept is insufficient.",
+        f"FIN PLANFORM [D]/[E]: Λc/4 {fin.quarter_chord_sweep_deg:.3f}° · taper {FIN_TAPER:.2f} · vertical TE.",
+        f"Cnβ independent corners: power-on {cnb_on[0]:+.5f}…{cnb_on[1]:+.5f}; power-off {cnb_off[0]:+.5f}…{cnb_off[1]:+.5f} /deg [E].",
+        f"CAD OPEN: carrier reaches x +{fin_te*1000:.0f} ({(fin_te-CONTRACT.rear_pod_end_m)*1000:.0f} mm beyond current pod); mass/interface F2 open.",
+    ], "micro", 3.4)
+    return sheet
+
+
+def draw_fin_detail() -> SvgSheet:
+    """Draw the V1a fixed-fin geometry and installation review sheet."""
+    fin_area = fin_area_for_target(0.0005)
+    fin = fin_geometry(fin_area)
+    mass_lo, mass_hi = fin_mass_band(fin_area)
+    dcd0, cf = fin_drag(fin_area)
+    cnb_on = cnb_total_band(fin_area, ETA_FIN_POWER_ON)
+    cnb_off = cnb_total_band(fin_area, ETA_FIN_POWER_OFF)
+    carrier_extension = fin.root_te_x_m - CONTRACT.rear_pod_end_m
+    prop_axial_gap = fin.root_le_x_m - CONTRACT.prop_plane_m
+
+    sheet = SvgSheet(
+        "Salamandra V1a fixed-fin geometry review",
+        "Metric A3 engineering-review sheet for the passive V1a centreline fin. It shows the single-source trapezoidal planform, aerodynamic datum, external leading-edge spar concept, thickness schedule and provisional carrier interface. The sheet defines no movable rudder and is not manufacturing authority.",
+        "SLM-FIN-001",
+    )
+    title_block(
+        sheet,
+        "FIN GEOMETRY REVIEW · V1a FIXED",
+        "SLM-FIN-001",
+        "1:1.5 / DETAILS NTS",
+        "SOURCE: GUIDE §4.4/6.7 · ADR-0038 · I-20 · yaw_stability.py",
+    )
+    provenance_legend(sheet, 303, 231)
+    sheet.text(20, 23, "A · SINGLE-SOURCE SIDE PLANFORM", "sheet-subtitle")
+    sheet.text(
+        20,
+        28,
+        "PASSIVE CENTRELINE FIN · VERTICAL TE · NO HINGE / SERVO",
+        "micro",
+    )
+
+    scale = 1.5
+    origin_x = 43.0
+    origin_y = 220.0
+
+    def fin_point(x_m: float, z_m: float) -> tuple[float, float]:
+        return (
+            origin_x + (x_m - fin.root_le_x_m) * 1000.0 / scale,
+            origin_y - z_m * 1000.0 / scale,
+        )
+
+    root_le = fin_point(fin.root_le_x_m, 0.0)
+    tip_le = fin_point(fin.tip_le_x_m, fin.span_m)
+    tip_te = fin_point(fin.tip_te_x_m, fin.span_m)
+    root_te = fin_point(fin.root_te_x_m, 0.0)
+    fin_points = [root_le, tip_le, tip_te, root_te]
+    sheet.polyline(
+        fin_points,
+        "provisional-fill",
+        close=True,
+        id="fin-v1a-planform",
+        style=(
+            "fill:#f4c46a;fill-opacity:.20;stroke:#985b00;stroke-width:.62;"
+            "stroke-dasharray:3.4 1.6;stroke-linejoin:round"
+        ),
+    )
+
+    root_qc = fin_point(fin.root_le_x_m + 0.25 * fin.root_chord_m, 0.0)
+    tip_qc = fin_point(fin.tip_le_x_m + 0.25 * fin.tip_chord_m, fin.span_m)
+    sheet.line(
+        *root_qc,
+        *tip_qc,
+        "centre",
+        id="fin-quarter-chord-line",
+    )
+    sheet.line(
+        *root_le,
+        *tip_le,
+        "derived",
+        id="fin-leading-edge-spar",
+        style="stroke:#146e9b;stroke-width:.70;stroke-dasharray:5 1.2",
+    )
+    ac = fin_point(fin.ac_x_m, fin.centroid_height_m)
+    sheet.circle(*ac, 1.7, "derived", id="fin-aerodynamic-centre")
+    sheet.line(ac[0] - 2.8, ac[1], ac[0] + 2.8, ac[1], "derived")
+    sheet.line(ac[0], ac[1] - 2.8, ac[0], ac[1] + 2.8, "derived")
+
+    sheet.vertical_dimension(
+        131.0,
+        tip_le[1],
+        root_le[1],
+        tip_te[0],
+        root_te[0],
+        f"b_v {fin.span_m*1000:.1f} [D]",
+    )
+    sheet.horizontal_dimension(
+        root_le[0],
+        root_te[0],
+        231.5,
+        root_le[1],
+        root_te[1],
+        f"c_r {fin.root_chord_m*1000:.1f} [D]",
+        label_above=False,
+    )
+    sheet.horizontal_dimension(
+        tip_le[0],
+        tip_te[0],
+        44.0,
+        tip_le[1],
+        tip_te[1],
+        f"c_t {fin.tip_chord_m*1000:.1f} [D]",
+    )
+    sheet.leader(
+        *ac,
+        118,
+        117,
+        f"AC x +{fin.ac_x_m*1000:.0f} · z {fin.centroid_height_m*1000:.1f} [D]/[E]",
+    )
+    sheet.leader(
+        *(fin_point(
+            fin.root_le_x_m + 0.25 * fin.root_chord_m
+            + 0.5 * (fin.tip_le_x_m + 0.25 * fin.tip_chord_m
+                     - fin.root_le_x_m - 0.25 * fin.root_chord_m),
+            0.5 * fin.span_m,
+        )),
+        118,
+        80,
+        f"Λc/4 {fin.quarter_chord_sweep_deg:.3f}° [D]",
+    )
+    sheet.leader(
+        *(fin_point(
+            0.5 * (fin.root_le_x_m + fin.tip_le_x_m),
+            0.5 * fin.span_m,
+        )),
+        108,
+        58,
+        "LE SPAR Ø3 AL [D]/[E]",
+    )
+
+    # Cross-sections are deliberately schematic: chord is shortened and
+    # thickness is exaggerated so the external LE rod/seat relationship is
+    # reviewable on an A3 sheet.
+    sheet.text(158, 23, "B · SECTION CONCEPTS", "sheet-subtitle")
+    sheet.text(158, 28, "CHORD REDUCED · THICKNESS EXAGGERATED ×4 · NTS", "micro")
+
+    def section_path(x0: float, cy: float, chord: float, plate_t: float) -> str:
+        rod_r = 4.0
+        te_half = 1.05
+        half_t = plate_t / 2.0
+        x1 = x0 + rod_r
+        x2 = x0 + chord
+        return " ".join([
+            f"M {fmt(x1)} {fmt(cy-half_t)}",
+            f"C {fmt(x0+0.40*chord)} {fmt(cy-half_t)} "
+            f"{fmt(x0+0.78*chord)} {fmt(cy-te_half)} {fmt(x2)} {fmt(cy-te_half)}",
+            f"L {fmt(x2)} {fmt(cy+te_half)}",
+            f"C {fmt(x0+0.78*chord)} {fmt(cy+te_half)} "
+            f"{fmt(x0+0.40*chord)} {fmt(cy+half_t)} {fmt(x1)} {fmt(cy+half_t)}",
+            "Z",
+        ])
+
+    for tag, cy, chord, thickness in (
+        ("ROOT", 73.0, 76.0, 8.0),
+        ("TIP", 119.0, 48.0, 4.0),
+    ):
+        x0 = 166.0
+        sheet.circle(
+            x0 + 4.0,
+            cy,
+            4.0,
+            "derived",
+            style="fill:#eaf0f3;stroke:#146e9b;stroke-width:.55",
+        )
+        sheet.path(
+            section_path(x0, cy, chord, thickness),
+            "provisional-fill",
+            style=(
+                "fill:#f4c46a;fill-opacity:.20;stroke:#985b00;"
+                "stroke-width:.48;stroke-dasharray:3 1.5"
+            ),
+        )
+        sheet.line(x0 + 4.0, cy - 6.0, x0 + 4.0, cy + 6.0, "centre")
+        sheet.text(
+            158,
+            cy - 15.0,
+            f"{tag} · t_max {FIN_ROOT_THICKNESS_M*1000:.1f} mm"
+            if tag == "ROOT"
+            else f"{tag} · t_max {FIN_TIP_THICKNESS_M*1000:.1f} mm",
+            "label",
+        )
+    sheet.multiline(158, 139, [
+        f"LE: Ø{FIN_SPAR_DIAMETER_M*1000:.1f} Al rod; external nose element [D]/[E].",
+        f"SEAT: Ø{FIN_SPAR_SEAT_DIAMETER_M*1000:.1f} open rear-facing C-seat [I].",
+        f"TE: {FIN_TE_THICKNESS_M*1000:.1f} mm [E]. No enclosed Ø3.2 bore is claimed.",
+    ], "micro", 3.4)
+
+    sheet.text(158, 160, "C · ROOT / CARRIER INTERFACE", "sheet-subtitle")
+    mount_x = 165.0
+    mount_y = 177.0
+    mount_w = fin.root_chord_m * 1000.0 / scale
+    sheet.rect(
+        mount_x,
+        mount_y,
+        mount_w,
+        8.0,
+        "provisional-fill",
+        rx=1.0,
+        id="fin-root-interface-envelope",
+    )
+    sheet.line(mount_x, mount_y + 4.0, mount_x + mount_w, mount_y + 4.0, "centre")
+    sheet.multiline(158, 194, [
+        f"INTERFACE ENVELOPE: {fin.root_chord_m*1000:.1f} × "
+        f"{FIN_ROOT_THICKNESS_M*1000:.1f} mm [D]/[I].",
+        "HARDWARE COUNT: 1× Ø1.75 filament dowel + 1× M2 screw [E].",
+        "HOLE POSITIONS, walls, inserts, load spread and print compensation OPEN [I].",
+    ], "micro", 3.4)
+
+    sheet.text(273, 23, "D · CALCULATED SCHEDULE", "sheet-subtitle")
+    schedule = [
+        ("STATUS", "V1a MARGINAL · F2/E8 OPEN [E]"),
+        ("AREA", f"{fin.area_m2*100:.4f} dm² [D]"),
+        ("SPAN", f"{fin.span_m*1000:.1f} mm [D]"),
+        ("ROOT / TIP", f"{fin.root_chord_m*1000:.1f} / {fin.tip_chord_m*1000:.1f} mm [D]"),
+        ("MAC", f"{fin.mac_m*1000:.1f} mm [D]"),
+        ("AR / TAPER", f"{AR_FIN:.2f} / {FIN_TAPER:.2f} [E]"),
+        ("SWEEP c/4", f"{FIN_SWEEP_DEG:.3f}° [D]"),
+        ("AC STATION", f"x +{FIN_AC_STATION_M*1000:.0f} mm [E]"),
+        ("ROOT / TIP t", f"{FIN_ROOT_THICKNESS_M*1000:.1f} / {FIN_TIP_THICKNESS_M*1000:.1f} mm [E]"),
+        ("MASS", f"{mass_lo:.2f}–{mass_hi:.2f} g; carrier open [E]"),
+        ("Cnβ ON", f"{cnb_on[0]:+.5f}…{cnb_on[1]:+.5f}/deg [E]"),
+        ("Cnβ OFF", f"{cnb_off[0]:+.5f}…{cnb_off[1]:+.5f}/deg [E]"),
+        ("ΔCD0", f"+{dcd0:.4f}; Cf {cf:.4f} [E]"),
+        ("CARRIER", f"to x +{fin.root_te_x_m*1000:.1f}; +{carrier_extension*1000:.1f} mm [D]/[I]"),
+        ("PROP AXIAL", f"root LE − disk = {prop_axial_gap*1000:.1f} mm [D]/[I]"),
+    ]
+    y = 36.0
+    for index, (name, value) in enumerate(schedule):
+        sheet.text(273, y, name, "micro", id=f"fin-schedule-name-{index}")
+        sheet.text(307, y, value, "mono", id=f"fin-schedule-value-{index}")
+        sheet.line(272, y + 1.7, 399, y + 1.7, "thin", style="stroke-opacity:.18")
+        y += 7.4
+
+    sheet.text(273, 153, "E · INSTALLATION DATUM", "sheet-subtitle")
+    datum_x0 = 279.0
+    datum_y = 181.0
+    datum_scale = 2.0
+
+    def datum_x(x_m: float) -> float:
+        return datum_x0 + (x_m - 0.225) * 1000.0 / datum_scale
+
+    sheet.line(datum_x(0.225), datum_y, datum_x(fin.root_te_x_m + 0.010), datum_y, "centre")
+    for index, (station, css) in enumerate((
+        (CONTRACT.prop_plane_m, "station"),
+        (fin.root_le_x_m, "provisional-line"),
+        (CONTRACT.rear_pod_end_m, "station"),
+        (fin.root_te_x_m, "provisional-line"),
+    ), start=1):
+        x = datum_x(station)
+        sheet.line(x, datum_y - 8.0, x, datum_y + 8.0, css)
+        sheet.text(x, datum_y - 10.5, f"P{index}", "micro", "middle")
+    sheet.multiline(273, 199, [
+        f"P1 PROP PLANE +{CONTRACT.prop_plane_m*1000:.0f} · "
+        f"P2 ROOT LE +{fin.root_le_x_m*1000:.1f} mm.",
+        f"P3 CURRENT POD +{CONTRACT.rear_pod_end_m*1000:.0f} · "
+        f"P4 ROOT TE +{fin.root_te_x_m*1000:.1f} mm.",
+    ], "micro", 3.4)
+    sheet.multiline(273, 213, [
+        "Carrier shape/OML remains [I]; this diagram controls stations only.",
+        "The 84 mm extension supersedes the incompatible +30 mm concept.",
+        "Propeller deformation, service access and wake mapping remain open.",
+    ], "micro", 3.4)
+
+    sheet.multiline(18, 239, [
+        "AUTHORITY: planform coordinates are [D] from yaw_stability.py on [E] aerodynamic inputs.",
+        "The fixed fin is not a rudder. No hinge line, control horn, linkage or servo is released.",
+        "The independent-corner Cnβ screen includes power-on/off q-ratio cases; it is not flight-test closure.",
+        "Structural section, external LE spar seat, carrier and hardware positions remain provisional [I].",
     ], "micro", 3.4)
     return sheet
 
@@ -2082,8 +2374,7 @@ def validate_contract() -> dict[str, bool]:
         for a, b in zip((0.0,) + CONTRACT.segment_joints_m[:-1], CONTRACT.segment_joints_m)
     ]
     fin_area = fin_area_for_target(0.0005)
-    fin_span = sqrt(fin_area * CONTRACT.fin_aspect_ratio)
-    fin_root_chord, fin_tip_chord, _ = fin_geometry(fin_area, fin_span)
+    fin = fin_geometry(fin_area)
     equipment_clean, _ = equipment_layout.solve_battery_x(
         equipment_layout.reference_layout("clean")
     )
@@ -2137,11 +2428,31 @@ def validate_contract() -> dict[str, bool]:
         "released root airfoil coordinates are available": len(load_airfoil(
             ROOT / "geometry" / "airfoils" / "salamandra-root-r1.dat"
         )) >= 20,
-        "generated fin geometry is internally consistent with the yaw model": (
-            abs(fin_span**2 / fin_area - CONTRACT.fin_aspect_ratio) < 1e-12
+        "generated fin reproduces area, AR, taper, sweep, AC and vertical TE": (
+            abs(fin.span_m**2 / fin.area_m2 - AR_FIN) < 1e-12
             and abs(
-                0.5 * (fin_root_chord + fin_tip_chord) * fin_span - fin_area
+                0.5 * (fin.root_chord_m + fin.tip_chord_m) * fin.span_m
+                - fin.area_m2
             ) < 1e-12
+            and abs(fin.tip_chord_m / fin.root_chord_m - FIN_TAPER) < 1e-12
+            and abs(fin.quarter_chord_sweep_deg - FIN_SWEEP_DEG) < 1e-12
+            and abs(fin.ac_x_m - FIN_AC_STATION_M) < 1e-12
+            and abs(fin.root_te_x_m - fin.tip_te_x_m) < 1e-12
+        ),
+        "fin root interface is aft of the propeller plane": (
+            fin.root_le_x_m > CONTRACT.prop_plane_m
+        ),
+        "fin carrier extension is derived and exposes the obsolete 30 mm concept": (
+            fin.root_te_x_m - CONTRACT.rear_pod_end_m > 0.080
+        ),
+        "fin section declares the spar as an external LE nose": (
+            FIN_SPAR_SEAT_DIAMETER_M > FIN_ROOT_THICKNESS_M
+            and FIN_SPAR_DIAMETER_M <= FIN_ROOT_THICKNESS_M
+            and FIN_TIP_THICKNESS_M < FIN_SPAR_DIAMETER_M
+        ),
+        "fin independent-corner power-off screen is no more favourable than power-on": (
+            cnb_total_band(fin_area, ETA_FIN_POWER_OFF)[0]
+            <= cnb_total_band(fin_area, ETA_FIN_POWER_ON)[0]
         ),
         "propeller skid datum preserves 10 mm ground clearance": abs(
             -CONTRACT.rear_pod_lower_prop_m
@@ -2355,6 +2666,29 @@ def validate_svg(source: str, filename: str, drawing_number: str) -> dict[str, b
             and "OPEN PROJECT GATES" in source
             and "NOT A PRINTABLE SHELL" in source
         )
+    if drawing_number == "SLM-FIN-001":
+        element_by_id = {
+            element.attrib.get("id"): element
+            for element in elements
+            if element.attrib.get("id")
+        }
+        checks[f"{filename}: single-source fin planform and AC are present"] = {
+            "fin-v1a-planform",
+            "fin-quarter-chord-line",
+            "fin-aerodynamic-centre",
+        } <= element_by_id.keys()
+        checks[f"{filename}: external LE spar and root interface are explicit"] = {
+            "fin-leading-edge-spar",
+            "fin-root-interface-envelope",
+        } <= element_by_id.keys()
+        checks[f"{filename}: fixed-fin and no-rudder authority is explicit"] = (
+            "NO HINGE / SERVO" in labels
+            and "The fixed fin is not a rudder" in source
+            and "No enclosed Ø3.2 bore is claimed" in source
+        )
+        checks[f"{filename}: powered and motor-off Cnβ bands are both scheduled"] = (
+            "Cnβ ON" in labels and "Cnβ OFF" in labels
+        )
     return checks
 
 
@@ -2363,6 +2697,7 @@ def build_drawings() -> tuple[DrawingOutput, ...]:
     drawings = (
         ("SLM-GA-001-general-arrangement.svg", "SLM-GA-001", draw_general_arrangement()),
         ("SLM-GA-002-side-elevations.svg", "SLM-GA-002", draw_side_elevations()),
+        ("SLM-FIN-001-fixed-fin-review.svg", "SLM-FIN-001", draw_fin_detail()),
         (
             "SLM-FUS-001-fuselage-oml-review.svg",
             "SLM-FUS-001",
@@ -2389,6 +2724,8 @@ def write_drawings(outputs: tuple[DrawingOutput, ...]) -> None:
 
 
 def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="Generate metric A3 Salamandra SVG drawing drafts")
     parser.add_argument(
         "--check",

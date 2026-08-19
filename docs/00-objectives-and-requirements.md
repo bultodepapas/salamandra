@@ -100,7 +100,7 @@ These are the objectives that define the *platform*, as opposed to the reference
 > C16 relaxed the requirement to 45 km/h but then used the local-section `clmax = 0.65`
 > as if it were whole-wing `CLmax`. I-07 supplies the correct distinction: local section
 > screen **0.65**, released wing design value **0.589**. The latter gives 45.0 km/h at
-> the V1 allocation mass. The current **1596.05 g** V1 lower model gives 44.7 km/h and
+> the V1 allocation mass. The current **1595.80 g** V1 lower model gives 44.7 km/h and
 > passes analytically; measured F2 mass remains mandatory.
 >
 > **Relaxed to ≤ 45 km/h**, justified by precedent: the Peregrine at 52 g/dm² and the Mojito at ~60 are hand-launched.
@@ -120,7 +120,7 @@ See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 
 > **R-CG:** the Article #1 carrier shall hold CG within ±5 mm with the 6S1P pack. The
 > CLEAN component-level solution places it at x = **−337.74 mm** (travel
-> −371.20…−336.10). V1 requires −373.73 mm, 2.53 mm beyond current travel, although
+> −371.20…−336.10). V1 requires −375.48 mm, 4.28 mm beyond current travel, although
 > the clamped CG remains inside the allowed band; F2 must close that station. A 4S aircraft
 > requires approximately 713 Kv rather than the 500–550 Kv 6S motor and therefore is a
 > separate power module. The former requirement to interchange 4S1P/4S2P/6S1P/6S2P in
@@ -160,9 +160,9 @@ linkage, no FC change):
 | | SALAMANDRA-CLEAN | SALAMANDRA-V1 |
 |---|---|---|
 | Vertical stabilizer | None | Fixed centreline fin (passive), S_v ≈ 2.1 dm² (V1a) |
-| Cnβ total | **−0.0006…−0.0014/deg — negative** (FC recovery unproven; not the first-flight configuration, G10/C31) | **−0.00005…+0.00095/deg** (nominal +0.0005) `[D]`/`[E]` |
+| Cnβ total | **−0.0006…−0.0014/deg — negative** (FC recovery unproven; not the first-flight configuration, G10/C31) | V1a powered **−0.00029…+0.00119/deg**, motor-off **−0.00057…+0.00087/deg** (powered nominal +0.0005) `[D]`/`[E]` |
 | Role | O1 efficiency build (≤ 1.15 Wh/km) | Recommended build for the Article #1 test programme |
-| Cost | — | 36–60 g `[E]` · ΔCD0 +0.0014 (+9.6 % energy `[E]`) · V_stall +0.6 km/h (OP-24 lever) |
+| Cost | — | 42.55–67.11 g lower-to-upper screen `[E]`, carrier mass open · ΔCD0 +0.0015 (+10.2 % energy `[E]`) · V_stall +0.6 km/h (OP-24 lever) |
 
 **Rudder (movable): not required** — authority analysis shows it cannot hold a 20 km/h
 crosswind slip at stall and the mission coordinates turns through roll (I-20 §5.4;

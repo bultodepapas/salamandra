@@ -148,8 +148,31 @@ SHEETS: tuple[SheetSpec, ...] = (
             "centreline fin. Neither configuration has a movable rudder. The released root "
             "airfoil and calculated V1a fin dimensions are traceable, while the side OML, "
             "vertical equipment placement, propeller-clearance keel and fin/pod installation "
-            "remain `[I]`. The drawing also flags the open 105 mm fin-root versus "
-            "x = +295 mm pod-extension interface for native CAD resolution."
+            "remain `[I]`. The drawing now uses the same vertical-trailing-edge planform "
+            "as the yaw model and exposes the carrier station near x = +349 mm; the "
+            "obsolete x = +295 mm concept is not geometrically sufficient."
+        ),
+    ),
+    SheetSpec(
+        number="SLM-FIN-001",
+        filename="SLM-FIN-001-fixed-fin-review.svg",
+        heading="V1a fixed-fin geometry review",
+        purpose=(
+            "Dedicated V1a fixed-fin planform, aerodynamic datum, external leading-edge "
+            "spar concept, thickness schedule, carrier stations and directional-stability "
+            "screen"
+        ),
+        scale="A3 · planform 1:1.5 / details NTS",
+        authority="Planform `[D]` on `[E]`; section/install `[E]`/`[I]`; no rudder authority",
+        note=(
+            "Use this sheet to review the passive V1a centreline fin as a component rather "
+            "than inferring it from the general side elevation. The planform vertices, "
+            "area, taper, vertical trailing edge, derived quarter-chord sweep and AC marker "
+            "come from one Python geometry object. Root/tip section sketches explain that "
+            "the Ø3 mm aluminium rod forms an external leading-edge nose in an open seat; "
+            "they do not claim an impossible enclosed Ø3.2 mm bore inside the 3.0→1.5 mm "
+            "plate. Mount detail, carrier OML, hole positions, print compensation, measured "
+            "mass and E8 flight closure remain provisional. No movable rudder is defined."
         ),
     ),
     SheetSpec(

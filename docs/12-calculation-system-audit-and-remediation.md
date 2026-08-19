@@ -511,7 +511,7 @@ brackets the current 0.08 estimate, or replace the estimate.
 | S2-9 | `joint_pin_trade.RHO_PETG = 1270.0` (module imports nothing from `design_config`) | `design_config.PETG_DENSITY_KG_M3` |
 | S2-10 | `divergence.j_section` hardcodes `tc / 0.135` | `design_config.ROOT_TC` |
 | S2-11 | `servo_torque` re-derives the chord law from `ROOT_CHORD`/`TAPER` at lines 51 and 64 | `design_config.chord(y)` |
-| S2-12 | `yaw_stability.fin_area_for_target` hardcodes fin `AR = 3.0`, sweep `12.0°`, and `L_V` uses a bare `0.285` m fin-AC station, none linked to `fin_geometry()` | a `fin_contract` dataclass |
+| S2-12 · **closed 2026-08-19** | The former separate `12.0°` aerodynamic sweep and vertical-TE SVG produced different planforms; drawing constants also repeated AR and AC | `yaw_stability.FinGeometry`: area, AR, taper, derived 7.125° sweep, MAC, AC and all four vertices; the generator and equipment model import it and validate every invariant |
 
 Additionally: `yaw_stability.LAM_C4 = SWEEP_C4_DEG` is **assigned and never used**, and the
 wing contribution to `Cn_β` is a fixed hardcoded band `CNB_W_BAND = (-0.00010, 0.0)` that

@@ -111,25 +111,24 @@
 <circle cx="233.75" cy="185" r="1.3" class="provisional-line"/>
 <path d="M 226.25 191.25 C 228.5 197.5 231.5 208 233.75 212.9" class="provisional-line" style="fill:none;stroke-width:1.05;stroke-linecap:round"/>
 <line x1="232.25" y1="212.9" x2="238.75" y2="212.9" class="provisional-line" stroke-dasharray="none"/>
-<line x1="58.075" y1="185" x2="266.078" y2="185" class="centre"/>
+<line x1="58.075" y1="185" x2="266.024" y2="185" class="centre"/>
 <line x1="175" y1="173.75" x2="175" y2="216.25" class="station"/>
-<path d="M 236 181.5 L 262.328 181.5 C 263.828 182.5 263.828 187.5 262.328 188.5 L 236 188.5 Z" class="provisional-fill" style="fill:#f4c46a;fill-opacity:.22;stroke:#985b00;stroke-width:.55;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
-<polygon points="236.078,181.5 246.578,118.5 262.328,118.5 262.328,181.5" class="provisional-fill"/>
-<line x1="236.078" y1="181.5" x2="246.578" y2="118.5" class="provisional-line" stroke-dasharray="none"/>
-<circle cx="246.25" cy="152.625" r="1.4" class="derived"/>
-<line x1="244.05" y1="152.625" x2="248.45" y2="152.625" class="derived"/>
-<line x1="246.25" y1="150.425" x2="246.25" y2="154.825" class="derived"/>
-<line x1="246.578" y1="118.5" x2="286" y2="118.5" class="extension"/>
-<line x1="236.078" y1="181.5" x2="286" y2="181.5" class="extension"/>
-<line x1="286" y1="118.5" x2="286" y2="181.5" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
-<text x="288" y="150" class="dimension-text" text-anchor="middle" transform="rotate(-90 288 150)">b_v 252 [D]</text>
-<line x1="246.25" y1="152.625" x2="300" y2="140" class="leader"/>
-<circle cx="246.25" cy="152.625" r="0.65" class="datum-dot"/>
+<path d="M 236 181.5 L 262.274 181.5 C 263.774 182.5 263.774 187.5 262.274 188.5 L 236 188.5 Z" class="provisional-fill" style="fill:#f4c46a;fill-opacity:.22;stroke:#985b00;stroke-width:.55;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
+<polygon points="236.112,181.5 246.577,118.713 262.274,118.713 262.274,181.5" class="provisional-fill"/>
+<circle cx="246.25" cy="152.722" r="1.4" class="derived"/>
+<line x1="244.05" y1="152.722" x2="248.45" y2="152.722" class="derived"/>
+<line x1="246.25" y1="150.522" x2="246.25" y2="154.922" class="derived"/>
+<line x1="246.577" y1="118.713" x2="286" y2="118.713" class="extension"/>
+<line x1="236.112" y1="181.5" x2="286" y2="181.5" class="extension"/>
+<line x1="286" y1="118.713" x2="286" y2="181.5" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+<text x="288" y="150.106" class="dimension-text" text-anchor="middle" transform="rotate(-90 288 150.106)">b_v 251 [D]</text>
+<line x1="246.25" y1="152.722" x2="300" y2="140" class="leader"/>
+<circle cx="246.25" cy="152.722" r="0.65" class="datum-dot"/>
 <text x="301.5" y="139.2" class="note" text-anchor="start">FIN AC x +285 [D]/[E]</text>
 <text x="20" y="23" class="sheet-subtitle" text-anchor="start">A · SALAMANDRA-CLEAN</text>
 <text x="20" y="28" class="micro" text-anchor="start">FINLESS · O1 EFFICIENCY BASELINE · YAW RISK [E]</text>
 <text x="20" y="126" class="sheet-subtitle" text-anchor="start">B · SALAMANDRA-V1a</text>
-<text x="20" y="131" class="micro" text-anchor="start">FIXED CENTRELINE FIN · NO MOVABLE RUDDER</text>
+<text x="20" y="131" class="micro" text-anchor="start">FIXED CENTRELINE FIN · NO MOVABLE RUDDER · MARGINAL [E]</text>
 <line x1="51" y1="38" x2="32" y2="38" class="medium" marker-end="url(#arrow-end)"/>
 <text x="54" y="39" class="label" text-anchor="start">FORWARD</text>
 <line x1="90.564" y1="66.35" x2="108" y2="49" class="leader provisional-line"/>
@@ -144,12 +143,12 @@
 <line x1="233.75" y1="212.9" x2="298" y2="225" class="leader provisional-line"/>
 <circle cx="233.75" cy="212.9" r="0.65" class="provisional-dot"/>
 <text x="299.5" y="224.2" class="provisional-text" text-anchor="start">LOCAL SKID z −111.6 · PROP CLEARANCE 10 [I]</text>
-<line x1="262.328" y1="185" x2="300" y2="198" class="leader provisional-line"/>
-<circle cx="262.328" cy="185" r="0.65" class="provisional-dot"/>
+<line x1="262.274" y1="185" x2="300" y2="198" class="leader provisional-line"/>
+<circle cx="262.274" cy="185" r="0.65" class="provisional-dot"/>
 <text x="301.5" y="197.2" class="provisional-text" text-anchor="start">V1a CARRIER TO x +349 [D]/[I]</text>
-<line x1="252.353" y1="146.85" x2="300" y2="153" class="leader provisional-line"/>
-<circle cx="252.353" cy="146.85" r="0.65" class="provisional-dot"/>
-<text x="301.5" y="152.2" class="provisional-text" text-anchor="start">V1a FIXED FIN · NO HINGE / SERVO</text>
+<line x1="252.333" y1="146.967" x2="300" y2="153" class="leader provisional-line"/>
+<circle cx="252.333" cy="146.967" r="0.65" class="provisional-dot"/>
+<text x="301.5" y="152.2" class="provisional-text" text-anchor="start">V1a FIXED FIN · S_v 2.10 dm² · NO HINGE / SERVO</text>
 <line x1="156.923" y1="73" x2="156.923" y2="108" class="extension"/>
 <line x1="229.231" y1="73" x2="229.231" y2="108" class="extension"/>
 <line x1="156.923" y1="108" x2="229.231" y2="108" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
@@ -163,6 +162,8 @@
 <tspan x="18" dy="3.4">Shared [D]/[E]: root r1, Ø8 boom/socket, pack envelope, Ø28 motor and V1a fin sizing.</tspan>
 <tspan x="18" dy="3.4">Side OML, equipment vertical placement, local skid and V1a carrier interface remain [I].</tspan>
 <tspan x="18" dy="3.4">O4: CAMERA FRONT/CENTRELINE [D]; COAX STRAIGHT-LINE LOWER BOUND 46.0/50.0 mm [D]/[M].</tspan>
-<tspan x="18" dy="3.4">CAD OPEN: fin AC placement requires carrier to x +349; the guide&#x27;s x +295 concept is insufficient.</tspan>
+<tspan x="18" dy="3.4">FIN PLANFORM [D]/[E]: Λc/4 7.125° · taper 0.60 · vertical TE.</tspan>
+<tspan x="18" dy="3.4">Cnβ independent corners: power-on -0.00029…+0.00119; power-off -0.00057…+0.00087 /deg [E].</tspan>
+<tspan x="18" dy="3.4">CAD OPEN: carrier reaches x +349 (84 mm beyond current pod); mass/interface F2 open.</tspan>
 </text>
 </svg>
