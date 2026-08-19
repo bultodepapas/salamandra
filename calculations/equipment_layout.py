@@ -1017,7 +1017,7 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
                         fin.span_m * 1000.0,
                     ),
                     (fin_shell_x_mm, y_mm, fin_shell_z_mm),
-                    "[E]", "yaw_stability.py; twin-fin installation [I]",
+                    "[E]", "yaw_stability.py; LW-PLA-HT twin-fin installation [I]",
                     mass_sigma_g=4.0, position_sigma_mm=(15.0, 2.0, 10.0),
                     collidable=False,
                 ),
@@ -1035,7 +1035,7 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
                 ),
                 _component(
                     f"v1_fin_boom_{side}",
-                    f"V1a {side} aft CORE carbon boom",
+                    f"V1a {side} aft root carbon support",
                     "stability",
                     design_config.V1_FIN_BOOM_MASS_KG * 500.0,
                     (
@@ -1425,10 +1425,18 @@ def validation_checks() -> dict[str, bool]:
                 coupled_v1.layout.component(PRIMARY_CG_ADJUSTER).position_mm
             )
         ),
-        "coupled V1 nose extension is solved rather than prescribed": (
-            0.0 < coupled_v1.nose_extension_mm < 30.0
+        "coupled V1 nose extension is solver-owned and only added if required": (
+            0.0 <= coupled_v1.nose_extension_mm < 30.0
             and coupled_v1.iterations <= 5
-            and coupled_v1.added_support_mass_g > 0.0
+            and coupled_v1.added_support_mass_g >= 0.0
+            and (
+                coupled_v1.nose_extension_mm > 0.0
+                or coupled_v1.layout.component(PRIMARY_CG_ADJUSTER).bounds.contains(
+                    (coupled_v1.required_battery_x_mm,
+                     coupled_v1.layout.component(PRIMARY_CG_ADJUSTER).position_mm[1],
+                     coupled_v1.layout.component(PRIMARY_CG_ADJUSTER).position_mm[2])
+                )
+            )
         ),
         "coupled V1 camera/VTX placement retains measured O4 coax length": all(
             passed

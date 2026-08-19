@@ -69,6 +69,7 @@ class FinPropellerClearance:
     fin_nominal_mm: float
     fin_residual_mm: float
     axial_overlap_mm: float
+    axial_residual_mm: float
     controlling_object: str
     analytical_pass: bool
     physical_status: str
@@ -157,13 +158,15 @@ def fin_propeller_clearance(layout: equipment_layout.Layout3D):
         0.0, min(fin_max_x, hazard_max_x) - max(fin_min_x, hazard_min_x)
     )
     controlling = "boom fairing" if boom_residual <= fin_residual else "fin shell"
-    passed = min(boom_residual, fin_residual) >= 0.0
+    axial_residual = hazard_min_x - fin_max_x
+    passed = min(boom_residual, fin_residual, axial_residual) >= 0.0
     return FinPropellerClearance(
         boom_nominal_mm=float(boom_nominal),
         boom_residual_mm=float(boom_residual),
         fin_nominal_mm=float(fin_nominal),
         fin_residual_mm=float(fin_residual),
         axial_overlap_mm=float(axial_overlap),
+        axial_residual_mm=float(axial_residual),
         controlling_object=controlling,
         analytical_pass=bool(passed),
         physical_status=(
@@ -231,9 +234,9 @@ def validation_checks() -> dict[str, bool]:
             clearance.analytical_pass
             and clearance.physical_status.endswith("PHYSICAL OPEN")
         ),
-        "side-view axial overlap is reported rather than mistaken for collision": (
-            clearance.axial_overlap_mm > 0.0
-            and clearance.boom_residual_mm > 0.0
+        "side-view fin is separated from the inflated propeller slab": (
+            clearance.axial_overlap_mm == 0.0
+            and clearance.axial_residual_mm >= 0.0
         ),
         "CLEAN and V1 consume the same canonical propeller definition": (
             clean.propeller.centre_mm == v1.propeller.centre_mm
@@ -257,7 +260,9 @@ def main() -> None:
     )
     print(f"Boom nominal/residual prop clearance: "
           f"{clearance.boom_nominal_mm:.1f}/{clearance.boom_residual_mm:.1f} mm")
-    print(f"Axial projection overlap: {clearance.axial_overlap_mm:.1f} mm")
+    print(f"Fin-to-inflated-propeller axial residual: "
+          f"{clearance.axial_residual_mm:.2f} mm "
+          f"(overlap {clearance.axial_overlap_mm:.1f} mm)")
     for name, passed in validation_checks().items():
         print(f"[{'PASS' if passed else 'FAIL'}] {name}")
     raise SystemExit(0 if all(validation_checks().values()) else 1)

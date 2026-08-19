@@ -823,7 +823,7 @@ def draw_side_elevations() -> SvgSheet:
 
     sheet = SvgSheet(
         "Salamandra CLEAN and V1a side elevations",
-        "Metric A3 side-elevation draft comparing SALAMANDRA-CLEAN with the V1a passive twin-fin variant. The two fins sit on aft CORE booms outside the propeller disk; their side projections coincide. No movable rudder is defined.",
+        "Metric A3 side-elevation draft comparing SALAMANDRA-CLEAN with the V1a passive twin-fin variant. The two CORE-rooted fins and their aft root supports remain forward of the fixed propeller hazard; their side projections coincide. No movable rudder is defined.",
         "SLM-GA-002",
     )
     title_block(
@@ -1482,7 +1482,7 @@ def draw_side_elevations() -> SvgSheet:
         f"Cnβ independent corners: power-on {cnb_on[0]:+.5f}…{cnb_on[1]:+.5f}; power-off {cnb_off[0]:+.5f}…{cnb_off[1]:+.5f} /deg [E].",
         f"V1 COUPLED PACKAGING [E]/[I]: nose +{v1_packaging.nose_extension_mm:.1f} mm; mass {v1_scene.layout.mass_g():.1f} g; O4 coax {v1_o4_coax_distance_mm:.1f}/50.0 mm.",
         f"BODY OML [I]: CLEAN {clean_oml_model.length_mm:.1f} mm; V1 {v1_oml_model.length_mm:.1f} mm; V1 nose-to-boom extent {fin.boom_x_end_m*1000-v1_oml_model.x_min_mm:.1f} mm.",
-        f"INSTALL [I]: booms y ±{fin.lateral_station_m*1000:.0f}; prop residual {v1_clearance.boom_residual_mm:.1f} mm after 16.0 mm allowance; F2 open.",
+        f"INSTALL [I]: roots y ±{fin.lateral_station_m*1000:.0f}; axial residual {v1_clearance.axial_residual_mm:.2f} mm to inflated prop slab; radial residual {v1_clearance.boom_residual_mm:.1f} mm; F2 open.",
     ], "micro", 3.4)
     return sheet
 
@@ -1503,7 +1503,7 @@ def draw_fin_detail() -> SvgSheet:
 
     sheet = SvgSheet(
         "Salamandra V1a twin-fin geometry review",
-        "Metric A3 engineering-review sheet for the passive V1a twin fins. It shows one calculated fin, both aft CORE booms outside the propeller disk, the aerodynamic datum and provisional structural interfaces. No movable rudder is defined.",
+        "Metric A3 engineering-review sheet for the passive V1a twin fins. It shows one calculated CORE-rooted fin, both aft root supports, the fixed propeller hazard, the aerodynamic datum and provisional structural interfaces. No movable rudder is defined.",
         "SLM-FIN-001",
     )
     title_block(
@@ -2848,8 +2848,9 @@ def validate_contract() -> dict[str, bool]:
         "twin booms remain radially outside the propeller disk": (
             fin.boom_inner_prop_clearance_m >= 0.025
         ),
-        "aft booms support the full fin root and extend past its trailing edge": (
-            fin.boom_x_start_m <= fin.root_le_x_m
+        "aft root supports begin at the CORE trailing edge and end behind the root": (
+            abs(fin.boom_x_start_m - x_te(fin.lateral_station_m)) < 1e-3
+            and fin.root_le_x_m < fin.boom_x_start_m < fin.root_te_x_m
             and fin.boom_x_end_m >= fin.root_te_x_m + 0.009
         ),
         "fin section declares the spar as an external LE nose": (
@@ -2928,7 +2929,7 @@ def validate_contract() -> dict[str, bool]:
                     equipment_layout.PRIMARY_CG_ADJUSTER
                 ).position_mm[0]
             ) < 1e-6
-            and equipment_v1_packaging.nose_extension_mm > 0.0
+            and equipment_v1_packaging.nose_extension_mm >= 0.0
         ),
         "fuselage generator analytical validation passes": all(
             fuselage_geometry.validation_checks().values()

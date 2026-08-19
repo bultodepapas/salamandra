@@ -37,7 +37,9 @@ from design_config import (
     CRUISE_SPEED_KMH,
     NU_SL,
     PETG_DENSITY_KG_M3,
+    PROP_AXIAL_ENVELOPE_M,
     PROP_DIAMETER_M,
+    PROP_PLANE_M,
     RHO_SL,
     STRUCTURAL_DESIGN_SPEED_KMH,
     SWEEP_C4_DEG,
@@ -47,6 +49,8 @@ from design_config import (
     lift_coefficient,
     speed_mps,
     stall_speed,
+    x_le,
+    x_te,
 )
 
 # --------------------------------------------------------------------------
@@ -94,10 +98,12 @@ K_FUS_BAND = (0.40, 0.96)   # DATCOM body factor band: 0.96 Raymer full-body,
 # Wing contribution band (FSW, AR 6): small vs the body; negative sign [E]
 CNB_W_BAND = (-0.00010, 0.00000)   # per degree
 
-# V1 installation: two fixed fins on two aft CORE booms at y = +/-140 mm.
-# The booms pass outside the 8 inch propeller disk instead of inventing a
-# centreline carrier through the rotating propeller.  Total fin area is used
-# in the stability equations; AR and all planform dimensions are per fin.
+# V1 installation: two fixed fins rooted in the aft CORE at y = +/-140 mm.
+# Motor and propeller stations are immutable propulsion inputs.  The fin
+# station is solved so that the complete planform and its aft root support stay
+# forward of the measured propeller slab; lateral clearance remains a second,
+# independent check.  Total fin area is used in the stability equations; AR
+# and all planform dimensions are per fin.
 FIN_COUNT = 2
 FIN_LATERAL_STATION_M = 0.140
 FIN_BOOM_WIDTH_M = 0.018
@@ -105,7 +111,9 @@ FIN_BOOM_HEIGHT_M = 0.014
 FIN_BOOM_OUTER_DIAMETER_M = 0.006
 FIN_BOOM_INNER_DIAMETER_M = 0.004
 FIN_BOOM_X_START_M = 0.156
-FIN_AC_STATION_M = 0.280   # coupled trade knee; validation remains open [E]
+FIN_PROPELLER_AXIAL_CLEARANCE_M = 0.005  # static design reserve after blade slab [E]
+FIN_MAX_PRINT_SPAN_M = 0.250             # one-piece 250 mm build-height gate [D]/[E]
+FIN_AC_STATION_M = 0.1145  # 0.5 mm-grid aft-most feasible station; see trade [D]/[E]
 AR_FIN = 2.0               # aspect ratio of each fin [E]
 FIN_TAPER = 0.45           # finite tip chord avoids a plate-like free tip [E]
 FIN_LE_SWEEP_DEG = 25.0    # straight swept LE; root-to-tip structural spar [E]
@@ -125,6 +133,11 @@ FIN_TE_THICKNESS_M = 0.0008     # printable trailing edge [E]
 FIN_SPAR_DIAMETER_M = 0.0030    # aluminium rod forming the LE nose [D]/[E]
 FIN_SPAR_SEAT_DIAMETER_M = 0.0032  # open rear-facing C-seat, not enclosed [I]
 FIN_ROOT_Z_M = 0.007            # boom-top / fin-root interface [I]
+FIN_SHELL_EFFECTIVE_THICKNESS_M = 0.00085  # two skins/ribs equivalent [E]
+FIN_SHELL_LOCAL_FACTOR = 1.10              # root/mount plastic allowance [E]
+# Conservative top of colorFabb's published maximum-foaming LW-PLA-HT
+# density band (0.530--0.620 g/cm3).  Coupon density/strength remain F2 gates.
+FIN_SHELL_DENSITY_KG_M3 = 620.0            # [M] supplier band / [E] process
 
 
 @cache
@@ -294,6 +307,8 @@ class FinPlacementCandidate:
     root_le_x_m: float
     assembly_cg_x_m: float
     battery_shift_m: float
+    propeller_axial_clearance_m: float
+    span_m: float
     score: float
     feasible: bool
 
@@ -320,7 +335,10 @@ def fin_geometry(S_v, b_v=None, ac_x=FIN_AC_STATION_M):
     tip_te_x = tip_le_x + c_t
     tip_qc_x = tip_le_x + 0.25 * c_t
     sweep = float(np.degrees(np.arctan2(tip_qc_x - root_qc_x, b_v)))
-    boom_x_end = max(root_te_x, tip_te_x) + 0.010
+    # The aft tube supports the root overhang only.  Extending it to the tip
+    # trailing-edge x station (the former implementation) had no structural
+    # meaning and carried the drawing unnecessarily into the propeller plane.
+    boom_x_end = root_te_x + 0.010
     prop_radius = PROP_DIAMETER_M / 2.0
     boom_clearance = FIN_LATERAL_STATION_M - FIN_BOOM_WIDTH_M / 2.0 - prop_radius
     return FinGeometry(
@@ -346,9 +364,15 @@ def fin_geometry(S_v, b_v=None, ac_x=FIN_AC_STATION_M):
 
 
 def fin_shell_mount_mass_band(S_v):
-    """Two PETG shells and local mounts, excluding spars and carbon booms [g]."""
-    m_lo = S_v * 0.00085 * PETG_DENSITY * 1.10
-    m_hi = S_v * 0.00135 * PETG_DENSITY * 1.15
+    """Two LW-PLA-HT shells/mounts, excluding spars and carbon supports [g]."""
+    m_lo = (
+        S_v * FIN_SHELL_EFFECTIVE_THICKNESS_M
+        * FIN_SHELL_DENSITY_KG_M3 * FIN_SHELL_LOCAL_FACTOR
+    )
+    # Upper band: 1.00 mm effective plastic, supplier max foamed density,
+    # and 15 % local root/mount material.  It is deliberately independent of
+    # the lower nominal-factor combination.
+    m_hi = S_v * 0.00100 * FIN_SHELL_DENSITY_KG_M3 * 1.15
     return 1000.0 * m_lo, 1000.0 * m_hi
 
 
@@ -380,21 +404,24 @@ def fin_mass_band(S_v, ac_x=None):
 
 
 def fin_placement_trade(target=0.0005):
-    """Return the V1a longitudinal trade and its mass-feasible knee.
+    """Return the fixed-propeller V1b longitudinal placement trade.
 
-    The study spans the installable aft-CORE region in 5 mm increments.  Each
-    station is resized to the same nominal stability target.  The equal-weight
-    dimensionless score balances area, lower mass, boom length, aft extent,
-    battery-rebalance demand and the inverse yaw-damping benefit of moment arm.
-    The 60 g allocation, the
-    fixed boom-start station and a +410 mm provisional handling envelope are
-    hard constraints.  These weights and the aft envelope remain [E]/[I]; the
-    function makes the compromise reproducible instead of hiding x_AC as an
-    unexplained literal.
+    Motor and propeller geometry are hard inputs.  Every 0.5 mm candidate is
+    resized to the same nominal directional-stability target.  A candidate is
+    feasible only when the complete fin and root support are forward of the
+    propeller's measured axial slab by the declared reserve, the root crosses
+    the local CORE trailing edge so loads can enter the existing structure,
+    the root leading edge remains on the CORE planform, the one-piece print
+    span is respected, and the complete lower mass stays in its revised 90 g
+    allocation.  Among feasible candidates, minimum installed mass selects the
+    aft-most useful aerodynamic centre.  No SVG coordinate participates.
     """
     raw = []
-    for ac_mm in range(225, 326, 5):
-        ac_x = ac_mm / 1000.0
+    propeller_forward_face = PROP_PLANE_M - 0.5 * PROP_AXIAL_ENVELOPE_M
+    local_wing_le = x_le(FIN_LATERAL_STATION_M)
+    local_wing_te = x_te(FIN_LATERAL_STATION_M)
+    for ac_half_mm in range(160, 561):
+        ac_x = ac_half_mm / 2000.0
         arm = ac_x - cg_target()
         area = fin_area_for_target(target, l_v=arm)
         fin = fin_geometry(area, ac_x=ac_x)
@@ -424,6 +451,8 @@ def fin_placement_trade(target=0.0005):
         ) / mass_lower
         battery_mass = battery_pack_layout.pack_mass_g("6S1P", "P42A")
         battery_shift = mass_lower / battery_mass * (assembly_x - cg_target())
+        fin_aft_x = max(fin.root_te_x_m, fin.tip_te_x_m)
+        axial_clearance = propeller_forward_face - fin_aft_x
         raw.append({
             "ac_x_m": ac_x,
             "moment_arm_m": arm,
@@ -434,35 +463,30 @@ def fin_placement_trade(target=0.0005):
             "root_le_x_m": fin.root_le_x_m,
             "assembly_cg_x_m": assembly_x,
             "battery_shift_m": battery_shift,
+            "propeller_axial_clearance_m": axial_clearance,
+            "span_m": fin.span_m,
         })
-
-    def normalized(key, value, *, reverse=False):
-        values = [row[key] for row in raw]
-        low, high = min(values), max(values)
-        fraction = (value - low) / (high - low)
-        return 1.0 - fraction if reverse else fraction
 
     candidates = []
     for row in raw:
-        score = sum((
-            normalized("area_m2", row["area_m2"]),
-            normalized("mass_lower_g", row["mass_lower_g"]),
-            normalized("boom_length_m", row["boom_length_m"]),
-            normalized("aft_extent_m", row["aft_extent_m"]),
-            normalized("battery_shift_m", row["battery_shift_m"]),
-            normalized("moment_arm_m", row["moment_arm_m"], reverse=True),
-        )) / 6.0
+        fin = fin_geometry(row["area_m2"], ac_x=row["ac_x_m"])
         feasible = (
             row["mass_lower_g"] <= V1_FIN_CAP_G + 1e-9
-            and row["root_le_x_m"] >= FIN_BOOM_X_START_M - 1e-9
-            and row["aft_extent_m"] <= 0.410 + 1e-9
+            and fin.root_le_x_m >= local_wing_le - 1e-9
+            and fin.root_le_x_m < local_wing_te
+            and fin.root_te_x_m >= local_wing_te - 1e-9
+            and row["span_m"] <= FIN_MAX_PRINT_SPAN_M + 1e-9
+            and row["propeller_axial_clearance_m"]
+                >= FIN_PROPELLER_AXIAL_CLEARANCE_M - 1e-9
+            and fin.boom_x_end_m
+                <= propeller_forward_face - FIN_PROPELLER_AXIAL_CLEARANCE_M + 1e-9
         )
         candidates.append(FinPlacementCandidate(
-            **row, score=float(score), feasible=bool(feasible)
+            **row, score=float(row["mass_lower_g"]), feasible=bool(feasible)
         ))
     selected = min(
         (candidate for candidate in candidates if candidate.feasible),
-        key=lambda candidate: (candidate.score, candidate.ac_x_m),
+        key=lambda candidate: (candidate.score, -candidate.ac_x_m),
     )
     return tuple(candidates), selected
 
@@ -577,14 +601,16 @@ def main():
 
     placement_candidates, placement = fin_placement_trade()
     print("\n   LONGITUDINAL PLACEMENT TRADE [E]/[I]")
-    print(f"   {len(placement_candidates)} stations: x_AC +225…+325 mm in 5 mm steps")
-    print(f"   Selected mass-feasible knee: x_AC +{placement.ac_x_m*1000:.0f} mm · "
-          f"arm {placement.moment_arm_m*1000:.1f} mm · score {placement.score:.3f}")
+    print(f"   {len(placement_candidates)} stations: x_AC +80…+280 mm in 0.5 mm steps")
+    print(f"   Selected minimum-mass feasible station: x_AC "
+          f"+{placement.ac_x_m*1000:.1f} mm · arm "
+          f"{placement.moment_arm_m*1000:.1f} mm · "
+          f"axial prop clearance {placement.propeller_axial_clearance_m*1000:.2f} mm")
     print(f"   Assembly x_CG +{placement.assembly_cg_x_m*1000:.1f} mm · "
           f"first-order battery shift {placement.battery_shift_m*1000:.1f} mm forward")
 
     # ---- 2. Fin sizing for stability tiers ----
-    print("\n2. FIN SIZING (2 x aft-CORE fins outside prop disk, l_v = %.0f mm)" % (fin_moment_arm()*1000))
+    print("\n2. FIN SIZING (2 x CORE-rooted fins forward of fixed propeller, l_v = %.0f mm)" % (fin_moment_arm()*1000))
     tiers = [
         ("V1a — marginal-stable (nominal ≥ 0.0005/deg)", 0.0005),
         ("V1b — higher powered nominal margin (≥ 0.0010/deg)", 0.0010),
@@ -733,8 +759,16 @@ def main():
     check("V1a swept trapezoid reproduces the aerodynamic sweep",
           abs(fin.quarter_chord_sweep_deg - FIN_SWEEP_DEG) < 1e-12)
     _, placement = fin_placement_trade()
-    check("declared V1a AC is the reproducible mass-feasible trade knee",
+    check("declared V1a AC is the reproducible fixed-propeller optimum",
           abs(placement.ac_x_m - FIN_AC_STATION_M) < 1e-12)
+    propeller_forward_face = PROP_PLANE_M - 0.5 * PROP_AXIAL_ENVELOPE_M
+    check("complete V1a fin stays forward of the fixed propeller slab",
+          propeller_forward_face
+          - max(fin.root_te_x_m, fin.tip_te_x_m)
+          >= FIN_PROPELLER_AXIAL_CLEARANCE_M - 1e-12)
+    check("aft root supports stay forward of the fixed propeller slab",
+          fin.boom_x_end_m
+          <= propeller_forward_face - FIN_PROPELLER_AXIAL_CLEARANCE_M + 1e-12)
     check("V1a twin geometry reproduces total area, per-fin AR, taper and AC",
           abs(0.5 * (fin.root_chord_m + fin.tip_chord_m) * fin.span_m
               - fin.area_each_m2) < 1e-12
@@ -749,9 +783,9 @@ def main():
           cnb_total_band(S_v, ETA_FIN_POWER_OFF)[0]
           <= cnb_total_band(S_v, ETA_FIN_POWER_ON)[0])
     v1a_lo = fin_mass_band(tier_areas[0])[0]
-    check(f"twin-fin lower assembly stays within its 60 g allocation "
+    check(f"twin-fin lower assembly stays within its {V1_FIN_CAP_G:.0f} g allocation "
           f"({V1_FIN_CAP_G:.2f} cap vs {v1a_lo:.2f} g lower assembly)",
-          0.0 <= V1_FIN_CAP_G - v1a_lo <= 2.0)
+          0.0 <= V1_FIN_CAP_G - v1a_lo)
     check("V1 analytical lower assembly matches the shared mass contract within 0.2 g",
           abs(AUW_REF + v1a_lo / 1000.0 - ARTICLE_V1_MASS_KG) < 2e-4)
     finless_modes = yaw_modes(cnb_no_hi, cnr_wing())

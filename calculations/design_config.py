@@ -169,10 +169,10 @@ PROP_PLANE_M = 0.235             # APC 8x8EP plane, aft of root c/4 [D]/[E]
 PROP_DIAMETER_M = 0.2032         # APC nominal 8 inch diameter [M]
 PROP_AXIAL_ENVELOPE_M = 0.0102   # measured/catalog component envelope [M]/[E]
 
-V1_FIN_MASS_CAP_KG = 0.06000          # twin-fin + boom allocation target [E]
-V1_FIN_SHELL_MOUNT_LOWER_KG = 0.04124814 # geometry-derived PETG lower model [E]
-V1_FIN_SPAR_MASS_KG = 0.00784955         # geometry-derived Ø3 mm Al rods [D]/[E]
-V1_FIN_BOOM_MASS_KG = 0.01087624         # geometry-derived Ø6/4 mm carbon [E]
+V1_FIN_MASS_CAP_KG = 0.06000          # forward, prop-safe twin-fin allocation [E]
+V1_FIN_SHELL_MOUNT_LOWER_KG = 0.03613742 # geometry-derived LW-PLA-HT lower model [M]/[E]
+V1_FIN_SPAR_MASS_KG = 0.01051544         # geometry-derived Ø3 mm Al rods [D]/[E]
+V1_FIN_BOOM_MASS_KG = 0.00287174         # geometry-derived Ø6/4 mm root extensions [E]
 V1_FIN_MODEL_LOWER_KG = (
     V1_FIN_SHELL_MOUNT_LOWER_KG
     + V1_FIN_SPAR_MASS_KG

@@ -60,7 +60,7 @@ Use this sheet to interrogate the fuselage generator itself. Plan and side outli
 
 ### SLM-GA-002 · Side elevations
 
-[![Metric A3 side-elevation draft comparing SALAMANDRA-CLEAN with the V1a passive twin-fin variant. The two fins sit on aft CORE booms outside the propeller disk; their side projections coincide. No movable rudder is defined.](geometry/drawings/SLM-GA-002-side-elevations.svg)](geometry/drawings/SLM-GA-002-side-elevations.svg)
+[![Metric A3 side-elevation draft comparing SALAMANDRA-CLEAN with the V1a passive twin-fin variant. The two CORE-rooted fins and their aft root supports remain forward of the fixed propeller hazard; their side projections coincide. No movable rudder is defined.](geometry/drawings/SLM-GA-002-side-elevations.svg)](geometry/drawings/SLM-GA-002-side-elevations.svg)
 
 Use this sheet to compare the two published directional configurations without changing the common wing or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds two passive fixed fins on aft CORE booms at y = ±140 mm. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The two 18 × 14 mm boom envelopes have 29.4 mm nominal and 13.4 mm residual radial clearance after the explicit 16.0 mm allowance. The rear inset proves their lateral separation where the side projections overlap.
 
@@ -68,7 +68,7 @@ Use this sheet to compare the two published directional configurations without c
 
 ### SLM-FIN-001 · V1a twin-fin geometry review
 
-[![Metric A3 engineering-review sheet for the passive V1a twin fins. It shows one calculated fin, both aft CORE booms outside the propeller disk, the aerodynamic datum and provisional structural interfaces. No movable rudder is defined.](geometry/drawings/SLM-FIN-001-fixed-fin-review.svg)](geometry/drawings/SLM-FIN-001-fixed-fin-review.svg)
+[![Metric A3 engineering-review sheet for the passive V1a twin fins. It shows one calculated CORE-rooted fin, both aft root supports, the fixed propeller hazard, the aerodynamic datum and provisional structural interfaces. No movable rudder is defined.](geometry/drawings/SLM-FIN-001-fixed-fin-review.svg)](geometry/drawings/SLM-FIN-001-fixed-fin-review.svg)
 
 Use this sheet to review one of the two identical passive V1a fins rather than inferring it from the general side elevation. The planform vertices, area, taper, swept leading/trailing edges, derived quarter-chord sweep and AC marker come from one Python geometry object. Root/tip section sketches explain that the Ø3 mm aluminium rod forms an external leading-edge nose in an open seat; they do not claim an impossible enclosed Ø3.2 mm bore inside the 3.0→1.5 mm plate. The top view proves propeller clearance and the uncredited dorsal root fillet remains inside the credited planform. The rear view distinguishes axial projection overlap from physical disk clearance. Saddle detail, hole positions, print compensation, measured mass and E8 flight closure remain provisional. No movable rudder is defined.
 

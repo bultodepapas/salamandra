@@ -841,9 +841,11 @@ def validation_checks(full: bool = True) -> dict[str, bool]:
             - model.policy.nose_extension_mm
         ) < 1e-9,
         "seeded VTX penetration is detected": penetration_caught,
-        "V1 battery travel miss remains visible and unclamped in the report": (
-            not v1_state["reachable"]
-            and v1_state["required_x_mm"] < v1_state["travel_min_x_mm"]
+        "V1 battery reachability is reported from the coupled fin mass": (
+            bool(v1_state["reachable"])
+            and v1_state["travel_min_x_mm"]
+                <= v1_state["required_x_mm"]
+                <= v1_state["travel_max_x_mm"]
         ),
     }
     if not full:
