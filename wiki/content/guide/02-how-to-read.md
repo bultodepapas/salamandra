@@ -1,7 +1,7 @@
 ---
 title: How to read the engineering record
 description: How authority, evidence, decisions, calculations, gaps and tests fit together without mixing releases or confidence classes.
-editUrl: https://github.com/bultodepapas/salmandra/edit/main/wiki/content/guide/02-how-to-read.md
+editUrl: https://github.com/bultodepapas/salamandra/edit/main/wiki/content/guide/02-how-to-read.md
 ---
 
 This is not a conventional product manual. It is a **controlled reasoning record**: the

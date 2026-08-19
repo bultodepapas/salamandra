@@ -1,7 +1,7 @@
 ---
 title: Glossary and notation
 description: Provenance tags, record identifiers, configurations, speed and load definitions, coordinate signs and key aerodynamic terms.
-editUrl: https://github.com/bultodepapas/salmandra/edit/main/wiki/content/guide/04-glossary.md
+editUrl: https://github.com/bultodepapas/salamandra/edit/main/wiki/content/guide/04-glossary.md
 ---
 
 Use this page to decode a table or claim. Formal sign and unit definitions remain in the

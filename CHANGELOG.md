@@ -4,6 +4,29 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.43] — 2026-08-19
+
+**C52 — the repository was renamed and the documentation site still pointed at the old
+name.**
+
+- `salmandra` → **`salamandra`**. GitHub redirects the repository URL, so clones and links
+  keep working, but **GitHub Pages does not**: the site is served from
+  `https://bultodepapas.github.io/salamandra/` while `wiki/base.mjs` still declared
+  `salmandra`, which is where the Astro `base` and every internal link come from. The
+  published site would have resolved its own navigation against a path that no longer
+  exists.
+- `wiki/base.mjs` exists precisely so the deployment identity is declared once — but eight
+  further files had re-typed the old name in `editUrl` frontmatter, 404 links and README
+  URLs. Single declaration, defeated by copy-paste, again (ADR-0046 in the documentation
+  layer this time).
+- Fixed in all nine places; the local `origin` remote is repointed. Verified: strict
+  generation, reference check, production build and **18,204 built-site links across 115
+  pages** all pass on the new base.
+- No engineering value, drawing or gate is affected. Release `v0.6.0` remains the current
+  release; this is post-release documentation infrastructure.
+
+---
+
 ## [1.42] — 2026-08-19
 
 **Release v0.6.0 — twin-fin directional architecture and the parametric fuselage

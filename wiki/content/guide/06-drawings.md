@@ -1,7 +1,7 @@
 ---
 title: Drawings and SVG workflow
 description: How Salamandra turns the numerical design contract into printable, reviewable SVG sketches without confusing provisional geometry with manufacturing authority.
-editUrl: https://github.com/bultodepapas/salmandra/edit/main/wiki/content/guide/06-drawings.md
+editUrl: https://github.com/bultodepapas/salamandra/edit/main/wiki/content/guide/06-drawings.md
 ---
 
 The drawing set is a bridge between analysis and native CAD. It gives designers a
@@ -64,7 +64,7 @@ constraints. Do not derive a cutting, drilling or printable part directly from t
 
 The research and rationale are in [I-25](../research/i-25-svg-technical-drawing-workflow/);
 the complete source/print contract is in the
-[drawing-set README](https://github.com/bultodepapas/salmandra/blob/main/geometry/drawings/README.md).
+[drawing-set README](https://github.com/bultodepapas/salamandra/blob/main/geometry/drawings/README.md).
 Native CAD plus F2/S3 evidence remains the release path.
 
 ## Codex and VS Code workflow

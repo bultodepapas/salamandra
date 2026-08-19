@@ -14,7 +14,7 @@ carries its source and the reasoning is the deliverable.**
 **Revision 1.20** · 19 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
 **Phase 1 in progress** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
 
-> 📖 **Read this project as a website:** <https://bultodepapas.github.io/salmandra/>
+> 📖 **Read this project as a website:** <https://bultodepapas.github.io/salamandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
 
 ---
@@ -312,7 +312,7 @@ working tree.
 > Read the [**v0.6.0 release notes**](docs/16-release-v0.6.md) before CAD or structural
 > work; **any V1 fin or carrier solid from v0.5.0 is obsolete**. Historical v0.1.0–v0.5.0
 > notes remain audit records. The wiki renders the package at
-> <https://bultodepapas.github.io/salmandra/>.
+> <https://bultodepapas.github.io/salamandra/>.
 
 ---
 

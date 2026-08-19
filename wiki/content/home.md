@@ -2,7 +2,7 @@
 title: Open aircraft engineering you can audit
 description: Salamandra is an open 3D-printed FPV aircraft platform with a traceable design record, reproducible analyses and explicit physical acceptance gates.
 template: splash
-editUrl: https://github.com/bultodepapas/salmandra/edit/main/wiki/content/home.md
+editUrl: https://github.com/bultodepapas/salamandra/edit/main/wiki/content/home.md
 hero:
   title: Salamandra
   tagline: Open aircraft engineering you can audit. Derived values are rerunnable, measured inputs retain provenance, and unresolved assumptions stay visible.

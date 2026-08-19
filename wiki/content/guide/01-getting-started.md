@@ -1,7 +1,7 @@
 ---
 title: Getting started
 description: A five-minute path to the current Salamandra baseline, its evidence model, its tools and the physical gates that remain open.
-editUrl: https://github.com/bultodepapas/salmandra/edit/main/wiki/content/guide/01-getting-started.md
+editUrl: https://github.com/bultodepapas/salamandra/edit/main/wiki/content/guide/01-getting-started.md
 ---
 
 This page gives you a working model of Salamandra in about five minutes. The most

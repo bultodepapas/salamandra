@@ -1,7 +1,7 @@
 ---
 title: Contributing to Salamandra
 description: Contribution paths for measurements, corrections, analyses, CAD parts and documentation, with the evidence and verification each path requires.
-editUrl: https://github.com/bultodepapas/salmandra/edit/main/wiki/content/guide/05-contributing.md
+editUrl: https://github.com/bultodepapas/salamandra/edit/main/wiki/content/guide/05-contributing.md
 ---
 
 Salamandra welcomes measurements, corrections, analyses, CAD, printed parts, adapters,
