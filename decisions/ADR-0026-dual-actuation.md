@@ -30,7 +30,7 @@ at 4.8 V `[M]`: 1.52× factored margin at 180 km/h and about 4.5× at the initia
 ## Consequences
 
 - Servo mass falls from 50.0 to **25.0 g**. With the ADR-0045 balance update, CLEAN AUW
-  is **1553.25 g** and the current twin-fin V1 lower model is **1612.45 g** `[D]`.
+  is **1553.25 g** and the current coupled twin-fin V1 model is **1615.63 g** `[D]`/`[E]`.
 - V1 remains about 7.9 g below the exact 45 km/h mass ceiling; CAD mass and measured
   E2 `CLmax` remain release gates.
 - Two actuators remove inter-servo fighting on a shared surface and halve the linkage,

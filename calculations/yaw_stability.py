@@ -27,6 +27,7 @@ from functools import cache
 
 import numpy as np
 
+import battery_pack_layout
 import drag_model
 from balance_cg import cg_target, solve_reference_layout
 from design_config import (
@@ -36,12 +37,11 @@ from design_config import (
     CRUISE_SPEED_KMH,
     NU_SL,
     PETG_DENSITY_KG_M3,
+    PROP_DIAMETER_M,
     RHO_SL,
     STRUCTURAL_DESIGN_SPEED_KMH,
     SWEEP_C4_DEG,
     V1_FIN_MASS_CAP_KG,
-    V1_FIN_BOOM_MASS_KG,
-    V1_FIN_SPAR_MASS_KG,
     B,
     S,
     lift_coefficient,
@@ -73,8 +73,6 @@ CL_CRU = lift_coefficient(AUW_REF, V_CRU)
 SPAN_EFFICIENCY = drag_model.SPAN_EFFICIENCY
 CD_PROFILE_CRUISE = drag_model.CD_PROFILE_CRUISE
 PETG_DENSITY = PETG_DENSITY_KG_M3
-FIN_SPAR_MASS_G = V1_FIN_SPAR_MASS_KG * 1000.0
-FIN_BOOM_MASS_G = V1_FIN_BOOM_MASS_KG * 1000.0
 
 # Fuselage + nose boom (guide §7.6, OP-01): length nose tip → rear pod end
 REAR_POD_END = 0.265     # m from root c/4, rear pod end (guide 7.6) [E]
@@ -107,15 +105,18 @@ FIN_BOOM_HEIGHT_M = 0.014
 FIN_BOOM_OUTER_DIAMETER_M = 0.006
 FIN_BOOM_INNER_DIAMETER_M = 0.004
 FIN_BOOM_X_START_M = 0.156
-FIN_AC_STATION_M = 0.285   # common fin AC, m aft of root c/4 [E]
+FIN_AC_STATION_M = 0.280   # coupled trade knee; validation remains open [E]
 AR_FIN = 2.0               # aspect ratio of each fin [E]
-FIN_TAPER = 0.3            # tip/root chord ratio [E]; tapered low-Re fin
+FIN_TAPER = 0.45           # finite tip chord avoids a plate-like free tip [E]
+FIN_LE_SWEEP_DEG = 25.0    # straight swept LE; root-to-tip structural spar [E]
 
-# The V1a concept has a vertical trailing edge.  For a trapezoid this fixes the
-# quarter-chord sweep from AR and taper; keeping a separate 12 degree literal
-# made the aerodynamic model disagree with the generated drawing (7.125 deg).
+# For a trapezoid, c_root / span = 2 / (AR * (1 + taper)).  Converting the
+# selected leading-edge sweep to quarter-chord sweep keeps the aerodynamic
+# method and the generated planform identical.  The resulting trailing edge is
+# also swept aft slightly; it is no longer the visually artificial vertical TE.
 FIN_SWEEP_DEG = float(np.degrees(np.arctan(
-    1.5 / AR_FIN * (1.0 - FIN_TAPER) / (1.0 + FIN_TAPER)
+    np.tan(np.radians(FIN_LE_SWEEP_DEG))
+    - 0.5 * (1.0 - FIN_TAPER) / (AR_FIN * (1.0 + FIN_TAPER))
 )))
 
 FIN_ROOT_THICKNESS_M = 0.0030   # maximum plate thickness at root [E]
@@ -256,8 +257,8 @@ class FinGeometry:
     """Single-source trapezoidal V1 twin-fin geometry, SI units.
 
     ``area_m2`` is the total projected area of both identical fins.  Span,
-    chords and vertices describe one fin.  The vertical trailing edge is an
-    explicit packaging decision and the two booms remain outside the prop disk.
+    chords and vertices describe one fin.  The straight leading edge is the
+    spar datum; both edges sweep aft and the booms remain outside the prop disk.
     """
 
     area_m2: float
@@ -280,8 +281,30 @@ class FinGeometry:
     boom_inner_prop_clearance_m: float
 
 
+@dataclass(frozen=True)
+class FinPlacementCandidate:
+    """One longitudinal placement in the reproducible V1a trade [E]."""
+
+    ac_x_m: float
+    moment_arm_m: float
+    area_m2: float
+    mass_lower_g: float
+    boom_length_m: float
+    aft_extent_m: float
+    root_le_x_m: float
+    assembly_cg_x_m: float
+    battery_shift_m: float
+    score: float
+    feasible: bool
+
+
 def fin_geometry(S_v, b_v=None, ac_x=FIN_AC_STATION_M):
-    """Return two identical vertical-TE fins from total projected area."""
+    """Return two identical swept trapezoidal fins from total projected area.
+
+    ``ac_x`` is the quarter-chord station at the trapezoid MAC.  Recovering the
+    root quarter chord from the declared sweep keeps the aerodynamic reference
+    fixed when area changes.
+    """
     area_each = S_v / FIN_COUNT
     if b_v is None:
         b_v = np.sqrt(area_each * AR_FIN)
@@ -290,14 +313,15 @@ def fin_geometry(S_v, b_v=None, ac_x=FIN_AC_STATION_M):
     c_t = FIN_TAPER * c_r
     h_c = (b_v / 3.0) * (c_r + 2.0 * c_t) / (c_r + c_t)
     mac = c_r + (c_t - c_r) * h_c / b_v
-    trailing_edge_x = ac_x + 0.75 * mac
-    root_le_x = trailing_edge_x - c_r
-    tip_le_x = trailing_edge_x - c_t
-    root_qc_x = root_le_x + 0.25 * c_r
+    root_qc_x = ac_x - h_c * np.tan(np.radians(FIN_SWEEP_DEG))
+    root_le_x = root_qc_x - 0.25 * c_r
+    tip_le_x = root_le_x + b_v * np.tan(np.radians(FIN_LE_SWEEP_DEG))
+    root_te_x = root_le_x + c_r
+    tip_te_x = tip_le_x + c_t
     tip_qc_x = tip_le_x + 0.25 * c_t
     sweep = float(np.degrees(np.arctan2(tip_qc_x - root_qc_x, b_v)))
-    boom_x_end = trailing_edge_x + 0.010
-    prop_radius = 0.2032 / 2.0
+    boom_x_end = max(root_te_x, tip_te_x) + 0.010
+    prop_radius = PROP_DIAMETER_M / 2.0
     boom_clearance = FIN_LATERAL_STATION_M - FIN_BOOM_WIDTH_M / 2.0 - prop_radius
     return FinGeometry(
         area_m2=float(S_v),
@@ -310,9 +334,9 @@ def fin_geometry(S_v, b_v=None, ac_x=FIN_AC_STATION_M):
         mac_m=float(mac),
         ac_x_m=float(ac_x),
         root_le_x_m=float(root_le_x),
-        root_te_x_m=float(trailing_edge_x),
+        root_te_x_m=float(root_te_x),
         tip_le_x_m=float(tip_le_x),
-        tip_te_x_m=float(trailing_edge_x),
+        tip_te_x_m=float(tip_te_x),
         quarter_chord_sweep_deg=sweep,
         lateral_station_m=FIN_LATERAL_STATION_M,
         boom_x_start_m=FIN_BOOM_X_START_M,
@@ -328,11 +352,119 @@ def fin_shell_mount_mass_band(S_v):
     return 1000.0 * m_lo, 1000.0 * m_hi
 
 
-def fin_mass_band(S_v):
+def fin_spar_mass_g(S_v, ac_x=None):
+    """Mass of both solid Ø3 mm aluminium leading-edge rods [g, D/E]."""
+    fin = fin_geometry(S_v, ac_x=FIN_AC_STATION_M if ac_x is None else ac_x)
+    leading_edge_length = np.hypot(
+        fin.span_m, fin.tip_le_x_m - fin.root_le_x_m
+    )
+    area = np.pi * FIN_SPAR_DIAMETER_M**2 / 4.0
+    return float(FIN_COUNT * leading_edge_length * area * 2700.0 * 1000.0)
+
+
+def fin_boom_mass_g(S_v, ac_x=None):
+    """Mass of both Ø6/4 mm carbon tubes at the derived length [g, E]."""
+    fin = fin_geometry(S_v, ac_x=FIN_AC_STATION_M if ac_x is None else ac_x)
+    length = fin.boom_x_end_m - fin.boom_x_start_m
+    area = np.pi * (
+        FIN_BOOM_OUTER_DIAMETER_M**2 - FIN_BOOM_INNER_DIAMETER_M**2
+    ) / 4.0
+    return float(FIN_COUNT * length * area * 1600.0 * 1000.0)
+
+
+def fin_mass_band(S_v, ac_x=None):
     """Complete twin-fin assembly band [g], including spars and carbon booms."""
     lo, hi = fin_shell_mount_mass_band(S_v)
-    fixed = FIN_SPAR_MASS_G + FIN_BOOM_MASS_G
+    fixed = fin_spar_mass_g(S_v, ac_x) + fin_boom_mass_g(S_v, ac_x)
     return lo + fixed, hi + fixed
+
+
+def fin_placement_trade(target=0.0005):
+    """Return the V1a longitudinal trade and its mass-feasible knee.
+
+    The study spans the installable aft-CORE region in 5 mm increments.  Each
+    station is resized to the same nominal stability target.  The equal-weight
+    dimensionless score balances area, lower mass, boom length, aft extent,
+    battery-rebalance demand and the inverse yaw-damping benefit of moment arm.
+    The 60 g allocation, the
+    fixed boom-start station and a +410 mm provisional handling envelope are
+    hard constraints.  These weights and the aft envelope remain [E]/[I]; the
+    function makes the compromise reproducible instead of hiding x_AC as an
+    unexplained literal.
+    """
+    raw = []
+    for ac_mm in range(225, 326, 5):
+        ac_x = ac_mm / 1000.0
+        arm = ac_x - cg_target()
+        area = fin_area_for_target(target, l_v=arm)
+        fin = fin_geometry(area, ac_x=ac_x)
+        shell_mass = fin_shell_mount_mass_band(area)[0]
+        spar_mass = fin_spar_mass_g(area, ac_x)
+        boom_mass = fin_boom_mass_g(area, ac_x)
+        mass_lower = shell_mass + spar_mass + boom_mass
+        # Polygon centroid of one projected trapezoid.  The fairing is not
+        # credited.  This is more faithful than using x_AC as a mass station.
+        vertices = (
+            (fin.root_le_x_m, 0.0),
+            (fin.tip_le_x_m, fin.span_m),
+            (fin.tip_te_x_m, fin.span_m),
+            (fin.root_te_x_m, 0.0),
+        )
+        twice_area = 0.0
+        centroid_numerator = 0.0
+        for first, second in zip(vertices, (*vertices[1:], vertices[0])):
+            cross = first[0] * second[1] - second[0] * first[1]
+            twice_area += cross
+            centroid_numerator += (first[0] + second[0]) * cross
+        shell_x = centroid_numerator / (3.0 * twice_area)
+        spar_x = 0.5 * (fin.root_le_x_m + fin.tip_le_x_m)
+        boom_x = 0.5 * (fin.boom_x_start_m + fin.boom_x_end_m)
+        assembly_x = (
+            shell_mass * shell_x + spar_mass * spar_x + boom_mass * boom_x
+        ) / mass_lower
+        battery_mass = battery_pack_layout.pack_mass_g("6S1P", "P42A")
+        battery_shift = mass_lower / battery_mass * (assembly_x - cg_target())
+        raw.append({
+            "ac_x_m": ac_x,
+            "moment_arm_m": arm,
+            "area_m2": area,
+            "mass_lower_g": mass_lower,
+            "boom_length_m": fin.boom_x_end_m - fin.boom_x_start_m,
+            "aft_extent_m": fin.boom_x_end_m,
+            "root_le_x_m": fin.root_le_x_m,
+            "assembly_cg_x_m": assembly_x,
+            "battery_shift_m": battery_shift,
+        })
+
+    def normalized(key, value, *, reverse=False):
+        values = [row[key] for row in raw]
+        low, high = min(values), max(values)
+        fraction = (value - low) / (high - low)
+        return 1.0 - fraction if reverse else fraction
+
+    candidates = []
+    for row in raw:
+        score = sum((
+            normalized("area_m2", row["area_m2"]),
+            normalized("mass_lower_g", row["mass_lower_g"]),
+            normalized("boom_length_m", row["boom_length_m"]),
+            normalized("aft_extent_m", row["aft_extent_m"]),
+            normalized("battery_shift_m", row["battery_shift_m"]),
+            normalized("moment_arm_m", row["moment_arm_m"], reverse=True),
+        )) / 6.0
+        feasible = (
+            row["mass_lower_g"] <= V1_FIN_CAP_G + 1e-9
+            and row["root_le_x_m"] >= FIN_BOOM_X_START_M - 1e-9
+            and row["aft_extent_m"] <= 0.410 + 1e-9
+        )
+        candidates.append(FinPlacementCandidate(
+            **row, score=float(score), feasible=bool(feasible)
+        ))
+    selected = min(
+        (candidate for candidate in candidates if candidate.feasible),
+        key=lambda candidate: (candidate.score, candidate.ac_x_m),
+    )
+    return tuple(candidates), selected
 
 
 def fin_drag(S_v):
@@ -443,6 +575,14 @@ def main():
     print(f"   2-DOF yaw modes (worst): λ = {lam[0]:+.3f}, {lam[1]:+.3f} 1/s"
           f"  (divergence τ ≈ {1.0/max(lam.real):.2f} s [E])")
 
+    placement_candidates, placement = fin_placement_trade()
+    print("\n   LONGITUDINAL PLACEMENT TRADE [E]/[I]")
+    print(f"   {len(placement_candidates)} stations: x_AC +225…+325 mm in 5 mm steps")
+    print(f"   Selected mass-feasible knee: x_AC +{placement.ac_x_m*1000:.0f} mm · "
+          f"arm {placement.moment_arm_m*1000:.1f} mm · score {placement.score:.3f}")
+    print(f"   Assembly x_CG +{placement.assembly_cg_x_m*1000:.1f} mm · "
+          f"first-order battery shift {placement.battery_shift_m*1000:.1f} mm forward")
+
     # ---- 2. Fin sizing for stability tiers ----
     print("\n2. FIN SIZING (2 x aft-CORE fins outside prop disk, l_v = %.0f mm)" % (fin_moment_arm()*1000))
     tiers = [
@@ -475,7 +615,7 @@ def main():
         print(f"\n   {tag}")
         print(f"   S_v,total = {S_v*100:.2f} dm² · 2 x b_v = {b_v*1000:.0f} mm · "
               f"c_r = {c_r*1000:.0f} / c_t = {c_t*1000:.0f} mm · AR_v ≈ {AR_FIN:.1f}")
-        print(f"   Planform        : vertical TE · Λc/4 = "
+        print(f"   Planform        : LE sweep {FIN_LE_SWEEP_DEG:.1f}° · Λc/4 = "
               f"{fin.quarter_chord_sweep_deg:.3f}° · MAC {fin.mac_m*1000:.1f} mm")
         print(f"   Cn_beta power-on  : {cnb_lo:+.5f} … {cnb_hi:+.5f} /deg "
               f"(nominal ≈ {cnb_fin(S_v,fin_moment_arm(),cla_nom)+cnb_fus_nom+WING_MEAN:+.5f})")
@@ -483,8 +623,8 @@ def main():
         print(f"   Fin Cn_beta     : {cnb_fin(S_v,fin_moment_arm(),cla_nom):+.5f} /deg")
         print(f"   Volume coeff V_v = {V_v:.3f} (tailless practice ≈ 0.02–0.05 [I])")
         print(f"   Mass complete   : {m_lo:.0f}–{m_hi:.0f} g "
-              f"(2 shells/mounts + {FIN_SPAR_MASS_G:.1f} g spars + "
-              f"{FIN_BOOM_MASS_G:.1f} g carbon booms)")
+              f"(2 shells/mounts + {fin_spar_mass_g(S_v):.1f} g spars + "
+              f"{fin_boom_mass_g(S_v):.1f} g carbon booms)")
         print(f"   ΔCD0            : +{dcd0:.4f}  →  +{dwhkm:.1f} % drag / "
               f"Wh/km ≈ {1.15*(1+dwhkm/100):.2f} [E]")
         print(f"   AUW +{1000*(auw_new-AUW_REF):.0f} g → V_stall ≈ {vs:.1f} km/h "
@@ -590,17 +730,19 @@ def main():
     sig_root_3 = M * 0.0015 / i_root_3
     check(f"V1a 3.0 mm root FS >= 1.5 without spar credit "
           f"(got {50e6/sig_root_3:.2f})", 50e6 / sig_root_3 >= 1.5)
-    check("V1a vertical-TE geometry reproduces the aerodynamic sweep",
+    check("V1a swept trapezoid reproduces the aerodynamic sweep",
           abs(fin.quarter_chord_sweep_deg - FIN_SWEEP_DEG) < 1e-12)
+    _, placement = fin_placement_trade()
+    check("declared V1a AC is the reproducible mass-feasible trade knee",
+          abs(placement.ac_x_m - FIN_AC_STATION_M) < 1e-12)
     check("V1a twin geometry reproduces total area, per-fin AR, taper and AC",
           abs(0.5 * (fin.root_chord_m + fin.tip_chord_m) * fin.span_m
               - fin.area_each_m2) < 1e-12
           and abs(fin.fin_count * fin.area_each_m2 - fin.area_m2) < 1e-12
           and abs(fin.span_m**2 / fin.area_each_m2 - AR_FIN) < 1e-12
           and abs(fin.tip_chord_m / fin.root_chord_m - FIN_TAPER) < 1e-12
-          and abs(
-              fin.root_te_x_m - 0.75 * fin.mac_m - fin.ac_x_m
-          ) < 1e-12)
+          and abs(fin.tip_le_x_m - fin.root_le_x_m
+                  - fin.span_m * np.tan(np.radians(FIN_LE_SWEEP_DEG))) < 1e-12)
     check("independent-corner Cn_beta band is ordered and contains nominal",
           cnb_total_band(S_v)[0] < cnb_v1 < cnb_total_band(S_v)[1])
     check("power-off is no more stabilizing than the power-on screen",

@@ -37,8 +37,10 @@ neither supports a floating plate behind the propeller.
 4. **Split drag rudders.** They can generate control moment but provide no passive static
    directional stiffness when closed and would make the baseline FC-dependent. Deferred.
 5. **Two aft CORE booms with fixed fins outside the propeller disk.** Retains the existing
-   propeller and equipment stations, preserves the calculated `x_ac = +285 mm`, separates
-   the fin root loads, and provides a direct wing/CORE load path. Accepted provisionally.
+   propeller station, separates the fin root loads, and provides a direct wing/CORE load
+   path. A Python station sweep selects the first mass-feasible knee at `x_ac = +280 mm`;
+   the resulting mass then drives the coupled CG and forward-packaging solve. Accepted
+   provisionally.
 
 ## Decision
 
@@ -49,34 +51,36 @@ SALAMANDRA-CLEAN   Finless O1 efficiency baseline. Directionally unstable by the
                    current analytical band; FC-dependent and not the first-flight default.
 
 SALAMANDRA-V1a     Two identical passive fixed fins, no movable rudder.
-                   Each fin: S_v = 1.7202 dm², span 185.5 mm,
-                   root/tip chord 142.7/42.8 mm, AR 2.0, taper 0.30,
-                   vertical trailing edge and quarter-chord sweep 21.991°.
-                   Total S_v = 3.4404 dm²; x_ac = +285 mm.
+                   Each fin: S_v = 1.7368 dm², span 186.4 mm,
+                   root/tip chord 128.5/57.8 mm, AR 2.0, taper 0.45,
+                   25° leading-edge and 20.379° quarter-chord sweep.
+                   Total S_v = 3.4737 dm²; x_ac = +280 mm.
                    Two 18 × 14 mm aft boom envelopes at y = ±140 mm,
-                   x = +156…+371.3 mm; 29.4 mm inner propeller radial clearance.
-                   A dorsal root-fillet envelope is shown but receives no stability credit.
+                   x = +156…+372.4 mm; 29.4 mm nominal / 13.4 mm residual
+                   propeller radial clearance after a 16.0 mm allowance.
+                   The dorsal root fillet remains inside the credited planform.
 ```
 
-The V1a planform is a conventional low-aspect-ratio tapered vertical surface. The taper
-reduces tip loading and material at the weak free end; the swept leading edge provides a
-continuous external Ø3 mm aluminium nose spar; the vertical trailing edge maximises root
-chord and keeps the aft station compact. These are engineering choices, not styling cues.
+The V1a planform is a conventional low-aspect-ratio swept trapezoid. The 0.45 taper avoids
+the former needle-like tip, while the 25° leading edge provides a continuous external Ø3 mm
+aluminium nose spar. Both trailing-edge vertices are derived from the same trapezoid; no
+vertical trailing-edge constraint is imposed. These are engineering choices, not styling cues.
 
 V1a is still a **marginal test configuration**, not a released production geometry. V1b is
-the positive-corner alternative if F2 mass closure permits its larger 4.58 dm² total area.
+the positive-corner alternative if F2 mass closure permits its larger 4.63 dm² total area.
 
 ## Consequences and gates
 
-- V1a analytical lower assembly: **59.20 g**, including both fin shells/mounts, both
-  leading-edge spars and both carbon booms. The 60.00 g allocation leaves **0.80 g**, so
+- V1a analytical lower assembly: **59.97 g**, including both fin shells/mounts, both
+  leading-edge spars and both carbon booms. The 60.00 g allocation leaves **0.03 g**, so
   measured F2 mass and final root-fillet/saddle mass are mandatory closure items.
-- Allocation AUW: **1613.25 g**; analytical stall speed **44.9 km/h**, below but close to
-  the 45 km/h requirement.
-- At 180 km/h, each V1a fin carries an estimated **26.3 N**, with **2.00 N·m** root moment.
-  A 3.0 mm solid PETG root gives analytical yield FS **5.34** without spar credit; first
-  bending mode is approximately **14.7 Hz**, so structural and flutter testing remain open.
-- Estimated parasite-drag increment is **ΔCD0 = +0.0019**, approximately **+13.1%** against
+- The coupled solution adds **2.40 g** of forward boom/cradle support, moves the battery to
+  x = −386.74 mm, camera to x = −463.79 mm and VTX to x = −429.61 mm, and extends the nose
+  **17.81 mm**. Resulting AUW is **1615.63 g** and analytical stall speed **44.93 km/h**.
+- At 180 km/h, each V1a fin carries an estimated **26.6 N**, with **2.17 N·m** root moment.
+  A 3.0 mm solid PETG root gives analytical yield FS **4.45** without spar credit; first
+  bending mode is approximately **14.6 Hz**, so structural and flutter testing remain open.
+- Estimated parasite-drag increment is **ΔCD0 = +0.0019**, approximately **+13.3%** against
   the clean drag model. CLEAN alone retains the headline O1 efficiency claim.
 - V1a's independent lower `Cnβ` corner is still negative. E8 yaw perturbation and decay
   testing is mandatory; the drawing must continue to say `MARGINAL`, not `STABLE`.

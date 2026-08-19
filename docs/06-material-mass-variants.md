@@ -51,7 +51,8 @@ Example option combinations (all validated runs of `mass_budget.py`):
 |---|---:|---:|
 | ALL PETG · Article #1 CLEAN | 1553.25 | 44.1 |
 | ALL PETG · V1 allocation target | 1613.25 | 44.9 |
-| **ALL PETG · V1 current lower model** | **1612.45** | **44.9 — analytical PASS; 7.9 g below exact stall-mass ceiling** |
+| ALL PETG · V1 fin-only lower model | 1613.22 | 44.9 — intermediate mass-budget result |
+| **ALL PETG · V1 coupled packaging** | **1615.63** | **44.93 — analytical PASS; 4.8 g below exact stall-mass ceiling** |
 
 Per-part × material matrix (mass, g, from the PETG base):
 
@@ -61,7 +62,7 @@ Per-part × material matrix (mass, g, from the PETG base):
 | wings + fixed TE bridges | 314.8 | 307.4 | 307.4 | 168.6 |
 | tips (2) | 40.0 | 39.1 | 39.1 | 21.4 |
 | moving elevons (2) | 45.0 | 43.9 | 43.9 | 24.1 |
-| fin (V1) | 37.3 | 36.4 | 36.4 | 20.0 |
+| fin (V1 shells/mounts) | 41.2 | 40.3 | 40.3 | 22.1 |
 
 ## 4. Engineering flags (honest, not silent)
 

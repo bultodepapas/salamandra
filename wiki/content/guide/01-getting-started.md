@@ -31,9 +31,11 @@ When two documents appear to disagree, use this order:
    interfaces, mass targets, operating limits and load definitions.
 3. `calculations/design_config.py` — numerical source of truth for values shared by
    multiple analyses.
-4. [ADRs](../decisions/) — decisions and reversal triggers.
-5. [Research threads](../research/) — evidence, methods, sources and limitations.
-6. [Open points](../salamandra/design-guide-open-points/) — provisional values and the
+4. [Advanced Design Guide](../salamandra/design-guide-advanced/) — calculations,
+   release migration and detailed engineering boundaries.
+5. [ADRs](../decisions/) — decisions and reversal triggers.
+6. [Research threads](../research/) — evidence, methods, sources and limitations.
+7. [Open points](../salamandra/design-guide-open-points/) — provisional values and the
    event that may change each one.
 
 Never average conflicting releases or combine a historical input with the current
@@ -43,7 +45,7 @@ baseline. Raise the conflict instead.
 
 | Your task | First page | Follow with |
 |---|---|---|
-| Model the aircraft | [Design guide](../salamandra/design-guide/) | [Open points](../salamandra/design-guide-open-points/) |
+| Model the aircraft | [Concise Design Guide](../salamandra/design-guide/) | [Advanced Design Guide](../salamandra/design-guide-advanced/) only when a requirement needs interpretation |
 | Understand a design choice | [ADR index](../decisions/) | The ADR's linked research and calculation |
 | Check what remains unknown | [Gap register](../gaps/) | [Test programme](../tests/) |
 | Reproduce a result | [Calculation index](../calculations/) | [Reproduction guide](../calculations/reproduction-guide/) |

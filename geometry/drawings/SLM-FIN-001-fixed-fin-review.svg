@@ -77,39 +77,39 @@
 <text x="352" y="285" class="mono" text-anchor="start">A3 · 420 × 297</text>
 <text x="383" y="280" class="micro" text-anchor="start">REV</text>
 <text x="383" y="285" class="mono" text-anchor="start">P0</text>
-<line x1="303" y1="231" x2="313" y2="231" class="outline"/>
-<text x="316" y="232" class="micro" text-anchor="start">CONTROLLED / DERIVED</text>
-<line x1="303" y1="236" x2="313" y2="236" class="provisional-line"/>
-<text x="316" y="237" class="micro" text-anchor="start">PROVISIONAL · CAD GATE F2</text>
+<line x1="158" y1="218" x2="168" y2="218" class="outline"/>
+<text x="171" y="219" class="micro" text-anchor="start">CONTROLLED / DERIVED</text>
+<line x1="158" y1="223" x2="168" y2="223" class="provisional-line"/>
+<text x="171" y="224" class="micro" text-anchor="start">PROVISIONAL · CAD GATE F2</text>
 <text x="20" y="23" class="sheet-subtitle" text-anchor="start">A · ONE OF TWO IDENTICAL FINS</text>
-<text x="20" y="28" class="micro" text-anchor="start">PASSIVE TWIN FINS · VERTICAL TE · NO HINGE / SERVO</text>
-<polygon points="43,220 109.584,96.344 138.12,96.344 138.12,220" class="provisional-fill" id="fin-v1a-planform" style="fill:#f4c46a;fill-opacity:.20;stroke:#985b00;stroke-width:.62;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
-<path d="M 21.667 220 C 33.667 220 45.667 213.333 51 201.333 L 51 220 Z" class="provisional-fill" id="fin-root-fillet-envelope" style="fill:#f4c46a;fill-opacity:.30;stroke:#985b00;stroke-width:.62;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
-<line x1="66.78" y1="220" x2="116.718" y2="96.344" class="centre" id="fin-quarter-chord-line"/>
-<line x1="43" y1="220" x2="109.584" y2="96.344" class="derived" id="fin-leading-edge-spar" style="stroke:#146e9b;stroke-width:.70;stroke-dasharray:5 1.2"/>
-<circle cx="87.267" cy="169.269" r="1.7" class="derived" id="fin-aerodynamic-centre"/>
-<line x1="84.467" y1="169.269" x2="90.067" y2="169.269" class="derived"/>
-<line x1="87.267" y1="166.469" x2="87.267" y2="172.069" class="derived"/>
-<line x1="138.12" y1="96.344" x2="131" y2="96.344" class="extension"/>
-<line x1="138.12" y1="220" x2="131" y2="220" class="extension"/>
-<line x1="131" y1="96.344" x2="131" y2="220" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
-<text x="133" y="158.172" class="dimension-text" text-anchor="middle" transform="rotate(-90 133 158.172)">b_v EACH 185.5 [D]</text>
+<text x="20" y="28" class="micro" text-anchor="start">PASSIVE TWIN FINS · SWEPT TRAPEZOID · NO HINGE / SERVO</text>
+<polygon points="43,220 100.94,95.748 139.501,95.748 128.691,220" class="provisional-fill" id="fin-v1a-planform" style="fill:#f4c46a;fill-opacity:.20;stroke:#985b00;stroke-width:.62;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
+<path d="M 43 220 C 49.667 220 55 213.333 59 201.333 L 59 220 Z" class="provisional-fill" id="fin-root-fillet-envelope" style="fill:#f4c46a;fill-opacity:.30;stroke:#985b00;stroke-width:.62;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
+<line x1="64.423" y1="220" x2="110.58" y2="95.748" class="centre" id="fin-quarter-chord-line"/>
+<line x1="43" y1="220" x2="100.94" y2="95.748" class="derived" id="fin-leading-edge-spar" style="stroke:#146e9b;stroke-width:.70;stroke-dasharray:5 1.2"/>
+<circle cx="84.583" cy="165.729" r="1.7" class="derived" id="fin-aerodynamic-centre"/>
+<line x1="81.783" y1="165.729" x2="87.383" y2="165.729" class="derived"/>
+<line x1="84.583" y1="162.929" x2="84.583" y2="168.529" class="derived"/>
+<line x1="139.501" y1="95.748" x2="131" y2="95.748" class="extension"/>
+<line x1="128.691" y1="220" x2="131" y2="220" class="extension"/>
+<line x1="131" y1="95.748" x2="131" y2="220" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+<text x="133" y="157.874" class="dimension-text" text-anchor="middle" transform="rotate(-90 133 157.874)">b_v EACH 186.4 [D]</text>
 <line x1="43" y1="220" x2="43" y2="231.5" class="extension"/>
-<line x1="138.12" y1="220" x2="138.12" y2="231.5" class="extension"/>
-<line x1="43" y1="231.5" x2="138.12" y2="231.5" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
-<text x="90.56" y="235.3" class="dimension-text" text-anchor="middle">c_r 142.7 [D]</text>
-<line x1="109.584" y1="96.344" x2="109.584" y2="44" class="extension"/>
-<line x1="138.12" y1="96.344" x2="138.12" y2="44" class="extension"/>
-<line x1="109.584" y1="44" x2="138.12" y2="44" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
-<text x="123.852" y="42.3" class="dimension-text" text-anchor="middle">c_t 42.8 [D]</text>
-<line x1="87.267" y1="169.269" x2="118" y2="117" class="leader"/>
-<circle cx="87.267" cy="169.269" r="0.65" class="datum-dot"/>
-<text x="119.5" y="116.2" class="note" text-anchor="start">AC x +285 · z 76.1 [D]/[E]</text>
-<line x1="91.749" y1="158.172" x2="118" y2="80" class="leader"/>
-<circle cx="91.749" cy="158.172" r="0.65" class="datum-dot"/>
-<text x="119.5" y="79.2" class="note" text-anchor="start">Λc/4 21.991° [D]</text>
-<line x1="76.292" y1="158.172" x2="108" y2="58" class="leader"/>
-<circle cx="76.292" cy="158.172" r="0.65" class="datum-dot"/>
+<line x1="128.691" y1="220" x2="128.691" y2="231.5" class="extension"/>
+<line x1="43" y1="231.5" x2="128.691" y2="231.5" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+<text x="85.846" y="235.3" class="dimension-text" text-anchor="middle">c_r 128.5 [D]</text>
+<line x1="100.94" y1="95.748" x2="100.94" y2="44" class="extension"/>
+<line x1="139.501" y1="95.748" x2="139.501" y2="44" class="extension"/>
+<line x1="100.94" y1="44" x2="139.501" y2="44" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+<text x="120.22" y="42.3" class="dimension-text" text-anchor="middle">c_t 57.8 [D]</text>
+<line x1="84.583" y1="165.729" x2="118" y2="117" class="leader"/>
+<circle cx="84.583" cy="165.729" r="0.65" class="datum-dot"/>
+<text x="119.5" y="116.2" class="note" text-anchor="start">AC x +280 · z 81.4 [D]/[E]</text>
+<line x1="87.501" y1="157.874" x2="118" y2="80" class="leader"/>
+<circle cx="87.501" cy="157.874" r="0.65" class="datum-dot"/>
+<text x="119.5" y="79.2" class="note" text-anchor="start">Λc/4 20.379° [D]</text>
+<line x1="71.97" y1="157.874" x2="108" y2="58" class="leader"/>
+<circle cx="71.97" cy="157.874" r="0.65" class="datum-dot"/>
 <text x="109.5" y="57.2" class="note" text-anchor="start">LE SPAR Ø3 AL [D]/[E]</text>
 <text x="158" y="23" class="sheet-subtitle" text-anchor="start">B · SECTION CONCEPTS</text>
 <text x="158" y="28" class="micro" text-anchor="start">CHORD REDUCED · THICKNESS EXAGGERATED ×4 · NTS</text>
@@ -127,10 +127,10 @@
 <tspan x="158" dy="3.4">TE: 0.8 mm [E]. No enclosed Ø3.2 bore is claimed.</tspan>
 </text>
 <text x="158" y="160" class="sheet-subtitle" text-anchor="start">C · ROOT / BOOM INTERFACE</text>
-<rect x="165" y="177" width="95.12" height="8" rx="1" class="provisional-fill" id="fin-root-interface-envelope"/>
-<line x1="165" y1="181" x2="260.12" y2="181" class="centre"/>
+<rect x="165" y="177" width="85.691" height="8" rx="1" class="provisional-fill" id="fin-root-interface-envelope"/>
+<line x1="165" y1="181" x2="250.691" y2="181" class="centre"/>
 <text x="158" y="194" class="micro" text-anchor="start">
-<tspan x="158" dy="0">INTERFACE ENVELOPE: 142.7 × 3.0 mm [D]/[I].</tspan>
+<tspan x="158" dy="0">INTERFACE ENVELOPE: 128.5 × 3.0 mm [D]/[I].</tspan>
 <tspan x="158" dy="3.4">HARDWARE PER FIN: 1× Ø1.75 dowel + 1× M2 screw [E].</tspan>
 <tspan x="158" dy="3.4">ROOT FILLET ENVELOPE SHOWN; final saddle, load spread and print compensation OPEN [I].</tspan>
 </text>
@@ -139,34 +139,34 @@
 <text x="307" y="36" class="mono" text-anchor="start" id="fin-schedule-value-0">V1a MARGINAL · F2/E8 OPEN [E]</text>
 <line x1="272" y1="37.7" x2="399" y2="37.7" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="43.4" class="micro" text-anchor="start" id="fin-schedule-name-1">COUNT / AREA</text>
-<text x="307" y="43.4" class="mono" text-anchor="start" id="fin-schedule-value-1">2 / 3.4404 dm² total [D]</text>
+<text x="307" y="43.4" class="mono" text-anchor="start" id="fin-schedule-value-1">2 / 3.4737 dm² total [D]</text>
 <line x1="272" y1="45.1" x2="399" y2="45.1" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="50.8" class="micro" text-anchor="start" id="fin-schedule-name-2">AREA EACH</text>
-<text x="307" y="50.8" class="mono" text-anchor="start" id="fin-schedule-value-2">1.7202 dm² [D]</text>
+<text x="307" y="50.8" class="mono" text-anchor="start" id="fin-schedule-value-2">1.7368 dm² [D]</text>
 <line x1="272" y1="52.5" x2="399" y2="52.5" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="58.2" class="micro" text-anchor="start" id="fin-schedule-name-3">SPAN EACH</text>
-<text x="307" y="58.2" class="mono" text-anchor="start" id="fin-schedule-value-3">185.5 mm [D]</text>
+<text x="307" y="58.2" class="mono" text-anchor="start" id="fin-schedule-value-3">186.4 mm [D]</text>
 <line x1="272" y1="59.9" x2="399" y2="59.9" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="65.6" class="micro" text-anchor="start" id="fin-schedule-name-4">ROOT / TIP</text>
-<text x="307" y="65.6" class="mono" text-anchor="start" id="fin-schedule-value-4">142.7 / 42.8 mm [D]</text>
+<text x="307" y="65.6" class="mono" text-anchor="start" id="fin-schedule-value-4">128.5 / 57.8 mm [D]</text>
 <line x1="272" y1="67.3" x2="399" y2="67.3" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="73" class="micro" text-anchor="start" id="fin-schedule-name-5">MAC</text>
-<text x="307" y="73" class="mono" text-anchor="start" id="fin-schedule-value-5">101.7 mm [D]</text>
+<text x="307" y="73" class="mono" text-anchor="start" id="fin-schedule-value-5">97.7 mm [D]</text>
 <line x1="272" y1="74.7" x2="399" y2="74.7" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="80.4" class="micro" text-anchor="start" id="fin-schedule-name-6">AR / TAPER</text>
-<text x="307" y="80.4" class="mono" text-anchor="start" id="fin-schedule-value-6">2.00 / 0.30 [E]</text>
+<text x="307" y="80.4" class="mono" text-anchor="start" id="fin-schedule-value-6">2.00 / 0.45 [E]</text>
 <line x1="272" y1="82.1" x2="399" y2="82.1" class="thin" style="stroke-opacity:.18"/>
-<text x="273" y="87.8" class="micro" text-anchor="start" id="fin-schedule-name-7">SWEEP c/4</text>
-<text x="307" y="87.8" class="mono" text-anchor="start" id="fin-schedule-value-7">21.991° [D]</text>
+<text x="273" y="87.8" class="micro" text-anchor="start" id="fin-schedule-name-7">SWEEP LE / c/4</text>
+<text x="307" y="87.8" class="mono" text-anchor="start" id="fin-schedule-value-7">25.0° / 20.379° [D]/[E]</text>
 <line x1="272" y1="89.5" x2="399" y2="89.5" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="95.2" class="micro" text-anchor="start" id="fin-schedule-name-8">AC STATION</text>
-<text x="307" y="95.2" class="mono" text-anchor="start" id="fin-schedule-value-8">x +285 mm [E]</text>
+<text x="307" y="95.2" class="mono" text-anchor="start" id="fin-schedule-value-8">x +280 mm [E]</text>
 <line x1="272" y1="96.9" x2="399" y2="96.9" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="102.6" class="micro" text-anchor="start" id="fin-schedule-name-9">ROOT / TIP t</text>
 <text x="307" y="102.6" class="mono" text-anchor="start" id="fin-schedule-value-9">3.0 / 1.5 mm [E]</text>
 <line x1="272" y1="104.3" x2="399" y2="104.3" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="110" class="micro" text-anchor="start" id="fin-schedule-name-10">MASS</text>
-<text x="307" y="110" class="mono" text-anchor="start" id="fin-schedule-value-10">59.20–86.18 g incl. booms [E]</text>
+<text x="307" y="110" class="mono" text-anchor="start" id="fin-schedule-value-10">59.97–87.22 g incl. booms [E]</text>
 <line x1="272" y1="111.7" x2="399" y2="111.7" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="117.4" class="micro" text-anchor="start" id="fin-schedule-name-11">Cnβ ON</text>
 <text x="307" y="117.4" class="mono" text-anchor="start" id="fin-schedule-value-11">-0.00029…+0.00119/deg [E]</text>
@@ -178,24 +178,31 @@
 <text x="307" y="132.2" class="mono" text-anchor="start" id="fin-schedule-value-13">+0.0019; Cf 0.0058 [E]</text>
 <line x1="272" y1="133.9" x2="399" y2="133.9" class="thin" style="stroke-opacity:.18"/>
 <text x="273" y="139.6" class="micro" text-anchor="start" id="fin-schedule-name-14">BOOMS</text>
-<text x="307" y="139.6" class="mono" text-anchor="start" id="fin-schedule-value-14">2× 215.3 mm at y ±140 [E]/[I]</text>
+<text x="307" y="139.6" class="mono" text-anchor="start" id="fin-schedule-value-14">2× 216.4 mm at y ±140 [E]/[I]</text>
 <line x1="272" y1="141.3" x2="399" y2="141.3" class="thin" style="stroke-opacity:.18"/>
-<text x="273" y="147" class="micro" text-anchor="start" id="fin-schedule-name-15">PROP RADIAL</text>
-<text x="307" y="147" class="mono" text-anchor="start" id="fin-schedule-value-15">inner boom clearance 29.4 mm [D]/[I]</text>
+<text x="273" y="147" class="micro" text-anchor="start" id="fin-schedule-name-15">PROP CLEAR</text>
+<text x="307" y="147" class="mono" text-anchor="start" id="fin-schedule-value-15">29.4 nom / 13.4 residual mm [E]/[I]</text>
 <line x1="272" y1="148.7" x2="399" y2="148.7" class="thin" style="stroke-opacity:.18"/>
-<text x="273" y="153" class="sheet-subtitle" text-anchor="start">E · TOP-VIEW INSTALLATION</text>
-<line x1="325" y1="215.4" x2="325" y2="164.6" class="station" id="fin-install-prop-disk"/>
-<circle cx="325" cy="190" r="1.2" class="provisional-line"/>
-<rect x="285.5" y="222.75" width="107.64" height="4.5" rx="0.8" class="provisional-fill" id="fin-install-boom-l"/>
-<line x1="316.799" y1="225" x2="388.14" y2="225" class="derived" id="fin-install-root-l" style="stroke:#146e9b;stroke-width:1.0"/>
-<text x="395.14" y="226" class="micro" text-anchor="start">L</text>
-<rect x="285.5" y="152.75" width="107.64" height="4.5" rx="0.8" class="provisional-fill" id="fin-install-boom-r"/>
-<line x1="316.799" y1="155" x2="388.14" y2="155" class="derived" id="fin-install-root-r" style="stroke:#146e9b;stroke-width:1.0"/>
-<text x="395.14" y="156" class="micro" text-anchor="start">R</text>
-<text x="273" y="217" class="micro" text-anchor="start">
-<tspan x="273" dy="0">PROP Ø203.2 at x +235; booms y ±140 mm.</tspan>
-<tspan x="273" dy="3.4">INNER BOOM-TO-DISK CLEARANCE 29.4 mm [D]/[I].</tspan>
-<tspan x="273" dy="3.4">Root-fillet area is uncredited; final boom fairings, service access and wake mapping remain open [I].</tspan>
+<text x="273" y="153" class="sheet-subtitle" text-anchor="start">E · TOP + REAR INSTALLATION</text>
+<rect x="300.829" y="168.618" width="5.771" height="42.764" class="provisional-line" id="fin-install-prop-hazard-top" style="fill:#c43d32;fill-opacity:.05;stroke:#b83b32;stroke-width:.35;stroke-dasharray:1.5 1"/>
+<line x1="303.714" y1="208.473" x2="303.714" y2="171.527" class="station" id="fin-install-prop-disk"/>
+<circle cx="303.714" cy="190" r="1.2" class="provisional-line"/>
+<rect x="281.143" y="213.818" width="61.822" height="3.273" rx="0.8" class="provisional-fill" id="fin-install-boom-l"/>
+<line x1="298.75" y1="215.455" x2="335.475" y2="215.455" class="derived" id="fin-install-root-l" style="stroke:#146e9b;stroke-width:1.0"/>
+<text x="344.965" y="216.455" class="micro" text-anchor="start">L</text>
+<rect x="281.143" y="162.909" width="61.822" height="3.273" rx="0.8" class="provisional-fill" id="fin-install-boom-r"/>
+<line x1="298.75" y1="164.545" x2="335.475" y2="164.545" class="derived" id="fin-install-root-r" style="stroke:#146e9b;stroke-width:1.0"/>
+<text x="344.965" y="165.545" class="micro" text-anchor="start">R</text>
+<circle cx="371" cy="191" r="21.382" class="provisional-line" id="fin-install-prop-hazard-rear" style="fill:#c43d32;fill-opacity:.04;stroke:#b83b32;stroke-width:.35;stroke-dasharray:1.5 1"/>
+<circle cx="371" cy="191" r="18.473" class="provisional-line" id="fin-install-prop-disk-rear" style="fill:none;stroke:#b83b32;stroke-width:.5"/>
+<rect x="343.909" y="189.727" width="3.273" height="2.545" class="provisional-fill" id="fin-install-boom-rear-left"/>
+<rect x="345.045" y="155.84" width="1" height="33.887" class="provisional-fill" id="fin-install-fin-rear-left"/>
+<rect x="394.818" y="189.727" width="3.273" height="2.545" class="provisional-fill" id="fin-install-boom-rear-right"/>
+<rect x="395.955" y="155.84" width="1" height="33.887" class="provisional-fill" id="fin-install-fin-rear-right"/>
+<text x="273" y="228" class="micro" text-anchor="start">
+<tspan x="273" dy="0">PROP Ø203.2 at x +235; hazard inflation 16.0 mm [E]/[I].</tspan>
+<tspan x="273" dy="3.4">BOOM CLEARANCE 29.4 nominal / 13.4 residual mm; ANALYTICAL PASS / F2 PHYSICAL OPEN.</tspan>
+<tspan x="273" dy="3.4">Nose extension 17.8 mm; root fairing contained inside planform; wake/F2 remain open [I].</tspan>
 </text>
 <text x="18" y="239" class="micro" text-anchor="start">
 <tspan x="18" dy="0">AUTHORITY: planform coordinates are [D] from yaw_stability.py on [E] aerodynamic inputs.</tspan>

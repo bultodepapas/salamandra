@@ -177,6 +177,7 @@ const mounted = new Map(); // srcRel -> { dest }
 const add = (srcRel, dest) => mounted.set(srcRel, { dest });
 
 add(DESIGN_GUIDE_SOURCE, 'salamandra/design-guide.md');
+add('design/Salamandra-Design-Guide-Advanced-v0.1.md', 'salamandra/design-guide-advanced.md');
 add('design/Design-Guide-Justification-v0.1.md', 'salamandra/design-guide-justification.md');
 add('design/Design-Guide-Open-Points-v0.1.md', 'salamandra/design-guide-open-points.md');
 

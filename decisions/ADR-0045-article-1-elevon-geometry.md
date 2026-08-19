@@ -50,10 +50,10 @@ edge `[I]`.
 - The moving PETG estimate becomes 45 g total and the conservative balance allocation
   becomes 54 g total. Because the removed moving PETG becomes fixed panel material,
   only 6 g of balance mass is credited to AUW.
-- Current analytical budgets become 1553.25 g CLEAN and 1612.45 g V1 after the I-29 twin-fin/boom correction.
-- The exact V1 battery solution is 18.47 mm beyond current travel and the clamped xCG
-  misses the aft band edge by 0.094 mm. F2 must recover the physical station with measured
-  mass placement or an approved envelope change; exact closure is not claimed.
+- Current analytical results are 1553.25 g CLEAN and 1615.63 g coupled V1 after the I-30 fin/packaging correction.
+- The coupled V1 solver extends the forward travel 17.81 mm, adds 2.40 g of support and
+  recovers exact target xCG at battery x = −386.74 mm. F2 must verify that analytical
+  envelope and the measured mass/stiffness; physical closure is not claimed.
 - Existing 390 mm elevon CAD, hinge strips, servo stations, balance values and drawings
   are obsolete for Article #1 and must not be mixed with this decision.
 - Drawing SLM-WNG-001 remains a generated review sheet marked

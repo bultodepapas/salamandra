@@ -266,9 +266,9 @@ Movement authority is intentionally asymmetric:
   `--hold-battery` solely to inspect an untrimmed candidate.
 
 Current candidate results `[D]`: CLEAN closes **1553.25 g** at the released CG target with the
-battery at x = **−337.74 mm**. V1 adds the complete fixed-fin lower model; the exact
-target requires x = **−389.67 mm**, 18.47 mm beyond the current −371.20 mm forward stop.
-At that stop V1 xCG = −88.686 mm misses the aft band edge by 0.094 mm. These values differ
+battery at x = **−337.74 mm**. V1 adds the complete fixed-fin lower model and runs the
+coupled packaging solve. A 17.81 mm forward extension and 2.40 g support addition place
+the battery at **−386.74 mm** and recover xCG = −93.784 mm in two iterations. These values differ
 from the aggregate `balance_cg.py` station because individual masses now occupy their
 explicit spatial locations.
 
@@ -429,18 +429,30 @@ python3 yaw_stability.py
 ```
 
 Cnβ budget of the finless baseline (body + FSW wing: **−0.00055…−0.00141/deg — negative**),
-twin-fin sizing for two stability tiers (vertical-TE V1a 3.4404 dm² total →
-nominal +0.0005/deg; V1b 4.58 dm² total → +0.0010/deg), independent-corner power-on/off
+twin-fin sizing for two stability tiers (swept-trapezoid V1a 3.4737 dm² total →
+nominal +0.0005/deg; V1b 4.63 dm² total → +0.0010/deg), independent-corner power-on/off
 bands, rudder authority vs crosswind, yaw damping and
 subsidence, fin bending at the 180 km/h structural case (**root t ≥ 3.0 mm**), and the mass/drag/stall cost of
 each tier. The selected architecture uses two aft CORE booms at y = ±140 mm outside the
 propeller disk; it does not credit slipstream. Published results (I-29, `[D]` on
 `[E]` bands): correctly dimensionalized finless modes are **+8.244/−9.453 s⁻¹**
 (divergence time constant about 0.12 s), while the powered nominal V1 screen gives
-**−1.233 ± 5.204i s⁻¹** (decay time about 0.8 s). V1a ΔCD0 +0.0015 (+10.2 % drag,
-actual trapezoidal MAC); V1b +13.4 %. V1a remains at 44.7 km/h before the open carrier
-mass; V1b reaches about 45.1 km/h. A change to geometry, bands or methods must reproduce
+**−1.224 ± 5.205i s⁻¹** (decay time about 0.8 s). V1a ΔCD0 +0.0019 (+13.3 % drag);
+V1b +0.0026 (+17.5 %). The selected `x_AC = +280 mm` is the mass-feasible knee of the
++225…+325 mm station trade. A change to geometry, bands or methods must reproduce
 all embedded validation cases, including planform invariants and independent-corner power states.
+
+### 10.1 Connected aircraft scene and clearance
+
+```bash
+python3 aircraft_scene.py
+```
+
+Consumes the same equipment ledger, propeller definition, V1 packaging solution and fin
+geometry used by the drawings. It validates oriented top/side/rear projections and
+separates side-view axial overlap from three-dimensional interference. Current V1 boom
+clearance is **29.4 mm nominal / 13.4 mm residual** after the explicit 16.0 mm radial
+allowance. Status is `ANALYTICAL PASS / F2 PHYSICAL OPEN`.
 
 ### 11. R-JOINT pin material trade (ADR-0031)
 
@@ -483,11 +495,11 @@ Data-driven weight budget with per-part material selection. The Article #1 defau
 6S1P P42A, SpeedyBee F405 WING + mandatory PDB, DJI O4 Air Unit including its
 separate antenna, two Corona DS-939MG servos,
 APC E 8×8 assembly and the coupled ADR-0043 boom. Published results (docs/06 §3):
-ALL PETG CLEAN **1553.25 g / 44.1 km/h**. The V1a lower assembly model is 40.85 g for
-two PETG shells/mounts + 7.67 g for two aluminium LE spars + 10.68 g for two carbon
-booms = **59.20 g**, giving **1612.45 g / 44.9 km/h** with the two-servo baseline.
-V1 remains only about 7.9 g below the exact 1620.4 g stall mass limit; its required
-battery station is 18.47 mm beyond current travel. F2 must verify mass, balance and CAD.
+ALL PETG CLEAN **1553.25 g / 44.1 km/h**. The current V1a lower assembly model is
+41.25 g for two PETG shells/mounts + 7.85 g for two aluminium LE spars + 10.88 g for
+two carbon booms = **59.97 g**. The coupled packaging solution adds 2.40 g of forward
+support, giving **1615.63 g / 44.93 km/h**. It extends the nose 17.81 mm and solves the
+battery at x = −386.74 mm; F2 must verify mass, balance, O4 routing and CAD.
 The AERO policies
 remain rejected by divergence. Validation retains v0.2 as a historical regression and
 checks both the 60.00 g complete-assembly allocation and the analytical lower model.
@@ -512,7 +524,7 @@ GXY+gyroid+1.1 mm wall case reaches 207 km/h. The computed 0.85 clearance rounds
 python3 launch_speed.py
 ```
 
-Gate check of the mandatory hand throw. The current run propagates the **1612.45 g V1
+Gate check of the mandatory hand throw. The current coupled packaging result is **1615.63 g V1
 analytical lower mass**
 and integrates `m dV/dt = T − D(V)` by RK4 with piecewise-constant phase thrust,
 including the 0.2 s motor delay.

@@ -35,6 +35,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-27](I-27-elevon-geometry-trade.md) | **Article #1 elevon span, chord and tip-clearance trade** | 🔄 **Computational selection executed; E2/E5/G7 physical closure open** | ADR-0045, OP-06, guide §6.6, F2 |
 | [I-28](I-28-coupled-parametric-fuselage-oml.md) | **Senior master plan for an automatic parametric fuselage around the coupled skeleton** | 🔴 **Revision 2 OML rejected; Revision 3 executable plan controls replacement** | OP-21, F1/F2, G10, future fuselage-generator ADR |
 | [I-29](I-29-twin-fin-architecture-correction.md) | **Directional-surface architecture correction: twin aft-CORE fins** | 🔄 **Geometry corrected; F2/E8 physical closure open** | ADR-0038, SLM-GA-002, SLM-FIN-001, G10 |
+| [I-30](I-30-fin-station-mass-cg-and-connected-scene-closure.md) | **Fin station, volume/mass, CG, forward packaging and connected SVG scene** | 🔄 **Analytical coupling executed; F2/E8 physical closure open** | ADR-0038, I-29, SLM-GA-002, SLM-FIN-001, SLM-EQP-001 |
 
 ## Source quality
 

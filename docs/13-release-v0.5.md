@@ -178,7 +178,8 @@ stations and speed limits are unchanged; nothing else requires rework.
 
 | Artifact | Release role |
 |---|---|
-| [`design/Salamandra-Design-Guide-v0.1.md`](../design/Salamandra-Design-Guide-v0.1.md) | **v0.23 controlling CAD and engineering specification** |
+| [`design/Salamandra-Design-Guide-v0.1.md`](../design/Salamandra-Design-Guide-v0.1.md) | **v0.23 concise, controlling CAD execution specification** |
+| [`design/Salamandra-Design-Guide-Advanced-v0.1.md`](../design/Salamandra-Design-Guide-Advanced-v0.1.md) | **v0.23 canonical advanced engineering reference** |
 | [`design/Design-Guide-Justification-v0.1.md`](../design/Design-Guide-Justification-v0.1.md) | v0.18 evidence and derivations |
 | [`design/Design-Guide-Open-Points-v0.1.md`](../design/Design-Guide-Open-Points-v0.1.md) | v0.18 unresolved gates and triggers |
 | [`decisions/ADR-0045-article-1-elevon-geometry.md`](../decisions/ADR-0045-article-1-elevon-geometry.md) | Article #1 control-surface geometry |

@@ -60,6 +60,10 @@ Irreversible decisions supported by `[E]` or `[I]` must be explicitly declared.
 4. **If you invalidate a previous claim, add an entry to the [CHANGELOG](CHANGELOG.md)**
    with a correction number C.
 
+Maintainers packaging accepted work must use the
+[New Release Guide](docs/15-how-to-publish-a-release.md). A release is a separate,
+reviewed integration step; merging a contribution does not automatically release it.
+
 ## About corrections
 
 **The correction register is part of the product, not a list of embarrassments.** The

@@ -31,7 +31,7 @@ Keep conventional PETG and make the following masses binding CAD/procurement lim
 | FPV | DJI O4 Air Unit **8.95 g installed** | E18 camera 3.10 g + E19 VTX/attached-antenna assembly 5.85 g `[M]`/`[D]`; I-19 |
 | Servos | 2× Corona DS-939MG **25.0 g** | one per elevon, 12.5 g each `[M]`; 1.52× factored torque margin at 180 km/h |
 | Propeller assembly | **25 g** | APC blade 15 g `[M]` + adapter/collet allowance 10 g `[E]` |
-| V1a complete twin-fin/boom assembly | **≤60.00 g** | Current lower model: 40.85 g two shells/mounts + 7.67 g two LE spars + 10.68 g two aft booms = **59.20 g**; 0.80 g allocation margin `[E]` |
+| V1a complete twin-fin/boom assembly | **≤60.00 g** | Current lower model: 41.25 g two shells/mounts + 7.85 g two LE spars + 10.88 g two aft booms = **59.97 g**; 0.03 g allocation margin `[E]` |
 
 All other v0.2 rows remain unchanged. The reproducible totals are:
 
@@ -39,7 +39,8 @@ All other v0.2 rows remain unchanged. The reproducible totals are:
 |---|---:|---:|---:|
 | SALAMANDRA-CLEAN | **1,553.25 g** | 55.1 g/dm² | **44.1 km/h** |
 | SALAMANDRA-V1 allocation target | **1,613.25 g** | 57.2 g/dm² | **44.9 km/h** |
-| SALAMANDRA-V1 current lower model | **1,612.45 g** | 57.2 g/dm² | **44.9 km/h — analytical PASS** |
+| SALAMANDRA-V1 fin-only lower model | **1,613.22 g** | 57.2 g/dm² | **44.9 km/h — intermediate only** |
+| SALAMANDRA-V1 coupled packaging result | **1,615.63 g** | 57.3 g/dm² | **44.93 km/h — analytical PASS** |
 
 The formula's exact 45 km/h mass ceiling is 1,620.4 g. CLEAN carries 67.2 g of margin
 and the connected V1 lower model carries only about 7.9 g. C32 remains the correction that

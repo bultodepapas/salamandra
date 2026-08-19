@@ -137,20 +137,21 @@ SHEETS: tuple[SheetSpec, ...] = (
         heading="Side elevations",
         purpose=(
             "Comparative side elevations: CLEAN finless baseline and V1a twin-fixed-fin test "
-            "variant, with common root section, packaging, motor/propeller and keel clearance"
+            "variant, with connected electronics, variant-specific packaging, motor/propeller "
+            "hazard and rear-view clearance proof"
         ),
         scale="A3 · 1:4",
         authority="Root/fin `[D]`/`[E]`; side OML/install `[I]`",
         note=(
             "Use this sheet to compare the two published directional configurations without "
-            "changing the common wing, boom, battery or propulsion installation. "
+            "changing the common wing or propulsion installation. "
             "**SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds two passive fixed "
             "fins on aft CORE booms at y = ±140 mm. Neither configuration has a movable rudder. The released root "
             "airfoil and calculated V1a fin dimensions are traceable, while the side OML, "
             "vertical equipment placement, propeller-clearance keel and fin/pod installation "
-            "remain `[I]`. The two 18 × 14 mm boom envelopes pass outside the propeller "
-            "disk with 29.4 mm inner radial clearance and support the complete calculated "
-            "root chord; the coincident side projections are identified explicitly."
+            "remain `[I]`. The two 18 × 14 mm boom envelopes have 29.4 mm nominal and "
+            "13.4 mm residual radial clearance after the explicit 16.0 mm allowance. The "
+            "rear inset proves their lateral separation where the side projections overlap."
         ),
     ),
     SheetSpec(
@@ -167,12 +168,13 @@ SHEETS: tuple[SheetSpec, ...] = (
         note=(
             "Use this sheet to review one of the two identical passive V1a fins rather "
             "than inferring it from the general side elevation. The planform vertices, "
-            "area, taper, vertical trailing edge, derived quarter-chord sweep and AC marker "
+            "area, taper, swept leading/trailing edges, derived quarter-chord sweep and AC marker "
             "come from one Python geometry object. Root/tip section sketches explain that "
             "the Ø3 mm aluminium rod forms an external leading-edge nose in an open seat; "
             "they do not claim an impossible enclosed Ø3.2 mm bore inside the 3.0→1.5 mm "
             "plate. The top view proves propeller clearance and the uncredited dorsal root "
-            "fillet makes the boom junction explicit. Saddle detail, hole positions, print "
+            "fillet remains inside the credited planform. The rear view distinguishes axial "
+            "projection overlap from physical disk clearance. Saddle detail, hole positions, print "
             "compensation, measured mass and E8 flight closure remain provisional. No movable "
             "rudder is defined."
         ),
@@ -183,7 +185,7 @@ SHEETS: tuple[SheetSpec, ...] = (
         heading="Equipment mass skeleton",
         purpose=(
             "Top and side mass skeleton: component envelopes, true mass centres, x/y/z "
-            "schedule, CLEAN CG and V1 battery-stop overlay. The top view includes the "
+            "schedule, CLEAN CG and coupled V1 battery/camera/VTX overlay. The top view includes the "
             "controlled exterior wing planform as spatial context but no wing construction, "
             "fuselage or OML."
         ),
@@ -194,8 +196,8 @@ SHEETS: tuple[SheetSpec, ...] = (
         ),
         note=(
             "Use this sheet to review mass and packaging rather than shape: component "
-            "envelopes, true mass centres, the x/y/z schedule, the CLEAN CG and the V1 "
-            "battery-stop overlay. Envelope fill colour identifies system function while "
+            "envelopes, true mass centres, the x/y/z schedule, the CLEAN CG and the coupled "
+            "V1 battery/camera/VTX solution. Envelope fill colour identifies system function while "
             "outline style continues to identify maturity. The controlled exterior wing "
             "planform appears only as spatial context: the sheet defines no fuselage outer "
             "mould line, no wing construction and no manufacturing geometry."

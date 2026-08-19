@@ -161,10 +161,18 @@ VLM_NY = 40                   # spanwise panels, half-cosine both tips
 VLM_NX = 6                    # chordwise panels
 WEISSINGER_NY = 100           # Weissinger-L spanwise stations
 ARTICLE_CLEAN_MASS_KG = 1.55325
+
+# Propulsion installation geometry shared by equipment, clearance calculations
+# and drawings.  These values used to be declared only inside the SVG generator,
+# which allowed the physical component ledger and the drawing to diverge.
+PROP_PLANE_M = 0.235             # APC 8x8EP plane, aft of root c/4 [D]/[E]
+PROP_DIAMETER_M = 0.2032         # APC nominal 8 inch diameter [M]
+PROP_AXIAL_ENVELOPE_M = 0.0102   # measured/catalog component envelope [M]/[E]
+
 V1_FIN_MASS_CAP_KG = 0.06000          # twin-fin + boom allocation target [E]
-V1_FIN_SHELL_MOUNT_LOWER_KG = 0.04085 # two thin PETG fin shells/mounts [E]
-V1_FIN_SPAR_MASS_KG = 0.00767         # two Ø3 mm aluminium LE spars [D]/[E]
-V1_FIN_BOOM_MASS_KG = 0.01068         # two Ø6/4 mm carbon booms [E]
+V1_FIN_SHELL_MOUNT_LOWER_KG = 0.04124814 # geometry-derived PETG lower model [E]
+V1_FIN_SPAR_MASS_KG = 0.00784955         # geometry-derived Ø3 mm Al rods [D]/[E]
+V1_FIN_BOOM_MASS_KG = 0.01087624         # geometry-derived Ø6/4 mm carbon [E]
 V1_FIN_MODEL_LOWER_KG = (
     V1_FIN_SHELL_MOUNT_LOWER_KG
     + V1_FIN_SPAR_MASS_KG

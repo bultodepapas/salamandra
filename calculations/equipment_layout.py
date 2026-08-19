@@ -628,6 +628,20 @@ def _mass_rows() -> dict[str, float]:
     return {row["part"]: row["m"] for row in rows}
 
 
+@dataclass(frozen=True)
+class CoupledPackagingSolution:
+    """Converged V1 mass/balance/forward-packaging solution [D]/[E]/[I]."""
+
+    layout: Layout3D
+    required_battery_x_mm: float
+    nose_extension_mm: float
+    forward_extent_mm: float
+    aft_extent_mm: float
+    central_carrier_length_mm: float
+    added_support_mass_g: float
+    iterations: int
+
+
 def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
     """Return the component-level Article #1 packaging candidate."""
     variant_key = variant.lower()
@@ -843,8 +857,13 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
         ),
         _component(
             "propeller", "APC 8x8EP pusher propeller", "propulsion",
-            masses["prop"] - 10.0, (10.2, 203.2, 203.2),
-            (235.0, 0.0, 0.0), "[M]",
+            masses["prop"] - 10.0,
+            (
+                design_config.PROP_AXIAL_ENVELOPE_M * 1000.0,
+                design_config.PROP_DIAMETER_M * 1000.0,
+                design_config.PROP_DIAMETER_M * 1000.0,
+            ),
+            (design_config.PROP_PLANE_M * 1000.0, 0.0, 0.0), "[M]",
             "APC LP08080EP 0.53 oz; guide prop plane",
             mass_sigma_g=0.5, position_sigma_mm=(1.0, 1.0, 1.0),
             collidable=False,
@@ -1123,6 +1142,130 @@ def solve_battery_x(
     return solved, required_x
 
 
+def solve_v1_packaging(max_iterations: int = 30) -> CoupledPackagingSolution:
+    """Close V1 fin mass, CG, battery travel, O4 coax and nose length.
+
+    The CLEAN camera policy and aft battery limit are retained.  If the V1 fin
+    assembly requires a farther-forward battery station, the nose boom and
+    cradle are extended forward.  Their added mass and shifted centres feed the
+    next CG iteration.  The camera follows the new forward cradle plane and the
+    O4 VTX moves only as far as necessary to retain the measured 50 mm coax
+    constraint.  All extension geometry remains provisional `[I]` pending CAD.
+    """
+    extension_mm = 0.0
+    base = reference_layout("v1")
+    base_tube = base.component("nose_boom_tube")
+    base_cradle = base.component("battery_cradle")
+    base_battery = base.component(PRIMARY_CG_ADJUSTER)
+    base_camera = base.component("o4_camera")
+    base_vtx = base.component("o4_vtx")
+    tube_linear_mass = base_tube.mass_g / base_tube.size_mm[0]
+    cradle_linear_mass = base_cradle.mass_g / base_cradle.size_mm[0]
+
+    def extended_layout(extension: float) -> Layout3D:
+        tube_position = (
+            base_tube.position_mm[0] - extension / 2.0,
+            base_tube.position_mm[1],
+            base_tube.position_mm[2],
+        )
+        tube = replace(
+            base_tube,
+            mass_g=base_tube.mass_g + tube_linear_mass * extension,
+            size_mm=(base_tube.size_mm[0] + extension, *base_tube.size_mm[1:]),
+            position_mm=tube_position,
+            bounds=Bounds3D.fixed(tube_position),
+        )
+        cradle_position = (
+            base_cradle.position_mm[0] - extension / 2.0,
+            base_cradle.position_mm[1],
+            base_cradle.position_mm[2],
+        )
+        cradle = replace(
+            base_cradle,
+            mass_g=base_cradle.mass_g + cradle_linear_mass * extension,
+            size_mm=(base_cradle.size_mm[0] + extension, *base_cradle.size_mm[1:]),
+            position_mm=cradle_position,
+            bounds=Bounds3D.fixed(cradle_position),
+        )
+        battery_bounds = Bounds3D(
+            (
+                base_battery.bounds.minimum_mm[0] - extension,
+                base_battery.position_mm[1],
+                base_battery.position_mm[2],
+            ),
+            base_battery.bounds.maximum_mm,
+        )
+        battery_x = min(
+            max(base_battery.position_mm[0], battery_bounds.minimum_mm[0]),
+            battery_bounds.maximum_mm[0],
+        )
+        battery = replace(
+            base_battery,
+            position_mm=(battery_x, *base_battery.position_mm[1:]),
+            bounds=battery_bounds,
+        )
+        camera_position = (
+            base_camera.position_mm[0] - extension,
+            base_camera.position_mm[1],
+            base_camera.position_mm[2],
+        )
+        camera = replace(
+            base_camera,
+            position_mm=camera_position,
+            bounds=Bounds3D.fixed(camera_position),
+        )
+        dz = abs(base_vtx.position_mm[2] - camera_position[2])
+        maximum_dx = sqrt(max(O4_COAX_LENGTH_MM**2 - dz**2, 0.0))
+        vtx_x = min(base_vtx.position_mm[0], camera_position[0] + maximum_dx)
+        vtx_x = max(vtx_x, base_vtx.bounds.minimum_mm[0])
+        vtx_position = (vtx_x, base_vtx.position_mm[1], base_vtx.position_mm[2])
+        vtx = base_vtx.moved(vtx_position)
+        replacements = {
+            component.identifier: component
+            for component in (tube, cradle, battery, camera, vtx)
+        }
+        return replace(
+            base,
+            components=tuple(
+                replacements.get(component.identifier, component)
+                for component in base.components
+            ),
+        )
+
+    for iteration in range(1, max_iterations + 1):
+        layout = extended_layout(extension_mm)
+        required_x = required_battery_x(layout, target_cg_mm())
+        battery_min = layout.component(PRIMARY_CG_ADJUSTER).bounds.minimum_mm[0]
+        missing = max(0.0, battery_min - required_x)
+        if missing <= 1e-7:
+            solved, required_x = solve_battery_x(layout)
+            break
+        extension_mm += missing
+    else:
+        raise RuntimeError("V1 packaging iteration did not converge")
+
+    minimum_x = min(component.aabb()[0][0] for component in solved.components)
+    maximum_x = max(component.aabb()[1][0] for component in solved.components)
+    rear_pod_end_mm = 265.0
+    bay_forward_mm = balance_cg.solve_reference_layout()["bay_fwd"] * 1000.0
+    added_mass = (
+        solved.component("nose_boom_tube").mass_g - base_tube.mass_g
+        + solved.component("battery_cradle").mass_g - base_cradle.mass_g
+    )
+    return CoupledPackagingSolution(
+        layout=solved,
+        required_battery_x_mm=float(required_x),
+        nose_extension_mm=float(extension_mm),
+        forward_extent_mm=float(minimum_x),
+        aft_extent_mm=float(maximum_x),
+        central_carrier_length_mm=float(
+            rear_pod_end_mm - (bay_forward_mm - extension_mm)
+        ),
+        added_support_mass_g=float(added_mass),
+        iterations=iteration,
+    )
+
+
 def parse_move(value: str) -> tuple[str, Vec3]:
     """Parse CLI ID=x,y,z movement syntax."""
     try:
@@ -1143,6 +1286,7 @@ def validation_checks() -> dict[str, bool]:
     clean = reference_layout("clean")
     solved, _ = solve_battery_x(clean)
     v1 = reference_layout("v1")
+    coupled_v1 = solve_v1_packaging()
     checks = {
         "component identifiers are unique": (
             len(clean.components)
@@ -1272,6 +1416,24 @@ def validation_checks() -> dict[str, bool]:
             v1.mass_g() - clean.mass_g(),
             design_config.V1_FIN_MODEL_LOWER_KG * 1000.0,
             abs_tol=1e-9,
+        ),
+        "coupled V1 packaging closes CG without clamping the battery": (
+            isclose(
+                coupled_v1.layout.cg_mm()[0], target_cg_mm(), abs_tol=1e-9
+            )
+            and coupled_v1.layout.component(PRIMARY_CG_ADJUSTER).bounds.contains(
+                coupled_v1.layout.component(PRIMARY_CG_ADJUSTER).position_mm
+            )
+        ),
+        "coupled V1 nose extension is solved rather than prescribed": (
+            0.0 < coupled_v1.nose_extension_mm < 30.0
+            and coupled_v1.iterations <= 5
+            and coupled_v1.added_support_mass_g > 0.0
+        ),
+        "coupled V1 camera/VTX placement retains measured O4 coax length": all(
+            passed
+            for link, _, passed in coupled_v1.layout.link_results()
+            if link.name.startswith("DJI O4")
         ),
     }
     try:

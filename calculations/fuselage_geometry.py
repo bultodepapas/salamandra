@@ -218,12 +218,14 @@ def _component_envelopes(
 def build_model(
     design: fuselage_contract.OmlDesignVector | None = None,
     policy: fuselage_contract.EnvelopePolicy | None = None,
+    layout: equipment_layout.Layout3D | None = None,
 ) -> FuselageModel:
     if design is None:
         design = fuselage_contract.DEFAULT_DESIGN
     if policy is None:
         policy = fuselage_contract.DEFAULT_POLICY
-    layout = equipment_layout.reference_layout("clean")
+    if layout is None:
+        layout = equipment_layout.reference_layout("clean")
     envelopes = _component_envelopes(layout, policy)
     camera = next(item for item in envelopes if item.identifier == policy.lens_face_component)
     motor = next(item for item in envelopes if item.identifier == "motor")

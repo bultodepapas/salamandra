@@ -4,6 +4,53 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.41] — 2026-08-19
+
+**C48 — fin placement, propeller clearance, mass/CG packaging and side-view geometry were
+not one coupled calculation.**
+
+- Replaced the assumed `x_AC = +285 mm` and vertical-TE planform with a reproducible
+  +225…+325 mm station trade. The first mass-feasible minimum-score knee is +280 mm.
+- Re-derived V1a as a 25°-LE swept trapezoid: 3.4737 dm² total, 186.4 mm span each,
+  128.5/57.8 mm root/tip chords, taper 0.45 and Λc/4 20.379°.
+- Derived PETG volume, aluminium spar mass and carbon-boom mass from geometry. The lower
+  complete module is 59.97 g, leaving 0.03 g against the provisional 60 g allocation.
+- Added the iterative V1 package solver. It closes the released CG in two passes by adding
+  17.81 mm of nose structure and 2.40 g of support mass, placing battery/camera/VTX at
+  x = −386.74/−463.79/−429.61 mm. V1 is 1615.63 g and 44.93 km/h analytically.
+- Added a shared 3-D aircraft scene and inflated propeller hazard. Boom clearance is
+  29.4 mm nominal / 13.4 mm residual after the explicit 16.0 mm allowance. Side axial
+  overlap is reported but rear projection proves analytical lateral separation; F2 remains open.
+- Rebuilt the V1 side OML from its solved layout (757.51 mm versus 739.70 mm CLEAN), added
+  the complete electronics skeleton and rear clearance proof, and regenerated the fin and
+  mass-skeleton sheets from the same Python objects.
+- Added I-30 with the equations, trade table, evidence boundary and remaining physical gates.
+
+---
+
+## [1.40] — 2026-08-19
+
+**CAD documentation split — no technical baseline change.**
+
+- Replaced the 67 kB designer entry point with a concise canonical CAD execution guide
+  organized around geometry, interfaces, packaging, mass limits and handoff gates.
+- Renamed the former full document to `Salamandra-Design-Guide-Advanced-v0.1.md`; it
+  remains the canonical source for engineering context, calculation results, release
+  migration and detailed traceability.
+- Kept version 0.23 and all released dimensions unchanged. The documentation site now
+  publishes both guides, while the primary Design Guide URL resolves to the concise one.
+- Corrected the stale advanced-guide component-map row so it agrees with its own released
+  V1 definition: two fixed fins, one on each aft CORE boom.
+- Added a maintainer release guide and an explicit README map explaining the distinct
+  authority and audience of the concise guide, advanced guide, justification and
+  open-points register.
+- Added the current manifest-controlled SVG drawing set to both Design Guides, with
+  `SLM-GA-001` as the visual entry point and explicit task/authority guidance for all six
+  generated sheets. The links follow the stable canonical filenames and therefore resolve
+  to the latest regenerated drawings.
+
+---
+
 ## [1.39] — 2026-08-19
 
 **C47 — the centreline-fin carrier was physically incompatible with the pusher propeller

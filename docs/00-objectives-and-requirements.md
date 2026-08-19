@@ -100,7 +100,7 @@ These are the objectives that define the *platform*, as opposed to the reference
 > C16 relaxed the requirement to 45 km/h but then used the local-section `clmax = 0.65`
 > as if it were whole-wing `CLmax`. I-07 supplies the correct distinction: local section
 > screen **0.65**, released wing design value **0.589**. The latter gives 45.0 km/h at
-> the V1 allocation mass. The current **1612.45 g** V1 lower model gives 44.9 km/h and
+> the V1 allocation mass. The coupled **1615.63 g** V1 model gives 44.93 km/h and
 > passes analytically; measured F2 mass remains mandatory.
 >
 > **Relaxed to ≤ 45 km/h**, justified by precedent: the Peregrine at 52 g/dm² and the Mojito at ~60 are hand-launched.
@@ -120,9 +120,9 @@ See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 
 > **R-CG:** the Article #1 carrier shall hold CG within ±5 mm with the 6S1P pack. The
 > CLEAN component-level solution places it at x = **−337.74 mm** (travel
-> −371.20…−336.10). The current twin-fin V1 lower model requires **−389.67 mm**, 18.47 mm
-> beyond current travel; the clamped xCG = −88.686 mm also misses the aft edge of the
-> allowed band by 0.094 mm. F2 must close mass placement and battery travel. A 4S aircraft
+> −371.20…−336.10). The coupled twin-fin V1 solver extends the nose 17.81 mm, adds 2.40 g
+> of support, and converges at battery x = **−386.74 mm** and target xCG −93.784 mm.
+> F2 must close measured mass, stiffness and battery travel. A 4S aircraft
 > requires approximately 713 Kv rather than the 500–550 Kv 6S motor and therefore is a
 > separate power module. The former requirement to interchange 4S1P/4S2P/6S1P/6S2P in
 > one cradle is superseded by ADR-0042.
@@ -160,10 +160,10 @@ or FC change):
 
 | | SALAMANDRA-CLEAN | SALAMANDRA-V1 |
 |---|---|---|
-| Vertical stabilizer | None | 2× fixed fins on aft CORE booms at y = ±140 mm; S_v,total = 3.4404 dm² (V1a) |
+| Vertical stabilizer | None | 2× fixed swept-trapezoid fins on aft CORE booms at y = ±140 mm; S_v,total = 3.4737 dm² (V1a) |
 | Cnβ total | **−0.00055…−0.00141/deg — negative** (FC recovery unproven; not the first-flight configuration, G10/C31) | V1a power-on/off **−0.00029…+0.00119/deg** (nominal +0.0005) `[D]`/`[E]`; marginal, lower corner open |
 | Role | O1 efficiency build (≤ 1.15 Wh/km) | Recommended build for the Article #1 test programme |
-| Cost | — | 59.20–86.18 g complete twin-fin/boom screen `[E]` · ΔCD0 +0.0019 (+13.1% `[E]`) · allocation V_stall 44.9 km/h |
+| Cost | — | 59.97–87.22 g complete twin-fin/boom screen `[E]` · ΔCD0 +0.0019 (+13.3% `[E]`) · coupled V_stall 44.93 km/h |
 
 **Rudder (movable): not required** — authority analysis shows it cannot hold a 20 km/h
 crosswind slip at stall and the mission coordinates turns through roll (I-20 §5.4;

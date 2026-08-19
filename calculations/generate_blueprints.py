@@ -32,6 +32,7 @@ from math import sqrt
 from pathlib import Path
 
 import aero_contract
+import aircraft_scene
 import drawing_index
 import equipment_layout
 import fuselage_contract
@@ -44,6 +45,8 @@ from design_config import (
     ELEVON_OUTBOARD_M,
     HALF_SPAN,
     MAC,
+    PROP_DIAMETER_M,
+    PROP_PLANE_M,
     ROOT_CHORD,
     STATIC_MARGIN,
     SWEEP_C4_DEG,
@@ -58,10 +61,12 @@ from design_config import (
 )
 from yaw_stability import (
     AR_FIN,
+    FIN_BOOM_WIDTH_M,
     FIN_COUNT,
     FIN_AC_STATION_M,
     FIN_ROOT_THICKNESS_M,
     FIN_ROOT_Z_M,
+    FIN_LE_SWEEP_DEG,
     FIN_SPAR_DIAMETER_M,
     FIN_SPAR_SEAT_DIAMETER_M,
     FIN_SWEEP_DEG,
@@ -111,8 +116,6 @@ class DrawingContract:
     cradle_wall_m: float = 0.0012
     motor_body_forward_m: float = 0.195
     motor_mount_m: float = 0.230
-    prop_plane_m: float = 0.235
-    prop_diameter_m: float = 0.2032
     rear_pod_end_m: float = 0.265
     rear_pod_lower_prop_m: float = -0.1116
     motor_diameter_m: float = 0.028
@@ -632,10 +635,10 @@ def draw_general_arrangement() -> SvgSheet:
     motor_aft = plan_point(CONTRACT.motor_mount_m, 0.0175, ox, oy, scale)
     sheet.rect(motor_fwd[0], motor_fwd[1], motor_aft[0] - motor_fwd[0],
                motor_aft[1] - motor_fwd[1], "provisional-fill", rx=1.2)
-    prop_left = plan_point(CONTRACT.prop_plane_m, -CONTRACT.prop_diameter_m / 2.0, ox, oy, scale)
-    prop_right = plan_point(CONTRACT.prop_plane_m, CONTRACT.prop_diameter_m / 2.0, ox, oy, scale)
+    prop_left = plan_point(PROP_PLANE_M, -PROP_DIAMETER_M / 2.0, ox, oy, scale)
+    prop_right = plan_point(PROP_PLANE_M, PROP_DIAMETER_M / 2.0, ox, oy, scale)
     sheet.line(*prop_left, *prop_right, "provisional-line")
-    sheet.circle(*plan_point(CONTRACT.prop_plane_m, 0.0, ox, oy, scale), 1.4, "provisional-line")
+    sheet.circle(*plan_point(PROP_PLANE_M, 0.0, ox, oy, scale), 1.4, "provisional-line")
 
     # CG and independent NP datums.  The separation is intentionally visible.
     for station, css, label, x_shift in (
@@ -754,7 +757,7 @@ def draw_general_arrangement() -> SvgSheet:
     )
     sheet.leader(*plan_point(-0.180, -0.028, ox, oy, scale), 164, 86,
                  "FUSELAGE OML · PROVISIONAL [I]", True, "end")
-    sheet.leader(*plan_point(CONTRACT.prop_plane_m, 0.1016, ox, oy, scale), 265, 229,
+    sheet.leader(*plan_point(PROP_PLANE_M, PROP_DIAMETER_M / 2.0, ox, oy, scale), 265, 229,
                  "APC 8×8 DISK x +235 · PROVISIONAL", True)
     sheet.leader(*chord_fraction_point(0.44, CONTRACT.hinge_fraction, ox, oy, scale),
                  335, 206, f"ELEVON · HINGE {ELEVON_HINGE_XC:.2f} c", False)
@@ -772,9 +775,10 @@ def draw_side_elevations() -> SvgSheet:
     scale = 4.0
     origin_x = 175.0
     layout = solve_reference_layout()
-    component_layout, pack_station_mm = equipment_layout.solve_battery_x(
-        equipment_layout.reference_layout("clean"), clamp=True
-    )
+    clean_scene = aircraft_scene.reference_scene("clean")
+    v1_scene = aircraft_scene.reference_scene("v1")
+    component_layout = clean_scene.layout
+    pack_station_mm = component_layout.component("battery_6s1p").position_mm[0]
     cradle_fwd = layout["bay_fwd"]
     cradle_aft = cradle_fwd + CONTRACT.cradle_length_m
     pack_station = pack_station_mm / 1000.0
@@ -790,6 +794,16 @@ def draw_side_elevations() -> SvgSheet:
     pack_aft = pack_station + CONTRACT.pack_length_m / 2.0
     pack_z_min = 0.004
     pack_z_max = pack_z_min + CONTRACT.pack_height_m
+    v1_packaging = v1_scene.packaging
+    v1_clearance = v1_scene.clearance
+    assert v1_packaging is not None and v1_clearance is not None
+    v1_o4_coax_distance_mm = next(
+        distance
+        for link, distance, _ in v1_scene.layout.link_results()
+        if link.name.startswith("DJI O4")
+    )
+    clean_oml_model = fuselage_geometry.build_model(layout=clean_scene.layout)
+    v1_oml_model = fuselage_geometry.build_model(layout=v1_scene.layout)
 
     root_section = load_airfoil(
         ROOT / "geometry" / "airfoils" / "salamandra-root-r1.dat"
@@ -820,6 +834,17 @@ def draw_side_elevations() -> SvgSheet:
         "SOURCE: GUIDE §§4.4/6.7/9.2 · ADR-0038 · I-16/I-29",
     )
     def draw_variant(origin_y: float, *, with_fin: bool) -> None:
+        active_scene = v1_scene if with_fin else clean_scene
+        active_layout = active_scene.layout
+        active_battery = active_layout.component("battery_6s1p")
+        active_camera = active_layout.component("o4_camera")
+        active_vtx = active_layout.component("o4_vtx")
+        active_cradle_fwd = cradle_fwd - (
+            v1_packaging.nose_extension_mm / 1000.0 if with_fin else 0.0
+        )
+        active_pack_min, active_pack_max = active_battery.aabb()
+        active_camera_min, active_camera_max = active_camera.aabb()
+        active_vtx_min, active_vtx_max = active_vtx.aabb()
         def point(x_m: float, z_m: float) -> str:
             x_svg, y_svg = side_point(x_m, z_m, origin_x, origin_y, scale)
             return f"{fmt(x_svg)} {fmt(y_svg)}"
@@ -832,7 +857,10 @@ def draw_side_elevations() -> SvgSheet:
             """Return a cubic segment for non-OML local installation details."""
             return f"C {point(*control_1)} {point(*control_2)} {point(*end)}"
 
-        oml_model = fuselage_geometry.reference_model()
+        # The side OML is rebuilt from the active component layout.  V1 therefore
+        # inherits the solver's forward camera/cradle shift instead of reusing
+        # the shorter CLEAN body silhouette.
+        oml_model = v1_oml_model if with_fin else clean_oml_model
         body_points = [
             side_point(x_mm / 1000.0, z_mm / 1000.0, origin_x, origin_y, scale)
             for x_mm, z_mm in fuselage_geometry.side_outline_mm(oml_model)
@@ -867,8 +895,86 @@ def draw_side_elevations() -> SvgSheet:
             style="stroke-width:.62;fill:none",
         )
 
+        # Complete electronic/propulsion skeleton from the canonical 3-D
+        # component ledger.  The five large items drawn explicitly below are
+        # excluded here to avoid double linework; every other equipment item is
+        # projected from its oriented envelope and carries its stable E-number.
+        skeleton_colours = {
+            "energy": "#8c62a8",
+            "propulsion": "#b94a48",
+            "power": "#c07a16",
+            "avionics": "#2d74a8",
+            "sensor": "#258f8a",
+            "actuator": "#4d8a45",
+            "fpv": "#a64886",
+            "rf": "#a64886",
+            "reserve": "#737b82",
+        }
+        explicit_ids = {"battery_6s1p", "motor", "propeller", "o4_camera", "o4_vtx"}
+        for component in (
+            active_layout.component(identifier)
+            for identifier in MASS_SKELETON_COMPONENT_IDS
+            if identifier not in explicit_ids
+        ):
+            projected_min, projected_max = aircraft_scene.projected_bounds(
+                component, "side"
+            )
+            top_left = side_point(
+                projected_min[0] / 1000.0,
+                projected_max[1] / 1000.0,
+                origin_x,
+                origin_y,
+                scale,
+            )
+            bottom_right = side_point(
+                projected_max[0] / 1000.0,
+                projected_min[1] / 1000.0,
+                origin_x,
+                origin_y,
+                scale,
+            )
+            colour = skeleton_colours.get(component.category, "#737b82")
+            dash = "3 1.5" if component.authority in {"[E]", "[I]"} else "none"
+            variant_id = "v1a" if with_fin else "clean"
+            sheet.rect(
+                top_left[0],
+                top_left[1],
+                bottom_right[0] - top_left[0],
+                bottom_right[1] - top_left[1],
+                "provisional-line",
+                rx=0.45,
+                id=f"side-skeleton-{variant_id}-{component.identifier}",
+                style=(
+                    f"fill:{colour};fill-opacity:.12;stroke:{colour};"
+                    f"stroke-width:.38;stroke-dasharray:{dash}"
+                ),
+            )
+            centre = side_point(
+                component.position_mm[0] / 1000.0,
+                component.position_mm[2] / 1000.0,
+                origin_x,
+                origin_y,
+                scale,
+            )
+            sheet.circle(
+                *centre,
+                0.55,
+                "derived",
+                id=f"side-skeleton-mass-{variant_id}-{component.identifier}",
+                style=f"fill:{colour};stroke:{colour};stroke-width:.2",
+            )
+            reference = MASS_SKELETON_REFERENCE_BY_ID[component.identifier]
+            sheet.text(
+                top_left[0] + 0.6,
+                top_left[1] - 0.7,
+                reference,
+                "micro",
+                id=f"side-skeleton-label-{variant_id}-{component.identifier}",
+                style=f"fill:{colour};font-size:2.15px",
+            )
+
         # Internal packaging: Ø8 boom, 155 x 24 mm cradle envelope and Ø28 motor.
-        boom_top_left = side_point(cradle_fwd, 0.004, origin_x, origin_y, scale)
+        boom_top_left = side_point(active_cradle_fwd, 0.004, origin_x, origin_y, scale)
         boom_bottom_right = side_point(
             CONTRACT.nose_support_m + CONTRACT.tube_core_insertion_m,
             -0.004,
@@ -884,8 +990,20 @@ def draw_side_elevations() -> SvgSheet:
             "provisional-line",
             rx=0.8,
         )
-        pack_top_left = side_point(pack_fwd, pack_z_max, origin_x, origin_y, scale)
-        pack_bottom_right = side_point(pack_aft, pack_z_min, origin_x, origin_y, scale)
+        pack_top_left = side_point(
+            active_pack_min[0] / 1000.0,
+            active_pack_max[2] / 1000.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        pack_bottom_right = side_point(
+            active_pack_max[0] / 1000.0,
+            active_pack_min[2] / 1000.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
         sheet.rect(
             pack_top_left[0],
             pack_top_left[1],
@@ -894,11 +1012,9 @@ def draw_side_elevations() -> SvgSheet:
             "provisional-line",
             rx=1.0,
         )
-        camera_min, camera_max = camera_component.aabb()
-        vtx_min, vtx_max = vtx_component.aabb()
         for component_min, component_max, identifier in (
-            (camera_min, camera_max, "camera"),
-            (vtx_min, vtx_max, "vtx"),
+            (active_camera_min, active_camera_max, "camera"),
+            (active_vtx_min, active_vtx_max, "vtx"),
         ):
             top_left = side_point(
                 component_min[0] / 1000.0,
@@ -927,22 +1043,22 @@ def draw_side_elevations() -> SvgSheet:
                 ),
             )
         camera_centre = side_point(
-            camera_component.position_mm[0] / 1000.0,
-            camera_component.position_mm[2] / 1000.0,
+            active_camera.position_mm[0] / 1000.0,
+            active_camera.position_mm[2] / 1000.0,
             origin_x,
             origin_y,
             scale,
         )
         vtx_centre = side_point(
-            vtx_component.position_mm[0] / 1000.0,
-            vtx_component.position_mm[2] / 1000.0,
+            active_vtx.position_mm[0] / 1000.0,
+            active_vtx.position_mm[2] / 1000.0,
             origin_x,
             origin_y,
             scale,
         )
         lens_face = side_point(
-            camera_min[0] / 1000.0,
-            camera_component.position_mm[2] / 1000.0,
+            active_camera_min[0] / 1000.0,
+            active_camera.position_mm[2] / 1000.0,
             origin_x,
             origin_y,
             scale,
@@ -988,23 +1104,50 @@ def draw_side_elevations() -> SvgSheet:
             rx=1.0,
         )
 
+        hazard = active_scene.propeller
+        hazard_top_left = side_point(
+            (hazard.centre_mm[0] - hazard.inflated_axial_half_mm) / 1000.0,
+            hazard.inflated_radius_mm / 1000.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        hazard_bottom_right = side_point(
+            (hazard.centre_mm[0] + hazard.inflated_axial_half_mm) / 1000.0,
+            -hazard.inflated_radius_mm / 1000.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        sheet.rect(
+            hazard_top_left[0],
+            hazard_top_left[1],
+            hazard_bottom_right[0] - hazard_top_left[0],
+            hazard_bottom_right[1] - hazard_top_left[1],
+            "provisional-line",
+            id=f"side-prop-hazard-{'v1a' if with_fin else 'clean'}",
+            style=(
+                "fill:#c43d32;fill-opacity:.055;stroke:#b83b32;"
+                "stroke-width:.35;stroke-dasharray:1.5 1"
+            ),
+        )
         prop_top = side_point(
-            CONTRACT.prop_plane_m,
-            CONTRACT.prop_diameter_m / 2.0,
+            PROP_PLANE_M,
+            PROP_DIAMETER_M / 2.0,
             origin_x,
             origin_y,
             scale,
         )
         prop_bottom = side_point(
-            CONTRACT.prop_plane_m,
-            -CONTRACT.prop_diameter_m / 2.0,
+            PROP_PLANE_M,
+            -PROP_DIAMETER_M / 2.0,
             origin_x,
             origin_y,
             scale,
         )
         sheet.line(*prop_top, *prop_bottom, "provisional-line")
         sheet.circle(
-            *side_point(CONTRACT.prop_plane_m, 0.0, origin_x, origin_y, scale),
+            *side_point(PROP_PLANE_M, 0.0, origin_x, origin_y, scale),
             1.3,
             "provisional-line",
         )
@@ -1017,7 +1160,7 @@ def draw_side_elevations() -> SvgSheet:
             curve(
                 (0.214, -0.050),
                 (0.226, -0.092),
-                (CONTRACT.prop_plane_m, CONTRACT.rear_pod_lower_prop_m),
+                (PROP_PLANE_M, CONTRACT.rear_pod_lower_prop_m),
             ),
         ])
         sheet.path(
@@ -1026,9 +1169,9 @@ def draw_side_elevations() -> SvgSheet:
             style="fill:none;stroke-width:1.05;stroke-linecap:round",
         )
         sheet.line(
-            *side_point(CONTRACT.prop_plane_m - 0.006,
+            *side_point(PROP_PLANE_M - 0.006,
                         CONTRACT.rear_pod_lower_prop_m, origin_x, origin_y, scale),
-            *side_point(CONTRACT.prop_plane_m + 0.020,
+            *side_point(PROP_PLANE_M + 0.020,
                         CONTRACT.rear_pod_lower_prop_m, origin_x, origin_y, scale),
             "provisional-line",
             stroke_dasharray="none",
@@ -1036,7 +1179,7 @@ def draw_side_elevations() -> SvgSheet:
 
         carrier_end = fin.boom_x_end_m if with_fin else CONTRACT.rear_pod_end_m
         sheet.line(
-            *side_point(cradle_fwd - 0.015, 0.0, origin_x, origin_y, scale),
+            *side_point(active_cradle_fwd - 0.015, 0.0, origin_x, origin_y, scale),
             *side_point(carrier_end + 0.015, 0.0, origin_x, origin_y, scale),
             "centre",
         )
@@ -1098,13 +1241,13 @@ def draw_side_elevations() -> SvgSheet:
             # deliberately excluded from S_v and Cn_beta, so it cannot inflate
             # the directional-stability result before F2 geometry closure.
             root_fillet_path = " ".join([
-                f"M {point(fin_root_le - 0.032, fin_root_z)}",
+                f"M {point(fin_root_le, fin_root_z)}",
                 curve(
-                    (fin_root_le - 0.014, fin_root_z),
-                    (fin_root_le + 0.004, fin_root_z + 0.010),
-                    (fin_root_le + 0.012, fin_root_z + 0.028),
+                    (fin_root_le + 0.010, fin_root_z),
+                    (fin_root_le + 0.018, fin_root_z + 0.010),
+                    (fin_root_le + 0.024, fin_root_z + 0.028),
                 ),
-                f"L {point(fin_root_le + 0.012, fin_root_z)}",
+                f"L {point(fin_root_le + 0.024, fin_root_z)}",
                 "Z",
             ])
             sheet.path(
@@ -1169,6 +1312,102 @@ def draw_side_elevations() -> SvgSheet:
     sheet.line(51, 38, 32, 38, "medium", marker_end="url(#arrow-end)")
     sheet.text(54, 39, "FORWARD", "label")
 
+    # Rear-view proof of the hidden y separation.  This inset is essential:
+    # the side projection reports axial overlap but cannot establish collision.
+    rear_cx, rear_cy, rear_scale = 350.0, 103.0, 4.0
+    nominal_radius = v1_scene.propeller.nominal_radius_mm / rear_scale
+    hazard_radius = v1_scene.propeller.inflated_radius_mm / rear_scale
+    sheet.text(314, 43, "C · V1 REAR CLEARANCE", "sheet-subtitle")
+    sheet.text(
+        314,
+        48,
+        "y/z PROOF · x OVERLAP EVALUATED IN 3-D",
+        "micro",
+    )
+    sheet.circle(
+        rear_cx,
+        rear_cy,
+        hazard_radius,
+        "provisional-line",
+        id="side-rear-prop-hazard",
+        style=(
+            "fill:#c43d32;fill-opacity:.045;stroke:#b83b32;"
+            "stroke-width:.4;stroke-dasharray:1.5 1"
+        ),
+    )
+    sheet.circle(
+        rear_cx,
+        rear_cy,
+        nominal_radius,
+        "provisional-line",
+        id="side-rear-prop-disk",
+        style="fill:none;stroke:#b83b32;stroke-width:.55",
+    )
+    for side, sign in (("left", -1.0), ("right", 1.0)):
+        boom_cx = rear_cx + sign * fin.lateral_station_m * 1000.0 / rear_scale
+        boom_w = FIN_BOOM_WIDTH_M * 1000.0 / rear_scale
+        boom_h = 14.0 / rear_scale
+        sheet.rect(
+            boom_cx - boom_w / 2.0,
+            rear_cy - boom_h / 2.0,
+            boom_w,
+            boom_h,
+            "provisional-line",
+            id=f"side-rear-boom-{side}",
+            style=(
+                "fill:#f4c46a;fill-opacity:.24;stroke:#985b00;"
+                "stroke-width:.45;stroke-dasharray:2 1"
+            ),
+        )
+        fin_root_y = rear_cy - FIN_ROOT_Z_M * 1000.0 / rear_scale
+        fin_top_y = rear_cy - (
+            FIN_ROOT_Z_M + fin.span_m
+        ) * 1000.0 / rear_scale
+        fin_w = max(1.0, FIN_ROOT_THICKNESS_M * 1000.0 / rear_scale)
+        sheet.rect(
+            boom_cx - fin_w / 2.0,
+            fin_top_y,
+            fin_w,
+            fin_root_y - fin_top_y,
+            "provisional-line",
+            id=f"side-rear-fin-{side}",
+            style=(
+                "fill:#f4c46a;fill-opacity:.18;stroke:#985b00;"
+                "stroke-width:.55;stroke-dasharray:2 1"
+            ),
+        )
+    right_disk = rear_cx + nominal_radius
+    right_boom_inner = (
+        rear_cx
+        + (fin.lateral_station_m * 1000.0 - FIN_BOOM_WIDTH_M * 500.0)
+        / rear_scale
+    )
+    sheet.line(right_disk, rear_cy + 4.5, right_boom_inner, rear_cy + 4.5, "dimension")
+    sheet.line(right_disk, rear_cy + 2.0, right_disk, rear_cy + 7.0, "extension")
+    sheet.line(
+        right_boom_inner,
+        rear_cy + 2.0,
+        right_boom_inner,
+        rear_cy + 7.0,
+        "extension",
+    )
+    sheet.text(
+        314,
+        136,
+        f"BOOM: {v1_clearance.boom_nominal_mm:.1f} nominal / "
+        f"{v1_clearance.boom_residual_mm:.1f} residual [E]/[I]",
+        "micro",
+        id="side-rear-clearance-label",
+    )
+    sheet.text(
+        314,
+        141,
+        f"{v1_clearance.physical_status} · axial projection overlap "
+        f"{v1_clearance.axial_overlap_mm:.1f} mm",
+        "micro",
+        id="side-rear-clearance-status",
+    )
+
     sheet.leader(
         *side_point(pack_station, pack_z_max, origin_x, 73.0, scale),
         108,
@@ -1186,7 +1425,7 @@ def draw_side_elevations() -> SvgSheet:
         "end",
     )
     sheet.leader(
-        *side_point(CONTRACT.prop_plane_m, CONTRACT.prop_diameter_m / 2.0,
+        *side_point(PROP_PLANE_M, PROP_DIAMETER_M / 2.0,
                     origin_x, 73.0, scale),
         292,
         55,
@@ -1194,7 +1433,7 @@ def draw_side_elevations() -> SvgSheet:
         True,
     )
     sheet.leader(
-        *side_point(CONTRACT.prop_plane_m, CONTRACT.rear_pod_lower_prop_m,
+        *side_point(PROP_PLANE_M, CONTRACT.rear_pod_lower_prop_m,
                     origin_x, 185.0, scale),
         298,
         225,
@@ -1216,6 +1455,14 @@ def draw_side_elevations() -> SvgSheet:
         f"V1a 2× FIXED FINS · S_v,total {fin_area*100:.2f} dm² · NO HINGE / SERVO",
         True,
     )
+    sheet.leader(
+        *side_point(v1_oml_model.x_min_mm / 1000.0, 0.0, origin_x, 185.0, scale),
+        84,
+        168,
+        f"V1 OML NOSE x {v1_oml_model.x_min_mm:+.1f} · +{v1_packaging.nose_extension_mm:.1f} [D]/[I]",
+        True,
+        "end",
+    )
     sheet.horizontal_dimension(
         side_point(x_le(0.0), 0.0, origin_x, 73.0, scale)[0],
         side_point(x_te(0.0), 0.0, origin_x, 73.0, scale)[0],
@@ -1225,15 +1472,17 @@ def draw_side_elevations() -> SvgSheet:
         f"ROOT {ROOT_CHORD*1000:.1f} [D]",
     )
     provenance_legend(sheet, 303, 24)
-    sheet.multiline(18, 235, [
+    sheet.multiline(18, 228, [
         "DATUM: root c/4 x = 0; motor axis z = 0; positive z up.",
         "Shared [D]/[E]: root r1, Ø8 boom/socket, pack envelope, Ø28 motor and V1a fin sizing.",
         "Side OML, equipment vertical placement, local skid and twin-boom interfaces remain [I].",
         f"O4: CAMERA FRONT/CENTRELINE [D]; COAX STRAIGHT-LINE LOWER BOUND {o4_coax_distance_mm:.1f}/50.0 mm [D]/[M].",
-        f"FIN PLANFORM EACH [D]/[E]: Λc/4 {fin.quarter_chord_sweep_deg:.3f}° · taper {FIN_TAPER:.2f} · vertical TE.",
-        "ROOT FAIRING [I]: aerodynamic/structural junction shown; its area receives no Cnβ credit.",
+        f"FIN PLANFORM EACH [D]/[E]: LE {FIN_LE_SWEEP_DEG:.1f}° · Λc/4 {fin.quarter_chord_sweep_deg:.3f}° · taper {FIN_TAPER:.2f}.",
+        "ROOT FAIRING [I]: contained inside the credited planform; no forward decorative extension.",
         f"Cnβ independent corners: power-on {cnb_on[0]:+.5f}…{cnb_on[1]:+.5f}; power-off {cnb_off[0]:+.5f}…{cnb_off[1]:+.5f} /deg [E].",
-        f"INSTALL [I]: 2× booms y ±{fin.lateral_station_m*1000:.0f}; inner prop clearance {fin.boom_inner_prop_clearance_m*1000:.1f} mm; F2 open.",
+        f"V1 COUPLED PACKAGING [E]/[I]: nose +{v1_packaging.nose_extension_mm:.1f} mm; mass {v1_scene.layout.mass_g():.1f} g; O4 coax {v1_o4_coax_distance_mm:.1f}/50.0 mm.",
+        f"BODY OML [I]: CLEAN {clean_oml_model.length_mm:.1f} mm; V1 {v1_oml_model.length_mm:.1f} mm; V1 nose-to-boom extent {fin.boom_x_end_m*1000-v1_oml_model.x_min_mm:.1f} mm.",
+        f"INSTALL [I]: booms y ±{fin.lateral_station_m*1000:.0f}; prop residual {v1_clearance.boom_residual_mm:.1f} mm after 16.0 mm allowance; F2 open.",
     ], "micro", 3.4)
     return sheet
 
@@ -1247,6 +1496,10 @@ def draw_fin_detail() -> SvgSheet:
     cnb_on = cnb_total_band(fin_area, ETA_FIN_POWER_ON)
     cnb_off = cnb_total_band(fin_area, ETA_FIN_POWER_OFF)
     boom_length = fin.boom_x_end_m - fin.boom_x_start_m
+    scene = aircraft_scene.reference_scene("v1")
+    clearance = scene.clearance
+    packaging = scene.packaging
+    assert clearance is not None and packaging is not None
 
     sheet = SvgSheet(
         "Salamandra V1a twin-fin geometry review",
@@ -1260,12 +1513,12 @@ def draw_fin_detail() -> SvgSheet:
         "1:1.5 / DETAILS NTS",
         "SOURCE: GUIDE §4.4/6.7 · ADR-0038 · I-29 · yaw_stability.py",
     )
-    provenance_legend(sheet, 303, 231)
+    provenance_legend(sheet, 158, 218)
     sheet.text(20, 23, "A · ONE OF TWO IDENTICAL FINS", "sheet-subtitle")
     sheet.text(
         20,
         28,
-        "PASSIVE TWIN FINS · VERTICAL TE · NO HINGE / SERVO",
+        "PASSIVE TWIN FINS · SWEPT TRAPEZOID · NO HINGE / SERVO",
         "micro",
     )
 
@@ -1294,11 +1547,11 @@ def draw_fin_detail() -> SvgSheet:
             "stroke-dasharray:3.4 1.6;stroke-linejoin:round"
         ),
     )
-    fillet_start = fin_point(fin.root_le_x_m - 0.032, 0.0)
-    fillet_c1 = fin_point(fin.root_le_x_m - 0.014, 0.0)
-    fillet_c2 = fin_point(fin.root_le_x_m + 0.004, 0.010)
-    fillet_end = fin_point(fin.root_le_x_m + 0.012, 0.028)
-    fillet_close = fin_point(fin.root_le_x_m + 0.012, 0.0)
+    fillet_start = fin_point(fin.root_le_x_m, 0.0)
+    fillet_c1 = fin_point(fin.root_le_x_m + 0.010, 0.0)
+    fillet_c2 = fin_point(fin.root_le_x_m + 0.018, 0.010)
+    fillet_end = fin_point(fin.root_le_x_m + 0.024, 0.028)
+    fillet_close = fin_point(fin.root_le_x_m + 0.024, 0.0)
     sheet.path(
         " ".join([
             f"M {fmt(fillet_start[0])} {fmt(fillet_start[1])}",
@@ -1475,7 +1728,7 @@ def draw_fin_detail() -> SvgSheet:
         ("ROOT / TIP", f"{fin.root_chord_m*1000:.1f} / {fin.tip_chord_m*1000:.1f} mm [D]"),
         ("MAC", f"{fin.mac_m*1000:.1f} mm [D]"),
         ("AR / TAPER", f"{AR_FIN:.2f} / {FIN_TAPER:.2f} [E]"),
-        ("SWEEP c/4", f"{FIN_SWEEP_DEG:.3f}° [D]"),
+        ("SWEEP LE / c/4", f"{FIN_LE_SWEEP_DEG:.1f}° / {FIN_SWEEP_DEG:.3f}° [D]/[E]"),
         ("AC STATION", f"x +{FIN_AC_STATION_M*1000:.0f} mm [E]"),
         ("ROOT / TIP t", f"{FIN_ROOT_THICKNESS_M*1000:.1f} / {FIN_TIP_THICKNESS_M*1000:.1f} mm [E]"),
         ("MASS", f"{mass_lo:.2f}–{mass_hi:.2f} g incl. booms [E]"),
@@ -1483,7 +1736,7 @@ def draw_fin_detail() -> SvgSheet:
         ("Cnβ OFF", f"{cnb_off[0]:+.5f}…{cnb_off[1]:+.5f}/deg [E]"),
         ("ΔCD0", f"+{dcd0:.4f}; Cf {cf:.4f} [E]"),
         ("BOOMS", f"2× {boom_length*1000:.1f} mm at y ±{fin.lateral_station_m*1000:.0f} [E]/[I]"),
-        ("PROP RADIAL", f"inner boom clearance {fin.boom_inner_prop_clearance_m*1000:.1f} mm [D]/[I]"),
+        ("PROP CLEAR", f"{clearance.boom_nominal_mm:.1f} nom / {clearance.boom_residual_mm:.1f} residual mm [E]/[I]"),
     ]
     y = 36.0
     for index, (name, value) in enumerate(schedule):
@@ -1492,11 +1745,11 @@ def draw_fin_detail() -> SvgSheet:
         sheet.line(272, y + 1.7, 399, y + 1.7, "thin", style="stroke-opacity:.18")
         y += 7.4
 
-    sheet.text(273, 153, "E · TOP-VIEW INSTALLATION", "sheet-subtitle")
-    plan_x0 = 280.0
+    sheet.text(273, 153, "E · TOP + REAR INSTALLATION", "sheet-subtitle")
+    plan_x0 = 278.0
     plan_y0 = 190.0
-    x_scale = 2.0
-    y_scale = 4.0
+    x_scale = 3.5
+    y_scale = 5.5
 
     def px(x_m: float) -> float:
         return plan_x0 + (x_m - 0.145) * 1000.0 / x_scale
@@ -1504,13 +1757,30 @@ def draw_fin_detail() -> SvgSheet:
     def py(y_m: float) -> float:
         return plan_y0 - y_m * 1000.0 / y_scale
 
-    # Propeller disk is a line in top view. Both booms remain radially outside it.
+    # Top view: the inflated hazard slab and both outboard boom/fin roots.
+    hazard = scene.propeller
+    hazard_left = px((hazard.centre_mm[0] - hazard.inflated_axial_half_mm) / 1000.0)
+    hazard_right = px((hazard.centre_mm[0] + hazard.inflated_axial_half_mm) / 1000.0)
+    hazard_top = py(hazard.inflated_radius_mm / 1000.0)
+    hazard_bottom = py(-hazard.inflated_radius_mm / 1000.0)
+    sheet.rect(
+        hazard_left,
+        min(hazard_top, hazard_bottom),
+        hazard_right - hazard_left,
+        abs(hazard_bottom - hazard_top),
+        "provisional-line",
+        id="fin-install-prop-hazard-top",
+        style=(
+            "fill:#c43d32;fill-opacity:.05;stroke:#b83b32;"
+            "stroke-width:.35;stroke-dasharray:1.5 1"
+        ),
+    )
     sheet.line(
-        px(CONTRACT.prop_plane_m), py(-CONTRACT.prop_diameter_m / 2.0),
-        px(CONTRACT.prop_plane_m), py(CONTRACT.prop_diameter_m / 2.0),
+        px(PROP_PLANE_M), py(-PROP_DIAMETER_M / 2.0),
+        px(PROP_PLANE_M), py(PROP_DIAMETER_M / 2.0),
         "station", id="fin-install-prop-disk",
     )
-    sheet.circle(px(CONTRACT.prop_plane_m), py(0.0), 1.2, "provisional-line")
+    sheet.circle(px(PROP_PLANE_M), py(0.0), 1.2, "provisional-line")
     for sign, tag in ((-1.0, "L"), (1.0, "R")):
         y_m = sign * fin.lateral_station_m
         top = py(y_m + 0.009)
@@ -1526,10 +1796,51 @@ def draw_fin_detail() -> SvgSheet:
             style="stroke:#146e9b;stroke-width:1.0",
         )
         sheet.text(px(fin.boom_x_end_m) + 2.0, py(y_m) + 1.0, tag, "micro")
-    sheet.multiline(273, 217, [
-        f"PROP Ø{CONTRACT.prop_diameter_m*1000:.1f} at x +{CONTRACT.prop_plane_m*1000:.0f}; booms y ±{fin.lateral_station_m*1000:.0f} mm.",
-        f"INNER BOOM-TO-DISK CLEARANCE {fin.boom_inner_prop_clearance_m*1000:.1f} mm [D]/[I].",
-        "Root-fillet area is uncredited; final boom fairings, service access and wake mapping remain open [I].",
+
+    # Rear view: the hidden coordinate that the side elevation cannot prove.
+    rear_cx, rear_cy, rear_scale = 371.0, 191.0, 5.5
+    sheet.circle(
+        rear_cx,
+        rear_cy,
+        hazard.inflated_radius_mm / rear_scale,
+        "provisional-line",
+        id="fin-install-prop-hazard-rear",
+        style=(
+            "fill:#c43d32;fill-opacity:.04;stroke:#b83b32;"
+            "stroke-width:.35;stroke-dasharray:1.5 1"
+        ),
+    )
+    sheet.circle(
+        rear_cx,
+        rear_cy,
+        hazard.nominal_radius_mm / rear_scale,
+        "provisional-line",
+        id="fin-install-prop-disk-rear",
+        style="fill:none;stroke:#b83b32;stroke-width:.5",
+    )
+    for side, sign in (("left", -1.0), ("right", 1.0)):
+        fin_x = rear_cx + sign * fin.lateral_station_m * 1000.0 / rear_scale
+        boom_w = FIN_BOOM_WIDTH_M * 1000.0 / rear_scale
+        sheet.rect(
+            fin_x - boom_w / 2.0,
+            rear_cy - 7.0 / rear_scale,
+            boom_w,
+            14.0 / rear_scale,
+            "provisional-fill",
+            id=f"fin-install-boom-rear-{side}",
+        )
+        sheet.rect(
+            fin_x - 0.5,
+            rear_cy - (FIN_ROOT_Z_M + fin.span_m) * 1000.0 / rear_scale,
+            1.0,
+            fin.span_m * 1000.0 / rear_scale,
+            "provisional-fill",
+            id=f"fin-install-fin-rear-{side}",
+        )
+    sheet.multiline(273, 228, [
+        f"PROP Ø{PROP_DIAMETER_M*1000:.1f} at x +{PROP_PLANE_M*1000:.0f}; hazard inflation {hazard.allowance.radial_total_mm:.1f} mm [E]/[I].",
+        f"BOOM CLEARANCE {clearance.boom_nominal_mm:.1f} nominal / {clearance.boom_residual_mm:.1f} residual mm; {clearance.physical_status}.",
+        f"Nose extension {packaging.nose_extension_mm:.1f} mm; root fairing contained inside planform; wake/F2 remain open [I].",
     ], "micro", 3.4)
 
     sheet.multiline(18, 239, [
@@ -1734,9 +2045,9 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
     clean, clean_battery_x = equipment_layout.solve_battery_x(
         equipment_layout.reference_layout("clean")
     )
-    v1, v1_battery_x = equipment_layout.solve_battery_x(
-        equipment_layout.reference_layout("v1"), clamp=True
-    )
+    v1_packaging = equipment_layout.solve_v1_packaging()
+    v1 = v1_packaging.layout
+    v1_battery_x = v1_packaging.required_battery_x_mm
     components = tuple(
         clean.component(identifier) for identifier in MASS_SKELETON_COMPONENT_IDS
     )
@@ -1873,7 +2184,7 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
 
     sheet = SvgSheet(
         "Salamandra equipment mass skeleton",
-        "Metric A3 orthographic mass-skeleton drawing generated from the three-dimensional component ledger. The top view places CLEAN component envelopes and mass centres over the controlled wing planform for spatial context; the side view shows the battery travel and V1 battery-stop overlay. No fuselage outer mould line, wing construction or manufacturing geometry is defined.",
+        "Metric A3 orthographic mass-skeleton drawing generated from the three-dimensional component ledger. The top view places CLEAN component envelopes and mass centres over the controlled wing planform for spatial context; both views overlay the coupled V1 battery, camera and VTX solution. No fuselage outer mould line, wing construction or manufacturing geometry is defined.",
         "SLM-EQP-001",
     )
     title_block(
@@ -1936,6 +2247,13 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         25,
         "x/y ENVELOPES + MASS CENTRES · WING CONTEXT [D]",
         "micro",
+    )
+    sheet.text(
+        18,
+        29,
+        "BROWN CHAIN = COUPLED V1 BATTERY / CAMERA / VTX SOLUTION",
+        "micro",
+        style="fill:#7c4b00;font-weight:700",
     )
     sheet.line(*top_point(-485.0, 0.0), *top_point(255.0, 0.0), "centre")
     sheet.line(
@@ -2074,19 +2392,42 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
                 side_reference_offsets.get(component.identifier, (0.0, 0.0)),
             )
 
-    # V1 uses the same equipment but drives the battery to the forward stop.
+    # V1 is a genuinely coupled result: fin/boom mass drives the battery target;
+    # insufficient battery travel extends the forward cradle, which moves the
+    # camera and then the VTX just enough to preserve the measured 50 mm coax.
     v1_battery = v1.component(equipment_layout.PRIMARY_CG_ADJUSTER)
-    for prefix, box in (("top", top_box(v1_battery)), ("side", side_box(v1_battery))):
-        sheet.rect(
-            *box,
-            "provisional-line",
-            rx=1.0,
-            id=f"v1-battery-stop-{prefix}",
-            style=(
-                "fill:none;stroke:#7c4b00;stroke-width:.7;"
-                "stroke-dasharray:6 1.5 1.2 1.5"
-            ),
-        )
+    for identifier in ("battery_6s1p", "o4_camera", "o4_vtx"):
+        v1_component = v1.component(identifier)
+        for prefix, box in (
+            ("top", top_box(v1_component)),
+            ("side", side_box(v1_component)),
+        ):
+            sheet.rect(
+                *box,
+                "provisional-line",
+                rx=1.0,
+                id=f"v1-coupled-{identifier}-{prefix}",
+                style=(
+                    "fill:none;stroke:#7c4b00;stroke-width:.7;"
+                    "stroke-dasharray:6 1.5 1.2 1.5"
+                ),
+            )
+    v1_camera = v1.component("o4_camera")
+    v1_vtx = v1.component("o4_vtx")
+    sheet.line(
+        *top_point(v1_camera.position_mm[0], v1_camera.position_mm[1]),
+        *top_point(v1_vtx.position_mm[0], v1_vtx.position_mm[1]),
+        "provisional-line",
+        id="v1-coupled-o4-coax-top",
+        style="stroke:#7c4b00;stroke-width:.55;stroke-dasharray:2 1",
+    )
+    sheet.line(
+        *side_mass_point(v1_camera.position_mm[0], v1_camera.position_mm[2]),
+        *side_mass_point(v1_vtx.position_mm[0], v1_vtx.position_mm[2]),
+        "provisional-line",
+        id="v1-coupled-o4-coax-side",
+        style="stroke:#7c4b00;stroke-width:.55;stroke-dasharray:2 1",
+    )
 
     # CLEAN CG markers are derived from every installed and budgeted component;
     # the lightweight O4 antenna mass is lumped into the E19 VTX assembly.
@@ -2123,7 +2464,7 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         *top_point(v1_battery.position_mm[0], -battery_half[1]),
         24,
         161,
-        "V1 BATTERY AT FORWARD STOP",
+        f"V1 COUPLED BATTERY x {v1_battery.position_mm[0]:+.1f} [D]/[E]",
         True,
     )
 
@@ -2177,7 +2518,8 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
         "E19: VTX 30x30x6 [M] + ANTENNA MASS = 5.85 g [D] · 80 mm ROUTE NOTE · E20 RETIRED.",
         f"SHOWN EQUIPMENT: {shown_mass:.2f} g · CLEAN INSTALLED: {clean.mass_g():.2f} g",
         f"NOT SHOWN: structure, elevons/balances and hardware = {excluded_mass:.2f} g",
-        f"BATTERY: CLEAN x {clean_battery_x:+.2f}; V1 required {v1_battery_x:+.2f}, placed {v1_battery.position_mm[0]:+.2f} mm.",
+        f"BATTERY: CLEAN x {clean_battery_x:+.2f}; V1 required/placed {v1_battery_x:+.2f} mm; CG {v1.cg_mm()[0]:+.2f} mm.",
+        f"V1 COUPLING: nose +{v1_packaging.nose_extension_mm:.2f} mm; camera {v1_camera.position_mm[0]:+.2f}; VTX {v1_vtx.position_mm[0]:+.2f}; mass {v1.mass_g():.2f} g.",
         "SERVOS: E04/E05 = 1 PER ELEVON AT y=406.25 mm · E02/E03 RETIRED WITH 4-SERVO CONCEPT.",
         "COLOUR = SYSTEM FUNCTION · SOLID = MEASURED/CONTROLLED · AMBER DASH = OPEN.",
         "R = unresolved reserve · U = outside released budget · dimensions are envelopes.",
@@ -2440,9 +2782,9 @@ def validate_contract() -> dict[str, bool]:
     equipment_clean, _ = equipment_layout.solve_battery_x(
         equipment_layout.reference_layout("clean")
     )
-    equipment_v1, equipment_v1_required_x = equipment_layout.solve_battery_x(
-        equipment_layout.reference_layout("v1"), clamp=True
-    )
+    equipment_v1_packaging = equipment_layout.solve_v1_packaging()
+    equipment_v1 = equipment_v1_packaging.layout
+    equipment_v1_required_x = equipment_v1_packaging.required_battery_x_mm
     equipment_components = tuple(
         equipment_clean.component(identifier)
         for identifier in MASS_SKELETON_COMPONENT_IDS
@@ -2490,7 +2832,7 @@ def validate_contract() -> dict[str, bool]:
         "released root airfoil coordinates are available": len(load_airfoil(
             ROOT / "geometry" / "airfoils" / "salamandra-root-r1.dat"
         )) >= 20,
-        "generated twin fins reproduce total area, per-fin AR, taper, sweep, AC and vertical TE": (
+        "generated twin fins reproduce total area, per-fin AR, taper, sweep and AC": (
             abs(fin.span_m**2 / fin.area_each_m2 - AR_FIN) < 1e-12
             and abs(
                 0.5 * (fin.root_chord_m + fin.tip_chord_m) * fin.span_m
@@ -2501,7 +2843,7 @@ def validate_contract() -> dict[str, bool]:
             and abs(fin.tip_chord_m / fin.root_chord_m - FIN_TAPER) < 1e-12
             and abs(fin.quarter_chord_sweep_deg - FIN_SWEEP_DEG) < 1e-12
             and abs(fin.ac_x_m - FIN_AC_STATION_M) < 1e-12
-            and abs(fin.root_te_x_m - fin.tip_te_x_m) < 1e-12
+            and fin.tip_te_x_m > fin.root_te_x_m
         ),
         "twin booms remain radially outside the propeller disk": (
             fin.boom_inner_prop_clearance_m >= 0.025
@@ -2521,7 +2863,7 @@ def validate_contract() -> dict[str, bool]:
         ),
         "propeller skid datum preserves 10 mm ground clearance": abs(
             -CONTRACT.rear_pod_lower_prop_m
-            - CONTRACT.prop_diameter_m / 2.0
+            - PROP_DIAMETER_M / 2.0
             - 0.010
         ) < 1e-12,
         "side cradle envelope clears the maximum-dimension P42A pack": (
@@ -2530,6 +2872,9 @@ def validate_contract() -> dict[str, bool]:
         ),
         "equipment-layout numerical validation passes": all(
             equipment_layout.validation_checks().values()
+        ),
+        "connected aircraft-scene and propeller-clearance validation passes": all(
+            aircraft_scene.validation_checks().values()
         ),
         "equipment skeleton component references are unique": (
             len(MASS_SKELETON_COMPONENT_IDS) == len(equipment_ids)
@@ -2562,20 +2907,28 @@ def validate_contract() -> dict[str, bool]:
         "equipment skeleton shown mass reproduces the current ledger": abs(
             sum(component.mass_g for component in equipment_components) - 821.85
         ) < 1e-9,
-        "CLEAN and V1 pack stations remain inside physical battery travel": (
+        "CLEAN and coupled V1 pack stations remain inside their physical travel": (
             equipment_battery.bounds.contains(
                 equipment_clean.component(
                     equipment_layout.PRIMARY_CG_ADJUSTER
                 ).position_mm
             )
-            and equipment_battery.bounds.contains(
+            and equipment_v1.component(
+                equipment_layout.PRIMARY_CG_ADJUSTER
+            ).bounds.contains(
                 equipment_v1.component(
                     equipment_layout.PRIMARY_CG_ADJUSTER
                 ).position_mm
             )
         ),
-        "equipment skeleton exposes unreachable exact V1 battery station": (
-            equipment_v1_required_x < equipment_battery.bounds.minimum_mm[0]
+        "equipment skeleton consumes the converged V1 packaging solution": (
+            abs(
+                equipment_v1_required_x
+                - equipment_v1.component(
+                    equipment_layout.PRIMARY_CG_ADJUSTER
+                ).position_mm[0]
+            ) < 1e-6
+            and equipment_v1_packaging.nose_extension_mm > 0.0
         ),
         "fuselage generator analytical validation passes": all(
             fuselage_geometry.validation_checks().values()

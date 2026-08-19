@@ -65,7 +65,7 @@ All values below are reproducible from `calculations/yaw_stability.py`,
 | Centre fin with propulsion moved aft ≈130 mm | Restores aft arm | Moves the 195 g propulsion group aft; first-order battery shift ≈57 mm forward, about 61 mm beyond V1 travel | Reject for Article 1 |
 | Wingtip fins | Tips are forward because of forward sweep; yaw arm is poor or adverse | Simple local attachment but wrong longitudinal station | Reject |
 | Split drag rudders | Control moment only when deployed; no closed-surface passive `Cnβ` | Two actuators and FC dependency | Defer |
-| Twin fixed fins on aft CORE booms | Preserves x_ac = +285 mm and total-area sizing | Direct load paths at y = ±140 mm, outside prop disk | Select provisionally |
+| Twin fixed fins on aft CORE booms | Python sweep resizes area at every AC station; first mass-feasible knee is x_ac = +280 mm | Direct load paths at y = ±140 mm, outside inflated prop envelope analytically | Select provisionally |
 
 ## 4. Selected V1a geometry
 
@@ -76,26 +76,26 @@ calculations use one fin.
 | Quantity | V1a value | Basis |
 |---|---:|---|
 | Count | 2 | architecture `[D]` |
-| Total area | 3.4404 dm² | nominal `Cnβ = +0.00050/deg` target `[E]` |
-| Area each | 1.7202 dm² | derived |
-| Span each | 185.5 mm | `AR_each = 2.0` |
-| Root / tip chord | 142.7 / 42.8 mm | taper 0.30 |
-| Quarter-chord sweep | 21.991° | derived with vertical trailing edge |
-| Aerodynamic-centre station | x = +285 mm | selected aft arm |
+| Total area | 3.4737 dm² | nominal `Cnβ = +0.00050/deg` target `[E]` |
+| Area each | 1.7368 dm² | derived |
+| Span each | 186.4 mm | `AR_each = 2.0` |
+| Root / tip chord | 128.5 / 57.8 mm | taper 0.45 |
+| Leading-edge / quarter-chord sweep | 25.0° / 20.379° | swept trapezoid |
+| Aerodynamic-centre station | x = +280 mm | first mass-feasible knee in +225…+325 mm sweep |
 | Boom station | y = ±140 mm | propeller-clearance geometry |
-| Boom envelope | 18 × 14 mm; x = +156…+371.3 mm | provisional structure `[I]` |
-| Inner radial propeller clearance | 29.4 mm | 203.2 mm propeller diameter |
+| Boom envelope | 18 × 14 mm; x = +156…+372.4 mm | provisional structure `[I]` |
+| Inner radial propeller clearance | 29.4 mm nominal; 13.4 mm residual | Ø203.2 mm propeller plus 16.0 mm radial allowance `[E]/[I]` |
 
 Why this shape:
 
 - **AR 2.0** avoids the excessive height and bending moment of the former AR 3.0 surface.
-- **Taper 0.30** removes area and mass from the free tip while retaining root chord for the
-  mount and creates a useful 22° quarter-chord sweep without decorative curvature.
-- **Vertical trailing edge** keeps both fins inside one compact aft station and provides a
-  straight printable closure. It is aerodynamically valid; the leading edge and section,
-  not a cosmetic curved trailing edge, establish the nose radius and attached-flow quality.
-- **Dorsal root fillet** removes the visually and structurally abrupt boom junction. The
-  drawing shows its envelope, but its area is intentionally excluded from `S_v` and `Cnβ`.
+- **Taper 0.45** reduces tip loading without the former narrow 42.8 mm tip and retains a
+  credible printed free-edge chord.
+- **Swept trapezoid** uses a controlled 25° leading edge and a naturally swept trailing
+  edge. The geometry is derived from area, aspect ratio and taper rather than a vertical-TE
+  drawing constraint.
+- **Dorsal root fillet** remains wholly inside the credited planform. It does not project
+  forward into the propeller region or receive additional `S_v`/`Cnβ` credit.
 - **External Ø3 mm aluminium leading-edge spar** follows the swept leading edge and avoids
   the impossible former claim of a Ø3.2 mm enclosed bore inside a 3.0→1.5 mm plate.
 
@@ -106,15 +106,17 @@ V1a results:
 - `Cnβ` independent corners, power on/off: **−0.00029…+0.00119 /deg**;
 - nominal `Cnβ`: **+0.00050 /deg**;
 - estimated `ΔCD0`: **+0.0019**, or approximately **+13.1%** against CLEAN;
-- complete lower analytical assembly: **59.20 g** versus a **60.00 g** allocation;
-- allocation AUW/stall: **1613.25 g / 44.9 km/h**;
-- load per fin at 180 km/h: **26.3 N**;
-- root bending moment per fin: **2.00 N·m**;
-- 3.0 mm PETG root analytical yield FS: **5.34**, without spar credit;
-- estimated first bending mode: **14.7 Hz**.
+- complete lower analytical assembly: **59.97 g** versus a **60.00 g** allocation;
+- coupled forward-support addition: **2.40 g**; solved AUW/stall: **1615.63 g / 44.93 km/h**;
+- solved battery/camera/VTX stations: **−386.74 / −463.79 / −429.61 mm**;
+- nose extension / V1 body OML length: **17.81 / 757.51 mm**;
+- load per fin at 180 km/h: **26.6 N**;
+- root bending moment per fin: **2.17 N·m**;
+- 3.0 mm PETG root analytical yield FS: **4.45**, without spar credit;
+- estimated first bending mode: **14.6 Hz**.
 
-The negative lower `Cnβ` corner and 0.80 g mass margin prevent design release. V1a is a
-geometry-correct marginal test article. V1b raises total area to approximately 4.58 dm² and
+The negative lower `Cnβ` corner and 0.03 g fin-module mass margin prevent design release. V1a is a
+geometry-correct marginal test article. V1b raises total area to approximately 4.63 dm² and
 its independent lower corner to +0.00017/deg, but its mass/stall consequences require a
 separate F2 decision.
 

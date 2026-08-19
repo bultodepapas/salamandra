@@ -25,6 +25,7 @@ from math import dist
 from pathlib import Path
 
 import aero_contract
+import aircraft_scene
 import airfoil_reflex_trade
 import b3_screening
 import balance_cg
@@ -55,6 +56,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 LOCAL_SCRIPTS = (
     "design_config.py",
+    "aircraft_scene.py",
     "drawing_index.py",
     "equipment_catalog.py",
     "fuselage_contract.py",
@@ -279,10 +281,15 @@ def check_equipment_layout(add):
         f"forward limit={v1_battery.bounds.minimum_mm[0]:+.2f} mm",
     )
     add(
-        "equipment risk: V1 at battery stop exposes the aft CG-band miss",
-        equipment_v1.cg_mm()[0]
-        > equipment_layout.target_cg_mm() + equipment_layout.CG_TOLERANCE_MM,
-        f"xCG={equipment_v1.cg_mm()[0]:+.2f} mm",
+        "equipment risk: unextended V1 stop reaches only the tolerance band, not target",
+        abs(equipment_v1.cg_mm()[0] - equipment_layout.target_cg_mm())
+        <= equipment_layout.CG_TOLERANCE_MM
+        and abs(equipment_v1.cg_mm()[0] - equipment_layout.target_cg_mm()) > 1.0,
+        (
+            f"xCG={equipment_v1.cg_mm()[0]:+.2f} mm; "
+            f"target={equipment_layout.target_cg_mm():+.2f} ±"
+            f"{equipment_layout.CG_TOLERANCE_MM:.1f} mm"
+        ),
     )
 
 
@@ -522,6 +529,8 @@ def check_fuselage(add):
     model = fuselage_geometry.reference_model()
     audits = fuselage_geometry.audit_envelopes(model)
     v1_state = fuselage_geometry.battery_state("v1")
+    v1_packaging = equipment_layout.solve_v1_packaging()
+    v1_model = fuselage_geometry.build_model(layout=v1_packaging.layout)
     for name, passed in fuselage_geometry.validation_checks(full=False).items():
         add(f"fuselage: {name}", passed, "I-28 NumPy OML software contract")
     add(
@@ -546,6 +555,23 @@ def check_fuselage(add):
             "mesh feasibility is not aircraft release"
         ),
     )
+    add(
+        "fuselage: coupled V1 OML inherits the solved nose extension",
+        close(
+            v1_model.length_mm - model.length_mm,
+            v1_packaging.nose_extension_mm,
+            atol=1e-6,
+        ),
+        (
+            f"CLEAN={model.length_mm:.2f} mm; V1={v1_model.length_mm:.2f} mm; "
+            f"delta={v1_packaging.nose_extension_mm:.2f} mm"
+        ),
+    )
+
+
+def check_aircraft_scene(add):
+    for name, passed in aircraft_scene.validation_checks().items():
+        add(f"aircraft scene: {name}", passed, "shared 3-D ledger/projection contract")
 
 
 # ---------------------------------------------------------------------------
@@ -566,6 +592,7 @@ CONTRACT_GROUPS = (
     ("controls", check_controls),
     ("yaw", check_yaw),
     ("fuselage", check_fuselage),
+    ("aircraft scene", check_aircraft_scene),
 )
 
 

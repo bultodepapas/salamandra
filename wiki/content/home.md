@@ -43,7 +43,7 @@ before using a provisional value.
 
 | If you are… | Start here | Then verify with… |
 |---|---|---|
-| Building CAD | [Design Guide v{{GUIDE_VERSION}}](salamandra/design-guide/) | [SVG drawing set](guide/06-drawings/), [open points](salamandra/design-guide-open-points/) and release migration rules |
+| Building CAD | [Concise Design Guide v{{GUIDE_VERSION}}](salamandra/design-guide/) | [SVG drawing set](guide/06-drawings/), [Advanced Design Guide](salamandra/design-guide-advanced/) when needed, and [open points](salamandra/design-guide-open-points/) |
 | Reviewing a decision | [ADR index](decisions/) | The linked research thread, calculation and reversal trigger |
 | Reproducing a number | [Calculation index](calculations/) | The [reproduction guide](calculations/reproduction-guide/) and system verifier |
 | Planning a test | [Gap register](gaps/) | The [experimental programme](tests/) and required configuration metadata |

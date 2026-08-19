@@ -37,9 +37,9 @@ released airfoil coordinates.
 |---|---|---:|---|
 | [`SLM-GA-001`](geometry/drawings/SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and continuous provisional fuselage/equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]` |
 | [`SLM-FUS-001`](geometry/drawings/SLM-FUS-001-fuselage-oml-review.svg) | Common-source plan, side and transverse body views with inflated central skeleton envelopes, containment margins and gross mesh diagnostics | A3 · views 1:4 / sections 1:1.5 | OML `[I]`; envelopes `[D]`/`[E]`/`[I]`; metrics `[D]` on `[I]` |
-| [`SLM-GA-002`](geometry/drawings/SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a twin-fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
+| [`SLM-GA-002`](geometry/drawings/SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a twin-fixed-fin test variant, with connected electronics, variant-specific packaging, motor/propeller hazard and rear-view clearance proof | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
 | [`SLM-FIN-001`](geometry/drawings/SLM-FIN-001-fixed-fin-review.svg) | Dedicated V1a twin-fin planform, aerodynamic datum, external leading-edge spar concept, thickness schedule, boom installation and directional-stability screen | A3 · planform 1:1.5 / details NTS | Planform `[D]` on `[E]`; section/install `[E]`/`[I]`; no rudder authority |
-| [`SLM-EQP-001`](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg) | Top and side mass skeleton: component envelopes, true mass centres, x/y/z schedule, CLEAN CG and V1 battery-stop overlay. The top view includes the controlled exterior wing planform as spatial context but no wing construction, fuselage or OML. | A3 · top 1:6.5 / side 1:4 | Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority |
+| [`SLM-EQP-001`](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg) | Top and side mass skeleton: component envelopes, true mass centres, x/y/z schedule, CLEAN CG and coupled V1 battery/camera/VTX overlay. The top view includes the controlled exterior wing planform as spatial context but no wing construction, fuselage or OML. | A3 · top 1:6.5 / side 1:4 | Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority |
 | [`SLM-WNG-001`](geometry/drawings/SLM-WNG-001-half-wing-layout.svg) | Right half-wing: printed segments, cells, spar/pin, ADR-0045 elevon/fixed-root bridge, exact y195 profile and polyhedral inset | A3 · plan 1:2 | Planform/profile/elevon bounds `[D]`; structure/polyhedral `[E]`/`[I]` |
 
 ### SLM-GA-001 · General arrangement
@@ -62,7 +62,7 @@ Use this sheet to interrogate the fuselage generator itself. Plan and side outli
 
 [![Metric A3 side-elevation draft comparing SALAMANDRA-CLEAN with the V1a passive twin-fin variant. The two fins sit on aft CORE booms outside the propeller disk; their side projections coincide. No movable rudder is defined.](geometry/drawings/SLM-GA-002-side-elevations.svg)](geometry/drawings/SLM-GA-002-side-elevations.svg)
 
-Use this sheet to compare the two published directional configurations without changing the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds two passive fixed fins on aft CORE booms at y = ±140 mm. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The two 18 × 14 mm boom envelopes pass outside the propeller disk with 29.4 mm inner radial clearance and support the complete calculated root chord; the coincident side projections are identified explicitly.
+Use this sheet to compare the two published directional configurations without changing the common wing or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds two passive fixed fins on aft CORE booms at y = ±140 mm. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The two 18 × 14 mm boom envelopes have 29.4 mm nominal and 13.4 mm residual radial clearance after the explicit 16.0 mm allowance. The rear inset proves their lateral separation where the side projections overlap.
 
 **Sheet** A3 · 1:4 · **Authority** Root/fin `[D]`/`[E]`; side OML/install `[I]`.
 
@@ -70,15 +70,15 @@ Use this sheet to compare the two published directional configurations without c
 
 [![Metric A3 engineering-review sheet for the passive V1a twin fins. It shows one calculated fin, both aft CORE booms outside the propeller disk, the aerodynamic datum and provisional structural interfaces. No movable rudder is defined.](geometry/drawings/SLM-FIN-001-fixed-fin-review.svg)](geometry/drawings/SLM-FIN-001-fixed-fin-review.svg)
 
-Use this sheet to review one of the two identical passive V1a fins rather than inferring it from the general side elevation. The planform vertices, area, taper, vertical trailing edge, derived quarter-chord sweep and AC marker come from one Python geometry object. Root/tip section sketches explain that the Ø3 mm aluminium rod forms an external leading-edge nose in an open seat; they do not claim an impossible enclosed Ø3.2 mm bore inside the 3.0→1.5 mm plate. The top view proves propeller clearance and the uncredited dorsal root fillet makes the boom junction explicit. Saddle detail, hole positions, print compensation, measured mass and E8 flight closure remain provisional. No movable rudder is defined.
+Use this sheet to review one of the two identical passive V1a fins rather than inferring it from the general side elevation. The planform vertices, area, taper, swept leading/trailing edges, derived quarter-chord sweep and AC marker come from one Python geometry object. Root/tip section sketches explain that the Ø3 mm aluminium rod forms an external leading-edge nose in an open seat; they do not claim an impossible enclosed Ø3.2 mm bore inside the 3.0→1.5 mm plate. The top view proves propeller clearance and the uncredited dorsal root fillet remains inside the credited planform. The rear view distinguishes axial projection overlap from physical disk clearance. Saddle detail, hole positions, print compensation, measured mass and E8 flight closure remain provisional. No movable rudder is defined.
 
 **Sheet** A3 · planform 1:1.5 / details NTS · **Authority** Planform `[D]` on `[E]`; section/install `[E]`/`[I]`; no rudder authority.
 
 ### SLM-EQP-001 · Equipment mass skeleton
 
-[![Metric A3 orthographic mass-skeleton drawing generated from the three-dimensional component ledger. The top view places CLEAN component envelopes and mass centres over the controlled wing planform for spatial context; the side view shows the battery travel and V1 battery-stop overlay. No fuselage outer mould line, wing construction or manufacturing geometry is defined.](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg)](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg)
+[![Metric A3 orthographic mass-skeleton drawing generated from the three-dimensional component ledger. The top view places CLEAN component envelopes and mass centres over the controlled wing planform for spatial context; both views overlay the coupled V1 battery, camera and VTX solution. No fuselage outer mould line, wing construction or manufacturing geometry is defined.](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg)](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg)
 
-Use this sheet to review mass and packaging rather than shape: component envelopes, true mass centres, the x/y/z schedule, the CLEAN CG and the V1 battery-stop overlay. Envelope fill colour identifies system function while outline style continues to identify maturity. The controlled exterior wing planform appears only as spatial context: the sheet defines no fuselage outer mould line, no wing construction and no manufacturing geometry.
+Use this sheet to review mass and packaging rather than shape: component envelopes, true mass centres, the x/y/z schedule, the CLEAN CG and the coupled V1 battery/camera/VTX solution. Envelope fill colour identifies system function while outline style continues to identify maturity. The controlled exterior wing planform appears only as spatial context: the sheet defines no fuselage outer mould line, no wing construction and no manufacturing geometry.
 
 **Sheet** A3 · top 1:6.5 / side 1:4 · **Authority** Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority.
 
@@ -184,13 +184,43 @@ The aircraft is designed as a **modular platform**:
 
 This is the first, reference design on the platform, named **Salamandra**. Its current
 specification for the designer is the
-[**Salamandra Design Guide v0.23**](design/Salamandra-Design-Guide-v0.1.md), with the
-justification in [`design/`](design/). The baseline is a PETG forward-swept flying wing,
+[**concise Salamandra Design Guide v0.23**](design/Salamandra-Design-Guide-v0.1.md).
+Detailed calculations, release migration and engineering context remain in the
+[**Advanced Design Guide**](design/Salamandra-Design-Guide-Advanced-v0.1.md), with the
+justification and open-points register in [`design/`](design/). The baseline is a PETG
+forward-swept flying wing,
 **modular and configurable**: a standard center module and interchangeable wing panels.
 Efficient FPV cruise flight, with electronics chosen by the builder.
 
+### Which design document should I use?
+
+These documents have different jobs. They describe the same released aircraft baseline;
+they are not competing specifications.
+
+| Document | Use it for | Intended reader | Authority |
+|---|---|---|---|
+| [**Salamandra Design Guide v0.23**](design/Salamandra-Design-Guide-v0.1.md) | Building and reviewing the CAD model: geometry, interfaces, equipment envelopes, mass limits and delivery checklist | CAD designer | **Primary CAD execution specification** |
+| [**Advanced Design Guide v0.23**](design/Salamandra-Design-Guide-Advanced-v0.1.md) | Detailed engineering limits, calculation results, release migration and complete technical context | Lead designer and engineering reviewer | **Canonical advanced engineering reference** |
+| [**Design Guide Justification**](design/Design-Guide-Justification-v0.1.md) | Understanding why each selected value exists and what evidence supports it | Reviewer or contributor challenging a requirement | Rationale and evidence companion |
+| [**Design Guide Open Points**](design/Design-Guide-Open-Points-v0.1.md) | Finding provisional values, unresolved gates and the event that can change each value | CAD designer, test engineer and release reviewer | Open-work and change-trigger register |
+
+**Normal CAD workflow:** begin with the concise Design Guide. Open the Advanced Design
+Guide only when a requirement needs interpretation. Check the Open Points before freezing
+any provisional feature. Use the Justification when reviewing or proposing a change. Both
+guides link directly to the
+[current manifest-controlled SVG drawing set](geometry/drawings/README.md); begin with
+`SLM-GA-001` and select the task-specific sheet from the guide table.
+
+### Publishing a new release
+
+Maintainers must follow the
+[**New Release Guide**](docs/15-how-to-publish-a-release.md). It defines the version and
+document updates, required CI-equivalent checks, release PR, annotated Git tag and
+post-release verification. A release is never created from a dirty or partially merged
+working tree.
+
 **📦 Current release — `v0.5.0`: verification integrity and the connected design
-contract.** The Design Guide is the authoritative entry point. A measured audit of the 33
+contract.** The concise Design Guide is the authoritative CAD entry point. A measured audit of the 33
 calculation modules ([`docs/12`](docs/12-calculation-system-audit-and-remediation.md))
 found that v0.4.0's "connected" baseline was partly nominal — twelve quantities declared
 twice, a hand-copied neutral point, a factor-1.76 yaw-inertia contradiction, checks that
@@ -236,7 +266,7 @@ comes from the propulsion chain, which is where the data say the gap is.
 | Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
 | Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
 | Elevons | **0.28 c, y 227.5…585 mm (35–90 %), 357.5 mm; fixed 32.5 mm root bridge and 65 mm tip; servo y ±406.25 mm** | [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
-| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; twin-fin V1 lower model 1612.45 g / 44.9 km/h** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md) |
+| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; coupled twin-fin V1 1615.63 g / 44.93 km/h** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), [I-30](research/I-30-fin-station-mass-cg-and-connected-scene-closure.md) |
 | Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; two-servo O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
 | Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | V_NE article #1 | **160 km/h** (design 180) | — |
@@ -274,7 +304,7 @@ configuration contributed to the platform.
 
 | Folder | What it contains |
 |---|---|
-| [`design/`](design/) | **Salamandra Design Guide v0.23** — the v0.5.0 controlling CAD specification, its justification and open points; v0.21 remains the v0.4.0 release snapshot |
+| [`design/`](design/) | **Concise Salamandra Design Guide v0.23** — the primary CAD execution specification; plus the canonical Advanced Design Guide, justification and open points |
 | [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |
@@ -338,14 +368,16 @@ Phase-1 status (2026-08-18):
 - **ADR-0040/0043/0045 — coupled planform, control surface, mass and balance updated.** The −15° planform
   and target CG **−93.8 mm** remain. With Article #1 hardware and the 550 g PETG-shell
   cap and two-servo baseline, CLEAN is **1553.25 g**. Its component-level pack solution
-  is **−337.74 mm** inside current travel. Twin-fin V1 requires **−389.67 mm**, 18.47 mm
-  beyond the forward stop; the clamped solution misses the aft CG-band edge by 0.094 mm. Current stations and acceptance gates are in the
+  is **−337.74 mm** inside current travel. The coupled twin-fin V1 solver extends the nose
+  17.81 mm and converges at battery x = **−386.74 mm**, camera x = −463.79 mm and VTX
+  x = −429.61 mm. Current stations and acceptance gates are in the
   [guide §7.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
 - **Twin-fin V1 is analytically below the stall ceiling but has little margin.** The two
-  shells/mounts, two LE spars and two aft booms total **59.20 g** against a 60.00 g
-  allocation. V1 is **1612.45 g / 44.9 km/h**, only about 7.9 g below the exact 45 km/h
+  shells/mounts, two LE spars and two aft booms total **59.97 g** against a 60.00 g
+  allocation. The coupled forward support adds 2.40 g; V1 is **1615.63 g / 44.93 km/h**,
+  only about 4.8 g below the exact 45 km/h
   mass ceiling. CAD, CG and scale-mass verification remain mandatory.
 - **OP-29 (divergence) — operationally bounded, structurally open.** Revision 4 uses
   the released r1 profile. Nominal Vdiv is 327.2 km/h, but the conservative unmeasured
@@ -361,7 +393,7 @@ Phase-1 status (2026-08-18):
   finless baseline is estimated **directionally unstable** (Cnβ −0.00055…−0.00141/deg
   `[E]`, FSW + nose boom); the platform now publishes two configurations:
   **SALAMANDRA-CLEAN** (finless, O1 efficiency build) and **SALAMANDRA-V1** (two fixed
-  fins on aft CORE booms, no movable rudder): V1a S_v,total **3.4404 dm²**, 59.20 g lower
+  fins on aft CORE booms, no movable rudder): V1a S_v,total **3.4737 dm²**, 59.97 g lower
   assembly and ΔCD0 +0.0019 `[D]`/`[E]` (`calculations/yaw_stability.py`). A movable
   rudder remains a future control variant; it is not needed to define passive stability. Closure by
   flight test **E8** (yaw perturbation).

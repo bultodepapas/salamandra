@@ -1,14 +1,37 @@
 # Fin Placement, Electronics Skeleton, and SVG Coupling Remediation Plan
 
 **Document type:** engineering remediation and implementation plan  
-**Status:** planning baseline; no geometry or manufacturing authority  
+**Status:** implemented analytical remediation; F2/E8 and manufacturing authority remain open
 **Applies to:** SALAMANDRA-CLEAN and the provisional V1 fixed-fin variant  
 **Primary outputs affected:** `SLM-GA-002`, `SLM-FIN-001`, `SLM-EQP-001`  
 **Date:** 19 August 2026  
 
-> This document deliberately does not select a final fin position or planform.
-> It defines the evidence, calculations, data architecture, trades, drawing views,
-> checks, and acceptance gates required before that selection can be made.
+> This document records the pre-implementation baseline and the implementation plan.
+> The executed selection, current values and remaining gates are recorded in
+> `research/I-30-fin-station-mass-cg-and-connected-scene-closure.md`. Numerical values
+> labelled as “present” below describe the superseded baseline unless explicitly marked
+> as an implementation result.
+
+---
+
+## 0. Implementation result
+
+The plan has been implemented in the calculation and drawing system. The selected result
+is a two-fin, AR 2.0, taper 0.45 swept trapezoid at `x_AC = +280 mm`, found by a 5 mm
+station sweep rather than inherited from the old SVG. Total area is 3.4737 dm²; each fin
+has 186.4 mm span and 128.5/57.8 mm root/tip chords. The complete lower fin/boom module is
+59.97 g.
+
+The mass/CG/package iteration converges in two passes: V1 AUW 1615.63 g, battery
+`x = −386.74 mm`, camera `x = −463.79 mm`, VTX `x = −429.61 mm`, nose extension
+17.81 mm and V1 body OML length 757.51 mm. The propeller check now uses a shared inflated
+hazard envelope: boom clearance is 29.4 mm nominal and 13.4 mm residual after the explicit
+16.0 mm allowance. This remains an analytical pass with F2 physical verification open.
+
+The generated side sheet contains the electronics skeleton and a rear-view clearance
+proof; the fin sheet contains the same Python-derived planform plus top/rear installation
+views; the mass-skeleton sheet overlays the coupled V1 battery/camera/VTX solution. The
+SVGs remain `DRAFT · NOT FOR MANUFACTURE`.
 
 ---
 
@@ -1675,4 +1698,3 @@ This sequence preserves the central engineering rule of the Salamandra project:
 
 > The drawing represents the calculated aircraft; the calculation does not justify a
 > shape invented by the drawing.
-

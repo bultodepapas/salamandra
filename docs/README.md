@@ -21,6 +21,7 @@ define the reference design and the platform's conventions. See the
 | [`11-release-v0.4.md`](11-release-v0.4.md) | **Historical release (tag v0.4.0)** — connected calculation baseline and Article #1 manoeuvre/ultimate-load envelope |
 | [`12-calculation-system-audit-and-remediation.md`](12-calculation-system-audit-and-remediation.md) | **Calculation-system audit `[M]`** — the measured findings (S1–S5) and the WP1–WP6 remediation programme that drove corrections C39–C43 |
 | [`13-release-v0.5.md`](13-release-v0.5.md) | **Current release (tag v0.5.0)** — single-declaration design contract ([ADR-0046](../decisions/ADR-0046-single-declaration-contract.md)), verification proven falsifiable, released elevon geometry and drawing set; E2/F2/S3/G7/G10/G11 remain open |
+| [`15-how-to-publish-a-release.md`](15-how-to-publish-a-release.md) | **Maintainer release procedure** — scope freeze, version ownership, release document, CI-equivalent gates, PR, annotated tag and post-release checks |
 | `first_investigation.md` | Rev. 1.0, initial research *(add manually)* |
 
 **Decisions** live in [`../decisions/`](../decisions/), the **why** in [`../research/`](../research/), what we do **not know** in [`../gaps/`](../gaps/).

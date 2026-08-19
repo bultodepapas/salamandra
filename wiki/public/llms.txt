@@ -35,7 +35,7 @@
 ## Platform
 
 - [Project readme](https://bultodepapas.github.io/salmandra/platform/readme/): Status and full navigation
-- [Changelog](https://bultodepapas.github.io/salmandra/platform/changelog/): Correction record through C44
+- [Changelog](https://bultodepapas.github.io/salmandra/platform/changelog/): Correction record through C47
 - [Contributing](https://bultodepapas.github.io/salmandra/platform/contributing/): Full contribution guide
 
 ## Optional
