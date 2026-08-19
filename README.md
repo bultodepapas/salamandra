@@ -1,4 +1,7 @@
-# 3D-printed FPV aircraft platform — open, modular, AI-assisted
+# Salamandra · open 3D-printed FPV aircraft platform
+
+**A free, community-driven platform for fixed-wing FPV aircraft — where every number
+carries its source and the reasoning is the deliverable.**
 
 <!-- BEGIN GENERATED: drawing-hero · calculations/drawing_index.py · do not edit by hand -->
 
@@ -8,19 +11,140 @@
 
 <!-- END GENERATED: drawing-hero -->
 
-A completely free, community-driven platform for 3D-printed fixed-wing FPV aircraft.
-The core design principles are developed largely through **AI-assisted research**, while the
-**final aircraft and its 3D models are created collaboratively by humans and AI**.
-
-This is an **evolving platform**, not a single aircraft. It currently targets a PETG
-forward-swept flying wing, but that is only the first design. The repository is meant to
-grow into a whole family of airframes, parts, adapters and experiments — contributed by
-the community.
-
-**Revision 1.19** · 19 August 2026 · **Release v0.6.0 · Phase 1 in progress**
+**Revision 1.20** · 19 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
+**Phase 1 in progress** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
 
 > 📖 **Read this project as a website:** <https://bultodepapas.github.io/salmandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
+
+---
+
+## Start here
+
+| If you want to… | Go to |
+|---|---|
+| **Understand the idea** | [What this project is](#what-this-project-is) |
+| **See the aircraft** | [Salamandra, Article #1](#the-aircraft--salamandra-article-1) · [drawing set](#drawing-set--generated-design-review-sheets) |
+| **Build the CAD model** | [**Salamandra Design Guide v0.23**](design/Salamandra-Design-Guide-v0.1.md) — the primary execution spec |
+| **Know what is still unknown** | [`gaps/`](gaps/README.md) · [Open Points](design/Design-Guide-Open-Points-v0.1.md) |
+| **Trace why a number exists** | [`decisions/`](decisions/README.md) · [`research/`](research/) · [CHANGELOG](CHANGELOG.md) |
+| **Reproduce the numbers** | [Tools and reproduction](#tools-and-reproducing-the-numbers) |
+| **Contribute a part or a variant** | [Contributing](#contributing) · [CONTRIBUTING.md](CONTRIBUTING.md) |
+
+---
+
+## What this project is
+
+There are dozens of open-source printed wings. Almost none of them publish **why** they
+have the geometry they have. And most of them are a single, finished design.
+
+This project is different in two ways:
+
+1. **The reasoning is the product.** Every decision carries its rationale, its source and
+   its [confidence level](#confidence-convention), and the mistakes made along the way are
+   recorded instead of erased. Anyone can trace where each number and each shape comes
+   from.
+2. **It is a platform, not a part.** The goal is a continuously evolving, community-driven
+   library of aircraft, components, variants and experiments — with this repository as the
+   central archive.
+
+It currently targets a PETG forward-swept flying wing, but that is only the first design.
+
+**It is fully free and as open as possible:**
+
+- **Free.** No paywall, no locked files, no licensing fees.
+- **Community-driven.** PRs with modifications, improvements and new variants are welcome
+  and expected. The platform grows through its contributors.
+- **Broad.** Human expertise is especially valuable in experimentation, practical judgment,
+  manufacturing and engineering intuition — but contributions are not limited to
+  aerodynamics or structures. Decorative parts, visual improvements, equipment mounts and
+  other creative modifications are welcome too.
+- **Reciprocal.** Under the project's [licences](#licence), derivatives stay open, so the
+  whole community benefits from every contribution.
+
+---
+
+## The aircraft — Salamandra, Article #1
+
+**Salamandra** is the first reference design on the platform: a PETG forward-swept flying
+wing, modular and configurable, built around a standard center module with interchangeable
+wing panels. Efficient FPV cruise flight, with electronics chosen by the builder.
+
+### Measurable objective
+
+| | Value |
+|---|---|
+| Market reference | **TBS Mojito** — 1.40 Wh/km measured, USD 189.95 |
+| **Target** | **≤ 1.15 Wh/km** at 95 km/h |
+| Where it comes from | **Propeller matching**, +20 % demonstrated on UIUC data `[D]` |
+
+The initial analysis showed that the Mojito **is not energy-efficient** — it consumes
+0.74 Wh/(km·kg), the same as a USD 40 foam wing; its achievement is sustaining that at
+2–3× the speed. This design's efficiency does not come from optimistic aerodynamics: it
+comes from the propulsion chain, which is where the data say the gap is.
+
+**It is falsifiable.** It is measured with [E2](tests/) and [E3](tests/).
+
+### Cruise configuration
+
+| Parameter | Value | Decision |
+|---|---|---|
+| Wingspan | 1300 mm | [ADR-0010](decisions/ADR-0010-mission-branch.md) |
+| Aspect ratio | 6.0 · S = 0.282 m² `[E]` | [ADR-0004](decisions/ADR-0004-aspect-ratio.md) |
+| Quarter-chord sweep | **−15°** | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
+| **t/c** | **13.5 % root / 9 % tip** | [ADR-0027](decisions/ADR-0027-relative-thickness.md) |
+| Airfoil | **Salamandra r1:** MH60 mean line, +1.0°/+0.5° root/tip reflex | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md) |
+| Printed wash-in | **+3.0°**; selected physical-elevon model trims −0.14°…+0.50° at the corrected V1 mass `[D]` | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md), [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
+| Material | **Conventional PETG** primary airframe; V1 fin shells use bounded LW-PLA-HT pending F2 coupons | [ADR-0021](decisions/ADR-0021-base-material.md), [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md) |
+| Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** | [ADR-0028](decisions/ADR-0028-gyroid-infill.md) |
+| Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
+| Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
+| Elevons | **0.28 c, y 227.5…585 mm (35–90 %), 357.5 mm; fixed 32.5 mm root bridge and 65 mm tip; servo y ±406.25 mm** | [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
+| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; coupled twin-fin V1 1601.98 g / 44.74 km/h** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), [I-30](research/I-30-fin-station-mass-cg-and-connected-scene-closure.md) |
+| Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; two-servo O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
+| Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
+| V_NE article #1 | **160 km/h** (design 180) | — |
+| Initial V_limit | **105 km/h**; 150 only after GXY validation | [`docs/07`](docs/07-divergence-margin.md) |
+| Avionics | INAV 9.1+ or ArduPlane · **pitot mandatory** | — |
+| **Directional** | **CLEAN (finless, O1 build) / V1 (fixed fin, first variant)** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md) |
+
+### Modular architecture
+
+```
+CORE-1          Center module. Wing joiners up to ~30 % of half-span,
+                battery bay with longitudinal adjustment, avionics, motor mount.
+
+PANEL-xxxx-y    xxxx = resulting total wingspan · y = airfoil family
+```
+
+| Config | Panels | Suggested battery | Use | Status |
+|---|---|---|---|---|
+| **Range** | 1600 | 4S2P Li-Ion 21700 | Maximum range | Design |
+| **Cruise** | 1300 | 6S1P Li-Ion 21700 | **Article #1** | Design |
+| **Sport** | 1100 | 6S LiPo | Fast flight | Design |
+
+**Directional variants ([ADR-0038](decisions/ADR-0038-fixed-fin-variant.md)):**
+`SALAMANDRA-CLEAN` (finless, O1 efficiency build) and `SALAMANDRA-V1` (two passive
+CORE-rooted fixed fins wholly forward of the fixed propeller hazard, no movable rudder —
+first platform variant, I-30, recommended after F2 closure). The twin-fin/support assembly
+is a CORE module; panels are untouched.
+
+> ⚠️ See [ADR-0032](decisions/ADR-0032-modularity.md): the panels **are not arbitrary**.
+> Each set is designed against a common neutral point. The same discipline applies to every
+> new configuration contributed to the platform.
+
+### Where the platform can go
+
+- **Replaceable wings.** Larger or differently shaped wings can be swapped onto the common
+  center module.
+- **Body variants.** Complete fuselage variations, larger fuselages, different wingtips,
+  alternative rudders and control surfaces.
+- **Different configurations.** The platform is not limited to the current forward-swept
+  flying wing. Future directions may include conventional fuselage designs, V-tail
+  configurations, tractor or pusher propulsion, and many other layouts.
+- **Hardware archive.** This repository is also the central archive for adapters and
+  mounting systems for different FPV equipment, electronics, propulsion systems and
+  related hardware.
 
 ---
 
@@ -30,6 +154,14 @@ The complete Article #1 set. These A3 metric sheets are **generated, not drawn**
 [`calculations/generate_blueprints.py`](calculations/generate_blueprints.py) renders them
 from the canonical planform, the calculated balance solution, the equipment ledger and the
 released airfoil coordinates.
+
+They are **technical sketches, not manufacturing drawings**. Dark and blue linework is
+traceable geometry, amber dashed linework is provisional, and every sheet states
+**DRAFT — NOT FOR MANUFACTURE**. For a scale check, print on A3 at 100 %; browser and wiki
+widths are responsive and are not scale references. The full source, graphic and print
+contract is in [`geometry/drawings/README.md`](geometry/drawings/README.md); the method is
+[I-25](research/I-25-svg-technical-drawing-workflow.md) and the toolchain
+[I-26](research/I-26-codex-svg-agent-toolchain.md).
 
 <!-- BEGIN GENERATED: drawing-index · calculations/drawing_index.py · do not edit by hand -->
 
@@ -92,44 +224,19 @@ Use this sheet to review PANEL segmentation and interfaces. It shows the exact y
 
 <!-- END GENERATED: drawing-index -->
 
-They are **technical sketches, not manufacturing drawings**. Dark and blue linework is
-traceable geometry, amber dashed linework is provisional, and every sheet states
-**DRAFT — NOT FOR MANUFACTURE**. For a scale check, print on A3 at 100 %; browser and wiki
-widths are responsive and are not scale references. The full source, graphic and print
-contract is in [`geometry/drawings/README.md`](geometry/drawings/README.md); the method is
-[I-25](research/I-25-svg-technical-drawing-workflow.md) and the toolchain
-[I-26](research/I-26-codex-svg-agent-toolchain.md).
-
 Regenerate after any upstream change; the same run republishes this section, the drawing
 index and the wiki from one manifest:
 
 ```bash
-python3 calculations/generate_blueprints.py           # render the sheets and republish them
-python3 calculations/generate_blueprints.py --check    # read-only staleness gate, also run in CI
+python3 calculations/generate_blueprints.py            # render the sheets and republish them
+python3 calculations/generate_blueprints.py --check     # read-only staleness gate, also run in CI
 ```
 
 ---
 
-## What this project is
+## How this project works
 
-There are dozens of open-source printed wings. Almost none of them publish **why** they
-have the geometry they have. And most of them are a single, finished design.
-
-This project is different in two ways:
-
-1. **The reasoning is the product.** Every decision carries its rationale, its source and
-   its confidence level, and the mistakes made along the way are recorded instead of
-   erased. Anyone can trace where each number and each shape comes from.
-2. **It is a platform, not a part.** The goal is a continuously evolving, community-driven
-   library of aircraft, components, variants and experiments — with this repository as the
-   central archive.
-
-**It is fully free and as open as possible.** Contributors are encouraged to open pull
-requests with modifications, improvements and new variants.
-
----
-
-## The AI–human workflow
+### The AI–human division of labour
 
 AI and the community have complementary roles:
 
@@ -141,56 +248,23 @@ AI and the community have complementary roles:
 Today, AI is still not particularly effective at directly creating reliable, parametric
 Fusion 360 models or native CAD files. That is intentional and expected: **the community
 creates the actual 3D parts** based on our AI-assisted research, on their own engineering
-knowledge, or on a combination of both.
+knowledge, or on a combination of both. The research tells *what* and *why*; the community
+provides the *how*.
 
-The repository is built so the two can meet: the research and analysis tell *what* and
-*why*; the community provides the *how* — the parts that realize it.
+### Confidence convention
 
----
+This is the project's central rule. Every quantitative claim carries a tag:
 
-## Why it is open
+| Tag | Meaning |
+|---|---|
+| `[M]` | Measured and published by a primary source |
+| `[D]` | Derived by calculation from `[M]` data |
+| `[E]` | Estimated on declared assumptions |
+| `[I]` | Reasoned inference, not verified |
 
-- **Free.** No paywall, no locked files, no licensing fees. The project is meant to be
-  used, built and shared.
-- **Community-driven.** PRs with modifications, improvements and new variants are welcome
-  and expected. The platform grows through its contributors.
-- **Broad contributions.** Human expertise is especially valuable in experimentation,
-  practical judgment, manufacturing and engineering intuition — but contributions are not
-  limited to aerodynamics or structures. Decorative parts, visual improvements, equipment
-  mounts and other creative modifications are welcome too.
-- **Reciprocal.** Under the project's licences, derivatives stay open, so the whole
-  community benefits from every contribution. See [Licence](#licence).
-
----
-
-## Modular platform and extensibility
-
-The aircraft is designed as a **modular platform**:
-
-- **Replaceable wings.** Larger or differently shaped wings can be swapped onto the common
-  center module.
-- **Body variants.** Contributors can create complete fuselage variations, larger
-  fuselages, different wingtips, alternative rudders and control surfaces.
-- **Different configurations.** The platform is not limited to the current forward-swept
-  flying wing. Future directions may include conventional fuselage designs, V-tail
-  configurations, tractor or pusher propulsion systems, and many other aircraft layouts.
-- **Hardware archive.** This repository is also the central archive for adapters and
-  mounting systems for different FPV equipment, electronics, propulsion systems and
-  related hardware.
-
----
-
-## Initial design: Salamandra, the forward-swept flying wing
-
-This is the first, reference design on the platform, named **Salamandra**. Its current
-specification for the designer is the
-[**concise Salamandra Design Guide v0.23**](design/Salamandra-Design-Guide-v0.1.md).
-Detailed calculations, release migration and engineering context remain in the
-[**Advanced Design Guide**](design/Salamandra-Design-Guide-Advanced-v0.1.md), with the
-justification and open-points register in [`design/`](design/). The baseline is a PETG
-forward-swept flying wing,
-**modular and configurable**: a standard center module and interchangeable wing panels.
-Efficient FPV cruise flight, with electronics chosen by the builder.
+> **Hard rule:** no `[E]` or `[I]` datum supports an irreversible decision without prior verification.
+>
+> **Corollary:** when better data overturn a conclusion, it is recorded in the [CHANGELOG](CHANGELOG.md) with a correction number.
 
 ### Which design document should I use?
 
@@ -211,7 +285,7 @@ guides link directly to the
 [current manifest-controlled SVG drawing set](geometry/drawings/README.md); begin with
 `SLM-GA-001` and select the task-specific sheet from the guide table.
 
-### Publishing a new release
+### Releases
 
 Maintainers must follow the
 [**New Release Guide**](docs/15-how-to-publish-a-release.md). It defines the version and
@@ -219,121 +293,26 @@ document updates, required CI-equivalent checks, release PR, annotated Git tag a
 post-release verification. A release is never created from a dirty or partially merged
 working tree.
 
-**📦 Current release — `v0.6.0`: twin-fin directional architecture and the parametric
-fuselage programme.** The concise Design Guide is the authoritative CAD entry point.
-v0.5.0 left two shapes as sketches; this release replaces both with derivations. The
-centreline fin is **rejected** — its load path crossed the propeller plane — and superseded
-by two CORE-rooted fixed fins at y = ±140 mm whose station comes out of a coupled
-clearance/mass/CG trade ([ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), I-29/I-30):
-6.1437 dm² total, fin AC x = +115.5 mm, 48.73 g against a 60 g allocation, V1 1601.98 g at
-44.74 km/h. The fuselage stops being hand-placed Bézier curves in the drawing generator:
-`fuselage_geometry.py` now lofts a superelliptic body around the equipment skeleton and
-**audits containment**, `fuselage_trade.py` scores candidate families, and the review
-selection ships as a hashed mesh. **The body is still `[I]`** — `aircraft_feasible` is
-false and the release says so. Two new sheets (`SLM-FUS-001`, `SLM-FIN-001`) bring the set
-to six. Read the [**v0.6.0 release notes**](docs/16-release-v0.6.md) before CAD or
-structural work; **any V1 fin or carrier solid from v0.5.0 is obsolete**. Historical
-v0.1.0–v0.5.0 notes remain audit records.
-The wiki renders the package at
-<https://bultodepapas.github.io/salmandra/>.
-
-### Measurable objective
-
-| | Value |
-|---|---|
-| Market reference | **TBS Mojito** — 1.40 Wh/km measured, USD 189.95 |
-| **Target** | **≤ 1.15 Wh/km** at 95 km/h |
-| Where it comes from | **Propeller matching**, +20 % demonstrated on UIUC data `[D]` |
-
-The initial analysis showed that the Mojito **is not energy-efficient** — it consumes
-0.74 Wh/(km·kg), the same as a USD 40 foam wing; its achievement is sustaining that at
-2–3× the speed. This design's efficiency does not come from optimistic aerodynamics: it
-comes from the propulsion chain, which is where the data say the gap is.
-
-**It is falsifiable.** It is measured with [E2](tests/) and [E3](tests/).
-
-### Article #1 — Cruise configuration
-
-| Parameter | Value | Decision |
-|---|---|---|
-| Wingspan | 1300 mm | [ADR-0010](decisions/ADR-0010-mission-branch.md) |
-| Aspect ratio | 6.0 · S = 0.282 m² `[E]` | [ADR-0004](decisions/ADR-0004-aspect-ratio.md) |
-| Quarter-chord sweep | **−15°** | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
-| **t/c** | **13.5 % root / 9 % tip** | [ADR-0027](decisions/ADR-0027-relative-thickness.md) |
-| Airfoil | **Salamandra r1:** MH60 mean line, +1.0°/+0.5° root/tip reflex | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md) |
-| Printed wash-in | **+3.0°**; selected physical-elevon model trims −0.14°…+0.50° at the corrected V1 mass `[D]` | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md), [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
-| Material | **Conventional PETG** primary airframe; V1 fin shells use bounded LW-PLA-HT pending F2 coupons | [ADR-0021](decisions/ADR-0021-base-material.md), [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md) |
-| Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** | [ADR-0028](decisions/ADR-0028-gyroid-infill.md) |
-| Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
-| Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
-| Elevons | **0.28 c, y 227.5…585 mm (35–90 %), 357.5 mm; fixed 32.5 mm root bridge and 65 mm tip; servo y ±406.25 mm** | [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
-| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; coupled twin-fin V1 1601.98 g / 44.74 km/h** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), [I-30](research/I-30-fin-station-mass-cg-and-connected-scene-closure.md) |
-| Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; two-servo O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
-| Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
-| V_NE article #1 | **160 km/h** (design 180) | — |
-| Initial V_limit | **105 km/h**; 150 only after GXY validation | [`docs/07`](docs/07-divergence-margin.md) |
-| Avionics | INAV 9.1+ or ArduPlane · **pitot mandatory** | — |
-| **Directional** | **CLEAN (finless, O1 build) / V1 (fixed fin, first variant)** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md) |
-
-### Modular architecture
-
-```
-CORE-1          Center module. Wing joiners up to ~30 % of half-span,
-                battery bay with longitudinal adjustment, avionics, motor mount.
-
-PANEL-xxxx-y    xxxx = resulting total wingspan · y = airfoil family
-```
-
-| Config | Panels | Suggested battery | Use | Status |
-|---|---|---|---|---|
-| **Range** | 1600 | 4S2P Li-Ion 21700 | Maximum range | Design |
-| **Cruise** | 1300 | 6S1P Li-Ion 21700 | **Article #1** | Design |
-| **Sport** | 1100 | 6S LiPo | Fast flight | Design |
-
-**Directional variants (ADR-0038):** `SALAMANDRA-CLEAN` (finless, O1 efficiency build)
-and `SALAMANDRA-V1` (two passive CORE-rooted fixed fins wholly forward of the fixed
-propeller hazard, no movable rudder — first platform variant, I-30, recommended after F2
-closure). The twin-fin/support assembly is a
-CORE module; panels are untouched.
-
-⚠️ See [ADR-0032](decisions/ADR-0032-modularity.md): the panels **are not arbitrary**. Each
-set is designed against a common neutral point. The same discipline applies to every new
-configuration contributed to the platform.
-
----
-
-## How to navigate this repository
-
-| Folder | What it contains |
-|---|---|
-| [`design/`](design/) | **Concise Salamandra Design Guide v0.23** — the primary CAD execution specification; plus the canonical Advanced Design Guide, justification and open points |
-| [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
-| [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
-| [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |
-| [`gaps/`](gaps/) | Register of what we do **not** know and how it gets closed |
-| [`tests/`](tests/) | Experimental program and data |
-| [`calculations/`](calculations/) | Analysis scripts, with validation cases — **full reproduction guide in its README** |
-| `geometry/` `stl/` `cad/` | Community 3D parts and outputs; `geometry/airfoils/` holds controlled section coordinates and `geometry/drawings/` holds generated A3 SVG design-review sheets |
-| [`wiki/`](wiki/) | **The served documentation site** (Astro Starlight): onboarding guide, auto-generated indexes, search. Deployed to GitHub Pages via `.github/workflows/docs.yml` |
-
-**Start with:** [`docs/00-objectives-and-requirements.md`](docs/00-objectives-and-requirements.md) → [`decisions/README.md`](decisions/README.md) → [`gaps/README.md`](gaps/README.md)
-
----
-
-## Confidence convention
-
-This is the project's central rule. Every quantitative claim carries a tag:
-
-| Tag | Meaning |
-|---|---|
-| `[M]` | Measured and published by a primary source |
-| `[D]` | Derived by calculation from `[M]` data |
-| `[E]` | Estimated on declared assumptions |
-| `[I]` | Reasoned inference, not verified |
-
-> **Hard rule:** no `[E]` or `[I]` datum supports an irreversible decision without prior verification.
+> **📦 Current release — `v0.6.0`: twin-fin directional architecture and the parametric
+> fuselage programme.**
 >
-> **Corollary:** when better data overturn a conclusion, it is recorded in the [CHANGELOG](CHANGELOG.md) with a correction number.
+> The concise Design Guide is the authoritative CAD entry point. v0.5.0 left two shapes as
+> sketches; this release replaces both with derivations. The centreline fin is **rejected**
+> — its load path crossed the propeller plane — and superseded by two CORE-rooted fixed
+> fins at y = ±140 mm whose station comes out of a coupled clearance/mass/CG trade
+> ([ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), I-29/I-30): 6.1437 dm² total, fin
+> AC x = +115.5 mm, 48.73 g against a 60 g allocation, V1 1601.98 g at 44.74 km/h. The
+> fuselage stops being hand-placed Bézier curves in the drawing generator:
+> `fuselage_geometry.py` now lofts a superelliptic body around the equipment skeleton and
+> **audits containment**, `fuselage_trade.py` scores candidate families, and the review
+> selection ships as a hashed mesh. **The body is still `[I]`** — `aircraft_feasible` is
+> false and the release says so. Two new sheets (`SLM-FUS-001`, `SLM-FIN-001`) bring the
+> set to six.
+>
+> Read the [**v0.6.0 release notes**](docs/16-release-v0.6.md) before CAD or structural
+> work; **any V1 fin or carrier solid from v0.5.0 is obsolete**. Historical v0.1.0–v0.5.0
+> notes remain audit records. The wiki renders the package at
+> <https://bultodepapas.github.io/salmandra/>.
 
 ---
 
@@ -354,7 +333,8 @@ OP-29 measured torsional stiffness/elastic axis and G11 dynamic gust closure bef
 speed envelope can expand beyond 105 km/h. Airfoil coordinate generation is no longer a
 CAD blocker.
 
-Phase-1 status (2026-08-18):
+<details>
+<summary><strong>Phase-1 detail (2026-08-18)</strong> — gap-by-gap state of the geometry and stability work</summary>
 
 - **G8 (neutral point) — largely closed.** On the ADR-0040 −15° planform, NP =
   **25.72 % MAC / −75.8 mm** by the full panel VLM, cross-checked by Weissinger-L at
@@ -401,9 +381,31 @@ Phase-1 status (2026-08-18):
   rudder remains a future control variant; it is not needed to define passive stability. Closure by
   flight test **E8** (yaw perturbation).
 
+</details>
+
 ---
 
-## Tools and workflow
+## Repository map
+
+| Folder | What it contains |
+|---|---|
+| [`design/`](design/) | **Concise Salamandra Design Guide v0.23** — the primary CAD execution specification; plus the canonical Advanced Design Guide, justification and open points |
+| [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
+| [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
+| [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |
+| [`gaps/`](gaps/) | Register of what we do **not** know and how it gets closed |
+| [`tests/`](tests/) | Experimental program and data |
+| [`calculations/`](calculations/) | Analysis scripts, with validation cases — **full reproduction guide in its README** |
+| `geometry/` `stl/` `cad/` | Community 3D parts and outputs; `geometry/airfoils/` holds controlled section coordinates and `geometry/drawings/` holds generated A3 SVG design-review sheets |
+| [`wiki/`](wiki/) | **The served documentation site** (Astro Starlight): onboarding guide, auto-generated indexes, search. Deployed to GitHub Pages via `.github/workflows/docs.yml` |
+
+**Reading order for a newcomer:**
+[`docs/00-objectives-and-requirements.md`](docs/00-objectives-and-requirements.md) →
+[`decisions/README.md`](decisions/README.md) → [`gaps/README.md`](gaps/README.md)
+
+---
+
+## Tools and reproducing the numbers
 
 The project runs on an explicit toolchain — every tool is named, versioned, and used for
 a defined job, from research to flight:
@@ -453,6 +455,8 @@ This is a community project. Contributions of all kinds are welcome — see
   control surfaces, mounts, adapters, decorative or creative pieces — is welcome.
 - Numbers without a source are not accepted in the technical record, even if they are
   correct.
+
+---
 
 ## Licence
 
