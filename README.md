@@ -36,6 +36,7 @@ released airfoil coordinates.
 | Drawing | Purpose | Sheet | Authority |
 |---|---|---:|---|
 | [`SLM-GA-001`](geometry/drawings/SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and continuous provisional fuselage/equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]` |
+| [`SLM-FUS-001`](geometry/drawings/SLM-FUS-001-fuselage-oml-review.svg) | Common-source plan, side and transverse body views with inflated central skeleton envelopes, containment margins and gross mesh diagnostics | A3 · views 1:4 / sections 1:1.5 | OML `[I]`; envelopes `[D]`/`[E]`/`[I]`; metrics `[D]` on `[I]` |
 | [`SLM-GA-002`](geometry/drawings/SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
 | [`SLM-EQP-001`](geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg) | Top and side mass skeleton: component envelopes, true mass centres, x/y/z schedule, CLEAN CG and V1 battery-stop overlay. The top view includes the controlled exterior wing planform as spatial context but no wing construction, fuselage or OML. | A3 · top 1:6.5 / side 1:4 | Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority |
 | [`SLM-WNG-001`](geometry/drawings/SLM-WNG-001-half-wing-layout.svg) | Right half-wing: printed segments, cells, spar/pin, ADR-0045 elevon/fixed-root bridge, exact y195 profile and polyhedral inset | A3 · plan 1:2 | Planform/profile/elevon bounds `[D]`; structure/polyhedral `[E]`/`[I]` |
@@ -44,9 +45,17 @@ released airfoil coordinates.
 
 [![Metric A3 top-view draft showing controlled forward-swept planform geometry, modular stations, calculated balance datums, and a provisional continuous fuselage outer-mould concept around the battery boom and propulsion pod.](geometry/drawings/SLM-GA-001-general-arrangement.svg)](geometry/drawings/SLM-GA-001-general-arrangement.svg)
 
-Use this sheet to review the whole-aircraft relationship: 1,300 mm controlled planform, modular stations, quarter-chord sweep, CG/NP, nose-boom battery station and rear-pusher envelope. A continuous curved fuselage OML connects the battery fairing, CORE and rear pod so the aircraft reads as one body. Its required stations are sourced, but its Bézier transitions remain `[I]`, amber and provisional until OP-21/F2 freezes native CAD.
+Use this sheet to review the whole-aircraft relationship: 1,300 mm controlled planform, modular stations, quarter-chord sweep, CG/NP, nose-boom battery station and rear-pusher envelope. A continuous curved fuselage OML connects the battery fairing, CORE and rear pod so the aircraft reads as one body. That OML is now projected from the common I-28 NumPy loft and central equipment envelopes; it remains `[I]`, amber and provisional until OP-21/F2 freezes the native CAD union and structural interfaces.
 
 **Sheet** A3 · 1:4 · **Authority** Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]`.
+
+### SLM-FUS-001 · Parametric fuselage OML review
+
+[![Metric A3 review sheet generated from the NumPy asymmetric superelliptic loft. It overlays body-owned inflated equipment envelopes in plan and side views, shows five transverse sections, and reports numerical containment and mesh diagnostics. All fuselage OML geometry is inferred and is not manufacturing authority.](geometry/drawings/SLM-FUS-001-fuselage-oml-review.svg)](geometry/drawings/SLM-FUS-001-fuselage-oml-review.svg)
+
+Use this sheet to interrogate the fuselage generator itself. Plan and side outlines and all five transverse sections come from the same asymmetric superelliptic NumPy loft; dashed rectangles are body-owned component envelopes after the explicit 1.2 mm wall plus 1.0 mm installation allowance. The table reports computed containment margins and gross operand metrics. It does not release a printable shell: wing boolean union, local load paths, openings, joints, wall schedule, cooling and body-inclusive aerodynamic closure remain open gates.
+
+**Sheet** A3 · views 1:4 / sections 1:1.5 · **Authority** OML `[I]`; envelopes `[D]`/`[E]`/`[I]`; metrics `[D]` on `[I]`.
 
 ### SLM-GA-002 · Side elevations
 

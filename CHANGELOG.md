@@ -4,6 +4,31 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.36] — 2026-08-18
+
+**I-28 — the provisional fuselage is now one audited 3-D source instead of unrelated
+2-D styling curves.**
+
+- Added a stdlib design/authority contract and a NumPy analytical body generator around
+  the body-owned subset of the CG-derived equipment skeleton. Three bounded asymmetric
+  superelliptic families prevent a cylindrical default while hard envelopes cannot be
+  removed by the styling controls.
+- The canonical `lifting_saddle` review mesh spans x = −452.70…+265.00 mm, is watertight,
+  encloses all nine central envelopes and reports 0.1583 m² gross wetted area, 2.195 L
+  volume and a non-additive 180.9 g gross 0.9 mm PETG skin screen.
+- Added deterministic seeded family/trade output in `geometry/fuselage/provisional/`,
+  including an ASCII-stable manifest and OBJ. Feasibility-first/Pareto bookkeeping does
+  not claim an aerodynamic optimum.
+- GA-001 and GA-002 now project this common loft. New generated sheet `SLM-FUS-001`
+  overlays plan/side envelopes, five transverse sections, containment margins, topology
+  and the aircraft-level blockers.
+- Added analytical, regression and mutation coverage. The body operand is geometrically
+  feasible, but aircraft feasibility remains false pending exact V1 battery reach,
+  physical location of 92.88 g reserves, net wing/body mass ownership, body-inclusive
+  NP/trim, wing installation audit and printable structural/thermal closure.
+
+---
+
 ## [1.35] — 2026-08-18
 
 **C45 — the O4 VTX was ahead of the FPV camera in the 3-D equipment model.**

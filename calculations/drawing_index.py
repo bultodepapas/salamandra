@@ -104,9 +104,31 @@ SHEETS: tuple[SheetSpec, ...] = (
             "Use this sheet to review the whole-aircraft relationship: 1,300 mm controlled "
             "planform, modular stations, quarter-chord sweep, CG/NP, nose-boom battery "
             "station and rear-pusher envelope. A continuous curved fuselage OML connects the "
-            "battery fairing, CORE and rear pod so the aircraft reads as one body. Its "
-            "required stations are sourced, but its Bézier transitions remain `[I]`, amber "
-            "and provisional until OP-21/F2 freezes native CAD."
+            "battery fairing, CORE and rear pod so the aircraft reads as one body. That OML "
+            "is now projected from the common I-28 NumPy loft and central equipment "
+            "envelopes; it remains `[I]`, amber and provisional until OP-21/F2 freezes the "
+            "native CAD union and structural interfaces."
+        ),
+    ),
+    SheetSpec(
+        number="SLM-FUS-001",
+        filename="SLM-FUS-001-fuselage-oml-review.svg",
+        heading="Parametric fuselage OML review",
+        purpose=(
+            "Common-source plan, side and transverse body views with inflated central "
+            "skeleton envelopes, containment margins and gross mesh diagnostics"
+        ),
+        scale="A3 · views 1:4 / sections 1:1.5",
+        authority="OML `[I]`; envelopes `[D]`/`[E]`/`[I]`; metrics `[D]` on `[I]`",
+        note=(
+            "Use this sheet to interrogate the fuselage generator itself. Plan and side "
+            "outlines and all five transverse sections come from the same asymmetric "
+            "superelliptic NumPy loft; dashed rectangles are body-owned component envelopes "
+            "after the explicit 1.2 mm wall plus 1.0 mm installation allowance. The table "
+            "reports computed containment margins and gross operand metrics. It does not "
+            "release a printable shell: wing boolean union, local load paths, openings, "
+            "joints, wall schedule, cooling and body-inclusive aerodynamic closure remain "
+            "open gates."
         ),
     ),
     SheetSpec(

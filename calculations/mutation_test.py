@@ -206,6 +206,16 @@ MUTATIONS = (
         "Taper sets the chord law, the MAC and the neutral point at once.",
         _set_attr("design_config", "TAPER", 0.65),
     ),
+    Mutation(
+        "fuselage: containment query always reports clearance",
+        "A smooth render must not survive when the OML audit is made blind to "
+        "a seeded equipment penetration.",
+        _patch_function(
+            "fuselage_geometry",
+            "point_margin_mm",
+            lambda old: lambda model, point_mm: 1.0,
+        ),
+    ),
 )
 
 
@@ -215,7 +225,7 @@ def _clear_caches():
         "aero_contract", "balance_cg", "equipment_layout", "yaw_stability",
         "divergence", "vlm_ala_volante", "fpv_power_budget",
         "propulsion_match", "boom_flexion", "airfoil_reflex_trade",
-        "verify_calculations",
+        "fuselage_geometry", "verify_calculations",
     ):
         module = sys.modules.get(module_name)
         if module is None:

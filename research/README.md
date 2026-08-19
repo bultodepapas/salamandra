@@ -33,6 +33,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-25](I-25-svg-technical-drawing-workflow.md) | **Reproducible SVG technical-drawing workflow** | ✅ **Executed — two A3 design-review sheets; manufacturing authority remains open** | `generate_blueprints.py`, `geometry/drawings/`, wiki drawing guide, future CAD ICDs |
 | [I-26](I-26-codex-svg-agent-toolchain.md) | **Codex, VS Code and agent toolchain for controlled SVG drawings** | ✅ **Executed — repository workflow hardened; optional renderer/schema gates open** | repository SVG skill, VS Code tasks, generator verification, drawing guide |
 | [I-27](I-27-elevon-geometry-trade.md) | **Article #1 elevon span, chord and tip-clearance trade** | 🔄 **Computational selection executed; E2/E5/G7 physical closure open** | ADR-0045, OP-06, guide §6.6, F2 |
+| [I-28](I-28-coupled-parametric-fuselage-oml.md) | **Senior master plan for an automatic parametric fuselage around the coupled skeleton** | 🔴 **Revision 2 OML rejected; Revision 3 executable plan controls replacement** | OP-21, F1/F2, G10, future fuselage-generator ADR |
 
 ## Source quality
 

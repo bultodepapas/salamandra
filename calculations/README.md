@@ -40,10 +40,13 @@ Data sources consumed (all `[M]`):
 | `aero_contract.py` | **Derived aerodynamic contract** — re-derives and caches the neutral point, lift-curve slope and CG target from the planform, keeping the published values as regression anchors with a declared tolerance. Replaces the hand-copied `NP_VLM` literal (C39) | Balance, packaging, drawings, yaw | numpy |
 | `drag_model.py` | **Shared drag polar** — viscous and induced terms returned separately per ADR-0009, with a declared launch-configuration transfer and band (C42) | `yaw_stability`, `launch_speed` | stdlib only |
 | `contract_lint.py` | **Single-declaration lint** — fails when a physical quantity is declared in two modules, when a bare literal duplicates a contract value, or when a banded constant is frozen as a default argument | Whole system, CI | stdlib only |
-| `mutation_test.py` | **Proof that the suite can fail** — seeds 19 deliberate defects (sign flips, dropped normalisations, desynchronised copies) and requires each to turn at least one contract check red (C43) | Whole system, CI | stdlib only |
+| `mutation_test.py` | **Proof that the suite can fail** — seeds 20 deliberate defects (sign flips, dropped normalisations, desynchronised copies and a defeated OML containment predicate) and requires each to turn at least one contract check red (C43) | Whole system, CI | stdlib only |
 | `design_config.py` | **Canonical numerical design contract** — planform, atmosphere, mission/stall/speed points, load factor and released mass targets; validates geometry and shared invariants | Guide, every coupled script | stdlib only |
-| `generate_blueprints.py` | **Metric SVG drawing generator** — emits and validates the A3 general-arrangement, equipment mass-skeleton and half-wing sheets from the canonical planform, 3D equipment ledger, calculated balance solution and released airfoil sections; visually distinguishes provisional geometry | `geometry/drawings/`, I-25, wiki drawing guide, CAD review | numpy through `balance_cg.py`; `equipment_layout.py` |
+| `generate_blueprints.py` | **Metric SVG drawing generator** — emits and validates the A3 general-arrangement, fuselage OML review, equipment mass-skeleton and half-wing sheets from the canonical planform, common NumPy body loft, 3D equipment ledger, calculated balance solution and released airfoil sections; visually distinguishes provisional geometry | `geometry/drawings/`, I-25/I-28, wiki drawing guide, CAD review | numpy; `fuselage_geometry.py`; `equipment_layout.py` |
 | `drawing_index.py` | **Drawing publication contract** — one registry of sheet number, purpose, sheet scale, authority and reviewer note; writes `geometry/drawings/manifest.json` and the generated drawing blocks in the repository README and drawing index, and fails when any of them is stale | `README.md`, `geometry/drawings/`, wiki drawing page | stdlib only |
+| `fuselage_contract.py` | **Provisional body design contract** — separates body-owned from wing-owned installation envelopes and defines three bounded, deliberately non-cylindrical OML families plus wall/clearance policy | `fuselage_geometry.py`, I-28, OP-21/F2 | stdlib only |
+| `fuselage_geometry.py` | **Analytical fuselage backend** — asymmetric superelliptic sections driven by clamped cubic B-spline laws and smooth envelope maxima; emits a watertight mesh, plan/side outlines, containment margins, fairness and projected-area diagnostics | OML review drawing, trade manifest/OBJ, CAD review | numpy; `equipment_layout.py` |
+| `fuselage_trade.py` | **Deterministic provisional OML trade** — seeded Latin-hypercube perturbations, feasibility-first scoring and Pareto filtering across the three family priors; writes the review manifest and OBJ without claiming aircraft closure | `geometry/fuselage/provisional/`, I-28 | numpy; fuselage contract/geometry |
 | `verify_calculations.py` | **Cross-module verification** — proves geometry, mass, battery, CG, stall, power, propulsion, speed-role, airfoil, stability, control and yaw contracts agree; runs every deterministic local CLI by default (`--fast` skips them); each contract group is exception-isolated | Whole calculation system, I-23 | numpy |
 | `sweep_trade.py` | **Coupled sweep selection** — full VLM + Weissinger NP, trim/twist/reflex, section-Cl margin, self-consistent balance/packaging and NASA TP-1685 divergence trend for −20…−10° candidates | I-21, ADR-0040 | numpy |
 | `vlm_ala_volante.py` | Panel vortex lattice for the forward-swept wing (taper + twist). NP, CL_α, load distribution, Cm0-per-degree twist yield | I-07, G8, guide §4.3 | numpy |
@@ -104,12 +107,34 @@ python3 generate_blueprints.py --check
 
 Running it without `--check` writes the sheets **and republishes** `geometry/drawings/manifest.json`, the repository README drawing gallery and the drawing index table through `drawing_index.py`; the wiki renders the same manifest at build time. `--check` fails when a sheet or any published block is stale, and it is the gate CI runs. Use `python3 drawing_index.py` when only the published text changed, since it needs no numerical stack.
 
-This checks the generated A3 metric drawing set, including
-`SLM-EQP-001-equipment-mass-skeleton.svg`: the equipment-only top/side projection and
-x/y/z mass schedule that precede fuselage OML design. Every sheet is explicitly marked
+This checks the generated A3 metric drawing set, including the equipment-only
+`SLM-EQP-001` mass skeleton and `SLM-FUS-001`, the common-source OML/envelope audit.
+Every sheet is explicitly marked
 **not for manufacture**. Print at actual size only; responsive web display is not a scale
 reference. The visual semantics and open limitations are recorded in
 `geometry/drawings/README.md`.
+
+### 0.2 Provisional fuselage OML (I-28)
+
+```bash
+python3 fuselage_contract.py
+python3 fuselage_geometry.py --json
+python3 fuselage_trade.py --check
+python3 fuselage_trade.py --family all --samples 1 --seed 2802
+```
+
+The body is generated around the body-owned subset of the CLEAN three-dimensional
+equipment skeleton. It is one analytical 3-D source for the OBJ review mesh,
+`SLM-FUS-001`, and the OML projections used by GA-001/002. The default
+`lifting_saddle` family is a review starting point rather than an aerodynamic optimum.
+At the canonical mesh it encloses every audited central envelope and is watertight, but
+the reported skin mass is only a gross 0.9 mm surface screen: overlap with the wing,
+cavities, openings, local reinforcement and printed-joint mass are unresolved.
+
+The generator deliberately keeps `geometry_feasible` separate from
+`aircraft_feasible`. The latter remains false while V1 battery reach, reserve-mass
+location, net union mass ownership, body-inclusive NP/trim and the wing installation
+audit are open. No generated body file is manufacturing authority.
 
 ### 1. Neutral point (I-07, and C2 cross-check — guide §3)
 

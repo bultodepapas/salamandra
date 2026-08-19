@@ -33,6 +33,8 @@ from pathlib import Path
 import aero_contract
 import drawing_index
 import equipment_layout
+import fuselage_contract
+import fuselage_geometry
 from balance_cg import cg_target, np_vlm, np_weissinger, solve_reference_layout
 from design_config import (
     ASPECT_RATIO,
@@ -562,74 +564,15 @@ def draw_general_arrangement() -> SvgSheet:
         CONTRACT.cradle_inner_width_m + 2.0 * CONTRACT.cradle_wall_m
     ) / 2.0
 
-    def body_point(x_m: float, y_m: float) -> str:
-        x_svg, y_svg = plan_point(x_m, y_m, ox, oy, scale)
-        return f"{fmt(x_svg)} {fmt(y_svg)}"
-
-    def body_curve(
-        control_1: tuple[float, float],
-        control_2: tuple[float, float],
-        end: tuple[float, float],
-    ) -> str:
-        return (
-            f"C {body_point(*control_1)} {body_point(*control_2)} "
-            f"{body_point(*end)}"
-        )
-
-    body_path = " ".join([
-        f"M {body_point(cradle_fwd, 0.0)}",
-        body_curve(
-            (cradle_fwd + 0.006, 0.021),
-            (cradle_fwd + 0.015, cradle_outer_half),
-            (cradle_fwd + 0.026, cradle_outer_half),
-        ),
-        body_curve(
-            (cradle_fwd + 0.075, cradle_outer_half),
-            (cradle_aft - 0.030, cradle_outer_half),
-            (cradle_aft, 0.030),
-        ),
-        body_curve(
-            (cradle_aft + 0.050, 0.029),
-            (CONTRACT.nose_support_m - 0.040, 0.026),
-            (CONTRACT.nose_support_m, 0.026),
-        ),
-        body_curve((-0.050, 0.028), (0.090, 0.042), (0.170, 0.042)),
-        body_curve(
-            (0.205, 0.042),
-            (0.248, 0.032),
-            (CONTRACT.rear_pod_end_m, 0.024),
-        ),
-        body_curve(
-            (CONTRACT.rear_pod_end_m + 0.010, 0.016),
-            (CONTRACT.rear_pod_end_m + 0.010, -0.016),
-            (CONTRACT.rear_pod_end_m, -0.024),
-        ),
-        body_curve((0.248, -0.032), (0.205, -0.042), (0.170, -0.042)),
-        body_curve(
-            (0.090, -0.042),
-            (-0.050, -0.028),
-            (CONTRACT.nose_support_m, -0.026),
-        ),
-        body_curve(
-            (CONTRACT.nose_support_m - 0.040, -0.026),
-            (cradle_aft + 0.050, -0.029),
-            (cradle_aft, -0.030),
-        ),
-        body_curve(
-            (cradle_aft - 0.030, -cradle_outer_half),
-            (cradle_fwd + 0.075, -cradle_outer_half),
-            (cradle_fwd + 0.026, -cradle_outer_half),
-        ),
-        body_curve(
-            (cradle_fwd + 0.015, -cradle_outer_half),
-            (cradle_fwd + 0.006, -0.021),
-            (cradle_fwd, 0.0),
-        ),
-        "Z",
-    ])
-    sheet.path(
-        body_path,
+    oml_model = fuselage_geometry.reference_model()
+    body_points = [
+        plan_point(x_mm / 1000.0, y_mm / 1000.0, ox, oy, scale)
+        for x_mm, y_mm in fuselage_geometry.plan_outline_mm(oml_model)
+    ]
+    sheet.polyline(
+        body_points,
         "provisional-fill",
+        close=True,
         style=(
             "fill:#f4c46a;fill-opacity:.22;stroke:#985b00;stroke-width:.62;"
             "stroke-dasharray:3.4 1.6;stroke-linejoin:round"
@@ -875,55 +818,18 @@ def draw_side_elevations() -> SvgSheet:
             control_2: tuple[float, float],
             end: tuple[float, float],
         ) -> str:
-            return (
-                f"C {point(*control_1)} {point(*control_2)} "
-                f"{point(*end)}"
-            )
+            """Return a cubic segment for non-OML local installation details."""
+            return f"C {point(*control_1)} {point(*control_2)} {point(*end)}"
 
-        body_path = " ".join([
-            f"M {point(cradle_fwd, 0.0)}",
-            curve(
-                (cradle_fwd + 0.005, 0.016),
-                (cradle_fwd + 0.014, 0.032),
-                (cradle_fwd + 0.030, 0.032),
-            ),
-            curve(
-                (cradle_fwd + 0.075, 0.032),
-                (cradle_aft - 0.035, 0.032),
-                (cradle_aft, 0.029),
-            ),
-            curve(
-                (cradle_aft + 0.050, 0.025),
-                (CONTRACT.nose_support_m - 0.040, 0.012),
-                (CONTRACT.nose_support_m, 0.012),
-            ),
-            curve((-0.105, 0.016), (-0.080, 0.019), (-0.060, 0.020)),
-            curve((-0.020, 0.026), (0.085, 0.030), (0.160, 0.026)),
-            curve((0.195, 0.024), (0.235, 0.022), (0.255, 0.019)),
-            curve((0.265, 0.016), (0.270, 0.006), (0.265, 0.0)),
-            curve((0.270, -0.008), (0.265, -0.015), (0.255, -0.017)),
-            curve((0.230, -0.022), (0.195, -0.027), (0.160, -0.030)),
-            curve((0.085, -0.032), (0.000, -0.030), (-0.060, -0.018)),
-            curve(
-                (-0.090, -0.012),
-                (CONTRACT.nose_support_m - 0.025, -0.010),
-                (CONTRACT.nose_support_m, -0.010),
-            ),
-            curve(
-                (CONTRACT.nose_support_m - 0.050, -0.008),
-                (cradle_aft + 0.045, -0.006),
-                (cradle_aft, -0.006),
-            ),
-            curve(
-                (cradle_aft - 0.040, -0.006),
-                (cradle_fwd + 0.040, -0.006),
-                (cradle_fwd, 0.0),
-            ),
-            "Z",
-        ])
-        sheet.path(
-            body_path,
+        oml_model = fuselage_geometry.reference_model()
+        body_points = [
+            side_point(x_mm / 1000.0, z_mm / 1000.0, origin_x, origin_y, scale)
+            for x_mm, z_mm in fuselage_geometry.side_outline_mm(oml_model)
+        ]
+        sheet.polyline(
+            body_points,
             "provisional-fill",
+            close=True,
             style=(
                 "fill:#f4c46a;fill-opacity:.22;stroke:#985b00;stroke-width:.62;"
                 "stroke-dasharray:3.4 1.6;stroke-linejoin:round"
@@ -943,7 +849,12 @@ def draw_side_elevations() -> SvgSheet:
         ]
         sheet.polyline(section_points, "controlled-fill", close=True)
         sheet.polyline(section_points, "outline", close=True)
-        sheet.path(body_path, "provisional-line", style="stroke-width:.62;fill:none")
+        sheet.polyline(
+            body_points,
+            "provisional-line",
+            close=True,
+            style="stroke-width:.62;fill:none",
+        )
 
         # Internal packaging: Ø8 boom, 155 x 24 mm cradle envelope and Ø28 motor.
         boom_top_left = side_point(cradle_fwd, 0.004, origin_x, origin_y, scale)
@@ -1273,6 +1184,186 @@ def draw_side_elevations() -> SvgSheet:
         f"O4: CAMERA FRONT/CENTRELINE [D]; COAX STRAIGHT-LINE LOWER BOUND {o4_coax_distance_mm:.1f}/50.0 mm [D]/[M].",
         f"CAD OPEN: fin AC placement requires carrier to x +{fin_te*1000:.0f}; the guide's x +295 concept is insufficient.",
     ], "micro", 3.4)
+    return sheet
+
+
+def draw_fuselage_oml_review() -> SvgSheet:
+    """Draw the analytical body OML, skeleton envelopes and audit evidence."""
+    model = fuselage_geometry.reference_model()
+    report = fuselage_geometry.report_as_dict(model)
+    audits = fuselage_geometry.audit_envelopes(model)
+    layout = equipment_layout.reference_layout("clean")
+    scale = 4.0
+    origin_x = 128.0
+    plan_y = 74.0
+    side_y = 165.0
+
+    sheet = SvgSheet(
+        "Salamandra provisional fuselage OML review",
+        "Metric A3 review sheet generated from the NumPy asymmetric superelliptic loft. "
+        "It overlays body-owned inflated equipment envelopes in plan and side views, "
+        "shows five transverse sections, and reports numerical containment and mesh "
+        "diagnostics. All fuselage OML geometry is inferred and is not manufacturing authority.",
+        "SLM-FUS-001",
+    )
+    title_block(
+        sheet,
+        "PARAMETRIC FUSELAGE OML REVIEW",
+        "SLM-FUS-001",
+        "VIEWS 1:4 · SECTIONS 1:1.5",
+        "SOURCE: I-28 REV 2 · FUSELAGE_CONTRACT/GEOMETRY · EQP LAYOUT",
+        title_font_size=3.35,
+    )
+
+    def x_view(x_mm: float) -> float:
+        return origin_x + x_mm / scale
+
+    def yz_view(value_mm: float, origin_y: float) -> float:
+        return origin_y - value_mm / scale
+
+    plan_points = [
+        (x_view(x_mm), yz_view(y_mm, plan_y))
+        for x_mm, y_mm in fuselage_geometry.plan_outline_mm(model)
+    ]
+    side_points = [
+        (x_view(x_mm), yz_view(z_mm, side_y))
+        for x_mm, z_mm in fuselage_geometry.side_outline_mm(model)
+    ]
+    sheet.polyline(
+        plan_points,
+        "provisional-fill",
+        close=True,
+        id="fuselage-oml-plan",
+        style=(
+            "fill:#f4c46a;fill-opacity:.20;stroke:#985b00;stroke-width:.62;"
+            "stroke-dasharray:3.4 1.6;stroke-linejoin:round"
+        ),
+    )
+    sheet.polyline(
+        side_points,
+        "provisional-fill",
+        close=True,
+        id="fuselage-oml-side",
+        style=(
+            "fill:#f4c46a;fill-opacity:.20;stroke:#985b00;stroke-width:.62;"
+            "stroke-dasharray:3.4 1.6;stroke-linejoin:round"
+        ),
+    )
+    sheet.line(x_view(model.x_min_mm - 18.0), plan_y,
+               x_view(model.x_max_mm + 18.0), plan_y, "centre")
+    sheet.line(x_view(model.x_min_mm - 18.0), side_y,
+               x_view(model.x_max_mm + 18.0), side_y, "centre")
+
+    envelope_by_id = {envelope.identifier: envelope for envelope in model.envelopes}
+    for identifier in fuselage_contract.BODY_ENVELOPE_COMPONENT_IDS:
+        envelope = envelope_by_id[identifier]
+        minimum = envelope.minimum_mm
+        maximum = envelope.maximum_mm
+        sheet.rect(
+            x_view(minimum[0]),
+            yz_view(maximum[1], plan_y),
+            (maximum[0] - minimum[0]) / scale,
+            (maximum[1] - minimum[1]) / scale,
+            "hidden",
+            id=f"fuselage-envelope-plan-{identifier}",
+        )
+        sheet.rect(
+            x_view(minimum[0]),
+            yz_view(maximum[2], side_y),
+            (maximum[0] - minimum[0]) / scale,
+            (maximum[2] - minimum[2]) / scale,
+            "hidden",
+            id=f"fuselage-envelope-side-{identifier}",
+        )
+
+    sheet.text(16, 27, "A · PLAN · BODY-OWNED INFLATED ENVELOPES", "sheet-subtitle")
+    sheet.text(16, 32, "WALL 1.2 + INSTALLATION CLEARANCE 1.0 mm [I]", "micro")
+    sheet.text(16, 119, "B · SIDE · ASYMMETRIC DORSAL / VENTRAL LAW", "sheet-subtitle")
+    sheet.text(16, 124, "ROOT WING SURFACE IS NOT A BOOLEAN UNION IN THIS OPERAND", "micro")
+    sheet.line(36, 39, 23, 39, "medium", marker_end="url(#arrow-end)")
+    sheet.text(40, 40, "FORWARD", "label")
+    sheet.leader(x_view(-345.0), plan_y - 10.0, 161, 47,
+                 "DASHED BOXES = EQUIPMENT + 2.2 mm [D]/[E]/[I]", True)
+    sheet.leader(x_view(0.0), side_y - 8.0, 164, 143,
+                 "LOFT FROM COMMON NUMPY SECTION LAW [I]", True)
+    sheet.horizontal_dimension(
+        x_view(model.x_min_mm),
+        x_view(model.x_max_mm),
+        205.0,
+        side_y,
+        side_y,
+        f"BODY OPERAND L = {model.length_mm:.1f} mm [I]",
+    )
+
+    section_ids = ("o4_camera", "battery_6s1p", "nose_boom_tube", "fc", "motor")
+    section_labels = ("CAM", "BAT", "BOOM", "CORE", "MOTOR")
+    section_centres = [
+        layout.component(identifier).position_mm[0] for identifier in section_ids
+    ]
+    section_origins = ((240.0, 53.0), (305.0, 53.0), (370.0, 53.0),
+                       (270.0, 112.0), (354.0, 112.0))
+    section_scale = 1.5
+    for identifier, label, x_mm, (cx, cy) in zip(
+        section_ids, section_labels, section_centres, section_origins
+    ):
+        points = fuselage_geometry.section_points(model, float(x_mm), 72)
+        section = [
+            (cx + float(y_mm) / section_scale, cy - float(z_mm) / section_scale)
+            for _, y_mm, z_mm in points
+        ]
+        sheet.polyline(
+            section,
+            "provisional-fill",
+            close=True,
+            id=f"fuselage-section-{identifier}",
+        )
+        sheet.line(cx - 29, cy, cx + 29, cy, "centre")
+        sheet.line(cx, cy - 25, cx, cy + 25, "centre")
+        sheet.text(cx, cy + 31, f"{label} · x {float(x_mm):+.1f}", "micro", "middle")
+
+    mesh = report["mesh"]
+    projected = report["projected"]
+    sheet.text(223, 21, "C · TRANSVERSE SECTIONS · ONE 3-D SOURCE", "sheet-subtitle")
+    sheet.text(221, 151, "D · NUMERICAL REVIEW", "sheet-subtitle")
+    sheet.multiline(
+        221,
+        158,
+        [
+            f"FAMILY       {report['family']} [I]",
+            f"RANGE x      {model.x_min_mm:+.2f} .. {model.x_max_mm:+.2f} mm",
+            f"MAX WIDTH    {projected['maximum_width_mm']:.2f} mm",
+            f"MAX HEIGHT   {projected['maximum_height_mm']:.2f} mm",
+            f"WETTED AREA  {mesh['area_m2']:.5f} m2 (gross operand)",
+            f"VOLUME       {mesh['volume_m3'] * 1e3:.3f} L",
+            f"0.9 mm SKIN  {mesh['gross_0p9_mm_skin_mass_g']:.1f} g SCREEN ONLY",
+            f"TOPOLOGY     watertight={str(mesh['watertight']).upper()}",
+            f"AIRCRAFT     feasible={str(report['aircraft_feasible']).upper()}",
+        ],
+        "mono",
+        4.15,
+    )
+    sheet.text(322, 151, "ENVELOPE MINIMUM MARGINS", "sheet-subtitle")
+    audit_lines = [
+        f"{audit.identifier[:17]:17s} {audit.minimum_margin_mm:+6.3f} mm "
+        f"{'PASS' if audit.passed else 'FAIL'}"
+        for audit in audits
+    ]
+    sheet.multiline(322, 158, audit_lines, "mono", 4.15)
+    sheet.multiline(
+        221,
+        218,
+        [
+            "OPEN PROJECT GATES:",
+            "V1 BATTERY REACH · 92.88 g RESERVES · NET UNION MASS",
+            "BODY-INCLUSIVE NP/TRIM · WING INSTALLATION AUDIT",
+            "GROSS OML OPERAND: NO RIBS, CUTOUTS, JOINTS OR PRINT WALL RELEASE",
+        ],
+        "provisional-text",
+        4.2,
+    )
+    provenance_legend(sheet, 16, 226)
+    sheet.text(16, 244, "[I] DRAFT OML · NOT A PRINTABLE SHELL · NOT FOR MANUFACTURE", "status")
+    sheet.text(214, 246, "COORDINATES: mm · x AFT · y STARBOARD · z UP", "micro")
     return sheet
 
 
@@ -2003,6 +2094,8 @@ def validate_contract() -> dict[str, bool]:
     equipment_battery = equipment_clean.component(
         equipment_layout.PRIMARY_CG_ADJUSTER
     )
+    fuselage_model = fuselage_geometry.reference_model()
+    fuselage_audits = fuselage_geometry.audit_envelopes(fuselage_model)
     checks = {
         "canonical geometry validation passes": all(validate_geometry().values()),
         "retired equipment references are not reused": not (
@@ -2103,6 +2196,16 @@ def validate_contract() -> dict[str, bool]:
         ),
         "equipment skeleton exposes unreachable exact V1 battery station": (
             equipment_v1_required_x < equipment_battery.bounds.minimum_mm[0]
+        ),
+        "fuselage generator analytical validation passes": all(
+            fuselage_geometry.validation_checks().values()
+        ),
+        "fuselage review covers every body-owned envelope": (
+            {audit.identifier for audit in fuselage_audits}
+            == set(fuselage_contract.BODY_ENVELOPE_COMPONENT_IDS)
+        ),
+        "fuselage review envelope audits pass": all(
+            audit.passed for audit in fuselage_audits
         ),
     }
     return checks
@@ -2223,6 +2326,31 @@ def validate_svg(source: str, filename: str, drawing_number: str) -> dict[str, b
                 "RESERVE",
             )
         )
+    if drawing_number == "SLM-FUS-001":
+        element_by_id = {
+            element.attrib.get("id"): element
+            for element in elements
+            if element.attrib.get("id")
+        }
+        body_ids = set(fuselage_contract.BODY_ENVELOPE_COMPONENT_IDS)
+        checks[f"{filename}: common-source plan and side OML are present"] = {
+            "fuselage-oml-plan",
+            "fuselage-oml-side",
+        } <= element_by_id.keys()
+        checks[f"{filename}: every body envelope is shown in both projections"] = all(
+            f"fuselage-envelope-plan-{identifier}" in element_by_id
+            and f"fuselage-envelope-side-{identifier}" in element_by_id
+            for identifier in body_ids
+        )
+        checks[f"{filename}: five analytical transverse sections are shown"] = sum(
+            identifier.startswith("fuselage-section-")
+            for identifier in element_by_id
+        ) == 5
+        checks[f"{filename}: open aircraft gates remain explicit"] = (
+            "feasible=FALSE" in source
+            and "OPEN PROJECT GATES" in source
+            and "NOT A PRINTABLE SHELL" in source
+        )
     return checks
 
 
@@ -2231,6 +2359,11 @@ def build_drawings() -> tuple[DrawingOutput, ...]:
     drawings = (
         ("SLM-GA-001-general-arrangement.svg", "SLM-GA-001", draw_general_arrangement()),
         ("SLM-GA-002-side-elevations.svg", "SLM-GA-002", draw_side_elevations()),
+        (
+            "SLM-FUS-001-fuselage-oml-review.svg",
+            "SLM-FUS-001",
+            draw_fuselage_oml_review(),
+        ),
         (
             "SLM-EQP-001-equipment-mass-skeleton.svg",
             "SLM-EQP-001",

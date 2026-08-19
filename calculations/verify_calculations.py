@@ -38,6 +38,8 @@ import equipment_catalog
 import equipment_layout
 import flight_envelope
 import fpv_power_budget
+import fuselage_contract
+import fuselage_geometry
 import inav_fc_match
 import launch_speed
 import mass_budget
@@ -55,6 +57,9 @@ LOCAL_SCRIPTS = (
     "design_config.py",
     "drawing_index.py",
     "equipment_catalog.py",
+    "fuselage_contract.py",
+    "fuselage_geometry.py",
+    "fuselage_trade.py",
     "drag_model.py",
     "aero_contract.py",
     "contract_lint.py",
@@ -512,6 +517,36 @@ def check_yaw(add):
     )
 
 
+def check_fuselage(add):
+    model = fuselage_geometry.reference_model()
+    audits = fuselage_geometry.audit_envelopes(model)
+    v1_state = fuselage_geometry.battery_state("v1")
+    for name, passed in fuselage_geometry.validation_checks(full=False).items():
+        add(f"fuselage: {name}", passed, "I-28 NumPy OML software contract")
+    add(
+        "fuselage: generated OML contains every central inflated envelope",
+        all(audit.passed for audit in audits),
+        "; ".join(
+            f"{audit.identifier}={audit.minimum_margin_mm:+.2f} mm"
+            for audit in audits
+        ),
+    )
+    add(
+        "fuselage: generated OML remains provisional",
+        model.design.family == fuselage_contract.DEFAULT_FAMILY
+        and fuselage_contract.AUTHORITY == "[I]",
+        f"{fuselage_contract.AUTHORITY} - {fuselage_contract.WARNING}",
+    )
+    add(
+        "fuselage risk: V1 travel and multidisciplinary closure remain open",
+        not v1_state["reachable"],
+        (
+            f"V1 required={v1_state['required_x_mm']:+.2f} mm; "
+            "mesh feasibility is not aircraft release"
+        ),
+    )
+
+
 # ---------------------------------------------------------------------------
 # Contract registry and isolated runner
 # ---------------------------------------------------------------------------
@@ -529,6 +564,7 @@ CONTRACT_GROUPS = (
     ("stability", check_stability),
     ("controls", check_controls),
     ("yaw", check_yaw),
+    ("fuselage", check_fuselage),
 )
 
 
