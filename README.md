@@ -25,7 +25,7 @@ carries its source and the reasoning is the deliverable.**
 |---|---|
 | **Understand the idea** | [What this project is](#what-this-project-is) |
 | **See the aircraft** | [Salamandra, Article #1](#the-aircraft--salamandra-article-1) · [drawing set](#drawing-set--generated-design-review-sheets) |
-| **Build the CAD model** | [**Salamandra Design Guide v0.23**](design/Salamandra-Design-Guide-v0.1.md) — the primary execution spec |
+| **Build the CAD model** | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) — the primary execution spec |
 | **Know what is still unknown** | [`gaps/`](gaps/README.md) · [Open Points](design/Design-Guide-Open-Points-v0.1.md) |
 | **Trace why a number exists** | [`decisions/`](decisions/README.md) · [`research/`](research/) · [CHANGELOG](CHANGELOG.md) |
 | **Reproduce the numbers** | [Tools and reproduction](#tools-and-reproducing-the-numbers) |
@@ -273,8 +273,8 @@ they are not competing specifications.
 
 | Document | Use it for | Intended reader | Authority |
 |---|---|---|---|
-| [**Salamandra Design Guide v0.23**](design/Salamandra-Design-Guide-v0.1.md) | Building and reviewing the CAD model: geometry, interfaces, equipment envelopes, mass limits and delivery checklist | CAD designer | **Primary CAD execution specification** |
-| [**Advanced Design Guide v0.23**](design/Salamandra-Design-Guide-Advanced-v0.1.md) | Detailed engineering limits, calculation results, release migration and complete technical context | Lead designer and engineering reviewer | **Canonical advanced engineering reference** |
+| [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) | Building and reviewing the CAD model: geometry, interfaces, equipment envelopes, mass limits and delivery checklist | CAD designer | **Primary CAD execution specification** |
+| [**Advanced Design Guide v0.24**](design/Salamandra-Design-Guide-Advanced-v0.1.md) | Detailed engineering limits, calculation results, release migration and complete technical context | Lead designer and engineering reviewer | **Canonical advanced engineering reference** |
 | [**Design Guide Justification**](design/Design-Guide-Justification-v0.1.md) | Understanding why each selected value exists and what evidence supports it | Reviewer or contributor challenging a requirement | Rationale and evidence companion |
 | [**Design Guide Open Points**](design/Design-Guide-Open-Points-v0.1.md) | Finding provisional values, unresolved gates and the event that can change each value | CAD designer, test engineer and release reviewer | Open-work and change-trigger register |
 
@@ -389,7 +389,7 @@ CAD blocker.
 
 | Folder | What it contains |
 |---|---|
-| [`design/`](design/) | **Concise Salamandra Design Guide v0.23** — the primary CAD execution specification; plus the canonical Advanced Design Guide, justification and open points |
+| [`design/`](design/) | **Concise Salamandra Design Guide v0.24** — the primary CAD execution specification; plus the canonical Advanced Design Guide, justification and open points |
 | [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |
