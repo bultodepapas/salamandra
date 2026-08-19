@@ -2,8 +2,8 @@
 """Deterministic feasibility-first trade runner for the provisional OML.
 
 The default command writes an ASCII-safe manifest and an OBJ review mesh. It
-does not select manufacturing geometry: the lifting-saddle family is merely the
-I-28 starting candidate, and every artifact remains [I].
+does not select manufacturing geometry: the integrated-spindle family is the
+Revision 3 starting candidate, and every artifact remains [I].
 """
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ import fuselage_geometry
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_DIR = ROOT / "geometry" / "fuselage" / "provisional"
 MANIFEST_NAME = "oml-manifest.json"
-MESH_NAME = "lifting-saddle-body.obj"
+MESH_NAME = "integrated-spindle-body.obj"
 
 
 @dataclass(frozen=True)
@@ -129,6 +129,7 @@ def candidate_summary(candidate: Candidate, pareto: bool) -> dict[str, object]:
         "minimum_envelope_margin_mm": min(
             audit["minimum_margin_mm"] for audit in report["envelope_audits"]
         ),
+        "distribution": report["distribution"],
         "open_project_blockers": [
             name for name, passed in report["project_blockers"].items() if not passed
         ],
@@ -250,8 +251,11 @@ def validation_checks() -> dict[str, bool]:
         "baseline trade evaluates all three families": baseline_families == {
             family.identifier for family in fuselage_contract.FAMILIES
         },
-        "trade retains the lifting saddle as provisional review selection": (
-            manifest["selection"]["candidate"] == "lifting_saddle-000"
+        "trade retains the integrated spindle as provisional review selection": (
+            manifest["selection"]["candidate"] == "integrated_spindle-000"
+        ),
+        "selected review operand passes geometric gates": bool(
+            manifest["selected_report"]["geometry_feasible"]
         ),
         "manifest and OBJ are ASCII safe": encoded.isascii() and obj.isascii(),
         "selected OBJ hash closes to its manifest": hashlib.sha256(

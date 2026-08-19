@@ -1211,7 +1211,7 @@ def draw_fuselage_oml_review() -> SvgSheet:
         "PARAMETRIC FUSELAGE OML REVIEW",
         "SLM-FUS-001",
         "VIEWS 1:4 · SECTIONS 1:1.5",
-        "SOURCE: I-28 REV 2 · FUSELAGE_CONTRACT/GEOMETRY · EQP LAYOUT",
+        "SOURCE: I-28 REV 3 · FUSELAGE_CONTRACT/GEOMETRY · EQP LAYOUT",
         title_font_size=3.35,
     )
 
@@ -1283,7 +1283,7 @@ def draw_fuselage_oml_review() -> SvgSheet:
     sheet.line(36, 39, 23, 39, "medium", marker_end="url(#arrow-end)")
     sheet.text(40, 40, "FORWARD", "label")
     sheet.leader(x_view(-345.0), plan_y - 10.0, 161, 47,
-                 "DASHED BOXES = EQUIPMENT + 2.2 mm [D]/[E]/[I]", True)
+                 "DASHED BOXES = EQUIPMENT + 2.45 mm [D]/[E]/[I]", True)
     sheet.leader(x_view(0.0), side_y - 8.0, 164, 143,
                  "LOFT FROM COMMON NUMPY SECTION LAW [I]", True)
     sheet.horizontal_dimension(
@@ -1323,6 +1323,7 @@ def draw_fuselage_oml_review() -> SvgSheet:
 
     mesh = report["mesh"]
     projected = report["projected"]
+    distribution = report["distribution"]
     sheet.text(223, 21, "C · TRANSVERSE SECTIONS · ONE 3-D SOURCE", "sheet-subtitle")
     sheet.text(221, 151, "D · NUMERICAL REVIEW", "sheet-subtitle")
     sheet.multiline(
@@ -1333,6 +1334,9 @@ def draw_fuselage_oml_review() -> SvgSheet:
             f"RANGE x      {model.x_min_mm:+.2f} .. {model.x_max_mm:+.2f} mm",
             f"MAX WIDTH    {projected['maximum_width_mm']:.2f} mm",
             f"MAX HEIGHT   {projected['maximum_height_mm']:.2f} mm",
+            f"AREA MAX x   {distribution['maximum_area_x_mm']:+.2f} mm · ROOT BAND PASS",
+            f"NO-NECK      ratio={distribution['payload_to_root_minimum_area_ratio']:.3f}",
+            f"PARALLEL     longest={100.0 * distribution['longest_parallel_side_fraction']:.2f}%",
             f"WETTED AREA  {mesh['area_m2']:.5f} m2 (gross operand)",
             f"VOLUME       {mesh['volume_m3'] * 1e3:.3f} L",
             f"0.9 mm SKIN  {mesh['gross_0p9_mm_skin_mass_g']:.1f} g SCREEN ONLY",
@@ -1355,7 +1359,7 @@ def draw_fuselage_oml_review() -> SvgSheet:
         [
             "OPEN PROJECT GATES:",
             "V1 BATTERY REACH · 92.88 g RESERVES · NET UNION MASS",
-            "BODY-INCLUSIVE NP/TRIM · WING INSTALLATION AUDIT",
+            "CAMERA APERTURE BOOLEAN · BODY-INCLUSIVE NP/TRIM · WING AUDIT",
             "GROSS OML OPERAND: NO RIBS, CUTOUTS, JOINTS OR PRINT WALL RELEASE",
         ],
         "provisional-text",

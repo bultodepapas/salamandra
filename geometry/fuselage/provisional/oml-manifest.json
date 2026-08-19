@@ -10,21 +10,72 @@
         "waist_shift_mm": 0.0,
         "width_scale": 1.0
       },
-      "family": "minimum_almond",
-      "geometry_feasible": true,
-      "id": "minimum_almond-000",
-      "minimum_envelope_margin_mm": 0.000621703976687299,
+      "distribution": {
+        "dominant_area_peak_count": 1,
+        "local_area_peak_count": 2,
+        "longest_parallel_side_fraction": 0.15625,
+        "maximum_area_in_root_band": false,
+        "maximum_area_mm2": 5828.817344202402,
+        "maximum_area_x_mm": -403.5040195359815,
+        "no_long_parallel_sides": false,
+        "no_payload_to_root_neck": false,
+        "payload_to_root_minimum_area_ratio": 0.0
+      },
+      "family": "slender_spindle",
+      "geometry_feasible": false,
+      "id": "slender_spindle-000",
+      "minimum_envelope_margin_mm": 0.15027039783648002,
       "objectives": {
-        "curvature_energy": 2029218.32434046,
-        "gross_body_area_m2": 0.14684516126217134,
-        "maximum_width_mm": 100.62554196909011
+        "curvature_energy": 144620.02069033592,
+        "gross_body_area_m2": 0.18020965559581403,
+        "maximum_width_mm": 104.0
       },
       "open_project_blockers": [
         "v1_battery_reachable",
         "mass_reserves_located",
         "net_union_mass_ownership_closed",
         "body_inclusive_np_trim_closed",
-        "wing_installation_audit_closed"
+        "wing_installation_audit_closed",
+        "camera_aperture_native_boolean_closed"
+      ],
+      "pareto_geometry_screen": false
+    },
+    {
+      "aircraft_feasible": false,
+      "design_vector": {
+        "dorsal_scale": 1.0,
+        "tail_scale": 1.0,
+        "ventral_scale": 1.0,
+        "waist_shift_mm": 0.0,
+        "width_scale": 1.0
+      },
+      "distribution": {
+        "dominant_area_peak_count": 1,
+        "local_area_peak_count": 2,
+        "longest_parallel_side_fraction": 0.03875,
+        "maximum_area_in_root_band": true,
+        "maximum_area_mm2": 9300.002365478134,
+        "maximum_area_x_mm": -22.558437172462334,
+        "no_long_parallel_sides": true,
+        "no_payload_to_root_neck": true,
+        "payload_to_root_minimum_area_ratio": 1.0
+      },
+      "family": "integrated_spindle",
+      "geometry_feasible": true,
+      "id": "integrated_spindle-000",
+      "minimum_envelope_margin_mm": 2.509585029573593,
+      "objectives": {
+        "curvature_energy": 127809.75570565242,
+        "gross_body_area_m2": 0.22832002510632357,
+        "maximum_width_mm": 152.0
+      },
+      "open_project_blockers": [
+        "v1_battery_reachable",
+        "mass_reserves_located",
+        "net_union_mass_ownership_closed",
+        "body_inclusive_np_trim_closed",
+        "wing_installation_audit_closed",
+        "camera_aperture_native_boolean_closed"
       ],
       "pareto_geometry_screen": true
     },
@@ -37,50 +88,35 @@
         "waist_shift_mm": 0.0,
         "width_scale": 1.0
       },
-      "family": "lifting_saddle",
-      "geometry_feasible": true,
-      "id": "lifting_saddle-000",
-      "minimum_envelope_margin_mm": 0.0006267485838844167,
+      "distribution": {
+        "dominant_area_peak_count": 1,
+        "local_area_peak_count": 2,
+        "longest_parallel_side_fraction": 0.06875,
+        "maximum_area_in_root_band": false,
+        "maximum_area_mm2": 6633.692524230434,
+        "maximum_area_x_mm": -398.8808935364242,
+        "no_long_parallel_sides": true,
+        "no_payload_to_root_neck": false,
+        "payload_to_root_minimum_area_ratio": 0.0
+      },
+      "family": "service_spindle",
+      "geometry_feasible": false,
+      "id": "service_spindle-000",
+      "minimum_envelope_margin_mm": 0.787182391822684,
       "objectives": {
-        "curvature_energy": 1416958.5707607046,
-        "gross_body_area_m2": 0.15830581602581728,
-        "maximum_width_mm": 101.23231629318931
+        "curvature_energy": 145382.90441516432,
+        "gross_body_area_m2": 0.20502325729065726,
+        "maximum_width_mm": 120.0
       },
       "open_project_blockers": [
         "v1_battery_reachable",
         "mass_reserves_located",
         "net_union_mass_ownership_closed",
         "body_inclusive_np_trim_closed",
-        "wing_installation_audit_closed"
+        "wing_installation_audit_closed",
+        "camera_aperture_native_boolean_closed"
       ],
-      "pareto_geometry_screen": true
-    },
-    {
-      "aircraft_feasible": false,
-      "design_vector": {
-        "dorsal_scale": 1.0,
-        "tail_scale": 1.0,
-        "ventral_scale": 1.0,
-        "waist_shift_mm": 0.0,
-        "width_scale": 1.0
-      },
-      "family": "serviceable_shoulder",
-      "geometry_feasible": true,
-      "id": "serviceable_shoulder-000",
-      "minimum_envelope_margin_mm": 0.0006444001671037999,
-      "objectives": {
-        "curvature_energy": 1047257.5560019308,
-        "gross_body_area_m2": 0.1686526193637572,
-        "maximum_width_mm": 102.38750683175732
-      },
-      "open_project_blockers": [
-        "v1_battery_reachable",
-        "mass_reserves_located",
-        "net_union_mass_ownership_closed",
-        "body_inclusive_np_trim_closed",
-        "wing_installation_audit_closed"
-      ],
-      "pareto_geometry_screen": true
+      "pareto_geometry_screen": false
     }
   ],
   "generator": "calculations/fuselage_trade.py",
@@ -89,7 +125,7 @@
     "longitudinal": 81
   },
   "samples_per_family_excluding_baseline": 0,
-  "schema": 1,
+  "schema": 2,
   "seed": 2801,
   "selected_report": {
     "aircraft_feasible": false,
@@ -112,154 +148,179 @@
         "travel_min_x_mm": -371.2001599291635
       }
     },
+    "camera_aperture": {
+      "forward_oml_extension_mm": 22.0,
+      "lens_face_x_mm": -452.7001599291635,
+      "outer_nose_x_mm": -474.7001599291635,
+      "status": "reserved_not_cut"
+    },
     "coordinate_system": "mm; x aft, y starboard, z up; root c/4 origin",
     "design_vector": {
       "dorsal_scale": 1.0,
-      "family": "lifting_saddle",
+      "family": "integrated_spindle",
       "tail_scale": 1.0,
       "ventral_scale": 1.0,
       "waist_shift_mm": 0.0,
       "width_scale": 1.0
+    },
+    "distribution": {
+      "dominant_area_peak_count": 1,
+      "local_area_peak_count": 2,
+      "longest_parallel_side_fraction": 0.03875,
+      "maximum_area_in_root_band": true,
+      "maximum_area_mm2": 9300.002365478134,
+      "maximum_area_x_mm": -22.558437172462334,
+      "no_long_parallel_sides": true,
+      "no_payload_to_root_neck": true,
+      "payload_to_root_minimum_area_ratio": 1.0
     },
     "envelope_audits": [
       {
         "authority": "[D]",
         "identifier": "o4_camera",
         "limiting_point_mm": [
-          -437.06015992916343,
-          -8.379999999999999,
-          -15.45
+          -452.7001599291635,
+          -8.629999999999999,
+          -15.7
         ],
-        "minimum_margin_mm": 4.399567092012208,
+        "minimum_margin_mm": 11.534625365932358,
         "passed": true
       },
       {
         "authority": "[D]",
         "identifier": "o4_vtx",
         "limiting_point_mm": [
-          -400.8,
-          -17.2,
-          36.7
+          -435.45,
+          -17.45,
+          36.95
         ],
-        "minimum_margin_mm": 9.104649527681822,
+        "minimum_margin_mm": 9.475532022339426,
         "passed": true
       },
       {
-        "authority": "[E]",
-        "identifier": "battery_cradle",
+        "authority": "[D]/[E]",
+        "identifier": "battery_6s1p",
         "limiting_point_mm": [
-          -452.7001599291635,
-          -37.400000000000006,
-          29.2
+          -432.60228656113577,
+          -35.3,
+          29.549999999999997
         ],
-        "minimum_margin_mm": 0.0006267485838844167,
+        "minimum_margin_mm": 4.496968830696327,
         "passed": true
       },
       {
         "authority": "[D]/[E]",
         "identifier": "nose_boom_tube",
         "limiting_point_mm": [
-          -204.10005330972112,
-          -6.2,
-          -6.2
+          -452.7001599291634,
+          -6.45,
+          6.45
         ],
-        "minimum_margin_mm": 2.571811595724083,
+        "minimum_margin_mm": 14.948303024603982,
         "passed": true
       },
       {
         "authority": "[M]",
         "identifier": "fc",
         "limiting_point_mm": [
-          -114.23395276913186,
-          -20.45,
-          -0.7000000000000002
+          -114.48395276913186,
+          -20.7,
+          -0.9500000000000002
         ],
-        "minimum_margin_mm": 4.8644809927586135,
+        "minimum_margin_mm": 18.404965998411154,
         "passed": true
       },
       {
         "authority": "[M]",
         "identifier": "pdb",
         "limiting_point_mm": [
-          -10.45,
-          -20.45,
-          -8.7
+          30.7,
+          -20.7,
+          -8.95
         ],
-        "minimum_margin_mm": 4.097364575254923,
+        "minimum_margin_mm": 17.165940211916162,
         "passed": true
       },
       {
         "authority": "[M]",
         "identifier": "pitot_sensor",
         "limiting_point_mm": [
-          -67.2,
-          -12.2,
-          -17.2
+          -67.45,
+          -12.45,
+          -17.45
         ],
-        "minimum_margin_mm": 4.020841706814354,
+        "minimum_margin_mm": 7.636418347154401,
         "passed": true
       },
       {
         "authority": "[E]",
         "identifier": "buzzer",
         "limiting_point_mm": [
-          20.3,
-          39.7,
-          -2.2
+          39.95,
+          39.95,
+          -2.45
         ],
-        "minimum_margin_mm": 3.4326461032397217,
+        "minimum_margin_mm": 12.793047598285323,
         "passed": true
       },
       {
         "authority": "[E]",
         "identifier": "motor",
         "limiting_point_mm": [
-          232.2,
-          -16.2,
-          -16.2
+          232.45,
+          -16.45,
+          16.45
         ],
-        "minimum_margin_mm": 2.048669496085339,
+        "minimum_margin_mm": 2.509585029573593,
         "passed": true
       }
     ],
     "fairness": {
-      "bottom_curvature_energy": 797107.4221964037,
-      "top_curvature_energy": 238716.08508158024,
-      "total_curvature_energy": 1416958.5707607046,
-      "waist_curvature_energy": 183.74429987397585,
-      "width_curvature_energy": 380951.3191828467
+      "bottom_curvature_energy": 36457.27535286395,
+      "top_curvature_energy": 19885.049818362593,
+      "total_curvature_energy": 127809.75570565242,
+      "waist_curvature_energy": 60591.508869930796,
+      "width_curvature_energy": 10875.921664495087
     },
-    "family": "lifting_saddle",
-    "family_name": "B - lifting saddle-body",
+    "family": "integrated_spindle",
+    "family_name": "B - reference integrated spindle",
     "geometry_feasible": true,
     "mesh": {
-      "area_m2": 0.15830581602581728,
+      "area_m2": 0.22832002510632357,
       "boundary_edges": 0,
       "centroid_mm": [
-        -137.41525045307512,
-        -0.0003477693122990314,
-        7.832146511542533
+        -121.80986442746327,
+        -0.0005202243436269935,
+        8.124692230103603
       ],
       "circumferential": 72,
       "faces": 11664,
-      "gross_0p9_mm_skin_mass_g": 180.94354771750915,
+      "gross_0p9_mm_skin_mass_g": 260.9697886965278,
       "longitudinal": 81,
       "mass_scope": "gross body operand only; overlap, cavities, ribs, supports and base wing are not resolved and this value must not be added to the mass ledger",
       "nonmanifold_edges": 0,
-      "signed_volume_m3": 0.0021948756856145324,
+      "signed_volume_m3": 0.00491595205568374,
       "vertices": 5834,
-      "volume_m3": 0.0021948756856145324,
+      "volume_m3": 0.00491595205568374,
       "watertight": true
     },
     "policy": {
+      "aft_recovery_mm": 35.0,
       "installation_clearance_mm": 1.0,
       "lens_face_component": "o4_camera",
-      "longitudinal_transition_mm": 20.0,
-      "smooth_max_power": 8.0,
+      "maximum_area_root_band_mm": [
+        -115.0,
+        45.0
+      ],
+      "maximum_parallel_fraction": 0.08,
+      "normal_exponent_max": 3.2,
+      "nose_extension_mm": 22.0,
+      "numerical_reserve_mm": 0.25,
       "wall_mm": 1.2
     },
     "project_blockers": {
       "body_inclusive_np_trim_closed": false,
+      "camera_aperture_native_boolean_closed": false,
       "clean_battery_reachable": true,
       "mass_reserves_located": false,
       "net_union_mass_ownership_closed": false,
@@ -267,17 +328,21 @@
       "wing_installation_audit_closed": false
     },
     "projected": {
-      "fineness_length_over_max_width": 7.089634873616427,
-      "maximum_height_mm": 68.96198877375897,
-      "maximum_width_mm": 101.23231629318931,
-      "plan_projected_area_m2": 0.055420738444792256,
-      "side_projected_area_m2": 0.031189165287564064
+      "fineness_length_over_max_width": 4.866448420586601,
+      "maximum_height_mm": 84.0,
+      "maximum_width_mm": 152.0,
+      "plan_projected_area_m2": 0.08389274664078886,
+      "side_projected_area_m2": 0.04907180032992476
     },
     "resolution_convergence": {
-      "area_relative_change": 0.0018389467640910473,
-      "volume_relative_change": 0.0005416970245127179
+      "area_relative_change": 0.0006808527193182714,
+      "volume_relative_change": 0.0012822937651378171
     },
-    "schema": 1,
+    "schema": 2,
+    "structural_corridor_ownership": [
+      "battery_cradle",
+      "nose_boom_tube"
+    ],
     "unresolved_reserve_mass_g": 92.88,
     "warning": "DRAFT - NOT FOR MANUFACTURE",
     "wing_installation_ownership": [
@@ -290,15 +355,15 @@
       "pitot_probe_tube"
     ],
     "x_range_mm": [
-      -452.7001599291635,
+      -474.7001599291635,
       265.0
     ]
   },
   "selection": {
     "basis": "I-28 starting family for review only; not an optimization winner and not manufacturing authority",
-    "candidate": "lifting_saddle-000",
-    "mesh_file": "lifting-saddle-body.obj",
-    "mesh_sha256": "5489e8911df551198f951592cc5afc2df8358b6036b7acea04d5452c01e3176e"
+    "candidate": "integrated_spindle-000",
+    "mesh_file": "integrated-spindle-body.obj",
+    "mesh_sha256": "0b3d79a2c3507708d0ce66d5bc4f5c9d811057b13178ae1abb353f9fa0f1bbc6"
   },
   "variant_scope": "ALL",
   "warning": "DRAFT - NOT FOR MANUFACTURE"

@@ -19,12 +19,17 @@ python calculations/fuselage_trade.py --check
 ```
 
 `provisional/oml-manifest.json` is ASCII-safe machine output. It records the
-design vector, inflated-envelope margins, mesh metrics, convergence, battery
-reachability and every open project blocker. `provisional/lifting-saddle-body.obj`
-is a millimetre-unit review mesh generated from the same manifest.
+design vector, inflated-envelope margins, section-area distribution, mesh
+metrics, convergence, battery reachability and every open project blocker.
+`provisional/integrated-spindle-body.obj` is the current millimetre-unit review
+mesh generated from the same manifest. `provisional/lifting-saddle-body.obj` is
+retained only as the rejected Revision 2 regression fixture; it is not a design
+candidate or current geometry.
 
-The OBJ is an analytical body operand, not a wing-body Boolean union, printable
+The current OBJ is an analytical body operand, not a wing-body Boolean union, printable
 solid or structural shell. Its gross 0.9 mm skin estimate must not be added to
 the aircraft mass ledger: overlap with the controlled center wing, cavities,
 ribs, supports, hatches and local reinforcement remain unresolved. OP-21/F2,
 native CAD, tolerances, print compensation and physical tests retain authority.
+The camera aperture Boolean is also open: the outer operand reserves the nose
+volume but does not yet create an optical tunnel or prove the camera field of view.

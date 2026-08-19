@@ -15,8 +15,8 @@
       "scale": "A3 · 1:4",
       "authority": "Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]`",
       "note": "Use this sheet to review the whole-aircraft relationship: 1,300 mm controlled planform, modular stations, quarter-chord sweep, CG/NP, nose-boom battery station and rear-pusher envelope. A continuous curved fuselage OML connects the battery fairing, CORE and rear pod so the aircraft reads as one body. That OML is now projected from the common I-28 NumPy loft and central equipment envelopes; it remains `[I]`, amber and provisional until OP-21/F2 freezes the native CAD union and structural interfaces.",
-      "bytes": 19399,
-      "sha256": "a76cbb3a1d8c5b36861bd54e45473e25a8c7954760d3a86364bddb18d538d930"
+      "bytes": 19349,
+      "sha256": "5af9a8707716498c921c449eaa1dbcaaf1382cf94b9b228fa111a203b9f9445a"
     },
     {
       "number": "SLM-FUS-001",
@@ -28,8 +28,8 @@
       "scale": "A3 · views 1:4 / sections 1:1.5",
       "authority": "OML `[I]`; envelopes `[D]`/`[E]`/`[I]`; metrics `[D]` on `[I]`",
       "note": "Use this sheet to interrogate the fuselage generator itself. Plan and side outlines and all five transverse sections come from the same asymmetric superelliptic NumPy loft; dashed rectangles are body-owned component envelopes after the explicit 1.2 mm wall plus 1.0 mm installation allowance. The table reports computed containment margins and gross operand metrics. It does not release a printable shell: wing boolean union, local load paths, openings, joints, wall schedule, cooling and body-inclusive aerodynamic closure remain open gates.",
-      "bytes": 28435,
-      "sha256": "04facdabf70987917bd81e4bc9349faa2f16381a6b99b5e16bbc582bdd590796"
+      "bytes": 28641,
+      "sha256": "6c03c463023a6d8210ac48c0ff57ba9c5b67a289543801b536903b1a4e857576"
     },
     {
       "number": "SLM-GA-002",
@@ -41,8 +41,8 @@
       "scale": "A3 · 1:4",
       "authority": "Root/fin `[D]`/`[E]`; side OML/install `[I]`",
       "note": "Use this sheet to compare the two published directional configurations without changing the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds a passive fixed centreline fin. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The drawing also flags the open 105 mm fin-root versus x = +295 mm pod-extension interface for native CAD resolution.",
-      "bytes": 36646,
-      "sha256": "5bf9ff93d29772cc1ca3c2a4113fcaa985e3defd3c6d85662341f5d55428ffd8"
+      "bytes": 36626,
+      "sha256": "ab59e18cc6f855837946bd514491cf475901597ab9f44aca8afe365341b6a5a1"
     },
     {
       "number": "SLM-EQP-001",

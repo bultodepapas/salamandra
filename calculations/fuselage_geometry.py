@@ -14,9 +14,7 @@ from __future__ import annotations
 import json
 from dataclasses import asdict, dataclass, replace
 from functools import cache
-from math import pi
-from typing import Iterable
-
+from math import gamma, pi
 import numpy as np
 
 import design_config
@@ -91,53 +89,89 @@ class FuselageModel:
         return self.x_max_mm - self.x_min_mm
 
 
-def open_uniform_knots(control_count: int, degree: int = 3) -> np.ndarray:
-    """Return the clamped open-uniform knot vector on [0, 1]."""
-    if degree < 1 or control_count <= degree:
-        raise ValueError("control_count must exceed the positive spline degree")
-    interior_count = control_count - degree - 1
-    interior = (
-        np.arange(1, interior_count + 1, dtype=float) / (interior_count + 1)
-        if interior_count
-        else np.empty(0)
+@cache
+def _c2_quintic_coefficients(
+    stations: tuple[float, ...], controls: tuple[float, ...]
+) -> tuple[tuple[float, ...], ...]:
+    """Return shape-preserving quintic Hermite coefficients per interval."""
+    x = np.asarray(stations, dtype=float)
+    y = np.asarray(controls, dtype=float)
+    h = np.diff(x)
+    secant = np.diff(y) / h
+    slope = np.zeros_like(y)
+    for index in range(1, len(y) - 1):
+        left = secant[index - 1]
+        right = secant[index]
+        if left * right > 0.0:
+            weight_left = 2.0 * h[index] + h[index - 1]
+            weight_right = h[index] + 2.0 * h[index - 1]
+            slope[index] = (weight_left + weight_right) / (
+                weight_left / left + weight_right / right
+            )
+
+    slope[0] = (
+        (2.0 * h[0] + h[1]) * secant[0] - h[0] * secant[1]
+    ) / (h[0] + h[1])
+    slope[-1] = (
+        (2.0 * h[-1] + h[-2]) * secant[-1] - h[-1] * secant[-2]
+    ) / (h[-1] + h[-2])
+    for endpoint, adjacent, neighbour in (
+        (0, secant[0], secant[1]),
+        (-1, secant[-1], secant[-2]),
+    ):
+        if np.sign(slope[endpoint]) != np.sign(adjacent):
+            slope[endpoint] = 0.0
+        elif np.sign(adjacent) != np.sign(neighbour) and abs(slope[endpoint]) > abs(
+            3.0 * adjacent
+        ):
+            slope[endpoint] = 3.0 * adjacent
+
+    constraint_matrix = np.asarray(
+        ((1.0, 1.0, 1.0), (3.0, 4.0, 5.0), (6.0, 12.0, 20.0))
     )
-    return np.concatenate((np.zeros(degree + 1), interior, np.ones(degree + 1)))
+    coefficients: list[tuple[float, ...]] = []
+    for index, interval in enumerate(h):
+        a0 = y[index]
+        a1 = slope[index] * interval
+        a2 = 0.0
+        residual = np.asarray(
+            (
+                y[index + 1] - a0 - a1,
+                slope[index + 1] * interval - a1,
+                0.0,
+            )
+        )
+        a3, a4, a5 = np.linalg.solve(constraint_matrix, residual)
+        coefficients.append(tuple(float(value) for value in (a0, a1, a2, a3, a4, a5)))
+    return tuple(coefficients)
 
 
-def bspline_basis(xi: np.ndarray | float, control_count: int, degree: int = 3) -> np.ndarray:
-    """Cox-de Boor basis matrix for a clamped one-dimensional B-spline."""
+def c2_shape_value(
+    stations: tuple[float, ...],
+    controls: tuple[float, ...],
+    xi: np.ndarray | float,
+) -> np.ndarray:
+    """Interpolate controls with slope-limited local quintic C2 segments.
+
+    PCHIP-style harmonic slopes remove shoulders at control stations. Every
+    knot has zero second derivative, so adjacent quintics join C2 while the
+    slope limiter suppresses the global-cubic overshoot observed at the compact
+    forward payload.
+    """
+    station_array = np.asarray(stations, dtype=float)
     values = np.atleast_1d(np.asarray(xi, dtype=float))
-    if np.any((values < 0.0) | (values > 1.0)):
-        raise ValueError("normalized spline coordinates must be in [0, 1]")
-    knots = open_uniform_knots(control_count, degree)
-    basis = np.zeros((len(values), control_count + degree), dtype=float)
-    for index in range(control_count + degree):
-        basis[:, index] = (
-            (values >= knots[index]) & (values < knots[index + 1])
-        ).astype(float)
-    basis[values == 1.0, :] = 0.0
-    basis[values == 1.0, control_count - 1] = 1.0
-    for order in range(1, degree + 1):
-        next_basis = np.zeros_like(basis)
-        for index in range(control_count + degree - order):
-            left_denominator = knots[index + order] - knots[index]
-            right_denominator = knots[index + order + 1] - knots[index + 1]
-            if left_denominator > 0.0:
-                next_basis[:, index] += (
-                    (values - knots[index]) / left_denominator * basis[:, index]
-                )
-            if right_denominator > 0.0:
-                next_basis[:, index] += (
-                    (knots[index + order + 1] - values)
-                    / right_denominator
-                    * basis[:, index + 1]
-                )
-        basis = next_basis
-    return basis[:, :control_count]
-
-
-def bspline_value(controls: tuple[float, ...], xi: np.ndarray | float) -> np.ndarray:
-    return bspline_basis(xi, len(controls)) @ np.asarray(controls, dtype=float)
+    if station_array.shape != np.asarray(controls, dtype=float).shape:
+        raise ValueError("shape stations and controls must have equal length")
+    if np.any((values < station_array[0]) | (values > station_array[-1])):
+        raise ValueError("normalized shape coordinates lie outside the control domain")
+    interval = np.searchsorted(station_array, values, side="right") - 1
+    interval = np.clip(interval, 0, len(station_array) - 2)
+    left = station_array[interval]
+    right = station_array[interval + 1]
+    t = (values - left) / (right - left)
+    coefficients = np.asarray(_c2_quintic_coefficients(stations, controls))
+    selected = coefficients[interval]
+    return np.polynomial.polynomial.polyval(t, selected.T, tensor=False)
 
 
 def _smoothstep(value: np.ndarray | float) -> np.ndarray:
@@ -145,40 +179,19 @@ def _smoothstep(value: np.ndarray | float) -> np.ndarray:
     return clipped * clipped * (3.0 - 2.0 * clipped)
 
 
-def _envelope_weight(
-    x_mm: float,
-    envelope: EnvelopeVolume,
-    transition_mm: float,
-) -> float:
-    if envelope.minimum_mm[0] <= x_mm <= envelope.maximum_mm[0]:
-        return 1.0
-    if x_mm < envelope.minimum_mm[0]:
-        distance = envelope.minimum_mm[0] - x_mm
-    else:
-        distance = x_mm - envelope.maximum_mm[0]
-    return float(_smoothstep(1.0 - distance / transition_mm))
-
-
-def _smooth_max(values: Iterable[float], power: float) -> float:
-    array = np.asarray(tuple(values), dtype=float)
-    if len(array) == 0 or np.any(array < 0.0) or power <= 1.0:
-        raise ValueError("smooth maximum needs non-negative values and power > 1")
-    return float(np.sum(array**power) ** (1.0 / power))
-
-
 def _component_envelopes(
     layout: equipment_layout.Layout3D,
     policy: fuselage_contract.EnvelopePolicy,
 ) -> tuple[EnvelopeVolume, ...]:
     volumes: list[EnvelopeVolume] = []
-    margin = policy.radial_margin_mm
+    margin = policy.radial_margin_mm + policy.numerical_reserve_mm
     lens_min_x = layout.component(policy.lens_face_component).aabb()[0][0]
     for identifier in fuselage_contract.BODY_ENVELOPE_COMPONENT_IDS:
         component = layout.component(identifier)
         minimum, maximum = component.aabb()
-        # Camera, cradle and boom share the controlled forward plane. Inflating
-        # any one of them through that aperture creates an impossible nose
-        # station; only the x-forward allowance is waived there.
+        # The camera face is an aperture datum. Its optical plane receives no
+        # forward inflation; the aerodynamic cap is generated ahead of it and
+        # the FOV subtraction remains a separate CAD/analysis object.
         x_margin_forward = (
             0.0 if abs(minimum[0] - lens_min_x) <= 1e-6 else margin
         )
@@ -214,10 +227,12 @@ def build_model(
     envelopes = _component_envelopes(layout, policy)
     camera = next(item for item in envelopes if item.identifier == policy.lens_face_component)
     motor = next(item for item in envelopes if item.identifier == "motor")
-    # The camera lens is a deliberate flush aperture. The aft 35 mm recovery
-    # reproduces the guide's +265 mm provisional pod end from the motor face.
-    x_min = camera.minimum_mm[0]
-    x_max = motor.maximum_mm[0] - policy.radial_margin_mm + 35.0
+    # Revision 3 deliberately separates the aerodynamic nose extent from the
+    # optical aperture datum. The aft recovery likewise belongs to the body
+    # law, not to the bought-in motor envelope.
+    x_min = camera.minimum_mm[0] - policy.nose_extension_mm
+    total_margin = policy.radial_margin_mm + policy.numerical_reserve_mm
+    x_max = motor.maximum_mm[0] - total_margin + policy.aft_recovery_mm
     return FuselageModel(
         design=design,
         family=fuselage_contract.FAMILY_BY_ID[design.family],
@@ -243,39 +258,21 @@ def section_parameters(model: FuselageModel, x_mm: float) -> SectionParameters:
     tail_start_xi = 72.0 / 100.0
     tail_weight = float(_smoothstep((xi - tail_start_xi) / (1.0 - tail_start_xi)))
     tail_multiplier = 1.0 + (design.tail_scale - 1.0) * tail_weight
-    width_base = float(bspline_value(family.half_width_control_mm, xi)[0])
-    top_base = float(bspline_value(family.top_control_mm, xi)[0])
-    bottom_base = float(bspline_value(family.bottom_control_mm, xi)[0])
+    stations = family.station_control_xi
+    width_base = float(c2_shape_value(stations, family.half_width_control_mm, xi)[0])
+    top_base = float(c2_shape_value(stations, family.top_control_mm, xi)[0])
+    bottom_base = float(c2_shape_value(stations, family.bottom_control_mm, xi)[0])
     waist = (
-        float(bspline_value(family.waist_z_control_mm, xi)[0])
+        float(c2_shape_value(stations, family.waist_z_control_mm, xi)[0])
         + design.waist_shift_mm
     )
-    exponent = float(bspline_value(family.exponent_control, xi)[0])
-    corner_factor = 2.0 ** (1.0 / exponent)
-    width_terms = [width_base * design.width_scale * tail_multiplier]
-    top_terms = [top_base * design.dorsal_scale * tail_multiplier]
-    bottom_terms = [bottom_base * design.ventral_scale * tail_multiplier]
-    for envelope in model.envelopes:
-        weight = _envelope_weight(
-            x_mm,
-            envelope,
-            model.policy.longitudinal_transition_mm,
-        )
-        if weight <= 0.0:
-            continue
-        lateral = max(abs(envelope.minimum_mm[1]), abs(envelope.maximum_mm[1]))
-        dorsal = max(envelope.maximum_mm[2] - waist, 0.0)
-        ventral = max(waist - envelope.minimum_mm[2], 0.0)
-        width_terms.append(lateral * corner_factor * weight)
-        top_terms.append(dorsal * corner_factor * weight)
-        bottom_terms.append(ventral * corner_factor * weight)
-    power = model.policy.smooth_max_power
+    exponent = float(c2_shape_value(stations, family.exponent_control, xi)[0])
     return SectionParameters(
         x_mm=float(x_mm),
-        half_width_mm=_smooth_max(width_terms, power),
+        half_width_mm=width_base * design.width_scale * tail_multiplier,
         waist_z_mm=waist,
-        top_radius_mm=_smooth_max(top_terms, power),
-        bottom_radius_mm=_smooth_max(bottom_terms, power),
+        top_radius_mm=top_base * design.dorsal_scale * tail_multiplier,
+        bottom_radius_mm=bottom_base * design.ventral_scale * tail_multiplier,
         exponent=exponent,
     )
 
@@ -492,6 +489,83 @@ def fairness_diagnostics(model: FuselageModel, stations: int = 401) -> dict[str,
     return result
 
 
+def section_area_mm2(parameters: SectionParameters) -> float:
+    """Return the exact area of one asymmetric superelliptic section."""
+    exponent = parameters.exponent
+    shape_factor = gamma(1.0 + 1.0 / exponent) ** 2 / gamma(
+        1.0 + 2.0 / exponent
+    )
+    return float(
+        2.0
+        * parameters.half_width_mm
+        * (parameters.top_radius_mm + parameters.bottom_radius_mm)
+        * shape_factor
+    )
+
+
+def distribution_diagnostics(
+    model: FuselageModel, stations: int = 801
+) -> dict[str, float | int | bool]:
+    """Quantify area ruling, necking and long parallel-side rejection.
+
+    These tests operate on the smooth OML itself, independently of equipment
+    containment. Their thresholds are explicit provisional design policy [I].
+    """
+    if stations < 101:
+        raise ValueError("distribution audit needs at least 101 stations")
+    x_values = np.linspace(model.x_min_mm, model.x_max_mm, stations)
+    parameters = [section_parameters(model, float(x)) for x in x_values]
+    areas = np.asarray([section_area_mm2(item) for item in parameters])
+    widths = np.asarray([item.half_width_mm for item in parameters])
+    area_gradient = np.gradient(areas, x_values)
+    peak_indices = np.flatnonzero(
+        (area_gradient[:-1] > 0.0) & (area_gradient[1:] <= 0.0)
+    ) + 1
+    maximum_index = int(np.argmax(areas))
+    maximum_x_mm = float(x_values[maximum_index])
+    root_min_mm, root_max_mm = model.policy.maximum_area_root_band_mm
+
+    normalized_width_slope = (
+        np.abs(np.gradient(widths, x_values))
+        * model.length_mm
+        / float(np.max(widths))
+    )
+    nearly_parallel = normalized_width_slope < 0.20
+    longest_run = 0
+    current_run = 0
+    for state in nearly_parallel:
+        current_run = current_run + 1 if bool(state) else 0
+        longest_run = max(longest_run, current_run)
+    longest_parallel_fraction = float(longest_run / (stations - 1))
+
+    battery = next(
+        envelope for envelope in model.envelopes if envelope.identifier == "battery_6s1p"
+    )
+    payload_aft_index = int(np.searchsorted(x_values, battery.maximum_mm[0]))
+    if maximum_index <= payload_aft_index:
+        payload_to_root_ratio = 0.0
+    else:
+        corridor = areas[payload_aft_index : maximum_index + 1]
+        payload_to_root_ratio = float(np.min(corridor) / corridor[0])
+
+    dominant_peak_count = int(
+        sum(areas[index] >= 0.98 * areas[maximum_index] for index in peak_indices)
+    )
+    return {
+        "maximum_area_mm2": float(areas[maximum_index]),
+        "maximum_area_x_mm": maximum_x_mm,
+        "local_area_peak_count": int(len(peak_indices)),
+        "dominant_area_peak_count": dominant_peak_count,
+        "maximum_area_in_root_band": bool(root_min_mm <= maximum_x_mm <= root_max_mm),
+        "payload_to_root_minimum_area_ratio": payload_to_root_ratio,
+        "no_payload_to_root_neck": bool(payload_to_root_ratio >= 0.98),
+        "longest_parallel_side_fraction": longest_parallel_fraction,
+        "no_long_parallel_sides": bool(
+            longest_parallel_fraction <= model.policy.maximum_parallel_fraction
+        ),
+    }
+
+
 def battery_state(variant: str) -> dict[str, float | bool]:
     """Return the unclamped requirement and the stop-limited diagnostic state."""
     layout = equipment_layout.reference_layout(variant)
@@ -528,6 +602,7 @@ def report_as_dict(
     audits = audit_envelopes(model)
     projected = projected_metrics(model)
     fairness = fairness_diagnostics(model)
+    distribution = distribution_diagnostics(model)
     gross_skin_mass_g = (
         metrics.area_m2 * 0.0009 * design_config.PETG_DENSITY_KG_M3 * 1000.0
     )
@@ -542,6 +617,9 @@ def report_as_dict(
         all(audit.passed for audit in audits)
         and metrics.watertight
         and metrics.volume_m3 > 0.0
+        and bool(distribution["maximum_area_in_root_band"])
+        and bool(distribution["no_payload_to_root_neck"])
+        and bool(distribution["no_long_parallel_sides"])
     )
     project_blockers: dict[str, bool] = {
         "clean_battery_reachable": bool(clean_state["reachable"]),
@@ -550,6 +628,7 @@ def report_as_dict(
         "net_union_mass_ownership_closed": False,
         "body_inclusive_np_trim_closed": False,
         "wing_installation_audit_closed": False,
+        "camera_aperture_native_boolean_closed": False,
     }
     return {
         "schema": fuselage_contract.SCHEMA_VERSION,
@@ -579,12 +658,26 @@ def report_as_dict(
         },
         "projected": projected,
         "fairness": fairness,
+        "distribution": distribution,
         "envelope_audits": [asdict(audit) for audit in audits],
+        "camera_aperture": {
+            "lens_face_x_mm": next(
+                envelope.minimum_mm[0]
+                for envelope in model.envelopes
+                if envelope.identifier == model.policy.lens_face_component
+            ),
+            "outer_nose_x_mm": model.x_min_mm,
+            "forward_oml_extension_mm": model.policy.nose_extension_mm,
+            "status": "reserved_not_cut",
+        },
         "geometry_feasible": geometry_feasible,
         "battery": {"clean": clean_state, "v1": v1_state},
         "unresolved_reserve_mass_g": reserve_mass_g,
         "wing_installation_ownership": list(
             fuselage_contract.WING_INSTALLATION_COMPONENT_IDS
+        ),
+        "structural_corridor_ownership": list(
+            fuselage_contract.STRUCTURAL_CORRIDOR_COMPONENT_IDS
         ),
         "project_blockers": project_blockers,
         "aircraft_feasible": geometry_feasible and all(project_blockers.values()),
@@ -652,10 +745,20 @@ def validation_checks(full: bool = True) -> dict[str, bool]:
     convergence evidence exactly once per validation campaign.
     """
     model = reference_model()
-    basis = bspline_basis(np.linspace(0.0, 1.0, 101), 9)
     mesh = build_mesh(model, 61 if full else 17, 64 if full else 24)
     metrics = mesh_metrics(mesh)
     audits = audit_envelopes(model)
+    distribution = distribution_diagnostics(model)
+    rejected_plateau_family = replace(
+        model.family,
+        half_width_control_mm=(50.0,) * len(model.family.half_width_control_mm),
+        top_control_mm=(30.0,) * len(model.family.top_control_mm),
+        bottom_control_mm=(30.0,) * len(model.family.bottom_control_mm),
+        exponent_control=(2.5,) * len(model.family.exponent_control),
+    )
+    rejected_plateau = distribution_diagnostics(
+        replace(model, family=rejected_plateau_family)
+    )
     vtx = next(envelope for envelope in model.envelopes if envelope.identifier == "o4_vtx")
     penetrated = replace(
         vtx,
@@ -675,16 +778,12 @@ def validation_checks(full: bool = True) -> dict[str, bool]:
             f"contract: {name}": passed
             for name, passed in fuselage_contract.validation_checks().items()
         },
-        "B-spline basis is non-negative and partitions unity": (
-            np.min(basis) >= -1e-12
-            and np.max(np.abs(basis.sum(axis=1) - 1.0)) < 1e-12
-        ),
         "reference section dimensions and exponents stay physical": all(
             (
                 (item := section_parameters(model, float(x))).half_width_mm > 0.0
                 and item.top_radius_mm > 0.0
                 and item.bottom_radius_mm > 0.0
-                and 2.0 <= item.exponent <= 5.0
+                and 2.0 <= item.exponent <= model.policy.normal_exponent_max
             )
             for x in np.linspace(model.x_min_mm, model.x_max_mm, 81)
         ),
@@ -695,9 +794,49 @@ def validation_checks(full: bool = True) -> dict[str, bool]:
             and np.all(np.isfinite(metrics.centroid_mm))
         ),
         "all central inflated envelopes are contained": all(audit.passed for audit in audits),
-        "camera lens face equals the forward OML plane": abs(
+        "C2 local shape interpolation remains inside its control bounds": all(
+            np.min(
+                c2_shape_value(
+                    model.family.station_control_xi,
+                    controls,
+                    np.linspace(0.0, 1.0, 1001),
+                )
+            )
+            >= min(controls) - 1e-12
+            and np.max(
+                c2_shape_value(
+                    model.family.station_control_xi,
+                    controls,
+                    np.linspace(0.0, 1.0, 1001),
+                )
+            )
+            <= max(controls) + 1e-12
+            for controls in (
+                model.family.half_width_control_mm,
+                model.family.top_control_mm,
+                model.family.bottom_control_mm,
+                model.family.waist_z_control_mm,
+                model.family.exponent_control,
+            )
+        ),
+        "area distribution has one dominant maximum in the root band": (
+            distribution["dominant_area_peak_count"] == 1
+            and bool(distribution["maximum_area_in_root_band"])
+        ),
+        "payload-to-root run has no area neck": bool(
+            distribution["no_payload_to_root_neck"]
+        ),
+        "planform has no long parallel-sided interval": bool(
+            distribution["no_long_parallel_sides"]
+        ),
+        "seeded cylindrical plateau is rejected by distribution gates": (
+            not bool(rejected_plateau["maximum_area_in_root_band"])
+            and not bool(rejected_plateau["no_long_parallel_sides"])
+        ),
+        "camera lens is aft of a reserved rounded-nose extension": abs(
             next(item for item in model.envelopes if item.identifier == "o4_camera").minimum_mm[0]
             - model.x_min_mm
+            - model.policy.nose_extension_mm
         ) < 1e-9,
         "seeded VTX penetration is detected": penetration_caught,
         "V1 battery travel miss remains visible and unclamped in the report": (

@@ -1,8 +1,8 @@
 # I-28 — Senior master plan for an automatic parametric Salamandra fuselage
 
-**Status:** 🔴 **Revision 2 OML rejected; Revision 3 implementation plan approved for execution**  
-**Revision:** 3  
-**Date:** 2026-08-18  
+**Status:** 🟡 **Revision 3 foundational OML implemented; coupled CAD/aircraft gates remain open**
+**Revision:** 3
+**Date:** 2026-08-19
 **Scope:** automatic aerodynamic body around the CG-derived equipment, electrical and
 structural skeleton; smooth wing-body integration; CLEAN/V1 compatibility; Python
 generation, optimization, verification and drawing publication  
@@ -960,8 +960,8 @@ During implementation, the minimum local campaign is:
 
 ```bash
 python calculations/fuselage_contract.py
-python calculations/fuselage_envelopes.py --check
-python calculations/fuselage_optimize.py --seed 2803 --check
+python calculations/fuselage_geometry.py
+python calculations/fuselage_trade.py --check
 python calculations/generate_blueprints.py
 python calculations/generate_blueprints.py --check
 python calculations/contract_lint.py

@@ -216,6 +216,20 @@ MUTATIONS = (
             lambda old: lambda model, point_mm: 1.0,
         ),
     ),
+    Mutation(
+        "fuselage: distribution audit is forced to approve every body",
+        "A cylindrical plateau must fail even when its mesh is smooth and watertight.",
+        _patch_function(
+            "fuselage_geometry",
+            "distribution_diagnostics",
+            lambda old: lambda model, stations=801: {
+                **old(model, stations),
+                "maximum_area_in_root_band": True,
+                "no_payload_to_root_neck": True,
+                "no_long_parallel_sides": True,
+            },
+        ),
+    ),
 )
 
 

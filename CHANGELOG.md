@@ -4,6 +4,33 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.37] — 2026-08-19
+
+**I-28 Revision 3 — rejected the box-derived lifting saddle and replaced it with a
+constraint-driven integrated spindle.**
+
+- Equipment AABBs are now containment inequalities only. The battery's real envelope,
+  not the long cradle box, constrains the outer mold line; the cradle and nose tube are
+  separately declared structural corridors.
+- The reference body uses bounded, slope-limited quintic Hermite segments with C2 joins.
+  This removes both global-cubic overshoot and the flat shoulders produced by zero-slope
+  station blending. Asymmetric superelliptic sections remain limited to exponent 3.2.
+- The rounded-nose operand now starts 22.0 mm ahead of the camera lens plane. The camera
+  aperture Boolean remains an explicit open CAD gate, so the review mesh cannot be
+  mistaken for a flight-ready optical installation.
+- Added hard section-area gates: one dominant maximum at x = −22.6 mm inside the root
+  band, no payload-to-root neck, and no long parallel-sided run. All nine inflated
+  central envelopes pass; the limiting motor margin remains positive.
+- Replaced the canonical artifact with `integrated-spindle-body.obj` and regenerated the
+  GA, side-elevation and FUS review sheets from that same NumPy source. The rejected
+  `lifting-saddle-body.obj` remains only as a regression fixture.
+- The current gross operand is watertight and reports approximately 0.228 m² wetted area,
+  4.916 L volume and a non-additive 261 g gross 0.9 mm PETG screen. Aircraft feasibility
+  remains false until the declared battery, reserve-mass, Boolean-union, NP/trim, wing
+  installation, camera-aperture and printable-shell gates close.
+
+---
+
 ## [1.36] — 2026-08-18
 
 **I-28 — the provisional fuselage is now one audited 3-D source instead of unrelated
