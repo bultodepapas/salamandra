@@ -1,13 +1,13 @@
 # Salamandra — Advanced Design Guide
 
-**Version 0.23** · 18 August 2026 · Status: **RELEASED in v0.5.0 — Article #1
-elevon geometry and the connected design contract.**
+**Version 0.24** · 19 August 2026 · Status: **RELEASED in v0.6.0 — twin-fin directional
+architecture and the parametric fuselage programme.**
 Planform, airfoil coordinates, twist, propulsion reference and mass allocation are
 controlling. Values still flagged `PROVISIONAL` (principally the CORE outer shape and
 unmeasured structural properties) retain an explicit trigger in the open-points register.
 
-> **AUTHORITATIVE ADVANCED REFERENCE:** this guide v0.23 preserves the complete
-> engineering specification of release `v0.5.0`. The concise
+> **AUTHORITATIVE ADVANCED REFERENCE:** this guide v0.24 preserves the complete
+> engineering specification of release `v0.6.0`. The concise
 > [`Salamandra Design Guide`](Salamandra-Design-Guide-v0.1.md) is the primary CAD
 > execution document. Both describe the same technical baseline. This advanced guide
 > supersedes v0.21 for the ADR-0045 control-surface,
@@ -76,10 +76,10 @@ Report any apparent conflict before modelling.
 | | |
 |---|---|
 | Designation | Salamandra — Advanced Design Guide |
-| Version | 0.23 |
-| Date | 2026-08-18 |
-| Release | **Released in v0.5.0** — [`docs/13-release-v0.5.md`](../docs/13-release-v0.5.md) |
-| Status | **RELEASED**; ADR-0045 elevon geometry and ADR-0046 declaration contract are in force for CAD, while E2, E5, F2, G7, S3, G10 and G11 remain physical acceptance gates |
+| Version | 0.24 |
+| Date | 2026-08-19 |
+| Release | **Released in v0.6.0** — [`docs/16-release-v0.6.md`](../docs/16-release-v0.6.md) |
+| Status | **RELEASED**; the twin-fin V1 architecture (ADR-0038, I-30) is in force for CAD and the fuselage OML remains `[I]` review geometry, while E2, E5, F2, G7, S3, G10 and G11 remain physical acceptance gates |
 | Reference configuration | **Cruise — Article #1** |
 | Inputs | ADR-0001…ADR-0046, I-01…I-27, docs/00, docs/02…docs/07, docs/10…docs/13 |
 | Intended reader | Lead CAD designer, reviewer and engineering analyst |
@@ -814,6 +814,7 @@ out of scope for this version.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.24 | 2026-08-19 | **Released in v0.6.0.** Replaces the rejected centreline fin with **two CORE-rooted fixed fins** at y = ±140 mm (C47/I-29) and releases the coupled station solution (C48/I-30): total **S_v 6.1437 dm²**, each fin **b_v 247.9 mm, c_r 170.9 / c_t 76.9 mm**, AR_v 2.0, taper 0.45, Λc/4 **15.064°**, fin AC **x = +115.5 mm**, arm 209.3 mm, lower assembly **48.73 g** against the 60.00 g allocation, V1 **1601.98 g / 44.74 km/h**, V1 battery station **x = −363.27 mm**, propeller clearance 29.4 mm nominal / 13.4 mm residual radial and 8.33 mm axial. Adds the parametric fuselage programme (I-28 Revision 3, `fuselage_contract/geometry/trade.py`): the OML is now generated and containment-audited, `integrated_spindle-000` is the review selection, and **all OML values remain `[I]` with `aircraft_feasible: false`**. Adds `SLM-FUS-001` and `SLM-FIN-001` to the drawing set (six sheets). C49 restores one numpy support window; C50 re-derives the CHANGELOG fin figures superseded before release. No planform, airfoil, twist, elevon, material, load-envelope or speed-limit change. Release notes: [`docs/16-release-v0.6.md`](../docs/16-release-v0.6.md). |
 | 0.23 | 2026-08-18 | **Released in v0.5.0.** Promotes the ADR-0045 elevon geometry to released status and adopts [ADR-0046](../decisions/ADR-0046-single-declaration-contract.md): every shared quantity is re-derived from one owner (`design_config.py` inputs, `aero_contract.py` derived aerodynamics, `drag_model.py` polar), enforced by `contract_lint.py` and proven falsifiable by 19 seeded defects in `mutation_test.py`. Corrections C39–C43. The only published value that moves is the V1a yaw mode, ω_n 4.03 → **5.35 rad/s**, ζ 0.197 → **0.231**; the neutral point stays at −75.79 mm / 25.72 % MAC and becomes a ±0.5 mm anchor. The four generated A3 drawing sheets join the released package. No planform, airfoil, twist, material, mass, CG, propulsion or speed-limit change. Release notes: [`docs/13-release-v0.5.md`](../docs/13-release-v0.5.md). |
 | 0.22 | 2026-08-18 | **Post-v0.4.0 Article #1 elevon decision (I-27/ADR-0045).** Shortens each 0.28 c surface from y 195…585 to **227.5…585 mm**, creates a 32.5 mm fixed PANEL-root trailing-edge bridge, retains the 65 mm fixed tip and moves the single servo to **y ±406.25 mm**. The connected model retains 94.5 % of the former roll derivative, closes Ncrit-12 trim at +0.50°, reduces the hinge proxy 11.7 % and updates balance/CLEAN/V1 masses to 54 g / 1553.25 g / 1596.26 g. V1 exact battery station is 2.72 mm outside current travel but CG remains in band; F2/E2/E5/G7 stay open. No flap mode or flutter credit is released. |
 | 0.21 | 2026-08-17 | **Released in v0.4.0.** Packages the C33–C34/I-24/ADR-0044 flight-load correction as the controlling baseline: +6/−3 g manoeuvre limit, +9/−4.5 g ultimate, positive V-n/VA results, section-versus-wing `clmax`/`CLmax`, and an explicit non-adoption of the legacy rigid gust screen. Existing v0.3 CAD geometry remains current; G11/E9 and the negative `CLmin` branch remain open. Release notes: [`docs/11-release-v0.4.md`](../docs/11-release-v0.4.md). |

@@ -36,10 +36,13 @@ jobs:
       matrix:
         # Both ends of the declared support window. The floor catches an
         # accidental dependency on a newer numpy API; the ceiling catches a
-        # removal. calculations/requirements.txt declares the same window.
+        # removal. calculations/requirements.txt and design_config.NUMPY_MINIMUM
+        # declare the same window: numpy>=2.0,<3.0 since the integrators moved
+        # to `numpy.trapezoid` (C49). The retired 1.24.4 floor is not tested,
+        # because the code cannot run on it.
         include:
           - python: '3.10'
-            numpy: 'numpy==1.24.4'
+            numpy: 'numpy==2.0.2'
           - python: '3.12'
             numpy: 'numpy'
     name: contracts (py${{ matrix.python }}, ${{ matrix.numpy }})

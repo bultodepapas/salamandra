@@ -1,6 +1,6 @@
 # Salamandra — Design Guide
 
-**Version 0.23** · 19 August 2026 · **RELEASED in v0.5.0**
+**Version 0.24** · 19 August 2026 · **RELEASED in v0.6.0**
 **Purpose:** concise, canonical execution specification for the Article #1 CAD model.
 
 > **CAD DESIGNER: START HERE.** Model only the requirements in this document. Do not
@@ -9,8 +9,10 @@
 > release history and engineering discussion, use the
 > [Advanced Design Guide](Salamandra-Design-Guide-Advanced-v0.1.md).
 
-This edition changes document structure only. It does not change the released v0.23
-geometry, mass allocation, equipment, loads or flight limits.
+This edition releases the **twin-fin V1 architecture** and the generated **provisional
+fuselage OML**. The wing, airfoil, twist, elevons, materials, loads and flight limits are
+unchanged from v0.23; any V1 fin or carrier solid modelled from v0.23 is obsolete. See
+[`docs/16-release-v0.6.md`](../docs/16-release-v0.6.md).
 
 ---
 

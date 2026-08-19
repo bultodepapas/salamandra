@@ -1,9 +1,9 @@
 # Salamandra — Design Guide: Open Points and Evolution
 
-**Version 0.18** · 18 August 2026 · **released with v0.5.0**, companion to
+**Version 0.19** · 19 August 2026 · **released with v0.6.0**, companion to
 the concise [`Salamandra Design Guide`](Salamandra-Design-Guide-v0.1.md) and the
 [`Advanced Design Guide`](Salamandra-Design-Guide-Advanced-v0.1.md) (technical baseline
-v0.23)
+v0.24)
 
 This document lists everything in the Design Guide that is **not yet fixed**: assumptions
 that need verification, values that will change when the corresponding research closes,
@@ -111,6 +111,7 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.19 | 2026-08-19 | **Released with v0.6.0 / guide v0.24.** The V1 directional gate changes shape rather than closing: the centreline fin is rejected (C47) and the released twin-fin solution (C48/I-30) is analytical — nominal Cnβ ≈ +0.00050 /deg with a band that still crosses zero, and a V1 stall margin under 1 km/h at 1601.98 g. **F2 gains the fuselage OML**: the body is now generated and containment-audited, but `aircraft_feasible` is false and every OML value stays `[I]`. G3 is unchanged and now visible — the fin ΔCD0 is the only component drag term the project owns. E2, S3, G6, G7, G10, G11 and D2/E3 are untouched. |
 | 0.18 | 2026-08-18 | **Released with v0.5.0 / guide v0.23.** The open-gate state is unchanged by the release: the ADR-0046 declaration contract, the C39–C43 corrections and the drawing set are traceability and verification work, not new evidence. OP-06 elevon geometry is now released rather than working; G7 flutter remains open **without** the withdrawn `sqrt(2)` two-servo stiffness credit; G10 yaw is republished at the single-source inertia (ω_n 5.35 rad/s, ζ 0.231) and stays damped across the whole declared band; E2, F2, S3, G6, G11, D2/E3 and OP-21 are untouched. |
 | 0.17 | 2026-08-18 | Guide v0.22/I-27/ADR-0045 propagated: OP-06 adopts the 35–90 % elevon as the working CAD baseline while retaining E2/E5/G7; OP-01/16 expose the 2.72 mm V1 battery-station shortfall; OP-24 credits only the 6 g balance reduction. No flap mode, final throw or flutter closure is claimed. |
 | 0.16 | 2026-08-17 | **Released with v0.4.0 / guide v0.21.** The open-gate state is intentionally unchanged: OP-31/G11/E9 still require dynamic gust and negative-`CLmin` evidence, while F2, E2 and S3 retain the mass, aerodynamic and structural physical acceptance work. |

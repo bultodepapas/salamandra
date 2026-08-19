@@ -17,7 +17,7 @@ forward-swept flying wing, but that is only the first design. The repository is 
 grow into a whole family of airframes, parts, adapters and experiments — contributed by
 the community.
 
-**Revision 1.18** · 18 August 2026 · **Release v0.5.0 · Phase 1 in progress**
+**Revision 1.19** · 19 August 2026 · **Release v0.6.0 · Phase 1 in progress**
 
 > 📖 **Read this project as a website:** <https://bultodepapas.github.io/salmandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
@@ -219,20 +219,21 @@ document updates, required CI-equivalent checks, release PR, annotated Git tag a
 post-release verification. A release is never created from a dirty or partially merged
 working tree.
 
-**📦 Current release — `v0.5.0`: verification integrity and the connected design
-contract.** The concise Design Guide is the authoritative CAD entry point. A measured audit of the 33
-calculation modules ([`docs/12`](docs/12-calculation-system-audit-and-remediation.md))
-found that v0.4.0's "connected" baseline was partly nominal — twelve quantities declared
-twice, a hand-copied neutral point, a factor-1.76 yaw-inertia contradiction, checks that
-could not turn red, and a CI that aborted at install time. This release closes that class:
-[ADR-0046](decisions/ADR-0046-single-declaration-contract.md) gives every shared quantity
-one owner, `contract_lint.py` fails a second declaration, and `mutation_test.py` seeds 19
-deliberate defects that must each turn a check red. It also releases the ADR-0045 elevon
-geometry (357.5 mm surfaces, two servos) and the four generated A3 drawing sheets.
-**One published number moves** — the V1a yaw mode, ω_n 4.03 → 5.35 rad/s. Read the
-[**v0.5.0 release notes**](docs/13-release-v0.5.md) before CAD or structural work;
-existing 390 mm elevon solids are obsolete. Historical v0.1.0–v0.4.0 notes remain audit
-records.
+**📦 Current release — `v0.6.0`: twin-fin directional architecture and the parametric
+fuselage programme.** The concise Design Guide is the authoritative CAD entry point.
+v0.5.0 left two shapes as sketches; this release replaces both with derivations. The
+centreline fin is **rejected** — its load path crossed the propeller plane — and superseded
+by two CORE-rooted fixed fins at y = ±140 mm whose station comes out of a coupled
+clearance/mass/CG trade ([ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), I-29/I-30):
+6.1437 dm² total, fin AC x = +115.5 mm, 48.73 g against a 60 g allocation, V1 1601.98 g at
+44.74 km/h. The fuselage stops being hand-placed Bézier curves in the drawing generator:
+`fuselage_geometry.py` now lofts a superelliptic body around the equipment skeleton and
+**audits containment**, `fuselage_trade.py` scores candidate families, and the review
+selection ships as a hashed mesh. **The body is still `[I]`** — `aircraft_feasible` is
+false and the release says so. Two new sheets (`SLM-FUS-001`, `SLM-FIN-001`) bring the set
+to six. Read the [**v0.6.0 release notes**](docs/16-release-v0.6.md) before CAD or
+structural work; **any V1 fin or carrier solid from v0.5.0 is obsolete**. Historical
+v0.1.0–v0.5.0 notes remain audit records.
 The wiki renders the package at
 <https://bultodepapas.github.io/salmandra/>.
 

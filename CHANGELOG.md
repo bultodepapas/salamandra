@@ -4,10 +4,104 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.42] — 2026-08-19
+
+**Release v0.6.0 — twin-fin directional architecture and the parametric fuselage
+programme.**
+
+- Design Guide **v0.24** (concise + Advanced), justification/open points **v0.19** and
+  [`docs/16-release-v0.6.md`](docs/16-release-v0.6.md) are the released record.
+- **The two shapes v0.5.0 left as sketches are now derivations.** The centreline fin
+  (rejected in C47) is replaced by two CORE-rooted fixed fins at y = ±140 mm whose station
+  is the output of a coupled clearance/mass/CG trade (C48, I-30), and the fuselage stops
+  being ~50 hand-placed Bézier control points inside the drawing generator: I-28
+  Revision 3 with `fuselage_contract.py`, `fuselage_geometry.py` and `fuselage_trade.py`
+  generates a superelliptic body around the equipment skeleton and **audits containment**,
+  so a candidate body can now fail a check.
+- **Released twin-fin values:** total `S_v` **6.1437 dm²**; each fin **b_v 247.9 mm**,
+  `c_r` **170.9** / `c_t` **76.9 mm**, AR_v 2.0, taper 0.45, Λc/4 **15.064°**; fin AC
+  **x = +115.5 mm**, arm 209.3 mm; lower assembly **48.73 g** against the 60.00 g
+  allocation; V1 **1601.98 g / 44.74 km/h**; V1 battery station **x = −363.27 mm**;
+  propeller clearance 29.4 mm nominal, 13.4 mm residual radial, 8.33 mm axial, zero
+  projected overlap.
+- **Fuselage state, stated honestly:** `integrated_spindle-000` is the review selection
+  with `geometry_feasible: true` and **`aircraft_feasible: false`**. Maximum section
+  9300 mm² at x = −22.6 mm sits inside the root band, with one dominant peak, no
+  payload-to-root neck and no long parallel sides; every audited equipment envelope passes
+  with margin. **All OML dimensions remain `[I]` and take no structural credit.**
+- Drawing set grows to **six manifest-verified A3 sheets** with the new `SLM-FUS-001`
+  fuselage review and `SLM-FIN-001` twin-fin review.
+- Packages corrections **C45–C51**. C49, C50 and C51 were found while cutting this
+  release; C51 was a required CI step failing on `main`.
+- **Engineering delta:** the V1 directional architecture and the body. Unchanged: planform,
+  Salamandra r1 airfoil and 3.0° wash-in, ADR-0045 elevon geometry, materials, load
+  envelope, CG target, the 105 km/h operational cap and the 160 km/h article `V_NE`.
+
+---
+
+### Corrections in this release
+
+**C49 — one numeric-stack support window was declared in three places, with two different
+floors, and CI was testing a numpy the code cannot run on.**
+
+- `calculations/requirements.txt` declares `numpy>=2.0,<3.0` and states that the floor is
+  hard because `servo_torque.py`, `elevon_sizing.py` and `fuselage_geometry.py` integrate
+  with `numpy.trapezoid`, which exists only from numpy 2.0. It further promises that
+  "`design_config.py` enforces this floor at import time so the failure is a named error
+  and not an AttributeError three modules deep."
+- `design_config.NUMPY_MINIMUM` was **`(1, 24)`**, and the `calculations.yml` matrix still
+  pinned **`numpy==1.24.4`** on its floor job. On numpy 1.26.4 the suite therefore failed
+  with exactly the `AttributeError: module 'numpy' has no attribute 'trapezoid'` the
+  comment promised to prevent, three modules deep, in `fuselage_geometry.py`,
+  `fuselage_trade.py` and `generate_blueprints.py`.
+- The enforced floor is raised to **`(2, 0)`** and the CI floor job moves to
+  **`numpy==2.0.2`**, so requirements, enforcement and CI state one window. Verified: on
+  numpy 1.26.4 the import now raises the named contract error instead of the
+  AttributeError.
+- This is the single-declaration failure (ADR-0046) escaping the code contract into the
+  *dependency* contract, where `contract_lint.py` does not look. The lesson is the same
+  one C44 taught for prose: what the linter does not read, review must.
+
+**C50 — the released twin-fin geometry moved after C48 and the changelog was not
+re-derived.**
+
+- The C48 entry published the intermediate solution: total 3.4737 dm², 186.4 mm span each,
+  128.5/57.8 mm chords, taper 0.45, Λc/4 20.379°, x_AC ≈ +280 mm, battery at −386.74 mm and
+  V1 1615.63 g. The subsequent pre-release refinement moved every one of those numbers.
+- The **released** values are those in §3.1 of [`docs/16-release-v0.6.md`](docs/16-release-v0.6.md):
+  **6.1437 dm² total, 247.9 mm span each, 170.9/76.9 mm chords, Λc/4 15.064°, x_AC +115.5 mm,
+  battery −363.27 mm, V1 1601.98 g / 44.74 km/h**. The guides, ADR-0038, I-29, I-30 and the
+  drawings already carried them; the CHANGELOG did not.
+- **Failure mode #3 again, in the release window this time.** The refinement updated eleven
+  documents and the generated sheets and stopped one file short. C48 keeps its text as the
+  record of that step, with a pointer to this correction.
+
+**C51 — the link rewrite that exists to preserve traceability was breaking the audit's own
+evidence links.**
+
+- `docs/12` cites its measured findings as line references into the source
+  (`../calculations/servo_torque.py#L67`). The wiki generator rewrites every
+  `calculations/*.py` link onto the generated reproduction-guide page **and carried the
+  line anchor with it**, where no such anchor can exist. Result: **14 built-site integrity
+  failures**, every one of them an evidence link of the audit document, and
+  `npm run check:site` — a required step of the `docs.yml` workflow — failing on `main`.
+- Line-anchored script links now resolve to the repository source file, where `#L67`
+  genuinely works; plain script links still resolve to the reproduction guide. Verified:
+  `check:site` reports **18,187 internal links across 115 pages OK**.
+- The defect had nothing to do with the documents that failed. A generator that silently
+  rewrites references is infrastructure, and infrastructure needs the same rule as a
+  calculation: state what result would make it fail.
+
+---
+
 ## [1.41] — 2026-08-19
 
 **C48 — fin placement, propeller clearance, mass/CG packaging and side-view geometry were
 not one coupled calculation.**
+
+> **Superseded by C50:** the fin figures below are the intermediate solution of this step.
+> The released geometry is 6.1437 dm² total, 247.9 mm span each, 170.9/76.9 mm chords,
+> Λc/4 15.064°, x_AC +115.5 mm, battery −363.27 mm and V1 1601.98 g / 44.74 km/h.
 
 - Replaced the assumed `x_AC = +285 mm` and vertical-TE planform with a reproducible
   +225…+325 mm station trade. The first mass-feasible minimum-score knee is +280 mm.

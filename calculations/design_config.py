@@ -40,10 +40,15 @@ DRAWINGS_DIR = REPO_ROOT / "geometry" / "drawings"
 # one named, actionable error instead of an AttributeError raised deep inside
 # an integration call.  The check is metadata-only: it does not import numpy,
 # which keeps this module stdlib-only for the scripts that need no numerics.
-# The floor is a broadly available release, not the newest one: this is a
-# community repository and a distribution-packaged numpy must keep working.
+# The floor is NOT a preference.  `servo_torque.py`, `elevon_sizing.py` and
+# `fuselage_geometry.py` integrate with `numpy.trapezoid`, which exists only
+# from numpy 2.0 (the 1.x spelling was `numpy.trapz`).  This constant, the
+# window in `calculations/requirements.txt` and the CI matrix floor are three
+# statements of ONE support window and must move together — they did not, and
+# the environment the comment above promises to protect got the AttributeError
+# it promises to prevent.  See C49.
 # ---------------------------------------------------------------------------
-NUMPY_MINIMUM = (1, 24)
+NUMPY_MINIMUM = (2, 0)
 NUMPY_MAXIMUM_EXCLUSIVE = (3, 0)
 
 

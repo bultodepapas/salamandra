@@ -363,6 +363,15 @@ function rewriteLinks(md, siteDir) {
 
     if (base.endsWith('.py')) {
       if (norm.startsWith('calculations/')) {
+        // A line reference (#L67, #L26-L28) resolves only in the repository
+        // source view. Carrying it onto the generated reproduction guide, which
+        // has no such anchor, produced 14 built-site integrity failures from
+        // docs/12 alone: the evidence links of an audit document, broken by the
+        // rewrite that was meant to preserve them (C51). Line-anchored script
+        // links therefore go to the file itself; plain ones keep the guide.
+        if (/^#L\d/.test(anchor)) {
+          return '](' + `https://github.com/${REPO}/blob/main/${norm}` + anchor + ')';
+        }
         return '](' + BASE + 'calculations/reproduction-guide/' + anchor + ')';
       }
       warn(`Unresolved script link "${href}" on page "${siteDir}"`);

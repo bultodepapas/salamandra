@@ -20,7 +20,8 @@ define the reference design and the platform's conventions. See the
 | [`10-release-v0.3.md`](10-release-v0.3.md) | **Historical release (tag v0.3.0)** — Salamandra r1 coordinates and Article #1 allocation; its post-release corrections are packaged by v0.4.0 |
 | [`11-release-v0.4.md`](11-release-v0.4.md) | **Historical release (tag v0.4.0)** — connected calculation baseline and Article #1 manoeuvre/ultimate-load envelope |
 | [`12-calculation-system-audit-and-remediation.md`](12-calculation-system-audit-and-remediation.md) | **Calculation-system audit `[M]`** — the measured findings (S1–S5) and the WP1–WP6 remediation programme that drove corrections C39–C43 |
-| [`13-release-v0.5.md`](13-release-v0.5.md) | **Current release (tag v0.5.0)** — single-declaration design contract ([ADR-0046](../decisions/ADR-0046-single-declaration-contract.md)), verification proven falsifiable, released elevon geometry and drawing set; E2/F2/S3/G7/G10/G11 remain open |
+| [`13-release-v0.5.md`](13-release-v0.5.md) | **Historical release (tag v0.5.0)** — single-declaration design contract ([ADR-0046](../decisions/ADR-0046-single-declaration-contract.md)), verification proven falsifiable, released elevon geometry and drawing set; E2/F2/S3/G7/G10/G11 remain open |
+| [`16-release-v0.6.md`](16-release-v0.6.md) | **Current release (tag v0.6.0)** — twin-fin directional architecture ([ADR-0038](../decisions/ADR-0038-fixed-fin-variant.md), I-29/I-30) and the parametric fuselage programme (I-28 Revision 3); the OML remains `[I]` review geometry with `aircraft_feasible: false`; E2/F2/S3/G7/G10/G11 remain open |
 | [`15-how-to-publish-a-release.md`](15-how-to-publish-a-release.md) | **Maintainer release procedure** — scope freeze, version ownership, release document, CI-equivalent gates, PR, annotated tag and post-release checks |
 | `first_investigation.md` | Rev. 1.0, initial research *(add manually)* |
 
