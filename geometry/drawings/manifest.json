@@ -15,8 +15,8 @@
       "scale": "A3 · 1:4",
       "authority": "Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]`",
       "note": "Use this sheet to review the whole-aircraft relationship: 1,300 mm controlled planform, modular stations, quarter-chord sweep, CG/NP, nose-boom battery station and rear-pusher envelope. A continuous curved fuselage OML connects the battery fairing, CORE and rear pod so the aircraft reads as one body. Its required stations are sourced, but its Bézier transitions remain `[I]`, amber and provisional until OP-21/F2 freezes native CAD.",
-      "bytes": 14073,
-      "sha256": "5f6d3f37d1513644cd7fe4f00e6634b95b2453f48c7cc55700d491d425f8e6f4"
+      "bytes": 14845,
+      "sha256": "b6d765811f50e797cef410ec6ee9db75a016e1d102d2cd7c30a47ce814ee89f9"
     },
     {
       "number": "SLM-GA-002",
@@ -28,8 +28,8 @@
       "scale": "A3 · 1:4",
       "authority": "Root/fin `[D]`/`[E]`; side OML/install `[I]`",
       "note": "Use this sheet to compare the two published directional configurations without changing the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds a passive fixed centreline fin. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The drawing also flags the open 105 mm fin-root versus x = +295 mm pod-extension interface for native CAD resolution.",
-      "bytes": 18130,
-      "sha256": "131eb265bae5d69c2e1947454e6a90a7ef341d2f74f2fea815d2030b4375f0dd"
+      "bytes": 19178,
+      "sha256": "f1ae6c4c27bb9a7ac9c6d8d0901f2de78149b852124422e16ad54bddde63c743"
     },
     {
       "number": "SLM-EQP-001",
@@ -41,8 +41,8 @@
       "scale": "A3 · top 1:6.5 / side 1:4",
       "authority": "Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority",
       "note": "Use this sheet to review mass and packaging rather than shape: component envelopes, true mass centres, the x/y/z schedule, the CLEAN CG and the V1 battery-stop overlay. Envelope fill colour identifies system function while outline style continues to identify maturity. The controlled exterior wing planform appears only as spatial context: the sheet defines no fuselage outer mould line, no wing construction and no manufacturing geometry.",
-      "bytes": 44266,
-      "sha256": "87fa6687ff518dacb856c7281d3af45be65a49623a9c7f4b95864da6e5d7bf81"
+      "bytes": 44757,
+      "sha256": "af442270a3a31565e141b6122a22ba8531629eeaa5dc9764b0d4c3e050fcafc8"
     },
     {
       "number": "SLM-WNG-001",

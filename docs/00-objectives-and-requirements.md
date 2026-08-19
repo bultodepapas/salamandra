@@ -100,7 +100,7 @@ These are the objectives that define the *platform*, as opposed to the reference
 > C16 relaxed the requirement to 45 km/h but then used the local-section `clmax = 0.65`
 > as if it were whole-wing `CLmax`. I-07 supplies the correct distinction: local section
 > screen **0.65**, released wing design value **0.589**. The latter gives 45.0 km/h at
-> the V1 allocation mass. The ADR-0045 **1596.26 g** V1 lower model gives 44.7 km/h and
+> the V1 allocation mass. The current **1596.05 g** V1 lower model gives 44.7 km/h and
 > passes analytically; measured F2 mass remains mandatory.
 >
 > **Relaxed to ≤ 45 km/h**, justified by precedent: the Peregrine at 52 g/dm² and the Mojito at ~60 are hand-launched.
@@ -119,8 +119,8 @@ See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 | **6S1P P42A (Article #1)** | 6 | **90.7 Wh** | **445 g** | **1553.25 g CLEAN** | **55.1 g/dm²** |
 
 > **R-CG:** the Article #1 carrier shall hold CG within ±5 mm with the 6S1P pack. The
-> CLEAN component-level solution places it at x = **−338.17 mm** (travel
-> −371.62…−336.52). V1 requires −374.34 mm, 2.72 mm beyond current travel, although
+> CLEAN component-level solution places it at x = **−337.74 mm** (travel
+> −371.20…−336.10). V1 requires −373.73 mm, 2.53 mm beyond current travel, although
 > the clamped CG remains inside the allowed band; F2 must close that station. A 4S aircraft
 > requires approximately 713 Kv rather than the 500–550 Kv 6S motor and therefore is a
 > separate power module. The former requirement to interchange 4S1P/4S2P/6S1P/6S2P in

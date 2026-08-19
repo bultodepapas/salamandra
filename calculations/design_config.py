@@ -162,7 +162,7 @@ VLM_NX = 6                    # chordwise panels
 WEISSINGER_NY = 100           # Weissinger-L spanwise stations
 ARTICLE_CLEAN_MASS_KG = 1.55325
 V1_FIN_MASS_CAP_KG = 0.03672          # allocation target retained by ADR-0043
-V1_FIN_SHELL_MOUNT_LOWER_KG = 0.03731 # current V1a analytical lower model [E]
+V1_FIN_SHELL_MOUNT_LOWER_KG = 0.03710 # current V1a analytical lower model [E]
 V1_FIN_SPAR_MASS_KG = 0.00570         # mandatory aluminium spar [D]/[E]
 V1_FIN_MODEL_LOWER_KG = (
     V1_FIN_SHELL_MOUNT_LOWER_KG + V1_FIN_SPAR_MASS_KG)

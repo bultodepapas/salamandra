@@ -218,7 +218,7 @@ comes from the propulsion chain, which is where the data say the gap is.
 | Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
 | Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
 | Elevons | **0.28 c, y 227.5…585 mm (35–90 %), 357.5 mm; fixed 32.5 mm root bridge and 65 mm tip; servo y ±406.25 mm** | [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
-| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; V1 lower model 1596.26 g / 44.7 km/h** | [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md), [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
+| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; V1 lower model 1596.05 g / 44.7 km/h** | [ADR-0043](decisions/ADR-0043-article-1-mass-allocation.md), [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
 | Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; two-servo O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
 | Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | V_NE article #1 | **160 km/h** (design 180) | — |
@@ -319,14 +319,14 @@ Phase-1 status (2026-08-18):
 - **ADR-0040/0043/0045 — coupled planform, control surface, mass and balance updated.** The −15° planform
   and target CG **−93.8 mm** remain. With Article #1 hardware and the 550 g PETG-shell
   cap and two-servo baseline, CLEAN is **1553.25 g**. Its component-level pack solution
-  is **−338.17 mm** inside current travel. V1 requires −374.34 mm, 2.72 mm beyond the
+  is **−337.74 mm** inside current travel. V1 requires −373.73 mm, 2.53 mm beyond the
   forward stop, although its CG remains inside the released band. Current stations and acceptance gates are in the
   [guide §7.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
 - **Two-servo correction closes the analytical V1 mass gap.** The complete fin remains
-  **43.01 g**, including its mandatory 5.7 g aluminium spar. With 25 g removed from
-  actuation and ADR-0045 balance allocation, V1 is **1596.26 g / 44.7 km/h**, about 24.1 g below the exact 45 km/h
+  **42.80 g**, including its mandatory 5.7 g aluminium spar. With 25 g removed from
+  actuation and ADR-0045 balance allocation, V1 is **1596.05 g / 44.7 km/h**, about 24.4 g below the exact 45 km/h
   mass ceiling. CAD and scale mass verification remain mandatory.
 - **OP-29 (divergence) — operationally bounded, structurally open.** Revision 4 uses
   the released r1 profile. Nominal Vdiv is 327.2 km/h, but the conservative unmeasured

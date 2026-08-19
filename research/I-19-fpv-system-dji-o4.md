@@ -191,6 +191,12 @@ the regulated rails (I-17 §6); battery-side totals use 90 % BEC efficiency.
   joined by the 50 mm coaxial cable. Its body envelope is
   **13.44 × 12.36 × 16.50 mm L×W×H** and its derived mass is 3.1 g. The Pro
   camera is 25.55 × 20 × 23.30 mm and uses a 130 mm coaxial cable.
+- **Article #1 installation policy `[D]`:** because aircraft forward is −x, E18 is
+  fixed on y = 0 with its optical direction along −x. Its 13.44 mm body places the
+  centre at x = −445.98 mm and the lens face at the forward cradle plane,
+  x = −452.70 mm. E19 remains aft at x = −418.0 mm. The 3-D centre distance is
+  45.99 mm versus the measured 50 mm coax length. This is a straight-line lower
+  bound only; connector exits, bend radius and service loop remain an F2 CAD gate.
 - **VTX placement:** Article #1 uses the **30 × 30 × 6 mm** transmission module.
   The Pro uses 33.5 × 33.5 × 13 mm. Both need **airflow** (the
   shell runs hot) and ≥ 5 cm antenna-to-structure clearance.

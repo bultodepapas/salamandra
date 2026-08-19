@@ -52,7 +52,11 @@ TUBE_CORE_INSERTION = 0.050
 AL_TUBE_LINEAR_MASS = 2700.0 * np.pi / 4.0 * (0.008 ** 2 - 0.006 ** 2)
 CRADLE_MASS = 0.015
 CRADLE_LENGTH = 0.201
-CAMERA_FROM_BAY_FWD = 0.066  # reproduces the old -450 mm station
+# The camera lens face is the forward end of the centreline installation.  DJI
+# publishes the Article #1 body length in x, so placing its mass centre half a
+# body length aft of the cradle forward plane keeps the complete envelope aft
+# of that plane without inventing a lens or mount thickness [D from M].
+CAMERA_FROM_BAY_FWD = DJI_O4_CAMERA.envelope_mm[0] / 2000.0
 
 
 @cache
@@ -208,6 +212,14 @@ def main():
             layout["bay_fwd"] + PACK_LEN["6S1P"] / 2.0
             <= layout["pack_station"]
             <= layout["bay_aft"] - PACK_LEN["6S1P"] / 2.0),
+        "camera lens face is flush with the forward cradle plane": abs(
+            next(
+                x for name, _, x in layout["components"]
+                if name == "FPV DJI O4 Air Unit - camera"
+            )
+            - DJI_O4_CAMERA.envelope_mm[0] / 2000.0
+            - layout["bay_fwd"]
+        ) < 1e-12,
         "boom estimate 36-40 g": 0.036 <= layout["components"][-1][1] <= 0.040,
         "balance CLEAN mass agrees with mass_budget within boom-model precision": abs(
             m0 + REFERENCE_PACK - ARTICLE_CLEAN_MASS_KG) < 5e-4,

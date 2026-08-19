@@ -198,9 +198,9 @@ stations, iterates boom mass/length with the pack solution, and solves all four 
 pack stations at target CG **−93.8 mm** (SM 8 %).
 
 Current aggregate screen (ADR-0043/0045, `[D]`): CLEAN mass **1553.25 g**, 6S1P pack
-station **−354.1 mm**, allowable CG-band station −371.5…−336.6 mm, cradle
-approximately −453.1…−255.0 mm, and support span **321.1 mm**. The component-level
-packaging model below supersedes the aggregate station with **−338.17 mm CLEAN** after assigning
+station **−353.7 mm**, allowable CG-band station −371.1…−336.2 mm, cradle
+approximately −452.7…−254.6 mm, and support span **320.7 mm**. The component-level
+packaging model below supersedes the aggregate station with **−337.74 mm CLEAN** after assigning
 individual x/y/z locations. Diagnostic aggregate stations for future modules are
 4S1P −473.5 / 4S2P −291.8 / 6S2P −227.7 mm; they are not Article #1.
 
@@ -232,16 +232,18 @@ Movement authority is intentionally asymmetric:
   The working result is x/c = **0.5334** with a **37.1 mm** projected pushrod run to the
   x/c = 0.72 hinge.
 - Low-mass avionics may be repositioned only inside their declared packaging bounds.
-  The O4 camera/VTX stations are governed by the 50 mm coax and envelope clearance,
-  not used as CG ballast.
+  The O4 camera is fixed at the foremost centreline station, looks along −x, and
+  places its lens face on the forward cradle plane. Its 45.99 mm three-dimensional
+  centre distance to the aft VTX is a lower-bound check against the 50 mm coax,
+  not a released cable route and not a CG-ballast degree of freedom.
 - The 445 g battery is the **only automatic CG-trim variable**. After an allowed manual
   equipment movement, the analytical solver recomputes only battery x; use
   `--hold-battery` solely to inspect an untrimmed candidate.
 
-Current candidate results `[D]`: CLEAN closes **1553.25 g** at xCG = −93.797 mm with the
-battery at x = **−338.17 mm**. V1 adds the complete fixed-fin lower model; the exact
-target requires x = **−374.34 mm**, beyond the current −371.62 mm forward stop.
-At that stop V1 remains inside the released band at xCG = −93.04 mm. These values differ
+Current candidate results `[D]`: CLEAN closes **1553.25 g** at the released CG target with the
+battery at x = **−337.74 mm**. V1 adds the complete fixed-fin lower model; the exact
+target requires x = **−373.73 mm**, beyond the current −371.20 mm forward stop.
+At that stop V1 remains inside the released band at xCG = −93.08 mm. These values differ
 from the aggregate `balance_cg.py` station because individual masses now occupy their
 explicit spatial locations.
 
@@ -402,7 +404,7 @@ python3 yaw_stability.py
 ```
 
 Cnβ budget of the finless baseline (body + FSW wing: **−0.0006…−0.0014/deg — negative**),
-centreline-fin sizing for the two stability tiers (V1a 2.13 dm² → nominal +0.0005/deg;
+centreline-fin sizing for the two stability tiers (V1a 2.12 dm² → nominal +0.0005/deg;
 V1b 2.83 dm² → +0.0010/deg), rudder authority vs crosswind, yaw damping and
 subsidence, fin bending at V_NE (**root t ≥ 3.0 mm**), and the mass/drag/stall cost of
 each tier. In-service datum `[M]`: the TBS Mojito (same
@@ -458,7 +460,7 @@ separate antenna, two Corona DS-939MG servos,
 APC E 8×8 assembly and the coupled ADR-0043 boom. Published results (docs/06 §3):
 ALL PETG CLEAN **1553.25 g / 44.1 km/h**. C32 separates the obsolete 36.72 g
 allocation target from the current V1a lower assembly model: 37.31 g PETG shell/mount
-+ 5.70 g mandatory aluminium spar = **43.01 g**, giving **1596.26 g / 44.7 km/h**
++ 5.70 g mandatory aluminium spar = **42.80 g**, giving **1596.05 g / 44.7 km/h**
 with the two-servo baseline.
 V1 remains about 24.1 g below the exact 1620.4 g stall mass limit; its exact battery
 station is still 2.72 mm outside current travel. F2 must verify mass, balance and CAD.
@@ -486,7 +488,7 @@ GXY+gyroid+1.1 mm wall case reaches 207 km/h. The computed 0.85 clearance rounds
 python3 launch_speed.py
 ```
 
-Gate check of the mandatory hand throw. Revision 6 propagates the **1596.26 g V1
+Gate check of the mandatory hand throw. Revision 6 propagates the **1596.05 g V1
 analytical lower mass**
 and integrates `m dV/dt = T − D(V)` by RK4 with piecewise-constant phase thrust,
 including the 0.2 s motor delay.
@@ -513,8 +515,8 @@ the V1 fin near the trailing edge; carbon optimisation deferred (ADR-0015).
   σ 266 MPa vs 276 (6061-T6), δ 34 mm.
 - **Two-support arrangement ADOPTED** (`[D]`): the structural check conservatively
   retains the pack load at −359.6 mm; the current component-level balance station is
-  **−338.17 mm CLEAN** between the forward
-  support (x ≈ −459) and CORE support (x ≈ −132), with pack, forward payload allowance
+  **−337.74 mm CLEAN** between the forward
+  support (x = −452.70) and CORE support (x ≈ −132), with pack, forward payload allowance
   and cradle represented as separate loads → σ **56 MPa** (FS **4.96**),
   δ **1.7 mm**, mode **31.4 Hz**. The cradle is a structural requirement, not
   packaging.

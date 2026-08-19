@@ -98,11 +98,11 @@
 <line x1="258.75" y1="131.572" x2="258.75" y2="193.034" class="station"/>
 <line x1="296.75" y1="123.504" x2="296.75" y2="176.511" class="station"/>
 <line x1="334.5" y1="115.488" x2="334.5" y2="160.097" class="station"/>
-<path d="M 210 46.73 C 215.25 48.23 218.8 50.48 218.8 53.23 C 218.8 65.48 218.8 89.48 217.5 96.98 C 217.25 109.48 216.5 117 216.5 127 C 217 147.5 220.5 182.5 220.5 202.5 C 220.5 211.25 218 222 216 226.25 C 214 228.75 206 228.75 204 226.25 C 202 222 199.5 211.25 199.5 202.5 C 199.5 182.5 203 147.5 203.5 127 C 203.5 117 202.75 109.48 202.5 96.98 C 201.2 89.48 201.2 65.48 201.2 53.23 C 201.2 50.48 204.75 48.23 210 46.73 Z" class="provisional-fill" style="fill:#f4c46a;fill-opacity:.22;stroke:#985b00;stroke-width:.62;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
-<rect x="209" y="46.73" width="2" height="92.77" rx="0.8" class="provisional-line"/>
-<rect x="201.2" y="46.73" width="17.6" height="50.25" rx="4" class="provisional-line"/>
-<line x1="200" y1="75.467" x2="220" y2="75.467" class="provisional-line"/>
-<line x1="202.5" y1="96.98" x2="217.5" y2="96.98" class="station"/>
+<path d="M 210 46.825 C 215.25 48.325 218.8 50.575 218.8 53.325 C 218.8 65.575 218.8 89.575 217.5 97.075 C 217.25 109.575 216.5 117 216.5 127 C 217 147.5 220.5 182.5 220.5 202.5 C 220.5 211.25 218 222 216 226.25 C 214 228.75 206 228.75 204 226.25 C 202 222 199.5 211.25 199.5 202.5 C 199.5 182.5 203 147.5 203.5 127 C 203.5 117 202.75 109.575 202.5 97.075 C 201.2 89.575 201.2 65.575 201.2 53.325 C 201.2 50.575 204.75 48.325 210 46.825 Z" class="provisional-fill" style="fill:#f4c46a;fill-opacity:.22;stroke:#985b00;stroke-width:.62;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
+<rect x="209" y="46.825" width="2" height="92.675" rx="0.8" class="provisional-line"/>
+<rect x="201.2" y="46.825" width="17.6" height="50.25" rx="4" class="provisional-line"/>
+<line x1="200" y1="75.564" x2="220" y2="75.564" class="provisional-line"/>
+<line x1="202.5" y1="97.075" x2="217.5" y2="97.075" class="station"/>
 <line x1="203.5" y1="127" x2="216.5" y2="127" class="station"/>
 <line x1="201.5" y1="217.5" x2="218.5" y2="217.5" class="station"/>
 <rect x="205.625" y="208.75" width="8.75" height="8.75" rx="1.2" class="provisional-fill"/>
@@ -125,8 +125,11 @@
 <line x1="210" y1="141.053" x2="233" y2="132.553" class="leader"/>
 <circle cx="210" cy="141.053" r="0.65" class="datum-dot"/>
 <text x="234.5" y="131.753" class="note" text-anchor="start">NP VLM -75.8</text>
-<circle cx="210" cy="63.23" r="1.7" class="provisional-line"/>
-<path d="M 208.8 62.03 L 211.2 64.43 M 211.2 62.03 L 208.8 64.43" class="provisional-line"/>
+<rect x="208.455" y="46.825" width="3.09" height="3.36" rx="0.7" class="provisional-line" id="general-arrangement-o4-camera"/>
+<rect x="206.25" y="51.75" width="7.5" height="7.5" rx="0.7" class="provisional-line" id="general-arrangement-o4-vtx"/>
+<line x1="210" y1="48.505" x2="210" y2="55.5" class="provisional-line" id="general-arrangement-o4-coax-lower-bound" style="stroke:#9a4f87;stroke-width:.55;stroke-dasharray:2 1"/>
+<line x1="210" y1="46.825" x2="205" y2="46.825" class="medium" marker-end="url(#arrow-end)" id="general-arrangement-camera-view-direction"/>
+<circle cx="210" cy="46.825" r="1.2" class="provisional-line"/>
 <line x1="47.5" y1="107.42" x2="47.5" y2="101.5" class="extension"/>
 <line x1="372.5" y1="107.42" x2="372.5" y2="101.5" class="extension"/>
 <line x1="47.5" y1="101.5" x2="372.5" y2="101.5" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
@@ -148,12 +151,15 @@
 <text x="260.25" y="136.572" class="micro" text-anchor="start" transform="rotate(-90 260.25 136.572)">J0 · 195</text>
 <text x="298.25" y="128.504" class="micro" text-anchor="start" transform="rotate(-90 298.25 128.504)">J1 · 347</text>
 <text x="336" y="120.488" class="micro" text-anchor="start" transform="rotate(-90 336 120.488)">J2 · 498</text>
-<line x1="210" y1="63.23" x2="185" y2="52" class="leader provisional-line"/>
-<circle cx="210" cy="63.23" r="0.65" class="provisional-dot"/>
-<text x="183.5" y="51.2" class="provisional-text" text-anchor="end">CAMERA x -387.1 · PROVISIONAL</text>
-<line x1="218.25" y1="75.467" x2="239" y2="73" class="leader provisional-line"/>
-<circle cx="218.25" cy="75.467" r="0.65" class="provisional-dot"/>
-<text x="240.5" y="72.2" class="provisional-text" text-anchor="start">6S1P PACK x -338.1 [D]/[E]</text>
+<line x1="210" y1="48.505" x2="185" y2="52" class="leader provisional-line"/>
+<circle cx="210" cy="48.505" r="0.65" class="provisional-dot"/>
+<text x="183.5" y="51.2" class="provisional-text" text-anchor="end">O4 CAMERA x -446.0 · FRONT / CENTRELINE [D]</text>
+<line x1="218.25" y1="75.564" x2="239" y2="73" class="leader provisional-line"/>
+<circle cx="218.25" cy="75.564" r="0.65" class="provisional-dot"/>
+<text x="240.5" y="72.2" class="provisional-text" text-anchor="start">6S1P PACK x -337.7 [D]/[E]</text>
+<line x1="210" y1="55.5" x2="199" y2="62" class="leader provisional-line"/>
+<circle cx="210" cy="55.5" r="0.65" class="provisional-dot"/>
+<text x="200.5" y="61.2" class="provisional-text" text-anchor="start">O4 VTX · COAX LOWER BOUND 46.0/50.0 [D]/[M]</text>
 <line x1="203" y1="115" x2="164" y2="86" class="leader provisional-line"/>
 <circle cx="203" cy="115" r="0.65" class="provisional-dot"/>
 <text x="162.5" y="85.2" class="provisional-text" text-anchor="end">FUSELAGE OML · PROVISIONAL [I]</text>

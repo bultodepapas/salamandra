@@ -170,17 +170,17 @@ boom mass with its required length. At Λc/4 = −15°, xNP = −75.8 mm and xCG
 | Pack | Mass (g) | AUW (g) | Required station (mm) | ±5 mm CG band | One-layer cradle |
 |---|---:|---:|---:|---:|---|
 | 4S1P P42A | 305 | 1413 | −473.5 aggregate | −496.7…−450.4 | No: separate module |
-| **6S1P P42A** | **445** | **1553.25** | **−354.1 aggregate / −338.17 CLEAN component layout** | **−371.62…−336.52 component travel** | **Yes** |
+| **6S1P P42A** | **445** | **1553.25** | **−353.7 aggregate / −337.74 CLEAN component layout** | **−371.20…−336.10 component travel** | **Yes** |
 | 4S2P P42A | 585 | 1693 | −291.8 aggregate | −306.3…−277.3 | No: separate module |
 | 6S2P P42A | 865 | 1973 | −227.7 aggregate | −239.1…−216.3 | No: separate module |
 
 The manufactured cradle is 201 mm long at approximately −460…−259 mm and the forward
 support span from x ≈ −132 is 327 mm; the tube includes another 50 mm of CORE insertion.
 The coupled hybrid estimate is 37.4 g. ADR-0045 credits only 6 g of reduced balance
-mass: **1553.25 g CLEAN**, **1589.97 g V1 allocation** and **1596.26 g** connected V1
+mass: **1553.25 g CLEAN**, **1589.97 g V1 allocation** and **1596.05 g** connected V1
 lower model including the mandatory spar. CLEAN reaches the exact target at pack
-x = −338.17 mm. V1 requires −374.34 mm against the −371.62 mm stop; its clamped CG is
-−93.04 mm, inside the allowed band but not exact. Both masses analytically pass C16;
+x = −337.74 mm. V1 requires −373.73 mm against the −371.20 mm stop; its clamped CG is
+−93.08 mm, inside the allowed band but not exact. Both masses analytically pass C16;
 F2 must verify complete-aircraft mass and recover/accept the 2.72 mm station shortfall.
 
 ## 4. Airfoil
@@ -249,7 +249,7 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 | Battery **445 g** (6S1P P42A) | I-16 cell/pack model, 6×70 + 25 g packaging | `[D]` |
 | Boom structure **37.4 g** | 327 mm support span + 50 mm CORE insertion, Al Ø8/int6 + printed cradle. Corrected point-load superposition: 56 MPa, FS 4.96, δ 1.7 mm, 31.4 Hz | `[D]`/`[E]` |
 | Motor 170 / ESC 35 / servos 25 / avionics 112.9 / O4 Air Unit 8.95 / prop assembly 25 g | Motor/ESC remain class estimates; 2× Corona servo, SpeedyBee FC+PDB, O4 Air Unit and APC blade use catalog masses; adapter remains `[E]` | ADR-0043 `[M]`/`[E]` |
-| Article #1 **1553.25 g CLEAN / 1596.26 g V1 lower model** | `mass_budget.py`; ADR-0045 credits only the 6 g balance reduction. Complete fin is 37.31 g shell/mount + 5.70 g mandatory spar. V1 remains about 24.1 g below the exact C16 ceiling. | ADR-0043/0045 `[D]`/`[E]` |
+| Article #1 **1553.25 g CLEAN / 1596.05 g V1 lower model** | `mass_budget.py`; ADR-0045 credits only the 6 g balance reduction. Complete fin is 37.10 g shell/mount + 5.70 g mandatory spar. V1 remains about 24.4 g below the exact C16 ceiling. | ADR-0043/0045 `[D]`/`[E]` |
 
 ## 7. Propulsion
 
@@ -270,7 +270,7 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 - Stall speed: V = √(2W/(ρ·S·CL_max)) with wing CL_max = 0.589 (I-07). The exact
   45 km/h mass ceiling is **1620.4 g**. CLEAN is **1553.25 g → 44.1 km/h**. The
   two-servo V1 allocation is **1589.97 g → 44.6 km/h** and the complete-fin lower model
-  is **1596.26 g → 44.7 km/h**, about 24.1 g below the ceiling. Measured mass and E2
+  is **1596.05 g → 44.7 km/h**, about 24.4 g below the ceiling. Measured mass and E2
   CLmax still govern release.
 - Required CL_max (wing): 0.589 (I-07) vs section cl_max 0.65 `[M]`
 - Cruise electrical power: 1.15 Wh/km × 95 km/h ≈ **110 W**
@@ -289,8 +289,8 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 |---|---|---|
 | 200 × 70 × 32 mm (historical) | Fits the finished 6S1P pack 153 × 64.5 × 22.2 mm (2×3, orient. A, I-16 `[D]`) with the ±5 mm R-CG slide (36.5 mm) and end clearances; 4S1P (153 × 43 × 22) also fits. 4S2P/6S2P (8/12 cells) fit no single-layer arrangement — I-16 | `[D]` |
 | Cradle 155 × 66 × 24 mm (v0.14) | **Superseded:** maximum P42A tolerance left only 0.3 mm total lateral clearance and failed the 2 mm installation gate. | `[D]`/`[E]` |
-| Current cradle | **201 mm overall**, inner cross-section **68 × 25 mm** around E01 max **153.0 × 65.7 × 22.6 mm**; 2.3 mm total lateral and 2.4 mm total vertical clearance; CLEAN pack center −338.17 mm inside −371.62…−336.52 mm travel. V1 exact −374.34 mm remains 2.72 mm outside. | `[D]`/`[E]` |
-| Nose boom | CORE support x ≈ −132 to forward support x ≈ −459, **327 mm span + 50 mm insertion**; aluminium **Ø8 / int Ø6** + cradle = 37.4 g. Two-support architecture mandatory | `[D]`/`[E]` |
+| Current cradle | **201 mm overall**, inner cross-section **68 × 25 mm** around E01 max **153.0 × 65.7 × 22.6 mm**; 2.3 mm total lateral and 2.4 mm total vertical clearance; CLEAN pack center −337.74 mm inside −371.20…−336.10 mm travel. V1 exact −373.73 mm remains 2.53 mm outside. | `[D]`/`[E]` |
+| Nose boom | CORE support x ≈ −132 to forward plane x = −452.70, **320.7 mm span + 50 mm insertion**; aluminium **Ø8 / int Ø6** + cradle remains a provisional allocation. Two-support architecture mandatory. | `[D]`/`[E]` |
 
 ## 10. References
 
@@ -316,13 +316,13 @@ therefore remain open, and no CAD dimension or speed limit is relaxed by I-24.
 | Finless Cnβ = **−0.0006…−0.0014/deg** | Updated body length 0.724 m gives −0.00055…−0.00132 plus FSW wing 0…−0.0001. Negative across the band | `[D]`/`[E]` |
 | Finless yaw divergence τ ≈ 0.12 s (worst); V1a −1.233 ± 5.205i s⁻¹ | Corrected 2-DOF (β, r) dimensionalization includes the mandatory `1/(2V)` conversion for Cnr/Cyr (C31), evaluated at the single-source `I_zz` = 0.1587 kg·m² `[D]` from the 3-D mass model rather than the retired 0.28 kg·m² `[E]` estimate (C40/C44). V1a is a damped reduced β-r oscillation with ≈0.8 s decay (ω_n 5.35 rad/s, ζ 0.231), damped across the whole ±15 % inertia band; it is not a full Dutch-roll identification, which remains an E8 task. | `[E]` |
 | Fin CLα ≈ 0.050–0.060/deg | Helmbold-Diederich AR_v 3.0, Λ 12° × low-Re factor 0.85–1.00 (printed surface, Re 1.5–3e5) | `[D]`/`[E]` |
-| V1a S_v = **2.13 dm²** → Cnβ −0.00005…+0.00095 (nominal +0.0005) | Current l_v 0.379 m; 253/105/63 mm geometry. Marginal tier does not stay positive at the full uncertainty corner | `[D]`/`[E]` |
+| V1a S_v = **2.12 dm²** → Cnβ −0.00005…+0.00095 (nominal +0.0005) | Current l_v 0.379 m; 252/105/63 mm geometry. Marginal tier does not stay positive at the full uncertainty corner | `[D]`/`[E]` |
 | V1b S_v = **2.83 dm²** → +0.00049…+0.00141 (nominal +0.0010) | 291/121/73 mm; robust tier stays positive across the declared band | `[D]`/`[E]` |
 | **Rudder rejected** | \|Cnδr\| ≈ 0.00043/deg (τ 0.32) cannot hold a 20 km/h crosswind slip at stall (δr ≈ 24° > ±20°); differential elevons ≈ 1/5 of a rudder's authority; no mission need (bank-to-turn); Mojito precedent `[M]` has no rudder servo | `[D]`/`[M]` |
 | Fin root t ≥ **3.0 mm** | V1a at VNE: F 40.7 N, h 116 mm, M 4.72 N·m; 2.5 mm gives FS 1.16, rejected; 3.0 mm gives **FS 1.67** without crediting the Al spar; mode ≈ 7.9 Hz | `[D]` |
-| Fin mass target **≤36.72 g**; lower model **43.01 g** | C32: the 37.31 g PETG shell/mount lower estimate excluded the mandatory 5.70 g spar. The complete-model gap is 6.29 g; F2 must reduce the assembly/CLEAN mass before V1 satisfies C16 | `[E]` |
+| Fin mass target **≤36.72 g**; lower model **42.80 g** | C32: the 37.10 g PETG shell/mount lower estimate excludes the mandatory 5.70 g spar. The complete-model gap is 6.08 g; F2 must reduce the assembly/CLEAN mass before V1 satisfies C16 | `[E]` |
 | ΔCD0 ≈ +0.0014 (V1a) → +9.8 % energy | Updated area; Wh/km ≈ 1.26 `[E]` | `[D]`/`[E]` |
-| V_stall V1a **44.7 km/h — analytical PASS** | 1596.26 g lower model versus exact C16 mass ceiling 1620.4 g; measured F2 mass and battery station remain mandatory | ADR-0043/0045 `[D]` |
+| V_stall V1a **44.7 km/h — analytical PASS** | 1596.05 g lower model versus exact C16 mass ceiling 1620.4 g; measured F2 mass and battery station remain mandatory | ADR-0043/0045 `[D]` |
 
 **Why two published configurations and not one:** the O1 efficiency target (≤ 1.15
 Wh/km) lives at the clean end of the drag budget — only SALAMANDRA-CLEAN can carry it;

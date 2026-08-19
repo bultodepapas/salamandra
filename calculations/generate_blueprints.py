@@ -650,7 +650,14 @@ def draw_general_arrangement() -> SvgSheet:
     sheet.rect(c1[0], c1[1], c2[0] - c1[0], c2[1] - c1[1],
                "provisional-line", rx=4.0)
     pack_station = pack_station_mm / 1000.0
-    camera_station = component_layout.component("o4_camera").position_mm[0] / 1000.0
+    camera_component = component_layout.component("o4_camera")
+    vtx_component = component_layout.component("o4_vtx")
+    camera_station = camera_component.position_mm[0] / 1000.0
+    o4_coax_distance_mm = next(
+        distance
+        for link, distance, _ in component_layout.link_results()
+        if link.name.startswith("DJI O4")
+    )
     px1, py1 = plan_point(pack_station, -0.040, ox, oy, scale)
     px2, _ = plan_point(pack_station, 0.040, ox, oy, scale)
     sheet.line(px1, py1, px2, py1, "provisional-line")
@@ -686,13 +693,64 @@ def draw_general_arrangement() -> SvgSheet:
             sheet.line(sx, sy - 2.7, sx, sy + 2.7, css)
             sheet.leader(sx, sy, sx + x_shift, sy - 8.5, label)
 
+    # FPV installation from the same 3-D ledger used for mass and cable gates.
+    # The lens face is the camera envelope's minimum-x plane; the view ray is
+    # forward (-x).  The straight centre-to-centre line is only a conservative
+    # routing lower bound, not a released cable path.
+    camera_min, camera_max = camera_component.aabb()
+    vtx_min, vtx_max = vtx_component.aabb()
+    for component_min, component_max, identifier in (
+        (camera_min, camera_max, "camera"),
+        (vtx_min, vtx_max, "vtx"),
+    ):
+        top_left = plan_point(
+            component_min[0] / 1000.0,
+            component_min[1] / 1000.0,
+            ox,
+            oy,
+            scale,
+        )
+        bottom_right = plan_point(
+            component_max[0] / 1000.0,
+            component_max[1] / 1000.0,
+            ox,
+            oy,
+            scale,
+        )
+        sheet.rect(
+            top_left[0],
+            top_left[1],
+            bottom_right[0] - top_left[0],
+            bottom_right[1] - top_left[1],
+            "provisional-line",
+            rx=0.7,
+            id=f"general-arrangement-o4-{identifier}",
+        )
     camera = plan_point(camera_station, 0.0, ox, oy, scale)
-    sheet.circle(*camera, 1.7, "provisional-line")
-    sheet.path(
-        f"M {fmt(camera[0]-1.2)} {fmt(camera[1]-1.2)} L {fmt(camera[0]+1.2)} {fmt(camera[1]+1.2)} "
-        f"M {fmt(camera[0]+1.2)} {fmt(camera[1]-1.2)} L {fmt(camera[0]-1.2)} {fmt(camera[1]+1.2)}",
-        "provisional-line",
+    vtx = plan_point(
+        vtx_component.position_mm[0] / 1000.0,
+        vtx_component.position_mm[1] / 1000.0,
+        ox,
+        oy,
+        scale,
     )
+    lens_face = plan_point(camera_min[0] / 1000.0, 0.0, ox, oy, scale)
+    sheet.line(
+        *camera,
+        *vtx,
+        "provisional-line",
+        id="general-arrangement-o4-coax-lower-bound",
+        style="stroke:#9a4f87;stroke-width:.55;stroke-dasharray:2 1",
+    )
+    sheet.line(
+        *lens_face,
+        lens_face[0] - 5.0,
+        lens_face[1],
+        "medium",
+        marker_end="url(#arrow-end)",
+        id="general-arrangement-camera-view-direction",
+    )
+    sheet.circle(*lens_face, 1.2, "provisional-line")
 
     # Principal dimensions.
     left_tip_le = plan_point(x_le(-HALF_SPAN), -HALF_SPAN, ox, oy, scale)
@@ -722,12 +780,19 @@ def draw_general_arrangement() -> SvgSheet:
         *camera,
         185,
         52,
-        f"CAMERA x {camera_station*1000:+.1f} · PROVISIONAL",
+        f"O4 CAMERA x {camera_station*1000:+.1f} · FRONT / CENTRELINE [D]",
         True,
         "end",
     )
     sheet.leader(*plan_point(pack_station, 0.033, ox, oy, scale), 239, 73,
                  f"6S1P PACK x {pack_station*1000:+.1f} [D]/[E]", True)
+    sheet.leader(
+        *vtx,
+        199,
+        62,
+        f"O4 VTX · COAX LOWER BOUND {o4_coax_distance_mm:.1f}/50.0 [D]/[M]",
+        True,
+    )
     sheet.leader(*plan_point(-0.180, -0.028, ox, oy, scale), 164, 86,
                  "FUSELAGE OML · PROVISIONAL [I]", True, "end")
     sheet.leader(*plan_point(CONTRACT.prop_plane_m, 0.1016, ox, oy, scale), 265, 229,
@@ -754,7 +819,14 @@ def draw_side_elevations() -> SvgSheet:
     cradle_fwd = layout["bay_fwd"]
     cradle_aft = cradle_fwd + CONTRACT.cradle_length_m
     pack_station = pack_station_mm / 1000.0
-    camera_station = component_layout.component("o4_camera").position_mm[0] / 1000.0
+    camera_component = component_layout.component("o4_camera")
+    vtx_component = component_layout.component("o4_vtx")
+    camera_station = camera_component.position_mm[0] / 1000.0
+    o4_coax_distance_mm = next(
+        distance
+        for link, distance, _ in component_layout.link_results()
+        if link.name.startswith("DJI O4")
+    )
     pack_fwd = pack_station - CONTRACT.pack_length_m / 2.0
     pack_aft = pack_station + CONTRACT.pack_length_m / 2.0
     pack_z_min = 0.004
@@ -899,6 +971,77 @@ def draw_side_elevations() -> SvgSheet:
             pack_bottom_right[1] - pack_top_left[1],
             "provisional-line",
             rx=1.0,
+        )
+        camera_min, camera_max = camera_component.aabb()
+        vtx_min, vtx_max = vtx_component.aabb()
+        for component_min, component_max, identifier in (
+            (camera_min, camera_max, "camera"),
+            (vtx_min, vtx_max, "vtx"),
+        ):
+            top_left = side_point(
+                component_min[0] / 1000.0,
+                component_max[2] / 1000.0,
+                origin_x,
+                origin_y,
+                scale,
+            )
+            bottom_right = side_point(
+                component_max[0] / 1000.0,
+                component_min[2] / 1000.0,
+                origin_x,
+                origin_y,
+                scale,
+            )
+            sheet.rect(
+                top_left[0],
+                top_left[1],
+                bottom_right[0] - top_left[0],
+                bottom_right[1] - top_left[1],
+                "provisional-line",
+                rx=0.7,
+                id=(
+                    f"side-o4-{identifier}-"
+                    f"{'v1a' if with_fin else 'clean'}"
+                ),
+            )
+        camera_centre = side_point(
+            camera_component.position_mm[0] / 1000.0,
+            camera_component.position_mm[2] / 1000.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        vtx_centre = side_point(
+            vtx_component.position_mm[0] / 1000.0,
+            vtx_component.position_mm[2] / 1000.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        lens_face = side_point(
+            camera_min[0] / 1000.0,
+            camera_component.position_mm[2] / 1000.0,
+            origin_x,
+            origin_y,
+            scale,
+        )
+        sheet.line(
+            *camera_centre,
+            *vtx_centre,
+            "provisional-line",
+            id=(
+                "side-o4-coax-lower-bound-"
+                f"{'v1a' if with_fin else 'clean'}"
+            ),
+            style="stroke:#9a4f87;stroke-width:.55;stroke-dasharray:2 1",
+        )
+        sheet.circle(*lens_face, 1.1, "provisional-line")
+        sheet.line(
+            *lens_face,
+            lens_face[0] - 5.0,
+            lens_face[1],
+            "medium",
+            marker_end="url(#arrow-end)",
         )
         motor_top_left = side_point(
             CONTRACT.motor_body_forward_m,
@@ -1057,16 +1200,6 @@ def draw_side_elevations() -> SvgSheet:
             )
             sheet.leader(*fin_ac, 300, 140, "FIN AC x +285 [D]/[E]")
 
-        camera = side_point(
-            camera_station, 0.018, origin_x, origin_y, scale
-        )
-        sheet.circle(*camera, 1.2, "provisional-line")
-        sheet.line(
-            *side_point(camera_station, 0.036, origin_x, origin_y, scale),
-            *side_point(camera_station, -0.012, origin_x, origin_y, scale),
-            "station",
-        )
-
     draw_variant(73.0, with_fin=False)
     draw_variant(185.0, with_fin=True)
 
@@ -1137,6 +1270,7 @@ def draw_side_elevations() -> SvgSheet:
         "DATUM: root c/4 x = 0; motor axis z = 0; positive z up.",
         "Shared [D]/[E]: root r1, Ø8 boom/socket, pack envelope, Ø28 motor and V1a fin sizing.",
         "Side OML, equipment vertical placement, local skid and V1a carrier interface remain [I].",
+        f"O4: CAMERA FRONT/CENTRELINE [D]; COAX STRAIGHT-LINE LOWER BOUND {o4_coax_distance_mm:.1f}/50.0 mm [D]/[M].",
         f"CAD OPEN: fin AC placement requires carrier to x +{fin_te*1000:.0f}; the guide's x +295 concept is insufficient.",
     ], "micro", 3.4)
     return sheet
@@ -1410,6 +1544,31 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
     # estimated/open envelopes keep an amber dashed outline, while measured or
     # controlled envelopes use a solid outline in the system colour.  E## is
     # the component mass centre, so the convention survives monochrome output.
+    camera_component = clean.component("o4_camera")
+    vtx_component = clean.component("o4_vtx")
+    o4_link, o4_distance_mm, o4_link_passed = next(
+        result
+        for result in clean.link_results()
+        if result[0].name.startswith("DJI O4")
+    )
+    sheet.line(
+        *top_point(
+            camera_component.position_mm[0], camera_component.position_mm[1]
+        ),
+        *top_point(vtx_component.position_mm[0], vtx_component.position_mm[1]),
+        "provisional-line",
+        id="equipment-top-o4-coax-lower-bound",
+        style="stroke:#9a4f87;stroke-width:.55;stroke-dasharray:2 1",
+    )
+    sheet.line(
+        *side_mass_point(
+            camera_component.position_mm[0], camera_component.position_mm[2]
+        ),
+        *side_mass_point(vtx_component.position_mm[0], vtx_component.position_mm[2]),
+        "provisional-line",
+        id="equipment-side-o4-coax-lower-bound",
+        style="stroke:#9a4f87;stroke-width:.55;stroke-dasharray:2 1",
+    )
     for component in components:
         provisional = (
             "[E]" in component.authority
@@ -1561,6 +1720,11 @@ def draw_equipment_mass_skeleton() -> SvgSheet:
     excluded_mass = clean.mass_g() - shown_mass
     sheet.multiline(214, 219, [
         "AUDIT: E01 153.0x65.7x22.6 [M]/[E] · E18 13.44x12.36x16.50 [M].",
+        (
+            f"E18→E19 COAX: LOWER BOUND {o4_distance_mm:.1f}/"
+            f"{o4_link.maximum_mm:.1f} mm [D]/[M] · "
+            f"{'PASS' if o4_link_passed else 'FAIL'}; ROUTE/CONNECTOR BENDS OPEN [I]."
+        ),
         "E19: VTX 30x30x6 [M] + ANTENNA MASS = 5.85 g [D] · 80 mm ROUTE NOTE · E20 RETIRED.",
         f"SHOWN EQUIPMENT: {shown_mass:.2f} g · CLEAN INSTALLED: {clean.mass_g():.2f} g",
         f"NOT SHOWN: structure, elevons/balances and hardware = {excluded_mass:.2f} g",

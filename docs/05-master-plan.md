@@ -174,7 +174,7 @@ The server is a third-party Beta project, not Autodesk. If it is abandoned or br
 ## 9. Exit gates — consolidated checklist
 
 - [ ] **F1** — complete checklist of `03-phase-1-plan.md §4`
-- [ ] **F2** — Article #1 6S1P R-CG and **1553.25 g CLEAN** verified; confirm the analytical **1596.26 g V1** lower model remains ≤1620.4 g using CAD/scale masses and recover or accept its **2.72 mm** forward battery-station shortfall
+- [ ] **F2** — Article #1 6S1P R-CG and **1553.25 g CLEAN** verified; confirm the analytical **1596.05 g V1** lower model remains ≤1620.4 g using CAD/scale masses and recover or accept its **2.53 mm** forward battery-station shortfall
 - [ ] **F3** — D3/D4 completed, matching table published
 - [ ] **F4** — manoeuvre/ultimate semantics and positive V-n branch fixed; dynamic gust basis and negative CLmin branch closed, GJ/EI verified on the real section, elevon authority confirmed (S5), G6 sweep factor computed on the real section
 - [ ] **F5** — instrumentation chain operational and validated on an existing platform (D2), G9 resolved

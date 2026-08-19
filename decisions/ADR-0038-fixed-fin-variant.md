@@ -14,7 +14,7 @@ shows:
 | Configuration | Cnβ total (/deg) | Verdict |
 |---|---|---|
 | **Finless baseline** | **−0.0006 … −0.0014** `[E]` | **Negative across the band — statically unstable in yaw**; corrected 2-DOF worst case λ = +6.25/−7.13 s⁻¹ (τ ≈ 0.16 s); FC recovery is unproven and there is no physical yaw effector |
-| **V1a — fixed fin, S_v 2.13 dm²** | −0.00005 … +0.00095 (nominal +0.0005) | Marginal; lower uncertainty corner remains slightly negative |
+| **V1a — fixed fin, S_v 2.12 dm²** | −0.00005 … +0.00095 (nominal +0.0005) | Marginal; lower uncertainty corner remains slightly negative |
 | **V1b — fixed fin, S_v 2.83 dm²** | +0.00049 … +0.00141 (nominal +0.0010) | Stable across the declared band |
 
 In-service precedent `[M]`: the TBS Mojito — the same FSW + nose + pusher class — carries
@@ -45,11 +45,11 @@ SALAMANDRA-CLEAN   Finless baseline — O1 efficiency build (≤ 1.15 Wh/km targ
 SALAMANDRA-V1      Fixed centreline fin, NO rudder — first platform variant (O14),
                    recommended build for the Article #1 test programme after F2 mass closure.
                    Spec (I-20 §6, yaw_stability.py [D]):
-                     S_v 2.13 dm² (V1a) · b_v ≈ 253 mm · c_r 105 / c_t 63 mm · AR_v 3.0
+                     S_v 2.12 dm² (V1a) · b_v ≈ 252 mm · c_r 105 / c_t 63 mm · AR_v 3.0
                      root t ≥ 3.0 mm solid (FS 1.67 at V_NE, no spar credit) · swept tip
                      rear-pod extension ≈ 30 mm aft of x ≈ +265 · fin AC ≈ +285 mm
                      l_v = 379 mm from CG · slipstream η ≈ 1.25
-                     complete mass 43.01–67.88 g [E] incl. 5.70 g spar · allocation target 36.72 g OPEN (C32)
+                     complete mass 42.80–67.88 g [E] incl. 5.70 g spar · allocation target 36.72 g OPEN (C32)
                      ΔCD0 ≈ +0.0014 (+9.8 % energy [E])
 ```
 
@@ -61,9 +61,9 @@ reopened only if the E-flight programme demonstrates a yaw-handling failure mode
 ## Consequences
 
 - **C16 (stall), corrected by C32 and ADR-0045:** the 36.72 g fin allocation omitted
-  the mandatory 5.70 g aluminium spar. The connected fin lower assembly is 43.01 g
-  and still misses that internal allocation by 6.29 g; however, the current aircraft
-  lower model is **1596.26 g / 44.7 km/h**, 24.1 g below the exact C16 mass ceiling.
+  the mandatory 5.70 g aluminium spar. The connected fin lower assembly is 42.80 g
+  and still misses that internal allocation by 6.08 g; however, the current aircraft
+  lower model is **1596.05 g / 44.7 km/h**, 24.4 g below the exact C16 mass ceiling.
   V1 remains the preferred test configuration subject to F2 measured mass and battery
   travel closure.
 - **O1 (≤ 1.15 Wh/km):** only SALAMANDRA-CLEAN can carry the headline claim; V1 costs

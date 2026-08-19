@@ -11,7 +11,7 @@
 > controlling. ADR-0041/0043 replace this trade's provisional profile moment, mass and
 > battery station with Salamandra r1. Those mass-layout inputs were superseded by
 > ADR-0045: the current CLEAN mass is 1553.25 g and the component-layout pack station
-> is −338.17 mm. The aerodynamic sweep conclusions are unchanged.
+> is −337.74 mm. The aerodynamic sweep conclusions are unchanged.
 
 ## 1. Questions
 
@@ -83,7 +83,7 @@ passes all constraints. The result is −15°, not the locally attractive −12�
 ## 5. Revised balance and divergence results
 
 At −15°, `balance_cg.py` gives a VLM target CG of −93.8 mm. After ADR-0045, the Article
-#1 6S1P P42A component layout balances CLEAN at −338.17 mm inside physical travel.
+#1 6S1P P42A component layout balances CLEAN at −337.74 mm inside physical travel.
 CLEAN AUW is 1.55325 kg and calculated stall speed is 44.1 km/h. The V1 allocation is
 1.58997 kg / 44.6 km/h and C32's connected lower model is 1.59626 kg / 44.7 km/h.
 The exact V1 target pack station is 2.72 mm ahead of current travel, although achieved

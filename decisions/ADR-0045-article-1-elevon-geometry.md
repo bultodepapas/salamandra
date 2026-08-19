@@ -50,7 +50,7 @@ edge `[I]`.
 - The moving PETG estimate becomes 45 g total and the conservative balance allocation
   becomes 54 g total. Because the removed moving PETG becomes fixed panel material,
   only 6 g of balance mass is credited to AUW.
-- Current analytical budgets become 1553.25 g CLEAN and 1596.26 g V1.
+- Current analytical budgets become 1553.25 g CLEAN and 1596.05 g V1.
 - The exact V1 battery solution is 2.72 mm beyond current travel, although CG remains
   inside the released band. F2 must correct or accept the physical station with measured
   masses; exact closure is not claimed.

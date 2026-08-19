@@ -8,7 +8,7 @@
 
 > **2026-08-18 update:** the sweep selection remains active. The trade has been rerun
 > with ADR-0041/0045 and the 1.59626 kg V1 lower model. Current physical-elevon trim is
-> −0.14°…+0.50° and the CLEAN component-layout 6S1P station is −338.17 mm.
+> −0.14°…+0.50° and the CLEAN component-layout 6S1P station is −337.74 mm.
 
 ## Context
 
@@ -70,7 +70,7 @@ coupon/wing measurements close E7.
 - With the released r1 family, ADR-0045 elevons and C32 V1 lower mass, 3.0° printed
   wash-in leaves −0.14°…+0.50° physical-elevon trim across Ncrit 10/12. E2 still owns measured
   aerodynamic acceptance.
-- Under the current ADR-0043/0045 allocation, the CLEAN component-layout 6S1P P42A pack station is −338.17 mm and
+- Under the current ADR-0043/0045 allocation, the CLEAN component-layout 6S1P P42A pack station is −337.74 mm and
   lies inside the one-layer cradle. Other packs require separate module closure.
 - The conservative unmeasured divergence case supports an initial limit of **105 km/h**.
   If the Gxy-plane stiffness coupon validates the corresponding model, the calculated

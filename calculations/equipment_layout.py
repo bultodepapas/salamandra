@@ -162,6 +162,7 @@ class Component3D:
     budgeted: bool = True
     reserve: bool = False
     collidable: bool = True
+    view_direction: Vec3 | None = None
 
     def __post_init__(self) -> None:
         if not self.identifier or any(char.isspace() for char in self.identifier):
@@ -176,6 +177,12 @@ class Component3D:
             value < 0.0 for value in self.position_sigma_mm
         ):
             raise ValueError(f"{self.identifier}: uncertainty cannot be negative")
+        if self.view_direction is not None and not isclose(
+            sqrt(sum(value**2 for value in self.view_direction)),
+            1.0,
+            abs_tol=1e-12,
+        ):
+            raise ValueError(f"{self.identifier}: view direction must be a unit vector")
         if not self.bounds.contains(self.position_mm):
             raise ValueError(f"{self.identifier}: reference position is outside bounds")
 
@@ -589,6 +596,7 @@ def _component(
     budgeted: bool = True,
     reserve: bool = False,
     collidable: bool = True,
+    view_direction: Vec3 | None = None,
 ) -> Component3D:
     return Component3D(
         identifier=identifier,
@@ -606,6 +614,7 @@ def _component(
         budgeted=budgeted,
         reserve=reserve,
         collidable=collidable,
+        view_direction=view_direction,
     )
 
 
@@ -925,7 +934,11 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
                 "DJI LxWxH [M]; mass = 8.2 g air unit incl. camera "
                 "minus 5.1 g transmission module [D]"
             ),
-            bounds=Bounds3D((-459.0, -10.0, -10.0), (-385.0, 10.0, 10.0)),
+            # Lens faces forward (-x) and is flush with the cradle forward
+            # plane; the body extends aft.  This is a fixed FPV installation
+            # policy, not a movable balance item.
+            bounds=Bounds3D.fixed((camera_station_mm, 0.0, -5.0)),
+            view_direction=(-1.0, 0.0, 0.0),
             mass_sigma_g=0.3, position_sigma_mm=(5.0, 2.0, 2.0),
         ),
         _component(
@@ -1126,6 +1139,26 @@ def validation_checks() -> dict[str, bool]:
             ),
             mass_budget.FPV["O4-Air-Unit"],
             abs_tol=1e-12,
+        ),
+        "O4 camera is fixed forward-facing on the aircraft centreline": (
+            clean.component("o4_camera").view_direction == (-1.0, 0.0, 0.0)
+            and isclose(
+                clean.component("o4_camera").position_mm[1], 0.0, abs_tol=1e-12
+            )
+            and all(
+                clean.component("o4_camera").position_mm[0]
+                < clean.component(identifier).position_mm[0]
+                for identifier in ("o4_vtx", "battery_6s1p", "fc")
+            )
+            and all(
+                clean.component("o4_camera").bounds.axis_span(axis) == 0.0
+                for axis in range(3)
+            )
+        ),
+        "O4 camera lens face is flush with the forward cradle plane": isclose(
+            clean.component("o4_camera").aabb()[0][0],
+            balance_cg.solve_reference_layout()["bay_fwd"] * 1000.0,
+            abs_tol=1e-9,
         ),
         "battery solve reaches the longitudinal-CG target": isclose(
             solved.cg_mm()[0], target_cg_mm(), abs_tol=1e-9

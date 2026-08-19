@@ -8,12 +8,12 @@
 > **C31/C32 update:** `yaw_stability.py` consumes the −15° geometry and solved
 > −93.8 mm CG. It also corrects an internal inconsistency: structure/rudder/damping now
 > use the calculated fin area instead of a stale fixed 2.0 dm². With the v0.3 boom,
-> current V1a is 2.13 dm² with a 3.0 mm solid root; V1b is 2.83 dm². C32 adds the
+> current V1a is 2.12 dm² with a 3.0 mm solid root; V1b is 2.82 dm². C32 adds the
 > mandatory 5.70 g spar to both complete-fin mass bands.
 
 > **ADR-0045 mass update (2026-08-18):** the selected elevon/balance allocation makes
-> current CLEAN 1553.25 g and V1a lower model 1596.26 g / 44.7 km/h. The 43.01 g fin
-> still exceeds its internal 36.72 g allocation by 6.29 g, but no longer causes an
+> current CLEAN 1553.25 g and V1a lower model 1596.05 g / 44.7 km/h. The 42.80 g fin
+> still exceeds its internal 36.72 g allocation by 6.08 g, but no longer causes an
 > analytical C16 stall-speed failure. Physical F2 mass and E2 CLmax remain gates.
 
 ---
@@ -36,7 +36,7 @@ fixed fin is. This thread reproduces that choice with numbers for the Salamandra
    - **Forward sweep** is the *destabilizing* yaw contribution (opposite of the aft-swept
      planks that dominate flying-wing FPV practice) — I-02 documents this family's known
      compensation (extremely forward CG, short elevon throws).
-   - **The nose boom** (OP-01, supports x ≈ −459…−132) is a long fuselage ahead of the CG: the
+   - **The nose boom** (OP-01, supports x = −452.70…≈−132) is a long fuselage ahead of the CG: the
      body contribution to Cnβ is negative, and the boom adds yaw inertia
      (I_z ≈ 0.28 kg·m², with the 6S1P pack at ≈ −0.373 m).
    - **There is no yaw effector.** INAV yaw PIDs (fw_p_yaw) need a surface or
@@ -116,18 +116,18 @@ pusher — carries a fin.
 
 | | **V1a — marginal** | **V1b — robust** |
 |---|---|---|
-| S_v | **2.13 dm²** | **2.83 dm²** |
+| S_v | **2.12 dm²** | **2.82 dm²** |
 | b_v / c_r / c_t | 253 / 105 / 63 mm | 291 / 121 / 73 mm |
 | Cnβ_total band | −0.00006 … +0.00096 (nominal **+0.0005**) | +0.00048 … +0.00142 (nominal **+0.0010**) |
 | V_v = S_v·l_v/(S·b) | 0.022 | 0.030 (tailless practice ≈ 0.02–0.05 `[I]`) |
-| Complete mass (distributed thickness + mount + spar) | **43.01–67.88 g** | **55.32–88.39 g** |
+| Complete mass (distributed thickness + mount + spar) | **42.80–67.88 g** | **55.32–88.39 g** |
 | ΔCD0 | +0.0014 | +0.0019 |
 | Drag / Wh/km impact | **+9.8 % → ≈ 1.26** `[E]` | +12.9 % → ≈ 1.30 `[E]` |
-| AUW & V_stall | Lower model **1596.26 g / 44.7 km/h analytical PASS**; allocation target 1589.97 g / 44.6 km/h | Heavier option; recompute after V1b CAD mass |
+| AUW & V_stall | Lower model **1596.05 g / 44.7 km/h analytical PASS**; allocation target 1589.97 g / 44.6 km/h | Heavier option; recompute after V1b CAD mass |
 
 C16 is analytically closed for the V1a lower model with 24.1 g margin to the exact
 45 km/h mass ceiling. The former 36.72 g V1a value is still an internal allocation
-target, not a physical lower bound; C32's connected fin model misses it by 6.29 g and
+target, not a physical lower bound; the connected fin model misses it by 6.08 g and
 the V1 battery target is 2.72 mm beyond travel — both are **flagged to F2/OP-24**.
 
 ## 5.3 Structure (V1a at V_NE 180 km/h, cantilever)
@@ -165,11 +165,11 @@ damped lateral-directional oscillation in this reduced model.
 # 6. Recommendation (engineering)
 
 1. **V1 = fixed centreline fin, no rudder — first platform variant (O14), recommended
-   build for the Article #1 test programme.** Size V1a (S_v = 2.13 dm², b_v ≈ 253 mm,
+   build for the Article #1 test programme.** Size V1a (S_v = 2.12 dm², b_v ≈ 252 mm,
    c_r ≈ 105 / c_t ≈ 63 mm, AR_v ≈ 3.0, root t ≥ 3.0 mm) on a ≈ 30 mm rear-pod extension
    behind the prop disk, fin AC ≈ +285 mm, slipstream-mounted (η ≈ 1.25 — the fin is
    *most* effective at low speed, exactly where launch and stall handling need it).
-   Complete lower mass 43.01 g against a 36.72 g allocation target, ΔCD0 ≈ +0.0014.
+   Complete lower mass 42.80 g against a 36.72 g allocation target, ΔCD0 ≈ +0.0014.
    V1b (+0.0010/deg nominal) if F2 allows its 55.32–88.39 g complete mass.
 2. **The finless configuration remains the O1-efficiency baseline** (≤ 1.15 Wh/km needs
    the cleanest build; the fin costs ≈ +10 % energy `[E]`). It is documented here as

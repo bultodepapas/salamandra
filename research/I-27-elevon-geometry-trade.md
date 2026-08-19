@@ -129,10 +129,10 @@ joint is tested.
 - Moving PETG estimate: 25.0 → **22.5 g per surface** `[E]`; 1.2× balance allocation:
   30.0 → **27.0 g per surface** `[D]/[E]`. The fixed bridge remains PETG in the aircraft,
   so the connected AUW credit is only **6.0 g of balance mass**, not 11 g of surface plus
-  balance. Current budgets become **1553.25 g CLEAN** and **1596.26 g V1 lower model**.
-- The V1 component model requires battery x = −374.34 mm against current travel ending
-  at −371.62 mm. Exact target is therefore **2.72 mm unreachable**, but calculated
-  xCG = −93.04 mm remains inside the released −98.8…−88.8 mm band. F2 must close this.
+  balance. Current budgets become **1553.25 g CLEAN** and **1596.05 g V1 lower model**.
+- The V1 component model requires battery x = −373.73 mm against current travel ending
+  at −371.20 mm. Exact target is therefore **2.53 mm unreachable**, but calculated
+  xCG = −93.08 mm remains inside the released −98.8…−88.8 mm band. F2 must close this.
 
 No flutter-speed improvement is claimed. Shortening reduces moving inertia, but it also
 shortens the hinge and can change hinge stiffness; the net modal effect is unknown.

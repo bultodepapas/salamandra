@@ -19,14 +19,14 @@ autolaunch configuration · **Updated:** 2026-08-18
 
 What is a realistic hand-launch velocity, how much stall margin do in-service FPV
 aircraft actually operate with, and what does the INAV/ArduPlane autolaunch practice
-require of the stall speed and thrust — for the 1553.25 g CLEAN / 1596.26 g V1
+require of the stall speed and thrust — for the 1553.25 g CLEAN / 1596.05 g V1
 lower-model wing?
 
 # 2. Why it matters
 
 The stall requirement is ≤45 km/h (C16). CLEAN closes at **44.1 km/h** and C32's
 connected V1 lower model closes analytically at **44.7 km/h** (`mass_budget.py`) after
-ADR-0045. The fin remains 6.29 g over its internal allocation and physical F2/E2
+ADR-0045. The fin remains 6.08 g over its internal allocation and physical F2/E2
 closure remains mandatory. The launch is a
 mandatory hand throw (docs/00) with autolaunch via acceleration detection. If the
 achievable launch speed is below stall, the aircraft cannot leave the hand. This thread
@@ -85,7 +85,7 @@ exceed hover** (backward G-forces confuse the FC climb detection).
 
 | Quantity | Value |
 |---|---:|
-| V_stall (V1 lower model 1596.26 g / CLEAN 1553.25 g) | **44.7 / 44.1 km/h** (12.4 / 12.2 m/s) |
+| V_stall (V1 lower model 1596.05 g / CLEAN 1553.25 g) | **44.7 / 44.1 km/h** (12.4 / 12.2 m/s) |
 | **Release gate:** V_suelta ≥ V_stall | **PASS for typical and firm throws** |
 | V_suelta, typical throw 10.5 m/s + ref idle | **12.8 m/s (46.3 km/h) — k = 1.04 at release; k = 1.20 reached in 0.35 s** |
 | V_suelta, firm throw 13 m/s + high idle | **16.2 m/s (58.4 km/h) — k = 1.31 at release** |
@@ -115,8 +115,8 @@ instrumented test programme; (d) accept the declared technique rule (firm throw)
      (ArduPilot guidance; higher → stall), launch throttle at the hover setting.**
    - Autolaunch configuration table (§3.2) for D1/D2 validation.
 2. **Stall-margin policy (C16 chain):** CLEAN closes at 44.1 km/h and the C32/ADR-0045
-   V1 lower model closes analytically at 1596.26 g / 44.7 km/h. F2 must still verify
-   actual aircraft mass, the fin's 6.29 g internal allocation gap and the V1 battery
+   V1 lower model closes analytically at 1596.05 g / 44.7 km/h. F2 must still verify
+   actual aircraft mass, the fin's 6.08 g internal allocation gap and the V1 battery
    travel shortfall (OP-24/OP-16).
    The launch analysis no longer blocks the first flight — it
    prescribes the technique. The CL_max chain (R-AIRFOIL, designed section, OP-02)

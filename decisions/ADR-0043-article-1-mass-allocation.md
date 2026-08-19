@@ -27,7 +27,7 @@ Keep conventional PETG and make the following masses binding CAD/procurement lim
 | FPV | DJI O4 Air Unit **8.95 g installed** | E18 camera 3.10 g + E19 VTX/attached-antenna assembly 5.85 g `[M]`/`[D]`; I-19 |
 | Servos | 2× Corona DS-939MG **25.0 g** | one per elevon, 12.5 g each `[M]`; 1.52× factored torque margin at 180 km/h |
 | Propeller assembly | **25 g** | APC blade 15 g `[M]` + adapter/collet allowance 10 g `[E]` |
-| V1a complete fin | **≤36.72 g target** | C32 current lower model: 37.31 g shell/mount + 5.70 g mandatory spar = **43.01 g**; 6.29 g gap `[E]` |
+| V1a complete fin | **≤36.72 g target** | Current lower model: 37.10 g shell/mount + 5.70 g mandatory spar = **42.80 g**; 6.08 g gap `[E]` |
 
 All other v0.2 rows remain unchanged. The reproducible totals are:
 
@@ -40,8 +40,8 @@ All other v0.2 rows remain unchanged. The reproducible totals are:
 The formula's exact 45 km/h mass ceiling is 1,620.4 g. CLEAN carries 67.2 g of margin
 and the connected V1 lower model carries about 24.1 g. C32 remains the correction that
 connected the mandatory fin spar; ADR-0026 removes two unsupported baseline actuators.
-The aggregate ledger gives x = −354.1 mm; the component-level layout that controls the
-drawing solves x = −338.17 mm after placing E18/E19 explicitly. Both calculations expose
+The aggregate ledger gives x = −353.7 mm; the component-level layout that controls the
+drawing solves x = −337.74 mm after placing E18/E19 explicitly. Both calculations expose
 their assumptions instead of retaining the v0.2 station.
 
 ## Consequences

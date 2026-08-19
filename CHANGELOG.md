@@ -4,6 +4,30 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.35] — 2026-08-18
+
+**C45 — the O4 VTX was ahead of the FPV camera in the 3-D equipment model.**
+
+- Aircraft forward is −x, but E18 was at x = −387.1 mm while E19 was at
+  x = −418.0 mm. The drawing symbol also used an unrelated side-view height and
+  omitted the camera-to-VTX link, so the generated sheets concealed the reversed
+  installation.
+- E18 is now fixed on y = 0, looking along −x, with its measured 13.44 mm body
+  extending aft from the forward cradle plane. The derived centre is x = −445.98 mm
+  and the lens face is x = −452.70 mm; E19 remains aft at x = −418.0 mm.
+- The 3-D centre-distance lower bound is 45.99 mm against the measured 50 mm coax.
+  Connector exits, bend radius and a service loop remain an F2 CAD gate: passing the
+  lower-bound calculation does not release a cable route.
+- The change moves the 3.10 g camera forward and therefore re-derives the coupled
+  battery solution: CLEAN x = −337.74 mm; V1 requires −373.73 mm against the
+  −371.20 mm forward stop. The re-derived fin model is 42.80 g and V1 is
+  1596.05 g; both remain within the prior acceptance conclusions.
+- `balance_cg.py` and `equipment_layout.py` now fail if the camera is not flush,
+  forward-facing, centred, fixed, ahead of E19, or within the coax limit. All three
+  generated arrangement/equipment views show the same envelopes and cable relation.
+
+---
+
 ## [1.34] — 2026-08-18
 
 **Release v0.5.0 — verification integrity and the connected design contract.**
