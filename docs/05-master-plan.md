@@ -16,10 +16,11 @@ It sets no calendar dates. The repo has no `[M]` data on how long each task take
 
 ## 0. What "the first prototype" is
 
-**Working definition, revisable:** the first prototype is **article #1** already described in the README — **Cruise (1300 mm, 6S1P)** configuration — printed, assembled, balanced according to [ADR-0025](../decisions/ADR-0025-elevon-balancing.md), with avionics and **pitot installed** (a requirement of [O1](00-objectives-and-requirements.md)), able to fly in a stabilized way to run **E2, E3 and E7**. **Recommended build: SALAMANDRA-V1 (fixed centreline fin, ADR-0038/I-20)** — the fin doubles Cnr and removes the finless yaw divergence, giving cleaner test data; the finless CLEAN build remains the O1-efficiency configuration.
+**Working definition, revisable:** the first prototype is **article #1** already described in the README — **Cruise (1300 mm, 6S1P)** configuration — printed, assembled, balanced according to [ADR-0025](../decisions/ADR-0025-elevon-balancing.md), with avionics and **pitot installed** (a requirement of [O1](00-objectives-and-requirements.md)), able to fly in a stabilized way to run **E2, E3 and E7**. **Recommended build: SALAMANDRA-V1 (passive twin fins on aft CORE booms, ADR-0038/I-29)** — the fins double the nominal yaw damping and remove the nominal finless yaw divergence, giving cleaner test data; the finless CLEAN build remains the O1-efficiency configuration.
 
-The V1 recommendation is conditional on F2 closing the C32 mass gap; until then CLEAN
-is the only mass-compliant configuration.
+The V1 recommendation is conditional on F2 closing the 0.80 g fin-allocation margin and
+the current 18.47 mm forward battery-travel shortfall. CLEAN is the only configuration
+with a fully reachable component-level CG solution at the present envelope.
 
 It is not "something that prints and flies once". It is the instrumented platform that **can generate the `[M]` data the project still lacks** (G2, G4, G6, G7 in `gaps/`). If it does not carry an operational pitot and blackbox, it does not count as the project's prototype — it counts as a mock-up.
 
@@ -174,7 +175,7 @@ The server is a third-party Beta project, not Autodesk. If it is abandoned or br
 ## 9. Exit gates — consolidated checklist
 
 - [ ] **F1** — complete checklist of `03-phase-1-plan.md §4`
-- [ ] **F2** — Article #1 6S1P R-CG and **1553.25 g CLEAN** verified; confirm the analytical **1595.80 g V1** lower model plus the open 84.1 mm carrier mass remains ≤1620.4 g using CAD/scale masses and recover or accept its **4.28 mm** forward battery-station shortfall
+- [ ] **F2** — Article #1 6S1P R-CG and **1553.25 g CLEAN** verified; confirm the analytical **1612.45 g V1** lower model (both fin shells, spars and booms) remains ≤1620.4 g using CAD/scale masses, close the **0.80 g** fin-allocation margin, and recover the current **18.47 mm** forward battery-station shortfall through measured mass placement or an approved envelope change
 - [ ] **F3** — D3/D4 completed, matching table published
 - [ ] **F4** — manoeuvre/ultimate semantics and positive V-n branch fixed; dynamic gust basis and negative CLmin branch closed, GJ/EI verified on the real section, elevon authority confirmed (S5), G6 sweep factor computed on the real section
 - [ ] **F5** — instrumentation chain operational and validated on an existing platform (D2), G9 resolved

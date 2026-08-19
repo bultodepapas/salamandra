@@ -13,8 +13,8 @@ open.
 |---|---|---:|---|
 | [`SLM-GA-001`](SLM-GA-001-general-arrangement.svg) | Article #1 top-view arrangement: controlled planform, modular stations, CG/NP and continuous provisional fuselage/equipment envelopes | A3 · 1:4 | Planform `[D]`; equipment `[D]`/`[E]`; OML `[I]` |
 | [`SLM-FUS-001`](SLM-FUS-001-fuselage-oml-review.svg) | Common-source plan, side and transverse body views with inflated central skeleton envelopes, containment margins and gross mesh diagnostics | A3 · views 1:4 / sections 1:1.5 | OML `[I]`; envelopes `[D]`/`[E]`/`[I]`; metrics `[D]` on `[I]` |
-| [`SLM-GA-002`](SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
-| [`SLM-FIN-001`](SLM-FIN-001-fixed-fin-review.svg) | Dedicated V1a fixed-fin planform, aerodynamic datum, external leading-edge spar concept, thickness schedule, carrier stations and directional-stability screen | A3 · planform 1:1.5 / details NTS | Planform `[D]` on `[E]`; section/install `[E]`/`[I]`; no rudder authority |
+| [`SLM-GA-002`](SLM-GA-002-side-elevations.svg) | Comparative side elevations: CLEAN finless baseline and V1a twin-fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance | A3 · 1:4 | Root/fin `[D]`/`[E]`; side OML/install `[I]` |
+| [`SLM-FIN-001`](SLM-FIN-001-fixed-fin-review.svg) | Dedicated V1a twin-fin planform, aerodynamic datum, external leading-edge spar concept, thickness schedule, boom installation and directional-stability screen | A3 · planform 1:1.5 / details NTS | Planform `[D]` on `[E]`; section/install `[E]`/`[I]`; no rudder authority |
 | [`SLM-EQP-001`](SLM-EQP-001-equipment-mass-skeleton.svg) | Top and side mass skeleton: component envelopes, true mass centres, x/y/z schedule, CLEAN CG and V1 battery-stop overlay. The top view includes the controlled exterior wing planform as spatial context but no wing construction, fuselage or OML. | A3 · top 1:6.5 / side 1:4 | Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority |
 | [`SLM-WNG-001`](SLM-WNG-001-half-wing-layout.svg) | Right half-wing: printed segments, cells, spar/pin, ADR-0045 elevon/fixed-root bridge, exact y195 profile and polyhedral inset | A3 · plan 1:2 | Planform/profile/elevon bounds `[D]`; structure/polyhedral `[E]`/`[I]` |
 
@@ -37,12 +37,13 @@ geometry only. OP-21 and F2 must freeze the native CAD surface before it can bec
 interface or manufacturing reference.
 
 The side-elevation sheet repeats the same authority boundary in the vertical plane. It
-compares **SALAMANDRA-CLEAN** with **SALAMANDRA-V1a**; V1a has a passive fixed fin and
+compares **SALAMANDRA-CLEAN** with **SALAMANDRA-V1a**; V1a has two passive fixed fins and
 explicitly **no movable rudder**. The root airfoil and calculated fin size are traceable,
 while equipment height placement, keel transitions and the fin-to-pod interface remain
-`[I]`. `SLM-FIN-001` isolates the component geometry: its single-source vertical-TE
-planform reaches root TE x = +349.1 mm, requiring an 84.1 mm carrier beyond the current
-x = +265 pod. The former x = +295 concept is retired as geometrically insufficient.
+`[I]`. `SLM-FIN-001` isolates one of two identical vertical-TE fins and the complete
+top-view installation. The two aft CORE booms sit at y = ±140 mm, clear the Ø203.2 mm
+propeller disk radially by 29.4 mm and support each full root chord to x = +361.3 mm.
+The superseded centreline carrier is not part of the current geometry.
 
 ## Reproduce
 

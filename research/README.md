@@ -25,7 +25,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-17](I-17-inav-flight-controllers.md) | **INAV flight controllers: popular boards and data sheets** | 🔄 **Reference catalog — open** | Guide §11, CORE avionics station, O2/O10 |
 | [I-18](I-18-servo-catalog.md) | **Elevon servos: popular models and data sheets** | 🔄 **Reference catalog — open** | Guide §5.3/§7.5, ADR-0025, ADR-0026, CORE servo bays |
 | [I-19](I-19-fpv-system-dji-o4.md) | **DJI O4 FPV system: O4 / Pro / Lite — data sheets + electrical data** | 🔄 **Reference catalog — open** | Guide §11, nose-pod/camera, O1, I-17 |
-| [I-20](I-20-yaw-stability-centerline-fin.md) | **Directional (yaw) stability and the centreline-fin variant** | 🔄 **New — quantitative budget `[D]`, `[E]` bands; flight-test closure pending** | First platform variant (O14), guide §6.7, OP-21, G10, E-series |
+| [I-20](I-20-yaw-stability-centerline-fin.md) | **Directional (yaw) stability and the superseded centreline-fin concept** | ↪ **Architecture superseded by I-29; method retained as history** | I-29, ADR-0038, G10 |
 | [I-21](I-21-sweep-trade-and-elastic-axis-correction.md) | **Sweep trade and elastic-axis correction** | 🔄 **Executed — design selected; material tests open** | ADR-0040, OP-01, OP-03, OP-23, OP-29 |
 | [I-22](I-22-high-roi-v0.3-audit.md) | **High-ROI v0.3 audit: airfoil, propulsion and mass/CG** | ✅ **Executed — corrected by I-23/C29; physical gates retained** | ADR-0041…0043, guide v0.19, release v0.3.0 |
 | [I-23](I-23-calculation-system-integration-audit.md) | **Calculation-system integration and physics audit** | ✅ **Executed — contracts and C29–C32 corrected; V1 mass gate reopened** | Guide v0.19, ADR-0042/0043, OP-06/12/13/23/24/28/29 |
@@ -34,6 +34,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-26](I-26-codex-svg-agent-toolchain.md) | **Codex, VS Code and agent toolchain for controlled SVG drawings** | ✅ **Executed — repository workflow hardened; optional renderer/schema gates open** | repository SVG skill, VS Code tasks, generator verification, drawing guide |
 | [I-27](I-27-elevon-geometry-trade.md) | **Article #1 elevon span, chord and tip-clearance trade** | 🔄 **Computational selection executed; E2/E5/G7 physical closure open** | ADR-0045, OP-06, guide §6.6, F2 |
 | [I-28](I-28-coupled-parametric-fuselage-oml.md) | **Senior master plan for an automatic parametric fuselage around the coupled skeleton** | 🔴 **Revision 2 OML rejected; Revision 3 executable plan controls replacement** | OP-21, F1/F2, G10, future fuselage-generator ADR |
+| [I-29](I-29-twin-fin-architecture-correction.md) | **Directional-surface architecture correction: twin aft-CORE fins** | 🔄 **Geometry corrected; F2/E8 physical closure open** | ADR-0038, SLM-GA-002, SLM-FIN-001, G10 |
 
 ## Source quality
 

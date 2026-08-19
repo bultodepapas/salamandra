@@ -1,5 +1,11 @@
 # I-20 — Directional (yaw) stability and the centreline-fin variant
 
+> **Architecture superseded 2026-08-19.** The stability-method development in this note
+> remains historical evidence, but its single centreline-fin/carrier installation is not a
+> valid SALAMANDRA geometry. I-29 and ADR-0038 replace it with two fixed fins on aft CORE
+> booms outside the propeller disk. Use `calculations/yaw_stability.py` and generated sheet
+> SLM-FIN-001 for current dimensions and results.
+
 **Status:** 🔄 Updated for ADR-0040 — quantitative budget `[D]`, band inputs `[E]`; flight-test closure pending
 **Date:** 2026-08-17
 **Feeds:** First platform variant (O14, ADR-0032), CORE rear-pod design (guide §7.6), OP-21, gap G10, in-service Mojito comparison (docs/02, I-02)

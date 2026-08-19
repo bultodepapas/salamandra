@@ -58,6 +58,7 @@ from design_config import (
 )
 from yaw_stability import (
     AR_FIN,
+    FIN_COUNT,
     FIN_AC_STATION_M,
     FIN_ROOT_THICKNESS_M,
     FIN_ROOT_Z_M,
@@ -767,7 +768,7 @@ def draw_general_arrangement() -> SvgSheet:
 
 
 def draw_side_elevations() -> SvgSheet:
-    """Draw the shared side OML and the CLEAN/V1a directional variants."""
+    """Draw the shared side OML and CLEAN/V1a twin-fin variants."""
     scale = 4.0
     origin_x = 175.0
     layout = solve_reference_layout()
@@ -808,7 +809,7 @@ def draw_side_elevations() -> SvgSheet:
 
     sheet = SvgSheet(
         "Salamandra CLEAN and V1a side elevations",
-        "Metric A3 side-elevation draft comparing the common root airfoil, battery boom, continuous provisional fuselage OML and local propeller-clearance skid for SALAMANDRA-CLEAN with the V1a fixed centreline-fin variant. The V1a fin is passive and has no movable rudder.",
+        "Metric A3 side-elevation draft comparing SALAMANDRA-CLEAN with the V1a passive twin-fin variant. The two fins sit on aft CORE booms outside the propeller disk; their side projections coincide. No movable rudder is defined.",
         "SLM-GA-002",
     )
     title_block(
@@ -816,7 +817,7 @@ def draw_side_elevations() -> SvgSheet:
         "SIDE ELEVATIONS · CLEAN / V1a",
         "SLM-GA-002",
         "1:4",
-        "SOURCE: GUIDE §§4.4/6.7/9.2 · ADR-0038 · I-16/I-20",
+        "SOURCE: GUIDE §§4.4/6.7/9.2 · ADR-0038 · I-16/I-29",
     )
     def draw_variant(origin_y: float, *, with_fin: bool) -> None:
         def point(x_m: float, z_m: float) -> str:
@@ -1033,7 +1034,7 @@ def draw_side_elevations() -> SvgSheet:
             stroke_dasharray="none",
         )
 
-        carrier_end = fin_te if with_fin else CONTRACT.rear_pod_end_m
+        carrier_end = fin.boom_x_end_m if with_fin else CONTRACT.rear_pod_end_m
         sheet.line(
             *side_point(cradle_fwd - 0.015, 0.0, origin_x, origin_y, scale),
             *side_point(carrier_end + 0.015, 0.0, origin_x, origin_y, scale),
@@ -1046,16 +1047,16 @@ def draw_side_elevations() -> SvgSheet:
         )
 
         if with_fin:
-            carrier_start = CONTRACT.prop_plane_m + 0.009
+            carrier_start = fin.boom_x_start_m
             carrier_path = " ".join([
-                f"M {point(carrier_start, fin_root_z)}",
-                f"L {point(fin_te, fin_root_z)}",
+                f"M {point(carrier_start, FIN_ROOT_Z_M)}",
+                f"L {point(fin.boom_x_end_m, FIN_ROOT_Z_M)}",
                 curve(
-                    (fin_te + 0.006, 0.010),
-                    (fin_te + 0.006, -0.010),
-                    (fin_te, -fin_root_z),
+                    (fin.boom_x_end_m + 0.004, 0.004),
+                    (fin.boom_x_end_m + 0.004, -0.004),
+                    (fin.boom_x_end_m, -FIN_ROOT_Z_M),
                 ),
-                f"L {point(carrier_start, -fin_root_z)}",
+                f"L {point(carrier_start, -FIN_ROOT_Z_M)}",
                 "Z",
             ])
             sheet.path(
@@ -1065,6 +1066,13 @@ def draw_side_elevations() -> SvgSheet:
                     "fill:#f4c46a;fill-opacity:.22;stroke:#985b00;"
                     "stroke-width:.55;stroke-dasharray:3.4 1.6;stroke-linejoin:round"
                 ),
+            )
+            # Both booms and fins are identical; side elevation is coincident.
+            sheet.line(
+                *side_point(fin.boom_x_start_m, 0.0, origin_x, origin_y, scale),
+                *side_point(fin.boom_x_end_m, 0.0, origin_x, origin_y, scale),
+                "derived",
+                style="stroke:#146e9b;stroke-width:.35;stroke-dasharray:1.3 1.0",
             )
             fin_points = [
                 side_point(fin_root_le, fin_root_z, origin_x, origin_y, scale),
@@ -1085,6 +1093,28 @@ def draw_side_elevations() -> SvgSheet:
                 ),
             ]
             sheet.polyline(fin_points, "provisional-fill", close=True)
+            # A small dorsal fairing makes the fin/boom junction physically
+            # legible and removes the sharp printed stress riser.  Its area is
+            # deliberately excluded from S_v and Cn_beta, so it cannot inflate
+            # the directional-stability result before F2 geometry closure.
+            root_fillet_path = " ".join([
+                f"M {point(fin_root_le - 0.032, fin_root_z)}",
+                curve(
+                    (fin_root_le - 0.014, fin_root_z),
+                    (fin_root_le + 0.004, fin_root_z + 0.010),
+                    (fin_root_le + 0.012, fin_root_z + 0.028),
+                ),
+                f"L {point(fin_root_le + 0.012, fin_root_z)}",
+                "Z",
+            ])
+            sheet.path(
+                root_fillet_path,
+                "provisional-fill",
+                style=(
+                    "fill:#f4c46a;fill-opacity:.30;stroke:#985b00;"
+                    "stroke-width:.55;stroke-dasharray:3.4 1.6;stroke-linejoin:round"
+                ),
+            )
             fin_ac = side_point(
                 fin.ac_x_m,
                 fin_root_z + fin_centroid_z,
@@ -1115,7 +1145,7 @@ def draw_side_elevations() -> SvgSheet:
                 fin_root_y,
                 fin_points[1][0],
                 fin_points[0][0],
-                f"b_v {fin_span*1000:.0f} [D]",
+                f"b_v EACH {fin_span*1000:.0f} [D]",
             )
             sheet.leader(
                 *fin_ac,
@@ -1133,7 +1163,7 @@ def draw_side_elevations() -> SvgSheet:
     sheet.text(
         20,
         131,
-        "FIXED CENTRELINE FIN · NO MOVABLE RUDDER · MARGINAL [E]",
+        "2× FIXED FINS ON AFT CORE BOOMS · NO MOVABLE RUDDER · MARGINAL [E]",
         "micro",
     )
     sheet.line(51, 38, 32, 38, "medium", marker_end="url(#arrow-end)")
@@ -1172,10 +1202,10 @@ def draw_side_elevations() -> SvgSheet:
         True,
     )
     sheet.leader(
-        *side_point(fin_te, 0.0, origin_x, 185.0, scale),
+        *side_point(fin.boom_x_end_m, 0.0, origin_x, 185.0, scale),
         300,
         198,
-        f"V1a CARRIER TO x +{fin_te*1000:.0f} [D]/[I]",
+        f"2× AFT BOOMS TO x +{fin.boom_x_end_m*1000:.0f} [D]/[I]",
         True,
     )
     sheet.leader(
@@ -1183,7 +1213,7 @@ def draw_side_elevations() -> SvgSheet:
                     fin_root_z + 0.55 * fin_span, origin_x, 185.0, scale),
         300,
         153,
-        f"V1a FIXED FIN · S_v {fin_area*100:.2f} dm² · NO HINGE / SERVO",
+        f"V1a 2× FIXED FINS · S_v,total {fin_area*100:.2f} dm² · NO HINGE / SERVO",
         True,
     )
     sheet.horizontal_dimension(
@@ -1198,44 +1228,44 @@ def draw_side_elevations() -> SvgSheet:
     sheet.multiline(18, 235, [
         "DATUM: root c/4 x = 0; motor axis z = 0; positive z up.",
         "Shared [D]/[E]: root r1, Ø8 boom/socket, pack envelope, Ø28 motor and V1a fin sizing.",
-        "Side OML, equipment vertical placement, local skid and V1a carrier interface remain [I].",
+        "Side OML, equipment vertical placement, local skid and twin-boom interfaces remain [I].",
         f"O4: CAMERA FRONT/CENTRELINE [D]; COAX STRAIGHT-LINE LOWER BOUND {o4_coax_distance_mm:.1f}/50.0 mm [D]/[M].",
-        f"FIN PLANFORM [D]/[E]: Λc/4 {fin.quarter_chord_sweep_deg:.3f}° · taper {FIN_TAPER:.2f} · vertical TE.",
+        f"FIN PLANFORM EACH [D]/[E]: Λc/4 {fin.quarter_chord_sweep_deg:.3f}° · taper {FIN_TAPER:.2f} · vertical TE.",
+        "ROOT FAIRING [I]: aerodynamic/structural junction shown; its area receives no Cnβ credit.",
         f"Cnβ independent corners: power-on {cnb_on[0]:+.5f}…{cnb_on[1]:+.5f}; power-off {cnb_off[0]:+.5f}…{cnb_off[1]:+.5f} /deg [E].",
-        f"CAD OPEN: carrier reaches x +{fin_te*1000:.0f} ({(fin_te-CONTRACT.rear_pod_end_m)*1000:.0f} mm beyond current pod); mass/interface F2 open.",
+        f"INSTALL [I]: 2× booms y ±{fin.lateral_station_m*1000:.0f}; inner prop clearance {fin.boom_inner_prop_clearance_m*1000:.1f} mm; F2 open.",
     ], "micro", 3.4)
     return sheet
 
 
 def draw_fin_detail() -> SvgSheet:
-    """Draw the V1a fixed-fin geometry and installation review sheet."""
+    """Draw one V1a fin and the complete twin-fin installation."""
     fin_area = fin_area_for_target(0.0005)
     fin = fin_geometry(fin_area)
     mass_lo, mass_hi = fin_mass_band(fin_area)
     dcd0, cf = fin_drag(fin_area)
     cnb_on = cnb_total_band(fin_area, ETA_FIN_POWER_ON)
     cnb_off = cnb_total_band(fin_area, ETA_FIN_POWER_OFF)
-    carrier_extension = fin.root_te_x_m - CONTRACT.rear_pod_end_m
-    prop_axial_gap = fin.root_le_x_m - CONTRACT.prop_plane_m
+    boom_length = fin.boom_x_end_m - fin.boom_x_start_m
 
     sheet = SvgSheet(
-        "Salamandra V1a fixed-fin geometry review",
-        "Metric A3 engineering-review sheet for the passive V1a centreline fin. It shows the single-source trapezoidal planform, aerodynamic datum, external leading-edge spar concept, thickness schedule and provisional carrier interface. The sheet defines no movable rudder and is not manufacturing authority.",
+        "Salamandra V1a twin-fin geometry review",
+        "Metric A3 engineering-review sheet for the passive V1a twin fins. It shows one calculated fin, both aft CORE booms outside the propeller disk, the aerodynamic datum and provisional structural interfaces. No movable rudder is defined.",
         "SLM-FIN-001",
     )
     title_block(
         sheet,
-        "FIN GEOMETRY REVIEW · V1a FIXED",
+        "TWIN-FIN GEOMETRY REVIEW · V1a FIXED",
         "SLM-FIN-001",
         "1:1.5 / DETAILS NTS",
-        "SOURCE: GUIDE §4.4/6.7 · ADR-0038 · I-20 · yaw_stability.py",
+        "SOURCE: GUIDE §4.4/6.7 · ADR-0038 · I-29 · yaw_stability.py",
     )
     provenance_legend(sheet, 303, 231)
-    sheet.text(20, 23, "A · SINGLE-SOURCE SIDE PLANFORM", "sheet-subtitle")
+    sheet.text(20, 23, "A · ONE OF TWO IDENTICAL FINS", "sheet-subtitle")
     sheet.text(
         20,
         28,
-        "PASSIVE CENTRELINE FIN · VERTICAL TE · NO HINGE / SERVO",
+        "PASSIVE TWIN FINS · VERTICAL TE · NO HINGE / SERVO",
         "micro",
     )
 
@@ -1261,6 +1291,27 @@ def draw_fin_detail() -> SvgSheet:
         id="fin-v1a-planform",
         style=(
             "fill:#f4c46a;fill-opacity:.20;stroke:#985b00;stroke-width:.62;"
+            "stroke-dasharray:3.4 1.6;stroke-linejoin:round"
+        ),
+    )
+    fillet_start = fin_point(fin.root_le_x_m - 0.032, 0.0)
+    fillet_c1 = fin_point(fin.root_le_x_m - 0.014, 0.0)
+    fillet_c2 = fin_point(fin.root_le_x_m + 0.004, 0.010)
+    fillet_end = fin_point(fin.root_le_x_m + 0.012, 0.028)
+    fillet_close = fin_point(fin.root_le_x_m + 0.012, 0.0)
+    sheet.path(
+        " ".join([
+            f"M {fmt(fillet_start[0])} {fmt(fillet_start[1])}",
+            f"C {fmt(fillet_c1[0])} {fmt(fillet_c1[1])} "
+            f"{fmt(fillet_c2[0])} {fmt(fillet_c2[1])} "
+            f"{fmt(fillet_end[0])} {fmt(fillet_end[1])}",
+            f"L {fmt(fillet_close[0])} {fmt(fillet_close[1])}",
+            "Z",
+        ]),
+        "provisional-fill",
+        id="fin-root-fillet-envelope",
+        style=(
+            "fill:#f4c46a;fill-opacity:.30;stroke:#985b00;stroke-width:.62;"
             "stroke-dasharray:3.4 1.6;stroke-linejoin:round"
         ),
     )
@@ -1291,7 +1342,7 @@ def draw_fin_detail() -> SvgSheet:
         root_le[1],
         tip_te[0],
         root_te[0],
-        f"b_v {fin.span_m*1000:.1f} [D]",
+        f"b_v EACH {fin.span_m*1000:.1f} [D]",
     )
     sheet.horizontal_dimension(
         root_le[0],
@@ -1394,7 +1445,7 @@ def draw_fin_detail() -> SvgSheet:
         f"TE: {FIN_TE_THICKNESS_M*1000:.1f} mm [E]. No enclosed Ø3.2 bore is claimed.",
     ], "micro", 3.4)
 
-    sheet.text(158, 160, "C · ROOT / CARRIER INTERFACE", "sheet-subtitle")
+    sheet.text(158, 160, "C · ROOT / BOOM INTERFACE", "sheet-subtitle")
     mount_x = 165.0
     mount_y = 177.0
     mount_w = fin.root_chord_m * 1000.0 / scale
@@ -1411,27 +1462,28 @@ def draw_fin_detail() -> SvgSheet:
     sheet.multiline(158, 194, [
         f"INTERFACE ENVELOPE: {fin.root_chord_m*1000:.1f} × "
         f"{FIN_ROOT_THICKNESS_M*1000:.1f} mm [D]/[I].",
-        "HARDWARE COUNT: 1× Ø1.75 filament dowel + 1× M2 screw [E].",
-        "HOLE POSITIONS, walls, inserts, load spread and print compensation OPEN [I].",
+        "HARDWARE PER FIN: 1× Ø1.75 dowel + 1× M2 screw [E].",
+        "ROOT FILLET ENVELOPE SHOWN; final saddle, load spread and print compensation OPEN [I].",
     ], "micro", 3.4)
 
     sheet.text(273, 23, "D · CALCULATED SCHEDULE", "sheet-subtitle")
     schedule = [
         ("STATUS", "V1a MARGINAL · F2/E8 OPEN [E]"),
-        ("AREA", f"{fin.area_m2*100:.4f} dm² [D]"),
-        ("SPAN", f"{fin.span_m*1000:.1f} mm [D]"),
+        ("COUNT / AREA", f"{FIN_COUNT} / {fin.area_m2*100:.4f} dm² total [D]"),
+        ("AREA EACH", f"{fin.area_each_m2*100:.4f} dm² [D]"),
+        ("SPAN EACH", f"{fin.span_m*1000:.1f} mm [D]"),
         ("ROOT / TIP", f"{fin.root_chord_m*1000:.1f} / {fin.tip_chord_m*1000:.1f} mm [D]"),
         ("MAC", f"{fin.mac_m*1000:.1f} mm [D]"),
         ("AR / TAPER", f"{AR_FIN:.2f} / {FIN_TAPER:.2f} [E]"),
         ("SWEEP c/4", f"{FIN_SWEEP_DEG:.3f}° [D]"),
         ("AC STATION", f"x +{FIN_AC_STATION_M*1000:.0f} mm [E]"),
         ("ROOT / TIP t", f"{FIN_ROOT_THICKNESS_M*1000:.1f} / {FIN_TIP_THICKNESS_M*1000:.1f} mm [E]"),
-        ("MASS", f"{mass_lo:.2f}–{mass_hi:.2f} g; carrier open [E]"),
+        ("MASS", f"{mass_lo:.2f}–{mass_hi:.2f} g incl. booms [E]"),
         ("Cnβ ON", f"{cnb_on[0]:+.5f}…{cnb_on[1]:+.5f}/deg [E]"),
         ("Cnβ OFF", f"{cnb_off[0]:+.5f}…{cnb_off[1]:+.5f}/deg [E]"),
         ("ΔCD0", f"+{dcd0:.4f}; Cf {cf:.4f} [E]"),
-        ("CARRIER", f"to x +{fin.root_te_x_m*1000:.1f}; +{carrier_extension*1000:.1f} mm [D]/[I]"),
-        ("PROP AXIAL", f"root LE − disk = {prop_axial_gap*1000:.1f} mm [D]/[I]"),
+        ("BOOMS", f"2× {boom_length*1000:.1f} mm at y ±{fin.lateral_station_m*1000:.0f} [E]/[I]"),
+        ("PROP RADIAL", f"inner boom clearance {fin.boom_inner_prop_clearance_m*1000:.1f} mm [D]/[I]"),
     ]
     y = 36.0
     for index, (name, value) in enumerate(schedule):
@@ -1440,41 +1492,51 @@ def draw_fin_detail() -> SvgSheet:
         sheet.line(272, y + 1.7, 399, y + 1.7, "thin", style="stroke-opacity:.18")
         y += 7.4
 
-    sheet.text(273, 153, "E · INSTALLATION DATUM", "sheet-subtitle")
-    datum_x0 = 279.0
-    datum_y = 181.0
-    datum_scale = 2.0
+    sheet.text(273, 153, "E · TOP-VIEW INSTALLATION", "sheet-subtitle")
+    plan_x0 = 280.0
+    plan_y0 = 190.0
+    x_scale = 2.0
+    y_scale = 4.0
 
-    def datum_x(x_m: float) -> float:
-        return datum_x0 + (x_m - 0.225) * 1000.0 / datum_scale
+    def px(x_m: float) -> float:
+        return plan_x0 + (x_m - 0.145) * 1000.0 / x_scale
 
-    sheet.line(datum_x(0.225), datum_y, datum_x(fin.root_te_x_m + 0.010), datum_y, "centre")
-    for index, (station, css) in enumerate((
-        (CONTRACT.prop_plane_m, "station"),
-        (fin.root_le_x_m, "provisional-line"),
-        (CONTRACT.rear_pod_end_m, "station"),
-        (fin.root_te_x_m, "provisional-line"),
-    ), start=1):
-        x = datum_x(station)
-        sheet.line(x, datum_y - 8.0, x, datum_y + 8.0, css)
-        sheet.text(x, datum_y - 10.5, f"P{index}", "micro", "middle")
-    sheet.multiline(273, 199, [
-        f"P1 PROP PLANE +{CONTRACT.prop_plane_m*1000:.0f} · "
-        f"P2 ROOT LE +{fin.root_le_x_m*1000:.1f} mm.",
-        f"P3 CURRENT POD +{CONTRACT.rear_pod_end_m*1000:.0f} · "
-        f"P4 ROOT TE +{fin.root_te_x_m*1000:.1f} mm.",
-    ], "micro", 3.4)
-    sheet.multiline(273, 213, [
-        "Carrier shape/OML remains [I]; this diagram controls stations only.",
-        "The 84 mm extension supersedes the incompatible +30 mm concept.",
-        "Propeller deformation, service access and wake mapping remain open.",
+    def py(y_m: float) -> float:
+        return plan_y0 - y_m * 1000.0 / y_scale
+
+    # Propeller disk is a line in top view. Both booms remain radially outside it.
+    sheet.line(
+        px(CONTRACT.prop_plane_m), py(-CONTRACT.prop_diameter_m / 2.0),
+        px(CONTRACT.prop_plane_m), py(CONTRACT.prop_diameter_m / 2.0),
+        "station", id="fin-install-prop-disk",
+    )
+    sheet.circle(px(CONTRACT.prop_plane_m), py(0.0), 1.2, "provisional-line")
+    for sign, tag in ((-1.0, "L"), (1.0, "R")):
+        y_m = sign * fin.lateral_station_m
+        top = py(y_m + 0.009)
+        bottom = py(y_m - 0.009)
+        sheet.rect(
+            px(fin.boom_x_start_m), min(top, bottom),
+            px(fin.boom_x_end_m) - px(fin.boom_x_start_m), abs(bottom - top),
+            "provisional-fill", rx=0.8, id=f"fin-install-boom-{tag.lower()}",
+        )
+        sheet.line(
+            px(fin.root_le_x_m), py(y_m), px(fin.root_te_x_m), py(y_m),
+            "derived", id=f"fin-install-root-{tag.lower()}",
+            style="stroke:#146e9b;stroke-width:1.0",
+        )
+        sheet.text(px(fin.boom_x_end_m) + 2.0, py(y_m) + 1.0, tag, "micro")
+    sheet.multiline(273, 217, [
+        f"PROP Ø{CONTRACT.prop_diameter_m*1000:.1f} at x +{CONTRACT.prop_plane_m*1000:.0f}; booms y ±{fin.lateral_station_m*1000:.0f} mm.",
+        f"INNER BOOM-TO-DISK CLEARANCE {fin.boom_inner_prop_clearance_m*1000:.1f} mm [D]/[I].",
+        "Root-fillet area is uncredited; final boom fairings, service access and wake mapping remain open [I].",
     ], "micro", 3.4)
 
     sheet.multiline(18, 239, [
         "AUTHORITY: planform coordinates are [D] from yaw_stability.py on [E] aerodynamic inputs.",
-        "The fixed fin is not a rudder. No hinge line, control horn, linkage or servo is released.",
+        "The fixed fins are not rudders. No hinge line, horn, linkage or servo is released.",
         "The independent-corner Cnβ screen includes power-on/off q-ratio cases; it is not flight-test closure.",
-        "Structural section, external LE spar seat, carrier and hardware positions remain provisional [I].",
+        "Structural sections, external LE spar seats, boom saddles and hardware remain provisional [I].",
     ], "micro", 3.4)
     return sheet
 
@@ -2428,22 +2490,25 @@ def validate_contract() -> dict[str, bool]:
         "released root airfoil coordinates are available": len(load_airfoil(
             ROOT / "geometry" / "airfoils" / "salamandra-root-r1.dat"
         )) >= 20,
-        "generated fin reproduces area, AR, taper, sweep, AC and vertical TE": (
-            abs(fin.span_m**2 / fin.area_m2 - AR_FIN) < 1e-12
+        "generated twin fins reproduce total area, per-fin AR, taper, sweep, AC and vertical TE": (
+            abs(fin.span_m**2 / fin.area_each_m2 - AR_FIN) < 1e-12
             and abs(
                 0.5 * (fin.root_chord_m + fin.tip_chord_m) * fin.span_m
-                - fin.area_m2
+                - fin.area_each_m2
             ) < 1e-12
+            and abs(fin.fin_count * fin.area_each_m2 - fin.area_m2) < 1e-12
+            and fin.fin_count == FIN_COUNT
             and abs(fin.tip_chord_m / fin.root_chord_m - FIN_TAPER) < 1e-12
             and abs(fin.quarter_chord_sweep_deg - FIN_SWEEP_DEG) < 1e-12
             and abs(fin.ac_x_m - FIN_AC_STATION_M) < 1e-12
             and abs(fin.root_te_x_m - fin.tip_te_x_m) < 1e-12
         ),
-        "fin root interface is aft of the propeller plane": (
-            fin.root_le_x_m > CONTRACT.prop_plane_m
+        "twin booms remain radially outside the propeller disk": (
+            fin.boom_inner_prop_clearance_m >= 0.025
         ),
-        "fin carrier extension is derived and exposes the obsolete 30 mm concept": (
-            fin.root_te_x_m - CONTRACT.rear_pod_end_m > 0.080
+        "aft booms support the full fin root and extend past its trailing edge": (
+            fin.boom_x_start_m <= fin.root_le_x_m
+            and fin.boom_x_end_m >= fin.root_te_x_m + 0.009
         ),
         "fin section declares the spar as an external LE nose": (
             FIN_SPAR_SEAT_DIAMETER_M > FIN_ROOT_THICKNESS_M
@@ -2683,7 +2748,7 @@ def validate_svg(source: str, filename: str, drawing_number: str) -> dict[str, b
         } <= element_by_id.keys()
         checks[f"{filename}: fixed-fin and no-rudder authority is explicit"] = (
             "NO HINGE / SERVO" in labels
-            and "The fixed fin is not a rudder" in source
+            and "The fixed fins are not rudders" in source
             and "No enclosed Ø3.2 bore is claimed" in source
         )
         checks[f"{filename}: powered and motor-off Cnβ bands are both scheduled"] = (

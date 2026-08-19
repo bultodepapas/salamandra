@@ -141,8 +141,8 @@ def main():
             residual <= ELEVON_EQUIVALENT_CAP_DEG,
         "3 deg wash-in retains positive computed local-cl stall margin":
             rows[3.0]["margin"] > 0.0,
-        "5 deg wash-in remains only marginally below the section-cl limit":
-            0.0 < rows[5.0]["margin"] < 0.005,
+        "5 deg wash-in exceeds the section-cl limit at the current V1 mass":
+            rows[5.0]["margin"] < 0.0,
         "6 deg wash-in exceeds the section-cl limit":
             rows[6.0]["margin"] < 0.0,
         "VLM solution reproduces requested total CL":

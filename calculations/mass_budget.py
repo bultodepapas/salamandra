@@ -44,6 +44,7 @@ from design_config import (
     PETG_DENSITY_KG_M3,
     STALL_SPEED_LIMIT_KMH,
     V1_FIN_SHELL_MOUNT_LOWER_KG,
+    V1_FIN_BOOM_MASS_KG,
     V1_FIN_SPAR_MASS_KG,
     mass_at_stall_speed,
     speed_mps,
@@ -137,6 +138,7 @@ HARDWARE_REF = 20.0                           # [E] screws, TPU, adhesive, dowel
 AVIONICS_REF = 110.0                          # [E] guide §8.1 (incl. pitot/GPS/RX)
 BOOM_REF = 37.4                               # [D]/[E] 327 mm Al extension + 15 g cradle
 FIN_SPAR_REF = V1_FIN_SPAR_MASS_KG * 1000.0  # [D]/[E] mandatory Ø3 mm Al LE spar
+FIN_BOOM_REF = V1_FIN_BOOM_MASS_KG * 1000.0  # [E] two Ø6/4 mm carbon aft booms
 
 V_STALL_REF, AUW_REF = 45.9, 1685.0           # ADR-0040 / balance_cg.py datum
 
@@ -208,9 +210,18 @@ def build(policy, battery="6S1P", cell="P42A", fc="SpeedyBee-F405",
     rows.append({"part": "balance", "kind": "fixed", "m": m_bal, "mat": "(derived)",
                      "src": "[D]/[E] ADR-0025/0045: 1.2 × moving elevons"})
     if fin:
-        rows.append({
-            "part": "fin_spar", "kind": "fixed", "m": FIN_SPAR_REF, "mat": "aluminium",
-            "src": "[D]/[E] guide §6.7: mandatory Ø3 mm LE spar"})
+        rows.extend([
+            {
+                "part": "fin_spars", "kind": "fixed", "m": FIN_SPAR_REF,
+                "mat": "aluminium",
+                "src": "[D]/[E] V1: two mandatory Ø3 mm LE spars",
+            },
+            {
+                "part": "fin_booms", "kind": "fixed", "m": FIN_BOOM_REF,
+                "mat": "carbon",
+                "src": "[E] V1: two Ø6/4 mm aft CORE booms",
+            },
+        ])
     # fixed rows
     m_fc = FC.get(fc, FC_AVG)
     rows += [
@@ -387,13 +398,13 @@ def main():
     check(f"Article #1 V1 analytical lower model matches shared contract "
           f"(got {reference_v1['auw']:.2f} g)",
           abs(reference_v1["auw"] - ARTICLE_V1_MASS_KG * 1000.0) < 0.01)
-    check(f"Post-ADR-0045 two-servo allocation target is "
+    check(f"Twin-fin two-servo allocation target is "
           f"{ARTICLE_V1_ALLOCATION_MASS_KG*1000:.2f} g",
-          abs(ARTICLE_V1_ALLOCATION_MASS_KG * 1000.0 - 1589.97) < 0.01)
-    check(f"Two-servo V1 is at least 24 g below the exact "
+          abs(ARTICLE_V1_ALLOCATION_MASS_KG * 1000.0 - 1613.25) < 0.01)
+    check(f"Twin-fin V1 lower model remains below the exact "
           f"{STALL_SPEED_LIMIT_KMH:.0f} km/h mass limit {stall_mass_limit_g:.1f} g "
           f"(got {reference_v1['auw']:.1f})",
-          stall_mass_limit_g - reference_v1["auw"] >= 24.0)
+          stall_mass_limit_g - reference_v1["auw"] > 0.0)
     check(f"Two-servo V1 V_stall is below {STALL_SPEED_LIMIT_KMH:.0f} km/h "
           f"(got {reference_v1['vs']:.2f})",
           reference_v1["vs"] < STALL_SPEED_LIMIT_KMH)

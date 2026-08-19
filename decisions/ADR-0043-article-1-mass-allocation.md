@@ -1,12 +1,16 @@
 # ADR-0043 — Article #1 mass allocation targets the 45 km/h stall requirement
 
 **Status:** ✅ CLEAN and V1 analytically closed; physical F2 open · **Date:** 2026-08-18 · **Confidence:** Medium `[M]`/`[D]`/`[E]` · **Reversible:** Yes
-**Research:** I-16…I-19, I-22/I-23, I-27 · **Verification:** F2 CAD mass properties and weighed assembly
+**Research:** I-16…I-19, I-22/I-23, I-27, I-29 · **Verification:** F2 CAD mass properties and weighed assembly
 
 > **2026-08-18 amendment — ADR-0045:** the selected 35–90 % half-span elevons
 > reduce moving PETG by 5 g and balance mass by 6 g while retaining the 550 g total
 > shell cap. Current connected totals and torque margin below supersede the original
 > figures preserved in repository history.
+
+> **2026-08-19 amendment — ADR-0038/I-29:** the invalid centreline-fin carrier is
+> replaced by two fins on aft CORE booms. The 60.00 g complete-assembly allocation and
+> connected totals below supersede the former 36.72 g fin-only target.
 
 ## Context
 
@@ -27,19 +31,19 @@ Keep conventional PETG and make the following masses binding CAD/procurement lim
 | FPV | DJI O4 Air Unit **8.95 g installed** | E18 camera 3.10 g + E19 VTX/attached-antenna assembly 5.85 g `[M]`/`[D]`; I-19 |
 | Servos | 2× Corona DS-939MG **25.0 g** | one per elevon, 12.5 g each `[M]`; 1.52× factored torque margin at 180 km/h |
 | Propeller assembly | **25 g** | APC blade 15 g `[M]` + adapter/collet allowance 10 g `[E]` |
-| V1a complete fin | **≤36.72 g target** | Current vertical-TE lower model: 36.85 g shell/mount + 5.70 g mandatory spar = **42.55 g**; 5.83 g gap, corrected carrier mass still open `[E]` |
+| V1a complete twin-fin/boom assembly | **≤60.00 g** | Current lower model: 40.85 g two shells/mounts + 7.67 g two LE spars + 10.68 g two aft booms = **59.20 g**; 0.80 g allocation margin `[E]` |
 
 All other v0.2 rows remain unchanged. The reproducible totals are:
 
 | Configuration | AUW | Wing loading | Predicted stall |
 |---|---:|---:|---:|
 | SALAMANDRA-CLEAN | **1,553.25 g** | 55.1 g/dm² | **44.1 km/h** |
-| SALAMANDRA-V1 allocation target | **1,589.97 g** | 56.4 g/dm² | **44.6 km/h** |
-| SALAMANDRA-V1 current lower model | **1,596.26 g** | 56.6 g/dm² | **44.7 km/h — analytical PASS** |
+| SALAMANDRA-V1 allocation target | **1,613.25 g** | 57.2 g/dm² | **44.9 km/h** |
+| SALAMANDRA-V1 current lower model | **1,612.45 g** | 57.2 g/dm² | **44.9 km/h — analytical PASS** |
 
 The formula's exact 45 km/h mass ceiling is 1,620.4 g. CLEAN carries 67.2 g of margin
-and the connected V1 lower model carries about 24.1 g. C32 remains the correction that
-connected the mandatory fin spar; ADR-0026 removes two unsupported baseline actuators.
+and the connected V1 lower model carries only about 7.9 g. C32 remains the correction that
+connected mandatory fin structure; I-29 additionally connects both aft booms.
 The aggregate ledger gives x = −353.7 mm; the component-level layout that controls the
 drawing solves x = −337.74 mm after placing E18/E19 explicitly. Both calculations expose
 their assumptions instead of retaining the v0.2 station.

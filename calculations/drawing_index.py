@@ -136,7 +136,7 @@ SHEETS: tuple[SheetSpec, ...] = (
         filename="SLM-GA-002-side-elevations.svg",
         heading="Side elevations",
         purpose=(
-            "Comparative side elevations: CLEAN finless baseline and V1a fixed-fin test "
+            "Comparative side elevations: CLEAN finless baseline and V1a twin-fixed-fin test "
             "variant, with common root section, packaging, motor/propeller and keel clearance"
         ),
         scale="A3 · 1:4",
@@ -144,35 +144,37 @@ SHEETS: tuple[SheetSpec, ...] = (
         note=(
             "Use this sheet to compare the two published directional configurations without "
             "changing the common wing, boom, battery or propulsion installation. "
-            "**SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds a passive fixed "
-            "centreline fin. Neither configuration has a movable rudder. The released root "
+            "**SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds two passive fixed "
+            "fins on aft CORE booms at y = ±140 mm. Neither configuration has a movable rudder. The released root "
             "airfoil and calculated V1a fin dimensions are traceable, while the side OML, "
             "vertical equipment placement, propeller-clearance keel and fin/pod installation "
-            "remain `[I]`. The drawing now uses the same vertical-trailing-edge planform "
-            "as the yaw model and exposes the carrier station near x = +349 mm; the "
-            "obsolete x = +295 mm concept is not geometrically sufficient."
+            "remain `[I]`. The two 18 × 14 mm boom envelopes pass outside the propeller "
+            "disk with 29.4 mm inner radial clearance and support the complete calculated "
+            "root chord; the coincident side projections are identified explicitly."
         ),
     ),
     SheetSpec(
         number="SLM-FIN-001",
         filename="SLM-FIN-001-fixed-fin-review.svg",
-        heading="V1a fixed-fin geometry review",
+        heading="V1a twin-fin geometry review",
         purpose=(
-            "Dedicated V1a fixed-fin planform, aerodynamic datum, external leading-edge "
-            "spar concept, thickness schedule, carrier stations and directional-stability "
+            "Dedicated V1a twin-fin planform, aerodynamic datum, external leading-edge "
+            "spar concept, thickness schedule, boom installation and directional-stability "
             "screen"
         ),
         scale="A3 · planform 1:1.5 / details NTS",
         authority="Planform `[D]` on `[E]`; section/install `[E]`/`[I]`; no rudder authority",
         note=(
-            "Use this sheet to review the passive V1a centreline fin as a component rather "
+            "Use this sheet to review one of the two identical passive V1a fins rather "
             "than inferring it from the general side elevation. The planform vertices, "
             "area, taper, vertical trailing edge, derived quarter-chord sweep and AC marker "
             "come from one Python geometry object. Root/tip section sketches explain that "
             "the Ø3 mm aluminium rod forms an external leading-edge nose in an open seat; "
             "they do not claim an impossible enclosed Ø3.2 mm bore inside the 3.0→1.5 mm "
-            "plate. Mount detail, carrier OML, hole positions, print compensation, measured "
-            "mass and E8 flight closure remain provisional. No movable rudder is defined."
+            "plate. The top view proves propeller clearance and the uncredited dorsal root "
+            "fillet makes the boom junction explicit. Saddle detail, hole positions, print "
+            "compensation, measured mass and E8 flight closure remain provisional. No movable "
+            "rudder is defined."
         ),
     ),
     SheetSpec(

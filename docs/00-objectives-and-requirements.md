@@ -92,7 +92,7 @@ These are the objectives that define the *platform*, as opposed to the reference
 | Structural ultimate loads | **+9 / −4.5 g** | Limit × 1.5 `[D]`; not flight targets (C33) |
 | Gust basis | **Open — legacy Part 23 screen is not adopted as a design load** | G11/E9; nonlinear dynamic response required |
 | **Stall speed** | **≤ 45 km/h** | See correction C16 |
-| Wing `CLmax` design value | **0.589** | I-07 `[D]`; current CLEAN/V1 analytical masses predict 44.1/44.7 km/h; E2 measured closure remains mandatory |
+| Wing `CLmax` design value | **0.589** | I-07 `[D]`; current CLEAN/V1 analytical masses predict 44.1/44.9 km/h; E2 measured closure remains mandatory |
 | Local section `clmax` screen | **≥ 0.65** | I-07/I-15; not the aircraft `CLmax` (C34) |
 
 > **Corrections C16/C34.** The original requirement was ≤ 40 km/h, derived with AUW
@@ -100,7 +100,7 @@ These are the objectives that define the *platform*, as opposed to the reference
 > C16 relaxed the requirement to 45 km/h but then used the local-section `clmax = 0.65`
 > as if it were whole-wing `CLmax`. I-07 supplies the correct distinction: local section
 > screen **0.65**, released wing design value **0.589**. The latter gives 45.0 km/h at
-> the V1 allocation mass. The current **1595.80 g** V1 lower model gives 44.7 km/h and
+> the V1 allocation mass. The current **1612.45 g** V1 lower model gives 44.9 km/h and
 > passes analytically; measured F2 mass remains mandatory.
 >
 > **Relaxed to ≤ 45 km/h**, justified by precedent: the Peregrine at 52 g/dm² and the Mojito at ~60 are hand-launched.
@@ -120,8 +120,9 @@ See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 
 > **R-CG:** the Article #1 carrier shall hold CG within ±5 mm with the 6S1P pack. The
 > CLEAN component-level solution places it at x = **−337.74 mm** (travel
-> −371.20…−336.10). V1 requires −375.48 mm, 4.28 mm beyond current travel, although
-> the clamped CG remains inside the allowed band; F2 must close that station. A 4S aircraft
+> −371.20…−336.10). The current twin-fin V1 lower model requires **−389.67 mm**, 18.47 mm
+> beyond current travel; the clamped xCG = −88.686 mm also misses the aft edge of the
+> allowed band by 0.094 mm. F2 must close mass placement and battery travel. A 4S aircraft
 > requires approximately 713 Kv rather than the 500–550 Kv 6S motor and therefore is a
 > separate power module. The former requirement to interchange 4S1P/4S2P/6S1P/6S2P in
 > one cradle is superseded by ADR-0042.
@@ -154,15 +155,15 @@ See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
 ## 3.6 Directional configuration (ADR-0038)
 
 The platform publishes **two directional configurations** for the reference design,
-differing only in an optional fixed centreline fin (a CORE component — no servo, no
-linkage, no FC change):
+differing only in an optional passive twin-fin CORE assembly (no rudder servos, linkages
+or FC change):
 
 | | SALAMANDRA-CLEAN | SALAMANDRA-V1 |
 |---|---|---|
-| Vertical stabilizer | None | Fixed centreline fin (passive), S_v ≈ 2.1 dm² (V1a) |
-| Cnβ total | **−0.0006…−0.0014/deg — negative** (FC recovery unproven; not the first-flight configuration, G10/C31) | V1a powered **−0.00029…+0.00119/deg**, motor-off **−0.00057…+0.00087/deg** (powered nominal +0.0005) `[D]`/`[E]` |
+| Vertical stabilizer | None | 2× fixed fins on aft CORE booms at y = ±140 mm; S_v,total = 3.4404 dm² (V1a) |
+| Cnβ total | **−0.00055…−0.00141/deg — negative** (FC recovery unproven; not the first-flight configuration, G10/C31) | V1a power-on/off **−0.00029…+0.00119/deg** (nominal +0.0005) `[D]`/`[E]`; marginal, lower corner open |
 | Role | O1 efficiency build (≤ 1.15 Wh/km) | Recommended build for the Article #1 test programme |
-| Cost | — | 42.55–67.11 g lower-to-upper screen `[E]`, carrier mass open · ΔCD0 +0.0015 (+10.2 % energy `[E]`) · V_stall +0.6 km/h (OP-24 lever) |
+| Cost | — | 59.20–86.18 g complete twin-fin/boom screen `[E]` · ΔCD0 +0.0019 (+13.1% `[E]`) · allocation V_stall 44.9 km/h |
 
 **Rudder (movable): not required** — authority analysis shows it cannot hold a 20 km/h
 crosswind slip at stall and the mission coordinates turns through roll (I-20 §5.4;
@@ -170,7 +171,8 @@ Mojito precedent `[M]` carries a fixed stabilizer and no rudder servo). Reopened
 future variant only if the E-flight programme (E8) demonstrates a yaw-handling failure
 mode.
 
-Full analysis: [I-20](../research/I-20-yaw-stability-centerline-fin.md),
+Full analysis: [I-29](../research/I-29-twin-fin-architecture-correction.md),
+[I-20 (superseded architecture)](../research/I-20-yaw-stability-centerline-fin.md),
 [ADR-0038](../decisions/ADR-0038-fixed-fin-variant.md), `calculations/yaw_stability.py`.
 Closure of the directional gap (G10) is by flight test (E8).
 

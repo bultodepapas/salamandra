@@ -4,6 +4,31 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.39] — 2026-08-19
+
+**C47 — the centreline-fin carrier was physically incompatible with the pusher propeller
+and arose from a visual misreading of the reference aircraft.**
+
+- Rejected the floating single-fin/carrier architecture after joint side/top-view review:
+  its root extended 84.1 mm behind the body OML and its centreline load path crossed the
+  x = +235 mm propeller plane.
+- Reviewed NASA X-48B/X-48C and the official TBS Chupito/Mojito manuals. The transferable
+  precedent is an integrated fin/load path at a usable aft station, not a plate behind a
+  rotating propeller. Research and the quantified architecture trade are in I-29.
+- Selected two passive fixed fins on aft CORE booms at y = ±140 mm. The 18 × 14 mm boom
+  envelopes give 29.4 mm inner radial clearance to the Ø203.2 mm propeller and support the
+  complete root chord.
+- Re-derived V1a from the same nominal `Cnβ` target with no slipstream credit: total area
+  3.4404 dm²; each fin 185.5 mm span, 142.7/42.8 mm root/tip chord, AR 2.0, taper 0.30,
+  Λc/4 21.991° and x_ac +285 mm. Added an uncredited dorsal root-fillet envelope.
+- Connected both fin shells/mounts, both LE spars and both aft booms to the mass and 3-D
+  equipment models. Lower assembly mass is 59.20 g; V1 is 1612.45 g / 44.9 km/h and its
+  required battery station is 18.47 mm beyond current travel. These remain F2 gates.
+- Regenerated and visually reviewed SLM-GA-002 and SLM-FIN-001. The dedicated fin sheet
+  now includes a top-view propeller-clearance proof; both SVGs remain draft review data.
+
+---
+
 ## [1.38] — 2026-08-19
 
 **C46 — the V1 fin drawing and yaw model described different planforms, and the

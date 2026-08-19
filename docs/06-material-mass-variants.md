@@ -22,7 +22,7 @@ properties in F2/P2 (OP-28); everything else is anchored to measured data.
 | Item | Model | Tag |
 |---|---|---|
 | Materials (ρ, g/cm³) | PETG **1.27** · PLA 1.24 · PLA+ 1.24 · AERO PLA **0.68** (foamed, flow 0.60) | `[M]` (I-04) / `[E]` band 0.55–0.70 for AERO |
-| Printed parts | v0.2 raw estimate 600 g is retained as a regression input. Article #1 CLEAN applies a **550 g PETG CAD cap**: core 150.1 + wings/fixed trailing-edge bridges 314.8 + tips 40.0 + moving elevons 45.0. C32 V1a adds 37.31 g shell/mount plus a fixed 5.70 g spar | ADR-0043/0045/C32 `[E]` |
+| Printed parts | v0.2 raw estimate 600 g is retained as a regression input. Article #1 CLEAN applies a **550 g PETG CAD cap**: core 150.1 + wings/fixed trailing-edge bridges 314.8 + tips 40.0 + moving elevons 45.0. V1a adds 40.85 g for two shells/mounts, 7.67 g for two external LE spars and 10.68 g for two aft carbon booms | ADR-0038/0043/0045, I-29 `[E]` |
 | Hybrid nose boom | Current ≈322 mm support span + 50 mm CORE insertion + printed cradle = **37.4 g** allocation | `[D]`/`[E]` ADR-0043 / `balance_cg.py` |
 | Material scaling | m_part(mat) = m_part(PETG) × ρ_mat/ρ_PETG (same geometry) | `[D]` |
 | Elevon balance mass | m_b = 1.2 × m_elevons (ADR-0025/0045: 22.5 g moving surface, 24 mm offset, 20 mm horn → 27 g/elevon) | `[D]` |
@@ -50,8 +50,8 @@ Example option combinations (all validated runs of `mass_budget.py`):
 | Scenario | AUW (g) | V_stall (km/h) |
 |---|---:|---:|
 | ALL PETG · Article #1 CLEAN | 1553.25 | 44.1 |
-| ALL PETG · V1 allocation target | 1589.97 | 44.6 |
-| **ALL PETG · V1 current lower model** | **1595.80** | **44.7 — analytical PASS; carrier mass open** |
+| ALL PETG · V1 allocation target | 1613.25 | 44.9 |
+| **ALL PETG · V1 current lower model** | **1612.45** | **44.9 — analytical PASS; 7.9 g below exact stall-mass ceiling** |
 
 Per-part × material matrix (mass, g, from the PETG base):
 

@@ -161,11 +161,15 @@ VLM_NY = 40                   # spanwise panels, half-cosine both tips
 VLM_NX = 6                    # chordwise panels
 WEISSINGER_NY = 100           # Weissinger-L spanwise stations
 ARTICLE_CLEAN_MASS_KG = 1.55325
-V1_FIN_MASS_CAP_KG = 0.03672          # allocation target retained by ADR-0043
-V1_FIN_SHELL_MOUNT_LOWER_KG = 0.03685 # vertical-TE V1a analytical lower model [E]
-V1_FIN_SPAR_MASS_KG = 0.00570         # mandatory aluminium spar [D]/[E]
+V1_FIN_MASS_CAP_KG = 0.06000          # twin-fin + boom allocation target [E]
+V1_FIN_SHELL_MOUNT_LOWER_KG = 0.04085 # two thin PETG fin shells/mounts [E]
+V1_FIN_SPAR_MASS_KG = 0.00767         # two Ø3 mm aluminium LE spars [D]/[E]
+V1_FIN_BOOM_MASS_KG = 0.01068         # two Ø6/4 mm carbon booms [E]
 V1_FIN_MODEL_LOWER_KG = (
-    V1_FIN_SHELL_MOUNT_LOWER_KG + V1_FIN_SPAR_MASS_KG)
+    V1_FIN_SHELL_MOUNT_LOWER_KG
+    + V1_FIN_SPAR_MASS_KG
+    + V1_FIN_BOOM_MASS_KG
+)
 ARTICLE_V1_ALLOCATION_MASS_KG = ARTICLE_CLEAN_MASS_KG + V1_FIN_MASS_CAP_KG
 ARTICLE_V1_MASS_KG = ARTICLE_CLEAN_MASS_KG + V1_FIN_MODEL_LOWER_KG
 
@@ -378,14 +382,14 @@ def validate_geometry():
             ARTICLE_V1_ALLOCATION_MASS_KG,
             ARTICLE_CLEAN_MASS_KG + V1_FIN_MASS_CAP_KG,
             abs_tol=1e-12),
-        "V1 analytical mass includes shell, mount and spar": isclose(
+        "V1 analytical mass includes twin-fin shells, spars and booms": isclose(
             ARTICLE_V1_MASS_KG,
             ARTICLE_CLEAN_MASS_KG + V1_FIN_SHELL_MOUNT_LOWER_KG
-            + V1_FIN_SPAR_MASS_KG,
+            + V1_FIN_SPAR_MASS_KG + V1_FIN_BOOM_MASS_KG,
             abs_tol=1e-12),
-        "two-servo V1 allocation stall rounds to 44.6 km/h": isclose(
+        "two-servo V1 allocation stall rounds to 44.9 km/h": isclose(
             stall_speed(ARTICLE_V1_ALLOCATION_MASS_KG) * 3.6,
-            44.6, abs_tol=0.05),
+            44.9, abs_tol=0.05),
         "two-servo analytical V1 remains below the 45 km/h ceiling":
             stall_speed(ARTICLE_V1_MASS_KG) * 3.6 < STALL_SPEED_LIMIT_KMH,
         # The speed ladder must stay ordered.  Nothing enforced this before, so

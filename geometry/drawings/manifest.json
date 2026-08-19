@@ -36,26 +36,26 @@
       "file": "SLM-GA-002-side-elevations.svg",
       "heading": "Side elevations",
       "title": "Salamandra CLEAN and V1a side elevations",
-      "description": "Metric A3 side-elevation draft comparing the common root airfoil, battery boom, continuous provisional fuselage OML and local propeller-clearance skid for SALAMANDRA-CLEAN with the V1a fixed centreline-fin variant. The V1a fin is passive and has no movable rudder.",
-      "purpose": "Comparative side elevations: CLEAN finless baseline and V1a fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance",
+      "description": "Metric A3 side-elevation draft comparing SALAMANDRA-CLEAN with the V1a passive twin-fin variant. The two fins sit on aft CORE booms outside the propeller disk; their side projections coincide. No movable rudder is defined.",
+      "purpose": "Comparative side elevations: CLEAN finless baseline and V1a twin-fixed-fin test variant, with common root section, packaging, motor/propeller and keel clearance",
       "scale": "A3 · 1:4",
       "authority": "Root/fin `[D]`/`[E]`; side OML/install `[I]`",
-      "note": "Use this sheet to compare the two published directional configurations without changing the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds a passive fixed centreline fin. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The drawing now uses the same vertical-trailing-edge planform as the yaw model and exposes the carrier station near x = +349 mm; the obsolete x = +295 mm concept is not geometrically sufficient.",
-      "bytes": 36779,
-      "sha256": "dfedac63fa2139c5f95ffc3c2316114632eb197e2478e538c038496bc7db417e"
+      "note": "Use this sheet to compare the two published directional configurations without changing the common wing, boom, battery or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds two passive fixed fins on aft CORE booms at y = ±140 mm. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The two 18 × 14 mm boom envelopes pass outside the propeller disk with 29.4 mm inner radial clearance and support the complete calculated root chord; the coincident side projections are identified explicitly.",
+      "bytes": 37234,
+      "sha256": "03cc014a78d007847a9f890df42057acf37fcb3b053042b487ec9acce19dd89d"
     },
     {
       "number": "SLM-FIN-001",
       "file": "SLM-FIN-001-fixed-fin-review.svg",
-      "heading": "V1a fixed-fin geometry review",
-      "title": "Salamandra V1a fixed-fin geometry review",
-      "description": "Metric A3 engineering-review sheet for the passive V1a centreline fin. It shows the single-source trapezoidal planform, aerodynamic datum, external leading-edge spar concept, thickness schedule and provisional carrier interface. The sheet defines no movable rudder and is not manufacturing authority.",
-      "purpose": "Dedicated V1a fixed-fin planform, aerodynamic datum, external leading-edge spar concept, thickness schedule, carrier stations and directional-stability screen",
+      "heading": "V1a twin-fin geometry review",
+      "title": "Salamandra V1a twin-fin geometry review",
+      "description": "Metric A3 engineering-review sheet for the passive V1a twin fins. It shows one calculated fin, both aft CORE booms outside the propeller disk, the aerodynamic datum and provisional structural interfaces. No movable rudder is defined.",
+      "purpose": "Dedicated V1a twin-fin planform, aerodynamic datum, external leading-edge spar concept, thickness schedule, boom installation and directional-stability screen",
       "scale": "A3 · planform 1:1.5 / details NTS",
       "authority": "Planform `[D]` on `[E]`; section/install `[E]`/`[I]`; no rudder authority",
-      "note": "Use this sheet to review the passive V1a centreline fin as a component rather than inferring it from the general side elevation. The planform vertices, area, taper, vertical trailing edge, derived quarter-chord sweep and AC marker come from one Python geometry object. Root/tip section sketches explain that the Ø3 mm aluminium rod forms an external leading-edge nose in an open seat; they do not claim an impossible enclosed Ø3.2 mm bore inside the 3.0→1.5 mm plate. Mount detail, carrier OML, hole positions, print compensation, measured mass and E8 flight closure remain provisional. No movable rudder is defined.",
-      "bytes": 17152,
-      "sha256": "d825cc6e100b8adaaf0ae66a8991153c94e2afe793ccf724ba2c712bc8d25d16"
+      "note": "Use this sheet to review one of the two identical passive V1a fins rather than inferring it from the general side elevation. The planform vertices, area, taper, vertical trailing edge, derived quarter-chord sweep and AC marker come from one Python geometry object. Root/tip section sketches explain that the Ø3 mm aluminium rod forms an external leading-edge nose in an open seat; they do not claim an impossible enclosed Ø3.2 mm bore inside the 3.0→1.5 mm plate. The top view proves propeller clearance and the uncredited dorsal root fillet makes the boom junction explicit. Saddle detail, hole positions, print compensation, measured mass and E8 flight closure remain provisional. No movable rudder is defined.",
+      "bytes": 17580,
+      "sha256": "f3e01e798f2388047824ccffff663f5c9e0eed01bda2ea013b952bf8fa3ee411"
     },
     {
       "number": "SLM-EQP-001",
@@ -68,7 +68,7 @@
       "authority": "Planform `[D]`; mass/position ledger `[D]`/`[E]`; open installations `[M]`; no OML authority",
       "note": "Use this sheet to review mass and packaging rather than shape: component envelopes, true mass centres, the x/y/z schedule, the CLEAN CG and the V1 battery-stop overlay. Envelope fill colour identifies system function while outline style continues to identify maturity. The controlled exterior wing planform appears only as spatial context: the sheet defines no fuselage outer mould line, no wing construction and no manufacturing geometry.",
       "bytes": 44757,
-      "sha256": "a0c700c1956d95d4b7ae3657774a96d028fdee6bc2425e24169a0baee7c082d9"
+      "sha256": "0bc531ea3837a51a377b25183d5b2563e071df93db047361969783dd290741f4"
     },
     {
       "number": "SLM-WNG-001",

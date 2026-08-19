@@ -267,8 +267,8 @@ Movement authority is intentionally asymmetric:
 
 Current candidate results `[D]`: CLEAN closes **1553.25 g** at the released CG target with the
 battery at x = **−337.74 mm**. V1 adds the complete fixed-fin lower model; the exact
-target requires x = **−375.48 mm**, 4.28 mm beyond the current −371.20 mm forward stop.
-At that stop V1 remains inside the released band at xCG = −93.08 mm. These values differ
+target requires x = **−389.67 mm**, 18.47 mm beyond the current −371.20 mm forward stop.
+At that stop V1 xCG = −88.686 mm misses the aft band edge by 0.094 mm. These values differ
 from the aggregate `balance_cg.py` station because individual masses now occupy their
 explicit spatial locations.
 
@@ -422,20 +422,19 @@ boundary requires CD ≤ 0.01765 and CLEAN L/D ≥ 7.21. A 4S module needs appro
 717 Kv; the propeller has 2.21× rpm margin. The former J 0.899 point omitted hotel load
 and assumed thrust equals unknown aircraft drag; C29 supersedes it.
 
-### 10. Directional stability and the fin variant (I-20)
+### 10. Directional stability and the twin-fin variant (I-29)
 
 ```bash
 python3 yaw_stability.py
 ```
 
-Cnβ budget of the finless baseline (body + FSW wing: **−0.0006…−0.0014/deg — negative**),
-centreline-fin sizing for the two stability tiers (vertical-TE V1a 2.1025 dm² → powered
-nominal +0.0005/deg; V1b 2.80 dm² → +0.0010/deg), independent-corner power-on/off
+Cnβ budget of the finless baseline (body + FSW wing: **−0.00055…−0.00141/deg — negative**),
+twin-fin sizing for two stability tiers (vertical-TE V1a 3.4404 dm² total →
+nominal +0.0005/deg; V1b 4.58 dm² total → +0.0010/deg), independent-corner power-on/off
 bands, rudder authority vs crosswind, yaw damping and
 subsidence, fin bending at the 180 km/h structural case (**root t ≥ 3.0 mm**), and the mass/drag/stall cost of
-each tier. In-service datum `[M]`: the TBS Mojito (same
-FSW + nose + pusher layout) flies a **fixed** stabilizer with elevons only — no rudder
-servo (product page, manual, official INAV CLI). Published results (I-20 §5, `[D]` on
+each tier. The selected architecture uses two aft CORE booms at y = ±140 mm outside the
+propeller disk; it does not credit slipstream. Published results (I-29, `[D]` on
 `[E]` bands): correctly dimensionalized finless modes are **+8.244/−9.453 s⁻¹**
 (divergence time constant about 0.12 s), while the powered nominal V1 screen gives
 **−1.233 ± 5.204i s⁻¹** (decay time about 0.8 s). V1a ΔCD0 +0.0015 (+10.2 % drag,
@@ -484,15 +483,14 @@ Data-driven weight budget with per-part material selection. The Article #1 defau
 6S1P P42A, SpeedyBee F405 WING + mandatory PDB, DJI O4 Air Unit including its
 separate antenna, two Corona DS-939MG servos,
 APC E 8×8 assembly and the coupled ADR-0043 boom. Published results (docs/06 §3):
-ALL PETG CLEAN **1553.25 g / 44.1 km/h**. C32 separates the obsolete 36.72 g
-allocation target from the current V1a lower assembly model: 36.85 g PETG shell/mount
-+ 5.70 g mandatory aluminium spar = **42.55 g**, giving **1595.80 g / 44.7 km/h**
-with the two-servo baseline.
-V1 remains about 24.1 g below the exact 1620.4 g stall mass limit; its exact battery
-station is still 2.72 mm outside current travel. F2 must verify mass, balance and CAD.
+ALL PETG CLEAN **1553.25 g / 44.1 km/h**. The V1a lower assembly model is 40.85 g for
+two PETG shells/mounts + 7.67 g for two aluminium LE spars + 10.68 g for two carbon
+booms = **59.20 g**, giving **1612.45 g / 44.9 km/h** with the two-servo baseline.
+V1 remains only about 7.9 g below the exact 1620.4 g stall mass limit; its required
+battery station is 18.47 mm beyond current travel. F2 must verify mass, balance and CAD.
 The AERO policies
 remain rejected by divergence. Validation retains v0.2 as a historical regression and
-checks both the allocation target and the explicit C32 failure.
+checks both the 60.00 g complete-assembly allocation and the analytical lower model.
 
 ### 14. Absolute divergence speed (G6 revision 4 — docs/07)
 
@@ -514,7 +512,7 @@ GXY+gyroid+1.1 mm wall case reaches 207 km/h. The computed 0.85 clearance rounds
 python3 launch_speed.py
 ```
 
-Gate check of the mandatory hand throw. Revision 6 propagates the **1595.80 g V1
+Gate check of the mandatory hand throw. The current run propagates the **1612.45 g V1
 analytical lower mass**
 and integrates `m dV/dt = T − D(V)` by RK4 with piecewise-constant phase thrust,
 including the 0.2 s motor delay.
