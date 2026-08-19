@@ -22,7 +22,7 @@ eye and then force the aircraft around the drawing.
 8. Rebuild the V1 fuselage OML from the resulting layout and project the same objects into
    the top, side and rear SVG views.
 
-The current solution converges in two iterations. No SVG contains an independent fin,
+The current solution converges without a nose extension. No SVG contains an independent fin,
 propeller, battery, camera or VTX position.
 
 ## 2. Evidence boundary
@@ -65,23 +65,23 @@ l_v=x_{AC}-x_{CG}.
 \]
 
 `calculations/yaw_stability.py` solves total area `S_v` so the nominal complete-aircraft
-derivative reaches `Cnβ = +0.00050/deg`. Thus moving the fin aft reduces required area but
-increases boom length, aft extent, assembly-CG arm and forward battery demand. The trade is
-not monotonic when all penalties are included.
+derivative reaches `Cnβ = +0.00050/deg`. Motor and propeller positions are not candidate
+variables. The measured propeller slab begins at x = +229.9 mm; its 5.0 mm dynamic
+inflation moves the analytical forward hazard face to +224.9 mm. Both the fin and support
+must retain at least 8.0 mm beyond that face.
 
 | `x_AC` (mm) | `l_v` (mm) | `S_v,total` (dm²) | lower assembly (g) | boom length (mm) | aft extent (mm) | first-order battery shift (mm) | Feasible |
 |---:|---:|---:|---:|---:|---:|---:|:---:|
-| 225 | 318.8 | 4.0730 | 65.32 | 168.2 | 324.2 | 49.56 | No: mass |
-| 250 | 343.8 | 3.7768 | 62.58 | 189.9 | 345.9 | 50.57 | No: mass |
-| 275 | 368.8 | 3.5208 | 60.36 | 211.9 | 367.9 | 51.68 | No: mass |
-| **280** | **373.8** | **3.4737** | **59.97** | **216.4** | **372.4** | **51.92** | **Yes; selected knee** |
-| 300 | 393.8 | 3.2972 | 58.58 | 234.3 | 390.3 | 52.90 | Yes; higher coupled penalty |
-| 325 | 418.8 | 3.1004 | 57.14 | 256.8 | 412.8 | 54.21 | No: aft extent |
+| 100.0 | 193.8 | 6.6351 | 51.39 | 48.95 | 204.95 | 25.09 | No: 257.6 mm print span |
+| 110.0 | 203.8 | 6.3095 | 49.61 | 56.40 | 212.40 | 25.28 | No: 251.2 mm print span |
+| **115.5** | **209.3** | **6.1437** | **48.73** | **60.57** | **216.57** | **25.39** | **Yes; selected** |
+| 116.0 | 209.8 | 6.1290 | 48.65 | 60.95 | 216.95 | 25.41 | No: support residual 7.95 mm |
+| 120.0 | 213.8 | 6.0144 | 48.04 | 64.02 | 220.02 | 25.50 | No: axial clearance |
 
-The code scans every 5 mm from +225 to +325 mm, normalises area, lower mass, boom length,
-aft extent and battery-shift penalties, and applies hard 60 g and +410 mm extent gates.
-`x_AC = +280 mm` is the first mass-feasible point and the minimum-score feasible knee. It
-is not inherited from the old drawing.
+The code scans every 0.5 mm from +80 to +280 mm. Feasibility is governed before scoring;
+among feasible candidates, minimum installed mass selects the aft-most useful station.
+`x_AC = +115.5 mm` is therefore a result of the fixed-propeller, stability, print, mass,
+wing-root and clearance constraints, not a drawing coordinate.
 
 ## 4. Selected swept trapezoid
 
@@ -91,43 +91,50 @@ leading-edge sweep and AC station:
 | Quantity | Result | Authority |
 |---|---:|---|
 | Count | 2 | `[D]` architecture |
-| Total / each area | 3.4737 / 1.7368 dm² | `[D]` from nominal target `[E]` |
+| Total / each area | 6.1437 / 3.0718 dm² | `[D]` from nominal target `[E]` |
 | Aspect ratio each / taper | 2.00 / 0.45 | `[E]` |
-| Span each | 186.38 mm | `[D]` |
-| Root / tip chord | 128.54 / 57.84 mm | `[D]` |
-| Leading-edge / quarter-chord sweep | 25.0° / 20.379° | `[E]` / `[D]` |
-| Root LE / TE | +217.62 / +346.16 mm | `[D]` |
-| Tip LE / TE | +304.53 / +362.38 mm | `[D]` |
-| MAC | 97.66 mm | `[D]` |
-| AC | +280.00 mm | `[D]` on target `[E]` |
+| Span each | 247.86 mm | `[D]` |
+| Root / tip chord | 170.94 / 76.92 mm | `[D]` |
+| Leading-edge / quarter-chord sweep | 20.0° / 15.064° | `[E]` / `[D]` |
+| Root LE / TE | +43.63 / +214.57 mm | `[D]` |
+| Tip LE / TE | +133.84 / +210.77 mm | `[D]` |
+| MAC | 129.88 mm | `[D]` |
+| AC | +115.50 mm | `[D]` on target `[E]` |
+| Planar root datum | z = +15.550 mm | `[D]` from 101 local-airfoil samples + 0.500 mm clearance `[E]` |
+| Carbon-support top / printed saddle | z = +7.000 mm / 8.550 mm height | `[D]` / `[I]` |
 
 This removes the former vertical-trailing-edge constraint and the artificial narrow tip.
 The root fillet is contained inside the credited planform, so it cannot appear ahead of the
-fin or inflate stability area.
+fin or inflate stability area. The root datum is not the former arbitrary support
+half-height. `equipment_layout.fin_root_interface_z_m()` samples the actual upper airfoil
+ordinate over the root/wing overlap, takes the maximum OML height, and adds 0.500 mm. The
+forward root therefore remains outside the wing skin, while an explicitly drawn printed
+saddle connects the aft overhang to the unchanged carbon support centred on `z = 0`.
 
 ## 5. Material volume and mass
 
-The lower PETG shell/mount model uses an 0.85 mm effective thickness and a 10% local-mount
-factor. With `ρ_PETG = 1270 kg/m³`:
+The lower LW-PLA-HT shell/mount model uses an 0.85 mm effective thickness and a 10%
+local-mount factor. The conservative upper end of the supplier's maximum-foaming density
+band is `ρ = 620 kg/m³`:
 
 \[
-V_{PETG,lo}=S_v(0.00085)(1.10)=32.48\;\mathrm{cm^3},
+V_{shell,lo}=S_v(0.00085)(1.10)=57.44\;\mathrm{cm^3},
 \]
 
 \[
-m_{PETG,lo}=41.25\;\mathrm{g}.
+m_{shell,lo}=35.61\;\mathrm{g}.
 \]
 
-Two solid Ø3 mm aluminium leading-edge rods follow the derived 205.65 mm swept-edge
-length and contribute 7.85 g. Two Ø6/4 mm carbon tubes use the derived 216.38 mm boom
-length and contribute 10.88 g. Therefore:
+Two solid Ø3 mm aluminium leading-edge rods follow the derived swept leading edges and
+contribute 10.07 g. Two Ø6/4 mm carbon root supports use the derived 60.57 mm length and
+contribute 3.04 g. Therefore:
 
 \[
-m_{module,lo}=41.25+7.85+10.88=59.97\;\mathrm{g}.
+m_{module,lo}=35.61+10.07+3.04=48.73\;\mathrm{g}.
 \]
 
-The upper analytical band is 87.22 g. The lower model leaves only 0.03 g below the 60 g
-allocation, so measured printed mass remains a mandatory F2 gate.
+The upper analytical band is 56.92 g. The lower model leaves 11.27 g below the 60 g
+allocation, but coupon density, final fillets and measured printed mass remain F2 gates.
 
 ## 6. Propeller interference calculation
 
@@ -150,31 +157,31 @@ The provisional radial allowance is explicit and additive:
 | residual reserve | 5 | `[I]` |
 | **Total** | **16** | `[E]/[I]` |
 
-Residual boom clearance is therefore 13.4 mm. The fin plane has 36.9 mm nominal and
-20.9 mm residual clearance. The side projection has 20.2 mm axial overlap, but that is not
-a collision: the rear projection proves the objects are laterally outside the inflated
-disk. Status remains **ANALYTICAL PASS / F2 PHYSICAL OPEN**.
+Residual radial support clearance is therefore 13.4 mm. Axially, the inflated propeller
+hazard begins at +224.9 mm. The fin ends at +214.57 mm and the support at +216.57 mm,
+leaving 10.33 and 8.33 mm residual respectively. Side-view axial overlap is zero. Status
+remains **ANALYTICAL PASS / F2 PHYSICAL OPEN**.
 
 ## 7. Coupled mass, CG and fuselage result
 
-Adding the selected fin module shifts the required battery station forward. The original
-travel is insufficient, so the iterative solver extends the nose tube and cradle. Their
-linear mass is derived from the existing component ledger and fed back into CG:
+Adding the selected fin module shifts the required battery station forward, but the
+original battery travel remains sufficient. The solver therefore adds no nose or cradle
+length and no associated support mass:
 
 | Coupled result | Value |
 |---|---:|
-| Iterations | 2 |
-| Nose boom/cradle extension | 17.8065 mm |
-| Added forward-support mass | 2.4048 g |
-| V1 AUW | 1615.6288 g |
+| Iterations | 1 |
+| Nose boom/cradle extension | 0.0000 mm |
+| Added forward-support mass | 0.0000 g |
+| V1 AUW | 1601.9777 g |
 | Solved CG x / target x | −93.78395 / −93.78395 mm |
-| Battery x | −386.7422 mm |
-| Camera x | −463.7867 mm |
-| VTX x | −429.6143 mm |
-| O4 straight-line lower bound / maximum | 50.0 / 50.0 mm |
-| CLEAN / V1 body OML length | 739.70 / 757.51 mm |
-| V1 nose-to-aft-boom longitudinal extent | 864.88 mm |
-| Analytical stall speed | 44.93 km/h |
+| Battery x | −363.2712 mm |
+| Camera x | −445.9802 mm |
+| VTX x | −418.0000 mm |
+| O4 straight-line lower bound / maximum | 45.99 / 50.0 mm |
+| CLEAN / V1 body OML length | 739.70 / 739.70 mm |
+| V1 nose-to-support longitudinal extent | 691.27 mm |
+| Analytical stall speed | 44.74 km/h |
 
 The 50.0 mm O4 value is a centre-to-centre straight-line lower bound. Connector bends and
 service routing remain open. The exact equality intentionally prevents the drawing from
@@ -202,4 +209,3 @@ changes the calculations and every dependent SVG on regeneration.
 4. Verify actual O4 connector bend radii and service routing.
 5. Repeat yaw-decay testing motor on and motor off; no slipstream credit is permitted until
    measured.
-

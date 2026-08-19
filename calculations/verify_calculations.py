@@ -275,16 +275,17 @@ def check_equipment_layout(add):
     )
     v1_battery = equipment_v1.component(equipment_layout.PRIMARY_CG_ADJUSTER)
     add(
-        "equipment risk: V1 exact target exceeds current battery travel",
-        v1_battery_required < v1_battery.bounds.minimum_mm[0],
+        "equipment layout: V1 exact target remains inside battery travel",
+        v1_battery.bounds.minimum_mm[0]
+        <= v1_battery_required
+        <= v1_battery.bounds.maximum_mm[0],
         f"required={v1_battery_required:+.2f} mm; "
         f"forward limit={v1_battery.bounds.minimum_mm[0]:+.2f} mm",
     )
     add(
-        "equipment risk: unextended V1 stop reaches only the tolerance band, not target",
+        "equipment layout: unextended V1 solution reaches the exact target",
         abs(equipment_v1.cg_mm()[0] - equipment_layout.target_cg_mm())
-        <= equipment_layout.CG_TOLERANCE_MM
-        and abs(equipment_v1.cg_mm()[0] - equipment_layout.target_cg_mm()) > 1.0,
+        <= 1e-6,
         (
             f"xCG={equipment_v1.cg_mm()[0]:+.2f} mm; "
             f"target={equipment_layout.target_cg_mm():+.2f} ±"
@@ -493,8 +494,8 @@ def check_yaw(add):
     fin_area = yaw_stability.fin_area_for_target(0.0005)
     fin_mass_lower = yaw_stability.fin_mass_band(fin_area)[0]
     add(
-        "mass risk: twin-fin lower model stays within the cap by less than 1 g",
-        0.0 <= design_config.V1_FIN_MASS_CAP_KG * 1000.0 - fin_mass_lower <= 1.0,
+        "yaw: twin-fin lower model retains at least 10 g allocation margin",
+        design_config.V1_FIN_MASS_CAP_KG * 1000.0 - fin_mass_lower >= 10.0,
         f"{fin_mass_lower:.2f} g model vs "
         f"{design_config.V1_FIN_MASS_CAP_KG*1000.0:.2f} g cap; F2 open",
     )
@@ -548,8 +549,8 @@ def check_fuselage(add):
         f"{fuselage_contract.AUTHORITY} - {fuselage_contract.WARNING}",
     )
     add(
-        "fuselage risk: V1 travel and multidisciplinary closure remain open",
-        not v1_state["reachable"],
+        "fuselage: V1 battery travel closes; multidisciplinary release remains open",
+        v1_state["reachable"],
         (
             f"V1 required={v1_state['required_x_mm']:+.2f} mm; "
             "mesh feasibility is not aircraft release"

@@ -1,5 +1,12 @@
 # I-29 — Directional-surface architecture correction: twin aft-CORE fins
 
+> **Superseded installation baseline (2026-08-19):** the aft-fin coordinates and masses
+> in this investigation are retained as rejected trade history. Adversarial review of the
+> side elevation showed that the +280 mm AC configuration projected through the propeller
+> hazard and failed the drawing-clarity hard constraint. [I-30](I-30-fin-station-mass-cg-and-connected-scene-closure.md)
+> now controls: fixed propulsion, CORE-rooted fins at x_AC +115.5 mm, zero axial overlap,
+> 8.33 mm controlling axial residual, 6.1437 dm² total area and 48.73 g lower mass.
+
 **Date:** 2026-08-19  
 **Status:** Engineering correction; geometry remains `[D]` on aerodynamic/structural inputs `[E]`  
 **Applies to:** SALAMANDRA-V1a/V1b, ADR-0038, SLM-GA-002 and SLM-FIN-001

@@ -219,7 +219,7 @@ def build(policy, battery="6S1P", cell="P42A", fc="SpeedyBee-F405",
             {
                 "part": "fin_booms", "kind": "fixed", "m": FIN_BOOM_REF,
                 "mat": "carbon",
-                "src": "[E] V1: two Ø6/4 mm aft CORE booms",
+                "src": "[E] V1: two Ø6/4 mm aft root supports",
             },
         ])
     # fixed rows

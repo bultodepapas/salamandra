@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from math import sqrt
 
 import equipment_layout
+from design_config import PROP_AXIAL_DYNAMIC_ALLOWANCE_M
 from yaw_stability import (
     FIN_BOOM_WIDTH_M,
     FIN_ROOT_THICKNESS_M,
@@ -33,7 +34,7 @@ class PropellerAllowance:
     support_deflection_mm: float = 3.0
     assembly_tolerance_mm: float = 2.0
     residual_margin_mm: float = 5.0
-    axial_dynamic_mm: float = 5.0
+    axial_dynamic_mm: float = PROP_AXIAL_DYNAMIC_ALLOWANCE_M * 1000.0
 
     @property
     def radial_total_mm(self) -> float:
@@ -158,7 +159,10 @@ def fin_propeller_clearance(layout: equipment_layout.Layout3D):
         0.0, min(fin_max_x, hazard_max_x) - max(fin_min_x, hazard_min_x)
     )
     controlling = "boom fairing" if boom_residual <= fin_residual else "fin shell"
-    axial_residual = hazard_min_x - fin_max_x
+    axial_residual = min(
+        hazard_min_x - fin_max_x,
+        hazard_min_x - fin.boom_x_end_m * 1000.0,
+    )
     passed = min(boom_residual, fin_residual, axial_residual) >= 0.0
     return FinPropellerClearance(
         boom_nominal_mm=float(boom_nominal),

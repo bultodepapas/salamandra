@@ -52,7 +52,7 @@ Example option combinations (all validated runs of `mass_budget.py`):
 | ALL PETG · Article #1 CLEAN | 1553.25 | 44.1 |
 | ALL PETG · V1 allocation target | 1613.25 | 44.9 |
 | ALL PETG · V1 fin-only lower model | 1613.22 | 44.9 — intermediate mass-budget result |
-| **ALL PETG · V1 coupled packaging** | **1615.63** | **44.93 — analytical PASS; 4.8 g below exact stall-mass ceiling** |
+| **ALL PETG baseline + LW-PLA-HT fins · V1 coupled packaging** | **1601.98** | **44.74 — analytical PASS; 18.4 g below exact stall-mass ceiling** |
 
 Per-part × material matrix (mass, g, from the PETG base):
 

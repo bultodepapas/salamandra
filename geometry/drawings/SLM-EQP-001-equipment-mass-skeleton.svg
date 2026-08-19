@@ -272,8 +272,8 @@
 <line x1="327.5" y1="73" x2="331.5" y2="48.5" class="leader"/>
 <rect x="328" y="46.05" width="7" height="4.9" rx="2" class="medium" id="mass-reference-side-avionics_installation_reserve" style="fill:#fffdf8;stroke:#17202a;stroke-width:.3"/>
 <text x="331.5" y="49.32" class="micro" text-anchor="middle">E21</text>
-<rect x="69.436" y="131.946" width="23.538" height="10.108" rx="1" class="provisional-line" id="v1-coupled-battery_6s1p-top" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
-<rect x="220.209" y="66.225" width="38.25" height="5.65" rx="1" class="provisional-line" id="v1-coupled-battery_6s1p-side" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
+<rect x="69.343" y="131.946" width="23.538" height="10.108" rx="1" class="provisional-line" id="v1-coupled-battery_6s1p-top" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
+<rect x="220.057" y="66.225" width="38.25" height="5.65" rx="1" class="provisional-line" id="v1-coupled-battery_6s1p-side" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
 <rect x="67.354" y="136.049" width="2.068" height="1.902" rx="1" class="provisional-line" id="v1-coupled-o4_camera-top" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
 <rect x="216.825" y="72.188" width="3.36" height="4.125" rx="1" class="provisional-line" id="v1-coupled-o4_camera-side" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
 <rect x="70.385" y="134.692" width="4.615" height="4.615" rx="1" class="provisional-line" id="v1-coupled-o4_vtx-top" style="fill:none;stroke:#7c4b00;stroke-width:.7;stroke-dasharray:6 1.5 1.2 1.5"/>
@@ -306,9 +306,9 @@
 <line x1="85.292" y1="137" x2="85.292" y2="242" class="extension"/>
 <line x1="79.892" y1="242" x2="85.292" y2="242" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
 <text x="82.592" y="240.3" class="dimension-text" text-anchor="middle">BATTERY CG TRAVEL 35.1 mm [D]/[E]</text>
-<line x1="81.206" y1="131.946" x2="24" y2="161" class="leader provisional-line"/>
-<circle cx="81.206" cy="131.946" r="0.65" class="provisional-dot"/>
-<text x="25.5" y="160.2" class="provisional-text" text-anchor="start">V1 COUPLED BATTERY x -362.7 [D]/[E]</text>
+<line x1="81.112" y1="131.946" x2="24" y2="161" class="leader provisional-line"/>
+<circle cx="81.112" cy="131.946" r="0.65" class="provisional-dot"/>
+<text x="25.5" y="160.2" class="provisional-text" text-anchor="start">V1 COUPLED BATTERY x -363.3 [D]/[E]</text>
 <text x="214" y="118" class="label" text-anchor="start">COMPONENT MASS / POSITION SCHEDULE</text>
 <text x="215" y="124" class="micro" text-anchor="start">REF</text>
 <text x="228" y="124" class="micro" text-anchor="start">COMPONENT</text>
@@ -451,8 +451,8 @@
 <tspan x="214" dy="4.1">E19: VTX 30x30x6 [M] + ANTENNA MASS = 5.85 g [D] · 80 mm ROUTE NOTE · E20 RETIRED.</tspan>
 <tspan x="214" dy="4.1">SHOWN EQUIPMENT: 821.85 g · CLEAN INSTALLED: 1553.25 g</tspan>
 <tspan x="214" dy="4.1">NOT SHOWN: structure, elevons/balances and hardware = 731.40 g</tspan>
-<tspan x="214" dy="4.1">BATTERY: CLEAN x -337.74; V1 required/placed -362.66 mm; CG -93.78 mm.</tspan>
-<tspan x="214" dy="4.1">V1 COUPLING: nose +0.00 mm; camera -445.98; VTX -418.00; mass 1602.77 g.</tspan>
+<tspan x="214" dy="4.1">BATTERY: CLEAN x -337.74; V1 required/placed -363.27 mm; CG -93.78 mm.</tspan>
+<tspan x="214" dy="4.1">V1 COUPLING: nose +0.00 mm; camera -445.98; VTX -418.00; mass 1601.98 g.</tspan>
 <tspan x="214" dy="4.1">SERVOS: E04/E05 = 1 PER ELEVON AT y=406.25 mm · E02/E03 RETIRED WITH 4-SERVO CONCEPT.</tspan>
 <tspan x="214" dy="4.1">COLOUR = SYSTEM FUNCTION · SOLID = MEASURED/CONTROLLED · AMBER DASH = OPEN.</tspan>
 <tspan x="214" dy="4.1">R = unresolved reserve · U = outside released budget · dimensions are envelopes.</tspan>

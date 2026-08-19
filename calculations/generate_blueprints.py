@@ -61,11 +61,11 @@ from design_config import (
 )
 from yaw_stability import (
     AR_FIN,
+    FIN_BOOM_HEIGHT_M,
     FIN_BOOM_WIDTH_M,
     FIN_COUNT,
     FIN_AC_STATION_M,
     FIN_ROOT_THICKNESS_M,
-    FIN_ROOT_Z_M,
     FIN_LE_SWEEP_DEG,
     FIN_SPAR_DIAMETER_M,
     FIN_SPAR_SEAT_DIAMETER_M,
@@ -810,6 +810,7 @@ def draw_side_elevations() -> SvgSheet:
     )
     fin_area = fin_area_for_target(0.0005)
     fin = fin_geometry(fin_area)
+    fin_root_z = equipment_layout.fin_root_interface_z_m(fin)
     fin_span = fin.span_m
     fin_root_chord = fin.root_chord_m
     fin_tip_chord = fin.tip_chord_m
@@ -817,7 +818,6 @@ def draw_side_elevations() -> SvgSheet:
     fin_te = fin.root_te_x_m
     fin_root_le = fin.root_le_x_m
     fin_tip_le = fin.tip_le_x_m
-    fin_root_z = FIN_ROOT_Z_M
     cnb_on = cnb_total_band(fin_area, ETA_FIN_POWER_ON)
     cnb_off = cnb_total_band(fin_area, ETA_FIN_POWER_OFF)
 
@@ -1191,15 +1191,16 @@ def draw_side_elevations() -> SvgSheet:
 
         if with_fin:
             carrier_start = fin.boom_x_start_m
+            carrier_half_height = 0.5 * FIN_BOOM_HEIGHT_M
             carrier_path = " ".join([
-                f"M {point(carrier_start, FIN_ROOT_Z_M)}",
-                f"L {point(fin.boom_x_end_m, FIN_ROOT_Z_M)}",
+                f"M {point(carrier_start, carrier_half_height)}",
+                f"L {point(fin.boom_x_end_m, carrier_half_height)}",
                 curve(
                     (fin.boom_x_end_m + 0.004, 0.004),
                     (fin.boom_x_end_m + 0.004, -0.004),
-                    (fin.boom_x_end_m, -FIN_ROOT_Z_M),
+                    (fin.boom_x_end_m, -carrier_half_height),
                 ),
-                f"L {point(carrier_start, -FIN_ROOT_Z_M)}",
+                f"L {point(carrier_start, -carrier_half_height)}",
                 "Z",
             ])
             sheet.path(
@@ -1210,7 +1211,25 @@ def draw_side_elevations() -> SvgSheet:
                     "stroke-width:.55;stroke-dasharray:3.4 1.6;stroke-linejoin:round"
                 ),
             )
-            # Both booms and fins are identical; side elevation is coincident.
+            # Printed saddle transfers the aft root overhang to the carbon
+            # support.  Its upper datum comes from the sampled wing OML; the
+            # support itself remains centred on z=0 and is not moved to fake
+            # clearance in the side view.
+            sheet.path(
+                " ".join([
+                    f"M {point(carrier_start, carrier_half_height)}",
+                    f"L {point(fin.root_te_x_m, carrier_half_height)}",
+                    f"L {point(fin.root_te_x_m, fin_root_z)}",
+                    f"L {point(carrier_start, fin_root_z)}",
+                    "Z",
+                ]),
+                "provisional-fill",
+                style=(
+                    "fill:#f4c46a;fill-opacity:.20;stroke:#985b00;"
+                    "stroke-width:.45;stroke-dasharray:2.4 1.3;stroke-linejoin:round"
+                ),
+            )
+            # Both root supports and fins are identical; side elevation is coincident.
             sheet.line(
                 *side_point(fin.boom_x_start_m, 0.0, origin_x, origin_y, scale),
                 *side_point(fin.boom_x_end_m, 0.0, origin_x, origin_y, scale),
@@ -1306,7 +1325,7 @@ def draw_side_elevations() -> SvgSheet:
     sheet.text(
         20,
         131,
-        "2× FIXED FINS ON AFT CORE BOOMS · NO MOVABLE RUDDER · MARGINAL [E]",
+        "2× CORE-ROOTED FIXED FINS · FORWARD OF FIXED PROP · NO MOVABLE RUDDER [E]",
         "micro",
     )
     sheet.line(51, 38, 32, 38, "medium", marker_end="url(#arrow-end)")
@@ -1359,9 +1378,9 @@ def draw_side_elevations() -> SvgSheet:
                 "stroke-width:.45;stroke-dasharray:2 1"
             ),
         )
-        fin_root_y = rear_cy - FIN_ROOT_Z_M * 1000.0 / rear_scale
+        fin_root_y = rear_cy - fin_root_z * 1000.0 / rear_scale
         fin_top_y = rear_cy - (
-            FIN_ROOT_Z_M + fin.span_m
+            fin_root_z + fin.span_m
         ) * 1000.0 / rear_scale
         fin_w = max(1.0, FIN_ROOT_THICKNESS_M * 1000.0 / rear_scale)
         sheet.rect(
@@ -1402,8 +1421,8 @@ def draw_side_elevations() -> SvgSheet:
     sheet.text(
         314,
         141,
-        f"{v1_clearance.physical_status} · axial projection overlap "
-        f"{v1_clearance.axial_overlap_mm:.1f} mm",
+        f"{v1_clearance.physical_status} · axial residual "
+        f"{v1_clearance.axial_residual_mm:.2f} mm · overlap 0.0 mm",
         "micro",
         id="side-rear-clearance-status",
     )
@@ -1444,7 +1463,7 @@ def draw_side_elevations() -> SvgSheet:
         *side_point(fin.boom_x_end_m, 0.0, origin_x, 185.0, scale),
         300,
         198,
-        f"2× AFT BOOMS TO x +{fin.boom_x_end_m*1000:.0f} [D]/[I]",
+        f"2× AFT ROOT SUPPORTS END x +{fin.boom_x_end_m*1000:.0f} [D]/[I]",
         True,
     )
     sheet.leader(
@@ -1475,7 +1494,7 @@ def draw_side_elevations() -> SvgSheet:
     sheet.multiline(18, 228, [
         "DATUM: root c/4 x = 0; motor axis z = 0; positive z up.",
         "Shared [D]/[E]: root r1, Ø8 boom/socket, pack envelope, Ø28 motor and V1a fin sizing.",
-        "Side OML, equipment vertical placement, local skid and twin-boom interfaces remain [I].",
+        "Side OML, equipment vertical placement, local skid and twin-root interfaces remain [I].",
         f"O4: CAMERA FRONT/CENTRELINE [D]; COAX STRAIGHT-LINE LOWER BOUND {o4_coax_distance_mm:.1f}/50.0 mm [D]/[M].",
         f"FIN PLANFORM EACH [D]/[E]: LE {FIN_LE_SWEEP_DEG:.1f}° · Λc/4 {fin.quarter_chord_sweep_deg:.3f}° · taper {FIN_TAPER:.2f}.",
         "ROOT FAIRING [I]: contained inside the credited planform; no forward decorative extension.",
@@ -1491,6 +1510,7 @@ def draw_fin_detail() -> SvgSheet:
     """Draw one V1a fin and the complete twin-fin installation."""
     fin_area = fin_area_for_target(0.0005)
     fin = fin_geometry(fin_area)
+    fin_root_z = equipment_layout.fin_root_interface_z_m(fin)
     mass_lo, mass_hi = fin_mass_band(fin_area)
     dcd0, cf = fin_drag(fin_area)
     cnb_on = cnb_total_band(fin_area, ETA_FIN_POWER_ON)
@@ -1730,20 +1750,21 @@ def draw_fin_detail() -> SvgSheet:
         ("AR / TAPER", f"{AR_FIN:.2f} / {FIN_TAPER:.2f} [E]"),
         ("SWEEP LE / c/4", f"{FIN_LE_SWEEP_DEG:.1f}° / {FIN_SWEEP_DEG:.3f}° [D]/[E]"),
         ("AC STATION", f"x +{FIN_AC_STATION_M*1000:.0f} mm [E]"),
-        ("ROOT / TIP t", f"{FIN_ROOT_THICKNESS_M*1000:.1f} / {FIN_TIP_THICKNESS_M*1000:.1f} mm [E]"),
-        ("MASS", f"{mass_lo:.2f}–{mass_hi:.2f} g incl. booms [E]"),
+        ("ROOT / TIP t", f"{FIN_ROOT_THICKNESS_M*1000:.1f} / {FIN_TIP_THICKNESS_M*1000:.1f} mm; root z {fin_root_z*1000:.2f} [D]/[E]"),
+        ("MASS", f"{mass_lo:.2f}–{mass_hi:.2f} g · LW-PLA-HT + spars/supports [E]"),
         ("Cnβ ON", f"{cnb_on[0]:+.5f}…{cnb_on[1]:+.5f}/deg [E]"),
         ("Cnβ OFF", f"{cnb_off[0]:+.5f}…{cnb_off[1]:+.5f}/deg [E]"),
         ("ΔCD0", f"+{dcd0:.4f}; Cf {cf:.4f} [E]"),
-        ("BOOMS", f"2× {boom_length*1000:.1f} mm at y ±{fin.lateral_station_m*1000:.0f} [E]/[I]"),
-        ("PROP CLEAR", f"{clearance.boom_nominal_mm:.1f} nom / {clearance.boom_residual_mm:.1f} residual mm [E]/[I]"),
+        ("ROOT SUPPORT", f"2× {boom_length*1000:.1f} mm at y ±{fin.lateral_station_m*1000:.0f} [E]/[I]"),
+        ("PROP RADIAL", f"{clearance.boom_nominal_mm:.1f} nom / {clearance.boom_residual_mm:.1f} residual mm [E]/[I]"),
+        ("PROP AXIAL", f"{clearance.axial_residual_mm:.2f} residual / 0.00 overlap mm [E]/[I]"),
     ]
     y = 36.0
     for index, (name, value) in enumerate(schedule):
         sheet.text(273, y, name, "micro", id=f"fin-schedule-name-{index}")
         sheet.text(307, y, value, "mono", id=f"fin-schedule-value-{index}")
         sheet.line(272, y + 1.7, 399, y + 1.7, "thin", style="stroke-opacity:.18")
-        y += 7.4
+        y += 6.8
 
     sheet.text(273, 153, "E · TOP + REAR INSTALLATION", "sheet-subtitle")
     plan_x0 = 278.0
@@ -1831,7 +1852,7 @@ def draw_fin_detail() -> SvgSheet:
         )
         sheet.rect(
             fin_x - 0.5,
-            rear_cy - (FIN_ROOT_Z_M + fin.span_m) * 1000.0 / rear_scale,
+            rear_cy - (fin_root_z + fin.span_m) * 1000.0 / rear_scale,
             1.0,
             fin.span_m * 1000.0 / rear_scale,
             "provisional-fill",
@@ -2843,15 +2864,18 @@ def validate_contract() -> dict[str, bool]:
             and abs(fin.tip_chord_m / fin.root_chord_m - FIN_TAPER) < 1e-12
             and abs(fin.quarter_chord_sweep_deg - FIN_SWEEP_DEG) < 1e-12
             and abs(fin.ac_x_m - FIN_AC_STATION_M) < 1e-12
-            and fin.tip_te_x_m > fin.root_te_x_m
+            and abs(fin.tip_te_x_m - fin.root_te_x_m) < 0.010
         ),
-        "twin booms remain radially outside the propeller disk": (
+        "twin root supports remain radially outside the propeller disk": (
             fin.boom_inner_prop_clearance_m >= 0.025
         ),
         "aft root supports begin at the CORE trailing edge and end behind the root": (
             abs(fin.boom_x_start_m - x_te(fin.lateral_station_m)) < 1e-3
             and fin.root_le_x_m < fin.boom_x_start_m < fin.root_te_x_m
-            and fin.boom_x_end_m >= fin.root_te_x_m + 0.009
+            and fin.boom_x_end_m >= fin.root_te_x_m + 0.0019
+        ),
+        "fin root datum is derived above the sampled local wing OML": (
+            0.015 < equipment_layout.fin_root_interface_z_m(fin) < 0.016
         ),
         "fin section declares the spar as an external LE nose": (
             FIN_SPAR_SEAT_DIAMETER_M > FIN_ROOT_THICKNESS_M

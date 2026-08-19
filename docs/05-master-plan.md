@@ -16,11 +16,11 @@ It sets no calendar dates. The repo has no `[M]` data on how long each task take
 
 ## 0. What "the first prototype" is
 
-**Working definition, revisable:** the first prototype is **article #1** already described in the README — **Cruise (1300 mm, 6S1P)** configuration — printed, assembled, balanced according to [ADR-0025](../decisions/ADR-0025-elevon-balancing.md), with avionics and **pitot installed** (a requirement of [O1](00-objectives-and-requirements.md)), able to fly in a stabilized way to run **E2, E3 and E7**. **Recommended build: SALAMANDRA-V1 (passive twin fins on aft CORE booms, ADR-0038/I-29)** — the fins double the nominal yaw damping and remove the nominal finless yaw divergence, giving cleaner test data; the finless CLEAN build remains the O1-efficiency configuration.
+**Working definition, revisable:** the first prototype is **article #1** already described in the README — **Cruise (1300 mm, 6S1P)** configuration — printed, assembled, balanced according to [ADR-0025](../decisions/ADR-0025-elevon-balancing.md), with avionics and **pitot installed** (a requirement of [O1](00-objectives-and-requirements.md)), able to fly in a stabilized way to run **E2, E3 and E7**. **Recommended build: SALAMANDRA-V1 (passive CORE-rooted twin fins wholly forward of the fixed propeller hazard, ADR-0038/I-30)** — the fins increase nominal yaw damping and remove the nominal finless yaw divergence, giving cleaner test data; the finless CLEAN build remains the O1-efficiency configuration.
 
-The V1 recommendation is conditional on F2 closing the 0.80 g fin-allocation margin and
-the coupled 17.81 mm nose-extension and 2.40 g support solution. CLEAN is the only configuration
-with a fully reachable component-level CG solution at the present envelope.
+The V1 recommendation is conditional on F2 verifying the LW-PLA-HT coupon density and
+strength, the 11.27 g fin-allocation margin, and the 8.33 mm axial propeller residual.
+Both CLEAN and V1 have reachable component-level CG solutions in the present battery envelope.
 
 It is not "something that prints and flies once". It is the instrumented platform that **can generate the `[M]` data the project still lacks** (G2, G4, G6, G7 in `gaps/`). If it does not carry an operational pitot and blackbox, it does not count as the project's prototype — it counts as a mock-up.
 
@@ -175,7 +175,7 @@ The server is a third-party Beta project, not Autodesk. If it is abandoned or br
 ## 9. Exit gates — consolidated checklist
 
 - [ ] **F1** — complete checklist of `03-phase-1-plan.md §4`
-- [ ] **F2** — Article #1 6S1P R-CG and **1553.25 g CLEAN** verified; confirm the coupled analytical **1615.63 g V1** result remains ≤1620.4 g using CAD/scale masses, close the **0.03 g** fin-module allocation margin, verify the calculated **17.81 mm** nose extension and 2.40 g support addition, and physically prove the 13.4 mm residual propeller/boom clearance
+- [ ] **F2** — Article #1 6S1P R-CG and **1553.25 g CLEAN** verified; confirm the coupled analytical **1601.98 g V1** result remains ≤1620.4 g using CAD/scale masses, verify LW-PLA-HT density/strength and the **11.27 g** fin-module allocation margin, verify the unchanged nose carrier and battery x −363.27 mm, and physically prove the 13.4 mm radial plus 8.33 mm axial propeller residuals
 - [ ] **F3** — D3/D4 completed, matching table published
 - [ ] **F4** — manoeuvre/ultimate semantics and positive V-n branch fixed; dynamic gust basis and negative CLmin branch closed, GJ/EI verified on the real section, elevon authority confirmed (S5), G6 sweep factor computed on the real section
 - [ ] **F5** — instrumentation chain operational and validated on an existing platform (D2), G9 resolved

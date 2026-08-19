@@ -40,10 +40,11 @@ The side-elevation sheet repeats the same authority boundary in the vertical pla
 compares **SALAMANDRA-CLEAN** with **SALAMANDRA-V1a**; V1a has two passive fixed fins and
 explicitly **no movable rudder**. The root airfoil and calculated fin size are traceable,
 while equipment height placement, keel transitions and the fin-to-pod interface remain
-`[I]`. `SLM-FIN-001` isolates one of two identical vertical-TE fins and the complete
-top-view installation. The two aft CORE booms sit at y = ±140 mm, clear the Ø203.2 mm
-propeller disk radially by 29.4 mm and support each full root chord to x = +361.3 mm.
-The superseded centreline carrier is not part of the current geometry.
+`[I]`. `SLM-FIN-001` isolates one of two identical swept trapezoidal fins and the complete
+top/rear installation. The two short aft root supports sit at y = ±140 mm, clear the
+Ø203.2 mm propeller disk radially by 29.4 mm nominal, and end at x = +216.57 mm. The
+inflated propeller hazard begins at x = +224.90 mm, leaving 8.33 mm axial residual and
+zero overlap. The superseded centreline carrier is not part of the current geometry.
 
 ## Reproduce
 

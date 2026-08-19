@@ -37,7 +37,9 @@ from design_config import (
     CRUISE_SPEED_KMH,
     NU_SL,
     PETG_DENSITY_KG_M3,
+    PROP_AXIAL_DYNAMIC_ALLOWANCE_M,
     PROP_AXIAL_ENVELOPE_M,
+    PROP_AXIAL_RESIDUAL_M,
     PROP_DIAMETER_M,
     PROP_PLANE_M,
     RHO_SL,
@@ -111,12 +113,11 @@ FIN_BOOM_HEIGHT_M = 0.014
 FIN_BOOM_OUTER_DIAMETER_M = 0.006
 FIN_BOOM_INNER_DIAMETER_M = 0.004
 FIN_BOOM_X_START_M = 0.156
-FIN_PROPELLER_AXIAL_CLEARANCE_M = 0.005  # static design reserve after blade slab [E]
 FIN_MAX_PRINT_SPAN_M = 0.250             # one-piece 250 mm build-height gate [D]/[E]
-FIN_AC_STATION_M = 0.1145  # 0.5 mm-grid aft-most feasible station; see trade [D]/[E]
+FIN_AC_STATION_M = 0.1155  # 0.5 mm-grid aft-most feasible station; see trade [D]/[E]
 AR_FIN = 2.0               # aspect ratio of each fin [E]
 FIN_TAPER = 0.45           # finite tip chord avoids a plate-like free tip [E]
-FIN_LE_SWEEP_DEG = 25.0    # straight swept LE; root-to-tip structural spar [E]
+FIN_LE_SWEEP_DEG = 20.0    # moderate low-speed sweep; limits aft tip growth [E]
 
 # For a trapezoid, c_root / span = 2 / (AR * (1 + taper)).  Converting the
 # selected leading-edge sweep to quarter-chord sweep keeps the aerodynamic
@@ -132,7 +133,6 @@ FIN_TIP_THICKNESS_M = 0.0015    # maximum plate thickness at tip [E]
 FIN_TE_THICKNESS_M = 0.0008     # printable trailing edge [E]
 FIN_SPAR_DIAMETER_M = 0.0030    # aluminium rod forming the LE nose [D]/[E]
 FIN_SPAR_SEAT_DIAMETER_M = 0.0032  # open rear-facing C-seat, not enclosed [I]
-FIN_ROOT_Z_M = 0.007            # boom-top / fin-root interface [I]
 FIN_SHELL_EFFECTIVE_THICKNESS_M = 0.00085  # two skins/ribs equivalent [E]
 FIN_SHELL_LOCAL_FACTOR = 1.10              # root/mount plastic allowance [E]
 # Conservative top of colorFabb's published maximum-foaming LW-PLA-HT
@@ -308,6 +308,7 @@ class FinPlacementCandidate:
     assembly_cg_x_m: float
     battery_shift_m: float
     propeller_axial_clearance_m: float
+    support_propeller_axial_clearance_m: float
     span_m: float
     score: float
     feasible: bool
@@ -338,7 +339,7 @@ def fin_geometry(S_v, b_v=None, ac_x=FIN_AC_STATION_M):
     # The aft tube supports the root overhang only.  Extending it to the tip
     # trailing-edge x station (the former implementation) had no structural
     # meaning and carried the drawing unnecessarily into the propeller plane.
-    boom_x_end = root_te_x + 0.010
+    boom_x_end = root_te_x + 0.002
     prop_radius = PROP_DIAMETER_M / 2.0
     boom_clearance = FIN_LATERAL_STATION_M - FIN_BOOM_WIDTH_M / 2.0 - prop_radius
     return FinGeometry(
@@ -412,12 +413,15 @@ def fin_placement_trade(target=0.0005):
     propeller's measured axial slab by the declared reserve, the root crosses
     the local CORE trailing edge so loads can enter the existing structure,
     the root leading edge remains on the CORE planform, the one-piece print
-    span is respected, and the complete lower mass stays in its revised 90 g
+    span is respected, and the complete lower mass stays in its 60 g
     allocation.  Among feasible candidates, minimum installed mass selects the
     aft-most useful aerodynamic centre.  No SVG coordinate participates.
     """
     raw = []
-    propeller_forward_face = PROP_PLANE_M - 0.5 * PROP_AXIAL_ENVELOPE_M
+    propeller_forward_face = (
+        PROP_PLANE_M - 0.5 * PROP_AXIAL_ENVELOPE_M
+        - PROP_AXIAL_DYNAMIC_ALLOWANCE_M
+    )
     local_wing_le = x_le(FIN_LATERAL_STATION_M)
     local_wing_te = x_te(FIN_LATERAL_STATION_M)
     for ac_half_mm in range(160, 561):
@@ -453,6 +457,7 @@ def fin_placement_trade(target=0.0005):
         battery_shift = mass_lower / battery_mass * (assembly_x - cg_target())
         fin_aft_x = max(fin.root_te_x_m, fin.tip_te_x_m)
         axial_clearance = propeller_forward_face - fin_aft_x
+        support_axial_clearance = propeller_forward_face - fin.boom_x_end_m
         raw.append({
             "ac_x_m": ac_x,
             "moment_arm_m": arm,
@@ -464,6 +469,7 @@ def fin_placement_trade(target=0.0005):
             "assembly_cg_x_m": assembly_x,
             "battery_shift_m": battery_shift,
             "propeller_axial_clearance_m": axial_clearance,
+            "support_propeller_axial_clearance_m": support_axial_clearance,
             "span_m": fin.span_m,
         })
 
@@ -477,9 +483,9 @@ def fin_placement_trade(target=0.0005):
             and fin.root_te_x_m >= local_wing_te - 1e-9
             and row["span_m"] <= FIN_MAX_PRINT_SPAN_M + 1e-9
             and row["propeller_axial_clearance_m"]
-                >= FIN_PROPELLER_AXIAL_CLEARANCE_M - 1e-9
-            and fin.boom_x_end_m
-                <= propeller_forward_face - FIN_PROPELLER_AXIAL_CLEARANCE_M + 1e-9
+                >= PROP_AXIAL_RESIDUAL_M - 1e-9
+            and row["support_propeller_axial_clearance_m"]
+                >= PROP_AXIAL_RESIDUAL_M - 1e-9
         )
         candidates.append(FinPlacementCandidate(
             **row, score=float(row["mass_lower_g"]), feasible=bool(feasible)
@@ -605,7 +611,9 @@ def main():
     print(f"   Selected minimum-mass feasible station: x_AC "
           f"+{placement.ac_x_m*1000:.1f} mm · arm "
           f"{placement.moment_arm_m*1000:.1f} mm · "
-          f"axial prop clearance {placement.propeller_axial_clearance_m*1000:.2f} mm")
+          f"axial fin/support residual "
+          f"{placement.propeller_axial_clearance_m*1000:.2f}/"
+          f"{placement.support_propeller_axial_clearance_m*1000:.2f} mm")
     print(f"   Assembly x_CG +{placement.assembly_cg_x_m*1000:.1f} mm · "
           f"first-order battery shift {placement.battery_shift_m*1000:.1f} mm forward")
 
@@ -761,14 +769,17 @@ def main():
     _, placement = fin_placement_trade()
     check("declared V1a AC is the reproducible fixed-propeller optimum",
           abs(placement.ac_x_m - FIN_AC_STATION_M) < 1e-12)
-    propeller_forward_face = PROP_PLANE_M - 0.5 * PROP_AXIAL_ENVELOPE_M
+    propeller_forward_face = (
+        PROP_PLANE_M - 0.5 * PROP_AXIAL_ENVELOPE_M
+        - PROP_AXIAL_DYNAMIC_ALLOWANCE_M
+    )
     check("complete V1a fin stays forward of the fixed propeller slab",
           propeller_forward_face
           - max(fin.root_te_x_m, fin.tip_te_x_m)
-          >= FIN_PROPELLER_AXIAL_CLEARANCE_M - 1e-12)
+          >= PROP_AXIAL_RESIDUAL_M - 1e-12)
     check("aft root supports stay forward of the fixed propeller slab",
           fin.boom_x_end_m
-          <= propeller_forward_face - FIN_PROPELLER_AXIAL_CLEARANCE_M + 1e-12)
+          <= propeller_forward_face - PROP_AXIAL_RESIDUAL_M + 1e-12)
     check("V1a twin geometry reproduces total area, per-fin AR, taper and AC",
           abs(0.5 * (fin.root_chord_m + fin.tip_chord_m) * fin.span_m
               - fin.area_each_m2) < 1e-12

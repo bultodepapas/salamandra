@@ -146,7 +146,7 @@ SHEETS: tuple[SheetSpec, ...] = (
             "Use this sheet to compare the two published directional configurations without "
             "changing the common wing or propulsion installation. "
             "**SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds two passive fixed "
-            "fins on aft CORE booms at y = ±140 mm. Neither configuration has a movable rudder. The released root "
+            "CORE-rooted fins at y = ±140 mm, wholly forward of the fixed propeller hazard. Neither configuration has a movable rudder. The released root "
             "airfoil and calculated V1a fin dimensions are traceable, while the side OML, "
             "vertical equipment placement, propeller-clearance keel and fin/pod installation "
             "remain `[I]`. The two 18 × 14 mm boom envelopes have 29.4 mm nominal and "

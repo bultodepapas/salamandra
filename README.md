@@ -62,7 +62,7 @@ Use this sheet to interrogate the fuselage generator itself. Plan and side outli
 
 [![Metric A3 side-elevation draft comparing SALAMANDRA-CLEAN with the V1a passive twin-fin variant. The two CORE-rooted fins and their aft root supports remain forward of the fixed propeller hazard; their side projections coincide. No movable rudder is defined.](geometry/drawings/SLM-GA-002-side-elevations.svg)](geometry/drawings/SLM-GA-002-side-elevations.svg)
 
-Use this sheet to compare the two published directional configurations without changing the common wing or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds two passive fixed fins on aft CORE booms at y = ±140 mm. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The two 18 × 14 mm boom envelopes have 29.4 mm nominal and 13.4 mm residual radial clearance after the explicit 16.0 mm allowance. The rear inset proves their lateral separation where the side projections overlap.
+Use this sheet to compare the two published directional configurations without changing the common wing or propulsion installation. **SALAMANDRA-CLEAN** is finless; **SALAMANDRA-V1a** adds two passive fixed CORE-rooted fins at y = ±140 mm, wholly forward of the fixed propeller hazard. Neither configuration has a movable rudder. The released root airfoil and calculated V1a fin dimensions are traceable, while the side OML, vertical equipment placement, propeller-clearance keel and fin/pod installation remain `[I]`. The two 18 × 14 mm boom envelopes have 29.4 mm nominal and 13.4 mm residual radial clearance after the explicit 16.0 mm allowance. The rear inset proves their lateral separation where the side projections overlap.
 
 **Sheet** A3 · 1:4 · **Authority** Root/fin `[D]`/`[E]`; side OML/install `[I]`.
 
@@ -261,12 +261,12 @@ comes from the propulsion chain, which is where the data say the gap is.
 | **t/c** | **13.5 % root / 9 % tip** | [ADR-0027](decisions/ADR-0027-relative-thickness.md) |
 | Airfoil | **Salamandra r1:** MH60 mean line, +1.0°/+0.5° root/tip reflex | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md) |
 | Printed wash-in | **+3.0°**; selected physical-elevon model trims −0.14°…+0.50° at the corrected V1 mass `[D]` | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md), [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
-| Material | **Conventional PETG**, light color | [ADR-0021](decisions/ADR-0021-base-material.md) |
+| Material | **Conventional PETG** primary airframe; V1 fin shells use bounded LW-PLA-HT pending F2 coupons | [ADR-0021](decisions/ADR-0021-base-material.md), [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md) |
 | Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** | [ADR-0028](decisions/ADR-0028-gyroid-infill.md) |
 | Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
 | Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
 | Elevons | **0.28 c, y 227.5…585 mm (35–90 %), 357.5 mm; fixed 32.5 mm root bridge and 65 mm tip; servo y ±406.25 mm** | [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
-| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; coupled twin-fin V1 1615.63 g / 44.93 km/h** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), [I-30](research/I-30-fin-station-mass-cg-and-connected-scene-closure.md) |
+| AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; coupled twin-fin V1 1601.98 g / 44.74 km/h** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), [I-30](research/I-30-fin-station-mass-cg-and-connected-scene-closure.md) |
 | Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; two-servo O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
 | Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | V_NE article #1 | **160 km/h** (design 180) | — |
@@ -290,8 +290,9 @@ PANEL-xxxx-y    xxxx = resulting total wingspan · y = airfoil family
 | **Sport** | 1100 | 6S LiPo | Fast flight | Design |
 
 **Directional variants (ADR-0038):** `SALAMANDRA-CLEAN` (finless, O1 efficiency build)
-and `SALAMANDRA-V1` (two passive fixed fins on aft CORE booms, no movable rudder — first
-platform variant, I-29, recommended after F2 closure). The twin-fin/boom assembly is a
+and `SALAMANDRA-V1` (two passive CORE-rooted fixed fins wholly forward of the fixed
+propeller hazard, no movable rudder — first platform variant, I-30, recommended after F2
+closure). The twin-fin/support assembly is a
 CORE module; panels are untouched.
 
 ⚠️ See [ADR-0032](decisions/ADR-0032-modularity.md): the panels **are not arbitrary**. Each
@@ -368,17 +369,17 @@ Phase-1 status (2026-08-18):
 - **ADR-0040/0043/0045 — coupled planform, control surface, mass and balance updated.** The −15° planform
   and target CG **−93.8 mm** remain. With Article #1 hardware and the 550 g PETG-shell
   cap and two-servo baseline, CLEAN is **1553.25 g**. Its component-level pack solution
-  is **−337.74 mm** inside current travel. The coupled twin-fin V1 solver extends the nose
-  17.81 mm and converges at battery x = **−386.74 mm**, camera x = −463.79 mm and VTX
-  x = −429.61 mm. Current stations and acceptance gates are in the
+  is **−337.74 mm** inside current travel. The coupled twin-fin V1 solver leaves the nose
+  unchanged and converges at battery x = **−363.27 mm**, camera x = −445.98 mm and VTX
+  x = −418.00 mm. Current stations and acceptance gates are in the
   [guide §7.2](design/Salamandra-Design-Guide-v0.1.md) and
   [justification §3.2](design/Design-Guide-Justification-v0.1.md); tools in
   `calculations/balance_cg.py` and `calculations/elevon_authority.py`.
-- **Twin-fin V1 is analytically below the stall ceiling but has little margin.** The two
-  shells/mounts, two LE spars and two aft booms total **59.97 g** against a 60.00 g
-  allocation. The coupled forward support adds 2.40 g; V1 is **1615.63 g / 44.93 km/h**,
-  only about 4.8 g below the exact 45 km/h
-  mass ceiling. CAD, CG and scale-mass verification remain mandatory.
+- **Twin-fin V1 is analytically below the stall ceiling.** The two LW-PLA-HT
+  shells/mounts, two LE spars and two short root supports total **48.73 g** against a
+  60.00 g allocation. No forward support is added; V1 is **1601.98 g / 44.74 km/h**,
+  about 18.4 g below the exact 45 km/h mass ceiling. Material coupons, CAD, CG and
+  scale-mass verification remain mandatory.
 - **OP-29 (divergence) — operationally bounded, structurally open.** Revision 4 uses
   the released r1 profile. Nominal Vdiv is 327.2 km/h, but the conservative unmeasured
   case is **129.6 km/h**; initial **Vlimit = 105 km/h**. S3 GJ,
@@ -393,8 +394,9 @@ Phase-1 status (2026-08-18):
   finless baseline is estimated **directionally unstable** (Cnβ −0.00055…−0.00141/deg
   `[E]`, FSW + nose boom); the platform now publishes two configurations:
   **SALAMANDRA-CLEAN** (finless, O1 efficiency build) and **SALAMANDRA-V1** (two fixed
-  fins on aft CORE booms, no movable rudder): V1a S_v,total **3.4737 dm²**, 59.97 g lower
-  assembly and ΔCD0 +0.0019 `[D]`/`[E]` (`calculations/yaw_stability.py`). A movable
+  CORE-rooted fins forward of the fixed propeller hazard, no movable rudder): V1a
+  S_v,total **6.1437 dm²**, 48.73 g lower assembly and ΔCD0 +0.0034 `[D]`/`[E]`
+  (`calculations/yaw_stability.py`). A movable
   rudder remains a future control variant; it is not needed to define passive stability. Closure by
   flight test **E8** (yaw perturbation).
 

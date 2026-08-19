@@ -267,8 +267,9 @@ Movement authority is intentionally asymmetric:
 
 Current candidate results `[D]`: CLEAN closes **1553.25 g** at the released CG target with the
 battery at x = **−337.74 mm**. V1 adds the complete fixed-fin lower model and runs the
-coupled packaging solve. A 17.81 mm forward extension and 2.40 g support addition place
-the battery at **−386.74 mm** and recover xCG = −93.784 mm in two iterations. These values differ
+coupled packaging solve. Existing travel is sufficient: no forward extension or added
+support mass is required. Battery x = **−363.27 mm** recovers xCG = −93.784 mm in one
+iteration. These values differ
 from the aggregate `balance_cg.py` station because individual masses now occupy their
 explicit spatial locations.
 
@@ -429,17 +430,17 @@ python3 yaw_stability.py
 ```
 
 Cnβ budget of the finless baseline (body + FSW wing: **−0.00055…−0.00141/deg — negative**),
-twin-fin sizing for two stability tiers (swept-trapezoid V1a 3.4737 dm² total →
-nominal +0.0005/deg; V1b 4.63 dm² total → +0.0010/deg), independent-corner power-on/off
+twin-fin sizing for two stability tiers (swept-trapezoid V1a 6.1437 dm² total →
+nominal +0.0005/deg; V1b 8.18 dm² total → +0.0010/deg), independent-corner power-on/off
 bands, rudder authority vs crosswind, yaw damping and
 subsidence, fin bending at the 180 km/h structural case (**root t ≥ 3.0 mm**), and the mass/drag/stall cost of
-each tier. The selected architecture uses two aft CORE booms at y = ±140 mm outside the
-propeller disk; it does not credit slipstream. Published results (I-29, `[D]` on
+each tier. The selected architecture uses two CORE-rooted fins at y = ±140 mm, wholly
+forward of the fixed propeller hazard; it does not credit slipstream. Published results (I-30, `[D]` on
 `[E]` bands): correctly dimensionalized finless modes are **+8.244/−9.453 s⁻¹**
 (divergence time constant about 0.12 s), while the powered nominal V1 screen gives
-**−1.224 ± 5.205i s⁻¹** (decay time about 0.8 s). V1a ΔCD0 +0.0019 (+13.3 % drag);
-V1b +0.0026 (+17.5 %). The selected `x_AC = +280 mm` is the mass-feasible knee of the
-+225…+325 mm station trade. A change to geometry, bands or methods must reproduce
+**−0.952 ± 5.239i s⁻¹** (decay time about 1.1 s). V1a ΔCD0 +0.0034 (+23.1 % drag);
+V1b +0.0044 (+30.5 %). The selected `x_AC = +115.5 mm` is the minimum-mass feasible
+result of the +80…+280 mm, 0.5 mm-grid fixed-propeller trade. A change to geometry, bands or methods must reproduce
 all embedded validation cases, including planform invariants and independent-corner power states.
 
 ### 10.1 Connected aircraft scene and clearance
@@ -450,9 +451,10 @@ python3 aircraft_scene.py
 
 Consumes the same equipment ledger, propeller definition, V1 packaging solution and fin
 geometry used by the drawings. It validates oriented top/side/rear projections and
-separates side-view axial overlap from three-dimensional interference. Current V1 boom
-clearance is **29.4 mm nominal / 13.4 mm residual** after the explicit 16.0 mm radial
-allowance. Status is `ANALYTICAL PASS / F2 PHYSICAL OPEN`.
+proves both radial and axial separation. Current V1 root-support clearance is **29.4 mm
+nominal / 13.4 mm residual radially** after the explicit 16.0 mm allowance and **8.33 mm
+axially** beyond the inflated forward hazard face. Side-view overlap is zero. Status is
+`ANALYTICAL PASS / F2 PHYSICAL OPEN`.
 
 ### 11. R-JOINT pin material trade (ADR-0031)
 
@@ -496,10 +498,10 @@ Data-driven weight budget with per-part material selection. The Article #1 defau
 separate antenna, two Corona DS-939MG servos,
 APC E 8×8 assembly and the coupled ADR-0043 boom. Published results (docs/06 §3):
 ALL PETG CLEAN **1553.25 g / 44.1 km/h**. The current V1a lower assembly model is
-41.25 g for two PETG shells/mounts + 7.85 g for two aluminium LE spars + 10.88 g for
-two carbon booms = **59.97 g**. The coupled packaging solution adds 2.40 g of forward
-support, giving **1615.63 g / 44.93 km/h**. It extends the nose 17.81 mm and solves the
-battery at x = −386.74 mm; F2 must verify mass, balance, O4 routing and CAD.
+35.61 g for two LW-PLA-HT shells/mounts + 10.07 g for two aluminium LE spars + 3.04 g
+for two carbon root supports = **48.73 g**. The coupled packaging solution requires no
+forward extension or added support mass, giving **1601.98 g / 44.74 km/h** and battery
+x = −363.27 mm; F2 must verify material coupons, mass, balance, O4 routing and CAD.
 The AERO policies
 remain rejected by divergence. Validation retains v0.2 as a historical regression and
 checks both the 60.00 g complete-assembly allocation and the analytical lower model.
@@ -524,7 +526,7 @@ GXY+gyroid+1.1 mm wall case reaches 207 km/h. The computed 0.85 clearance rounds
 python3 launch_speed.py
 ```
 
-Gate check of the mandatory hand throw. The current coupled packaging result is **1615.63 g V1
+Gate check of the mandatory hand throw. The current coupled packaging result is **1601.98 g V1
 analytical lower mass**
 and integrates `m dV/dt = T − D(V)` by RK4 with piecewise-constant phase thrust,
 including the 0.2 s motor delay.

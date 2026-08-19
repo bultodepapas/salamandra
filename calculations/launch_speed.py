@@ -5,7 +5,7 @@ revision 6: ADR-0045 Article #1 masses, drag-inclusive RK4 propagation,
 Mojito configuration-class correction and published throwing biomechanics).
 
 WHY THIS DOCUMENT EXISTS: the launch is a mandatory hand throw (docs/00) and
-the stall speed is the tightest margin in the design (44.9 km/h = 12.5 m/s for
+the stall speed is the tightest margin in the design (44.7 km/h = 12.4 m/s for
 the connected V1 lower model; physical mass and CLmax closure remain open at F2/E2).
 The FIRST revision of this script demanded
 k_safe = 1.20 at the RELEASE INSTANT and concluded "infeasible". That was too
@@ -229,8 +229,8 @@ def main():
         print(f"   [{'PASS' if cond else 'FAIL'}] {name}")
 
     vs_c = v_stall(ARTICLE_V1_MASS_KG)
-    check(f"V_stall reproduces mass_budget V1 44.9 km/h (got "
-          f"{vs_c*3.6:.1f})", abs(vs_c * 3.6 - 44.9) < 0.1)
+    check(f"V_stall reproduces mass_budget V1 44.7 km/h (got "
+          f"{vs_c*3.6:.1f})", abs(vs_c * 3.6 - 44.7435) < 0.05)
     vs_g2 = v_stall(ARTICLE_CLEAN_MASS_KG)
     check(f"V_stall reproduces mass_budget CLEAN 44.1 km/h (got {vs_g2*3.6:.1f})",
           abs(vs_g2 * 3.6 - 44.1) < 0.1)

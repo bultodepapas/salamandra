@@ -168,11 +168,13 @@ ARTICLE_CLEAN_MASS_KG = 1.55325
 PROP_PLANE_M = 0.235             # APC 8x8EP plane, aft of root c/4 [D]/[E]
 PROP_DIAMETER_M = 0.2032         # APC nominal 8 inch diameter [M]
 PROP_AXIAL_ENVELOPE_M = 0.0102   # measured/catalog component envelope [M]/[E]
+PROP_AXIAL_DYNAMIC_ALLOWANCE_M = 0.005  # blade/runout/support axial inflation [E]
+PROP_AXIAL_RESIDUAL_M = 0.008           # residual after inflated hazard [E]
 
 V1_FIN_MASS_CAP_KG = 0.06000          # forward, prop-safe twin-fin allocation [E]
-V1_FIN_SHELL_MOUNT_LOWER_KG = 0.03613742 # geometry-derived LW-PLA-HT lower model [M]/[E]
-V1_FIN_SPAR_MASS_KG = 0.01051544         # geometry-derived Ø3 mm Al rods [D]/[E]
-V1_FIN_BOOM_MASS_KG = 0.00287174         # geometry-derived Ø6/4 mm root extensions [E]
+V1_FIN_SHELL_MOUNT_LOWER_KG = 0.03561492 # geometry-derived LW-PLA-HT lower model [M]/[E]
+V1_FIN_SPAR_MASS_KG = 0.01006827         # geometry-derived Ø3 mm Al rods [D]/[E]
+V1_FIN_BOOM_MASS_KG = 0.00304446         # geometry-derived Ø6/4 mm root extensions [E]
 V1_FIN_MODEL_LOWER_KG = (
     V1_FIN_SHELL_MOUNT_LOWER_KG
     + V1_FIN_SPAR_MASS_KG

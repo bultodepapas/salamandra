@@ -179,7 +179,7 @@
 <circle cx="172.5" cy="185" r="0.55" class="derived" id="side-skeleton-mass-v1a-avionics_installation_reserve" style="fill:#737b82;stroke:#737b82;stroke-width:.2"/>
 <text x="150.6" y="181.175" class="micro" text-anchor="start" id="side-skeleton-label-v1a-avionics_installation_reserve" style="fill:#737b82;font-size:2.15px">E21</text>
 <rect x="61.825" y="184" width="92.675" height="2" rx="0.8" class="provisional-line"/>
-<rect x="65.209" y="178.225" width="38.25" height="5.65" rx="1" class="provisional-line"/>
+<rect x="65.057" y="178.225" width="38.25" height="5.65" rx="1" class="provisional-line"/>
 <rect x="61.825" y="184.188" width="3.36" height="4.125" rx="0.7" class="provisional-line" id="side-o4-camera-v1a"/>
 <rect x="66.75" y="176.375" width="7.5" height="1.5" rx="0.7" class="provisional-line" id="side-o4-vtx-v1a"/>
 <line x1="63.505" y1="186.25" x2="70.5" y2="177.125" class="provisional-line" id="side-o4-coax-lower-bound-v1a" style="stroke:#9a4f87;stroke-width:.55;stroke-dasharray:2 1"/>
@@ -191,26 +191,27 @@
 <circle cx="233.75" cy="185" r="1.3" class="provisional-line"/>
 <path d="M 226.25 191.25 C 228.5 197.5 231.5 208 233.75 212.9" class="provisional-line" style="fill:none;stroke-width:1.05;stroke-linecap:round"/>
 <line x1="232.25" y1="212.9" x2="238.75" y2="212.9" class="provisional-line" stroke-dasharray="none"/>
-<line x1="58.075" y1="185" x2="232.033" y2="185" class="centre"/>
+<line x1="58.075" y1="185" x2="232.892" y2="185" class="centre"/>
 <line x1="175" y1="173.75" x2="175" y2="216.25" class="station"/>
-<path d="M 214 183.25 L 228.283 183.25 C 229.283 184 229.283 186 228.283 186.75 L 214 186.75 Z" class="provisional-fill" style="fill:#f4c46a;fill-opacity:.22;stroke:#985b00;stroke-width:.55;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
-<line x1="214" y1="185" x2="228.283" y2="185" class="derived" style="stroke:#146e9b;stroke-width:.35;stroke-dasharray:1.3 1.0"/>
-<polygon points="182.735,183.25 211.842,120.831 231.213,120.831 225.783,183.25" class="provisional-fill"/>
-<path d="M 182.735 183.25 C 185.235 183.25 187.235 180.75 188.735 176.25 L 188.735 183.25 Z" class="provisional-fill" style="fill:#f4c46a;fill-opacity:.30;stroke:#985b00;stroke-width:.55;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
-<circle cx="203.625" cy="155.987" r="1.4" class="derived"/>
-<line x1="201.425" y1="155.987" x2="205.825" y2="155.987" class="derived"/>
-<line x1="203.625" y1="153.787" x2="203.625" y2="158.187" class="derived"/>
-<line x1="211.842" y1="120.831" x2="286" y2="120.831" class="extension"/>
-<line x1="182.735" y1="183.25" x2="286" y2="183.25" class="extension"/>
-<line x1="286" y1="120.831" x2="286" y2="183.25" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
-<text x="288" y="152.04" class="dimension-text" text-anchor="middle" transform="rotate(-90 288 152.04)">b_v EACH 250 [D]</text>
-<line x1="203.625" y1="155.987" x2="300" y2="140" class="leader"/>
-<circle cx="203.625" cy="155.987" r="0.65" class="datum-dot"/>
-<text x="301.5" y="139.2" class="note" text-anchor="start">FIN AC x +114 [D]/[E]</text>
+<path d="M 214 183.25 L 229.142 183.25 C 230.142 184 230.142 186 229.142 186.75 L 214 186.75 Z" class="provisional-fill" style="fill:#f4c46a;fill-opacity:.22;stroke:#985b00;stroke-width:.55;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
+<path d="M 214 183.25 L 228.642 183.25 L 228.642 181.113 L 214 181.113 Z" class="provisional-fill" style="fill:#f4c46a;fill-opacity:.20;stroke:#985b00;stroke-width:.45;stroke-dasharray:2.4 1.3;stroke-linejoin:round"/>
+<line x1="214" y1="185" x2="229.142" y2="185" class="derived" style="stroke:#146e9b;stroke-width:.35;stroke-dasharray:1.3 1.0"/>
+<polygon points="185.907,181.113 208.46,119.146 227.691,119.146 228.642,181.113" class="provisional-fill"/>
+<path d="M 185.907 181.113 C 188.407 181.113 190.407 178.613 191.907 174.113 L 191.907 181.113 Z" class="provisional-fill" style="fill:#f4c46a;fill-opacity:.30;stroke:#985b00;stroke-width:.55;stroke-dasharray:3.4 1.6;stroke-linejoin:round"/>
+<circle cx="203.875" cy="154.047" r="1.4" class="derived"/>
+<line x1="201.675" y1="154.047" x2="206.075" y2="154.047" class="derived"/>
+<line x1="203.875" y1="151.847" x2="203.875" y2="156.247" class="derived"/>
+<line x1="208.46" y1="119.146" x2="286" y2="119.146" class="extension"/>
+<line x1="185.907" y1="181.113" x2="286" y2="181.113" class="extension"/>
+<line x1="286" y1="119.146" x2="286" y2="181.113" class="dimension" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)"/>
+<text x="288" y="150.13" class="dimension-text" text-anchor="middle" transform="rotate(-90 288 150.13)">b_v EACH 248 [D]</text>
+<line x1="203.875" y1="154.047" x2="300" y2="140" class="leader"/>
+<circle cx="203.875" cy="154.047" r="0.65" class="datum-dot"/>
+<text x="301.5" y="139.2" class="note" text-anchor="start">FIN AC x +116 [D]/[E]</text>
 <text x="20" y="23" class="sheet-subtitle" text-anchor="start">A · SALAMANDRA-CLEAN</text>
 <text x="20" y="28" class="micro" text-anchor="start">FINLESS · O1 EFFICIENCY BASELINE · YAW RISK [E]</text>
 <text x="20" y="126" class="sheet-subtitle" text-anchor="start">B · SALAMANDRA-V1a</text>
-<text x="20" y="131" class="micro" text-anchor="start">2× FIXED FINS ON AFT CORE BOOMS · NO MOVABLE RUDDER · MARGINAL [E]</text>
+<text x="20" y="131" class="micro" text-anchor="start">2× CORE-ROOTED FIXED FINS · FORWARD OF FIXED PROP · NO MOVABLE RUDDER [E]</text>
 <line x1="51" y1="38" x2="32" y2="38" class="medium" marker-end="url(#arrow-end)"/>
 <text x="54" y="39" class="label" text-anchor="start">FORWARD</text>
 <text x="314" y="43" class="sheet-subtitle" text-anchor="start">C · V1 REAR CLEARANCE</text>
@@ -218,14 +219,14 @@
 <circle cx="350" cy="103" r="29.4" class="provisional-line" id="side-rear-prop-hazard" style="fill:#c43d32;fill-opacity:.045;stroke:#b83b32;stroke-width:.4;stroke-dasharray:1.5 1"/>
 <circle cx="350" cy="103" r="25.4" class="provisional-line" id="side-rear-prop-disk" style="fill:none;stroke:#b83b32;stroke-width:.55"/>
 <rect x="312.75" y="101.25" width="4.5" height="3.5" class="provisional-line" id="side-rear-boom-left" style="fill:#f4c46a;fill-opacity:.24;stroke:#985b00;stroke-width:.45;stroke-dasharray:2 1"/>
-<rect x="314.5" y="38.831" width="1" height="62.419" class="provisional-line" id="side-rear-fin-left" style="fill:#f4c46a;fill-opacity:.18;stroke:#985b00;stroke-width:.55;stroke-dasharray:2 1"/>
+<rect x="314.5" y="37.146" width="1" height="61.966" class="provisional-line" id="side-rear-fin-left" style="fill:#f4c46a;fill-opacity:.18;stroke:#985b00;stroke-width:.55;stroke-dasharray:2 1"/>
 <rect x="382.75" y="101.25" width="4.5" height="3.5" class="provisional-line" id="side-rear-boom-right" style="fill:#f4c46a;fill-opacity:.24;stroke:#985b00;stroke-width:.45;stroke-dasharray:2 1"/>
-<rect x="384.5" y="38.831" width="1" height="62.419" class="provisional-line" id="side-rear-fin-right" style="fill:#f4c46a;fill-opacity:.18;stroke:#985b00;stroke-width:.55;stroke-dasharray:2 1"/>
+<rect x="384.5" y="37.146" width="1" height="61.966" class="provisional-line" id="side-rear-fin-right" style="fill:#f4c46a;fill-opacity:.18;stroke:#985b00;stroke-width:.55;stroke-dasharray:2 1"/>
 <line x1="375.4" y1="107.5" x2="382.75" y2="107.5" class="dimension"/>
 <line x1="375.4" y1="105" x2="375.4" y2="110" class="extension"/>
 <line x1="382.75" y1="105" x2="382.75" y2="110" class="extension"/>
 <text x="314" y="136" class="micro" text-anchor="start" id="side-rear-clearance-label">BOOM: 29.4 nominal / 13.4 residual [E]/[I]</text>
-<text x="314" y="141" class="micro" text-anchor="start" id="side-rear-clearance-status">ANALYTICAL PASS / F2 PHYSICAL OPEN · axial projection overlap 0.0 mm</text>
+<text x="314" y="141" class="micro" text-anchor="start" id="side-rear-clearance-status">ANALYTICAL PASS / F2 PHYSICAL OPEN · axial residual 8.33 mm · overlap 0.0 mm</text>
 <line x1="90.564" y1="66.35" x2="108" y2="49" class="leader provisional-line"/>
 <circle cx="90.564" cy="66.35" r="0.65" class="provisional-dot"/>
 <text x="106.5" y="48.2" class="provisional-text" text-anchor="end">E01 MAX 153.0 × 22.6 [M]/[E]</text>
@@ -238,12 +239,12 @@
 <line x1="233.75" y1="212.9" x2="298" y2="225" class="leader provisional-line"/>
 <circle cx="233.75" cy="212.9" r="0.65" class="provisional-dot"/>
 <text x="299.5" y="224.2" class="provisional-text" text-anchor="start">LOCAL SKID z −111.6 · PROP CLEARANCE 10 [I]</text>
-<line x1="228.283" y1="185" x2="300" y2="198" class="leader provisional-line"/>
-<circle cx="228.283" cy="185" r="0.65" class="provisional-dot"/>
-<text x="301.5" y="197.2" class="provisional-text" text-anchor="start">2× AFT BOOMS TO x +213 [D]/[I]</text>
-<line x1="209.425" y1="148.92" x2="300" y2="153" class="leader provisional-line"/>
-<circle cx="209.425" cy="148.92" r="0.65" class="provisional-dot"/>
-<text x="301.5" y="152.2" class="provisional-text" text-anchor="start">V1a 2× FIXED FINS · S_v,total 6.23 dm² · NO HINGE / SERVO</text>
+<line x1="229.142" y1="185" x2="300" y2="198" class="leader provisional-line"/>
+<circle cx="229.142" cy="185" r="0.65" class="provisional-dot"/>
+<text x="301.5" y="197.2" class="provisional-text" text-anchor="start">2× AFT ROOT SUPPORTS END x +217 [D]/[I]</text>
+<line x1="212.403" y1="147.031" x2="300" y2="153" class="leader provisional-line"/>
+<circle cx="212.403" cy="147.031" r="0.65" class="provisional-dot"/>
+<text x="301.5" y="152.2" class="provisional-text" text-anchor="start">V1a 2× FIXED FINS · S_v,total 6.14 dm² · NO HINGE / SERVO</text>
 <line x1="56.325" y1="185" x2="84" y2="168" class="leader provisional-line"/>
 <circle cx="56.325" cy="185" r="0.65" class="provisional-dot"/>
 <text x="82.5" y="167.2" class="provisional-text" text-anchor="end">V1 OML NOSE x -474.7 · +0.0 [D]/[I]</text>
@@ -258,13 +259,13 @@
 <text x="18" y="228" class="micro" text-anchor="start">
 <tspan x="18" dy="0">DATUM: root c/4 x = 0; motor axis z = 0; positive z up.</tspan>
 <tspan x="18" dy="3.4">Shared [D]/[E]: root r1, Ø8 boom/socket, pack envelope, Ø28 motor and V1a fin sizing.</tspan>
-<tspan x="18" dy="3.4">Side OML, equipment vertical placement, local skid and twin-boom interfaces remain [I].</tspan>
+<tspan x="18" dy="3.4">Side OML, equipment vertical placement, local skid and twin-root interfaces remain [I].</tspan>
 <tspan x="18" dy="3.4">O4: CAMERA FRONT/CENTRELINE [D]; COAX STRAIGHT-LINE LOWER BOUND 46.0/50.0 mm [D]/[M].</tspan>
-<tspan x="18" dy="3.4">FIN PLANFORM EACH [D]/[E]: LE 25.0° · Λc/4 20.379° · taper 0.45.</tspan>
+<tspan x="18" dy="3.4">FIN PLANFORM EACH [D]/[E]: LE 20.0° · Λc/4 15.064° · taper 0.45.</tspan>
 <tspan x="18" dy="3.4">ROOT FAIRING [I]: contained inside the credited planform; no forward decorative extension.</tspan>
 <tspan x="18" dy="3.4">Cnβ independent corners: power-on -0.00029…+0.00119; power-off -0.00029…+0.00119 /deg [E].</tspan>
-<tspan x="18" dy="3.4">V1 COUPLED PACKAGING [E]/[I]: nose +0.0 mm; mass 1602.8 g; O4 coax 46.0/50.0 mm.</tspan>
-<tspan x="18" dy="3.4">BODY OML [I]: CLEAN 739.7 mm; V1 739.7 mm; V1 nose-to-boom extent 687.8 mm.</tspan>
-<tspan x="18" dy="3.4">INSTALL [I]: roots y ±140; axial residual 0.05 mm to inflated prop slab; radial residual 13.4 mm; F2 open.</tspan>
+<tspan x="18" dy="3.4">V1 COUPLED PACKAGING [E]/[I]: nose +0.0 mm; mass 1602.0 g; O4 coax 46.0/50.0 mm.</tspan>
+<tspan x="18" dy="3.4">BODY OML [I]: CLEAN 739.7 mm; V1 739.7 mm; V1 nose-to-boom extent 691.3 mm.</tspan>
+<tspan x="18" dy="3.4">INSTALL [I]: roots y ±140; axial residual 8.33 mm to inflated prop slab; radial residual 13.4 mm; F2 open.</tspan>
 </text>
 </svg>

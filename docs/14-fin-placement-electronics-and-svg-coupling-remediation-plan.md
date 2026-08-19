@@ -16,17 +16,35 @@
 
 ## 0. Implementation result
 
-The plan has been implemented in the calculation and drawing system. The selected result
-is a two-fin, AR 2.0, taper 0.45 swept trapezoid at `x_AC = +280 mm`, found by a 5 mm
-station sweep rather than inherited from the old SVG. Total area is 3.4737 dm²; each fin
-has 186.4 mm span and 128.5/57.8 mm root/tip chords. The complete lower fin/boom module is
-59.97 g.
+The plan has been implemented and then corrected after adversarial review of the rendered
+side elevation. Motor `x = +212.5 mm` and propeller plane `x = +235.0 mm` are immutable
+inputs. Python sweeps 401 fin aerodynamic-centre stations from +80 to +280 mm at 0.5 mm
+spacing, resizes every candidate to the same nominal `Cnβ = +0.00050/deg` target, and
+rejects candidates that violate wing-root support, 250 mm print height, 60 g mass, radial
+clearance, or axial propeller clearance. The selected two-fin trapezoid has `x_AC =
++115.5 mm`, total area 6.1437 dm², AR 2.0, taper 0.45, 20° leading-edge sweep, 247.9 mm
+span, and 170.9/76.9 mm root/tip chords.
 
-The mass/CG/package iteration converges in two passes: V1 AUW 1615.63 g, battery
-`x = −386.74 mm`, camera `x = −463.79 mm`, VTX `x = −429.61 mm`, nose extension
-17.81 mm and V1 body OML length 757.51 mm. The propeller check now uses a shared inflated
-hazard envelope: boom clearance is 29.4 mm nominal and 13.4 mm residual after the explicit
-16.0 mm allowance. This remains an analytical pass with F2 physical verification open.
+The side-view root is also solver-owned. The old graphic reused the 7.0 mm support
+half-height as the fin-root elevation even though the local upper wing OML reaches
+15.05 mm at the forward root. The implementation now samples 101 airfoil points across
+the root/wing overlap and adds 0.50 mm clearance, producing `z_root = +15.550 mm`.
+The carbon support remains centred at `z = 0` with a 7.0 mm top; an 8.550 mm printed
+saddle is shown between it and the aerodynamic root. No propulsion coordinate changes.
+
+The complete lower module is 48.73 g: 35.61 g for the two 0.85 mm-equivalent LW-PLA-HT
+shells/mounts at the conservative 620 kg/m³ foamed-density bound, 10.07 g for two Ø3 mm
+aluminium leading-edge rods, and 3.04 g for two Ø6/4 mm carbon root supports. The coupled
+layout closes without changing propulsion or extending the nose: V1 AUW is 1601.98 g,
+battery `x = −363.27 mm`, camera `x = −445.98 mm`, VTX `x = −418.00 mm`, and body OML
+length 739.70 mm.
+
+The propeller check uses the shared measured 10.2 mm axial slab plus 5.0 mm dynamic
+inflation and an additional required 8.0 mm residual. The selected fin and support retain
+10.33 and 8.33 mm respectively beyond the inflated forward face, so side-view axial
+overlap is exactly zero. Radial support clearance remains 29.4 mm nominal and 13.4 mm
+after the explicit 16.0 mm radial allowance. Status remains analytical pass with F2
+physical verification open.
 
 The generated side sheet contains the electronics skeleton and a rear-view clearance
 proof; the fin sheet contains the same Python-derived planform plus top/rear installation

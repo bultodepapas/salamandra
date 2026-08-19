@@ -31,7 +31,6 @@
         "maximum_width_mm": 104.0
       },
       "open_project_blockers": [
-        "v1_battery_reachable",
         "mass_reserves_located",
         "net_union_mass_ownership_closed",
         "body_inclusive_np_trim_closed",
@@ -70,7 +69,6 @@
         "maximum_width_mm": 152.0
       },
       "open_project_blockers": [
-        "v1_battery_reachable",
         "mass_reserves_located",
         "net_union_mass_ownership_closed",
         "body_inclusive_np_trim_closed",
@@ -109,7 +107,6 @@
         "maximum_width_mm": 120.0
       },
       "open_project_blockers": [
-        "v1_battery_reachable",
         "mass_reserves_located",
         "net_union_mass_ownership_closed",
         "body_inclusive_np_trim_closed",
@@ -140,10 +137,10 @@
         "travel_min_x_mm": -371.2001599291635
       },
       "v1": {
-        "cg_x_mm": -88.87211068477885,
-        "placed_x_mm": -371.2001599291635,
-        "reachable": false,
-        "required_x_mm": -389.00667945918434,
+        "cg_x_mm": -93.78395276913182,
+        "placed_x_mm": -363.2712331969533,
+        "reachable": true,
+        "required_x_mm": -363.2712331969533,
         "travel_max_x_mm": -336.1044131881771,
         "travel_min_x_mm": -371.2001599291635
       }
@@ -324,7 +321,7 @@
       "clean_battery_reachable": true,
       "mass_reserves_located": false,
       "net_union_mass_ownership_closed": false,
-      "v1_battery_reachable": false,
+      "v1_battery_reachable": true,
       "wing_installation_audit_closed": false
     },
     "projected": {

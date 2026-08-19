@@ -492,6 +492,39 @@ def section_limits(y_mm: float, x_fraction: float) -> tuple[float, float]:
     raise RuntimeError("airfoil station interpolation failed")
 
 
+FIN_ROOT_OML_CLEARANCE_M = 0.0005
+
+
+def fin_root_interface_z_m(fin, samples: int = 101) -> float:
+    """Return the planar fin-root datum above the local wing upper OML.
+
+    The fin is rooted at its declared lateral station.  Only the portion of
+    the root that overlaps the wing planform participates in this envelope;
+    the aft overhang is carried by the separate carbon-root support.  Sampling
+    the actual interpolated airfoil ordinates prevents the side drawing from
+    using the support half-height as an arbitrary fin-root coordinate.
+    """
+    if samples < 2:
+        raise ValueError("fin root OML envelope requires at least two samples")
+    y_m = fin.lateral_station_m
+    local_le_m = design_config.x_le(y_m)
+    local_chord_m = design_config.chord(y_m)
+    local_te_m = local_le_m + local_chord_m
+    overlap_start_m = max(fin.root_le_x_m, local_le_m)
+    overlap_end_m = min(fin.root_te_x_m, local_te_m)
+    if overlap_end_m <= overlap_start_m:
+        raise ValueError("fin root does not overlap the local wing planform")
+    upper_m = []
+    for index in range(samples):
+        x_m = overlap_start_m + (
+            (overlap_end_m - overlap_start_m) * index / (samples - 1)
+        )
+        x_fraction = (x_m - local_le_m) / local_chord_m
+        _, upper_fraction = section_limits(y_m * 1000.0, x_fraction)
+        upper_m.append(upper_fraction * local_chord_m)
+    return max(upper_m) + FIN_ROOT_OML_CLEARANCE_M
+
+
 def _servo_vertical_interval(y_mm: float, x_fraction: float) -> tuple[float, float]:
     """Allowed servo-centre z interval across the complete body footprint."""
     chord_mm = design_config.chord(y_mm / 1000.0) * 1000.0
@@ -988,19 +1021,19 @@ def reference_components(variant: str = "clean") -> tuple[Component3D, ...]:
         from yaw_stability import (
             FIN_BOOM_HEIGHT_M,
             FIN_BOOM_WIDTH_M,
-            FIN_ROOT_Z_M,
             fin_area_for_target,
             fin_geometry,
         )
 
         fin = fin_geometry(fin_area_for_target(0.0005))
+        fin_root_z_m = fin_root_interface_z_m(fin)
         fin_shell_x_mm = (fin.root_te_x_m - 0.5 * fin.mac_m) * 1000.0
-        fin_shell_z_mm = (FIN_ROOT_Z_M + fin.centroid_height_m) * 1000.0
+        fin_shell_z_mm = (fin_root_z_m + fin.centroid_height_m) * 1000.0
         spar_dx_m = fin.tip_le_x_m - fin.root_le_x_m
         spar_length_mm = hypot(fin.span_m, spar_dx_m) * 1000.0
         spar_pitch_deg = degrees(atan2(spar_dx_m, fin.span_m))
         spar_x_mm = 0.5 * (fin.root_le_x_m + fin.tip_le_x_m) * 1000.0
-        spar_z_mm = (FIN_ROOT_Z_M + 0.5 * fin.span_m) * 1000.0
+        spar_z_mm = (fin_root_z_m + 0.5 * fin.span_m) * 1000.0
         boom_length_mm = (fin.boom_x_end_m - fin.boom_x_start_m) * 1000.0
         boom_x_mm = 0.5 * (fin.boom_x_start_m + fin.boom_x_end_m) * 1000.0
         for side, sign in (("left", -1.0), ("right", 1.0)):

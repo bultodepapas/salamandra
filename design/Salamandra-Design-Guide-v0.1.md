@@ -87,7 +87,7 @@ in the aircraft master model.
 | Directional configuration | CLEAN without fins or V1 with two fixed fins | `FIXED` |
 
 `SALAMANDRA-CLEAN` and `SALAMANDRA-V1` use the same wing, elevons, servos and
-flight-controller installation. V1 adds only the two aft CORE booms and two fixed fins.
+flight-controller installation. V1 adds only two CORE-rooted fixed fins and their short aft root supports.
 No movable rudder or flap/flaperon mode is released.
 
 ### 3.1 Current SVG drawing set
@@ -285,21 +285,23 @@ zero-freeplay linkage. ±20° is a provisional mechanical envelope, not a flight
 
 ### 6.6 V1 fixed-fin module
 
-V1 uses two identical fixed fins on two aft CORE booms. No rudder, linkage or additional
-servo is permitted in Article #1.
+V1 uses two identical fixed fins rooted at y = ±140 mm in the aft CORE. Motor and
+propeller stations are fixed; the complete fins and their short aft root supports remain
+forward of the inflated propeller hazard. No rudder, linkage or additional servo is
+permitted in Article #1.
 
 | Feature | Requirement | Status |
 |---|---|---|
-| Boom envelopes | 18 × 14 mm; x = +156.0…+372.4 mm; y = ±140 mm | `PROVISIONAL [I]` |
-| Fin root LE / TE | x = +217.6 / +346.2 mm | `FIXED [D]` |
-| Fin tip LE / TE | x = +304.5 / +362.4 mm | `FIXED [D]` |
-| Fin span | 186.4 mm each | `FIXED [D]` |
-| Root / tip chord | 128.5 / 57.8 mm | `FIXED [D]` |
-| Leading-edge / quarter-chord sweep | +25.0° / +20.379° | `FIXED [D/E]` |
-| Fin aerodynamic centre | x = +280 mm; selected mass-feasible trade knee | `FIXED [D]` |
+| Root-support envelopes | 18 × 14 mm; x = +156.0…+216.6 mm; y = ±140 mm | `PROVISIONAL [I]` |
+| Fin root LE / TE | x = +43.6 / +214.6 mm | `FIXED [D]` |
+| Fin tip LE / TE | x = +133.8 / +210.8 mm | `FIXED [D]` |
+| Fin span | 247.9 mm each | `FIXED [D]` |
+| Root / tip chord | 170.9 / 76.9 mm | `FIXED [D]` |
+| Leading-edge / quarter-chord sweep | +20.0° / +15.064° | `FIXED [D/E]` |
+| Fin aerodynamic centre | x = +115.5 mm; fixed-propeller constrained optimum | `FIXED [D]` |
 | Section | Symmetric biconvex; 3.0 mm root to 1.5 mm tip; approximately 0.8 mm TE | `PROVISIONAL [E]` |
 | Leading edge | External Ø3 mm aluminium rod in open rear-facing C-seat | `PROVISIONAL [E]` |
-| Propeller clearance | 29.4 mm nominal / 13.4 mm residual after explicit 16.0 mm allowance | `PROVISIONAL [D/E/I]` |
+| Propeller clearance | Radial support: 29.4 mm nominal / 13.4 mm residual; axial support: 8.33 mm beyond inflated forward hazard; zero side-view overlap | `PROVISIONAL [D/E/I]` |
 | Attachment | Provisional Ø1.75 mm alignment dowel plus M2 screw; root fillet contained inside credited planform | `PROVISIONAL [I]` |
 
 Do not create an enclosed Ø3.2 mm bore inside the thin fin. Keep the saddle, load spread,
@@ -319,9 +321,9 @@ fillet and attachment hardware parametric for the F2 review.
 | Tip closures | 40.0 g | `ALLOCATION [E]` |
 | Two moving elevons | 45.0 g | `ALLOCATION [E]` |
 | Elevon balance mass | 54 g total; final value by measured balance | `ALLOCATION [D/E]` |
-| Complete V1 fin/boom module | 60.0 g maximum; 59.97 g analytical lower model | `GATE [D/E]` |
+| Complete V1 fin/support module | 60.0 g maximum; 48.73 g analytical lower model | `GATE [D/E]` |
 | CLEAN all-up mass | 1553.25 g analytical | `GATE [D/E]` |
-| V1 all-up mass | 1615.63 g coupled analytical; absolute stall-model ceiling 1620.4 g | `GATE [D/E]` |
+| V1 all-up mass | 1601.98 g coupled analytical; absolute stall-model ceiling 1620.4 g | `GATE [D/E]` |
 
 The CAD handoff must include mass and centre-of-mass reports for every printed part,
 the CLEAN assembly and the V1 module. A mass estimate without assigned material and
@@ -336,11 +338,11 @@ density is not acceptable.
 | Equivalent root reference | 21.5 mm forward of root leading edge | `FIXED [D]` |
 | CLEAN pack centre | x = −337.74 mm | `FIXED [D]` |
 | CLEAN pack-centre travel | x = −371.20…−336.10 mm | `PROVISIONAL [D]` |
-| Coupled V1 pack-centre travel | x = −389.01…−336.10 mm after nose extension | `PROVISIONAL [D/I]` |
-| V1 required / solved pack centre | x = −386.74 / −386.74 mm | `FIXED [D]` |
+| Coupled V1 pack-centre travel | x = −371.20…−336.10 mm; no nose extension required | `PROVISIONAL [D/I]` |
+| V1 required / solved pack centre | x = −363.27 / −363.27 mm | `FIXED [D]` |
 
-The coupled V1 solver extends the forward structure 17.81 mm, adds 2.40 g of calculated
-tube/cradle support and converges to the target CG in two iterations. This is analytical
+The coupled V1 solver retains the CLEAN forward structure, adds no tube/cradle support,
+and converges to the target CG in one iteration. This is analytical
 packaging closure, not CAD or physical closure. Keep the cradle, equipment stations and
 linear-mass assumptions parametric and verify them at F2.
 
@@ -356,14 +358,14 @@ fixed; there is no inboard elevon.
 | Feature | CAD requirement | Status |
 |---|---|---|
 | Nose boom | Aluminium Ø8 / Ø6 internal; CORE support near x = −132 mm; 50 mm insertion | `PROVISIONAL [D/E]` |
-| Forward cradle plane | CLEAN x = −452.70 mm; V1 x = −470.51 mm | `PROVISIONAL [D/I]` |
+| Forward cradle plane | CLEAN/V1 x = −452.70 mm | `PROVISIONAL [D/I]` |
 | CORE boom socket | Ø8.2 mm bore at y = 0, z = 0; four-perimeter collar | `PROVISIONAL` |
-| Battery cradle | CLEAN 201 mm / 15.0 g; V1 218.81 mm / 16.33 g; 68 × 25 mm internal; 1.2 mm walls | `PROVISIONAL [D/E/I]` |
+| Battery cradle | CLEAN/V1 201 mm / 15.0 g; 68 × 25 mm internal; 1.2 mm walls | `PROVISIONAL [D/E/I]` |
 | Battery retention | Two 12 mm straps and spring-lock hatch | `PROVISIONAL [E]` |
-| Camera | DJI O4 envelope 13.44 × 12.36 × 16.50 mm; CLEAN/V1 centre x = −445.98/−463.79 mm; lens faces −x | `FIXED [M/D]` |
-| VTX | 30 × 30 × 6 mm; CLEAN/V1 centre x = −418.0/−429.61 mm, z = +31.5 mm; provide airflow | `FIXED [M/D]` |
-| Camera–VTX cable | CLEAN/V1 centre-distance lower bound 45.99/50.00 mm; routing and bend radius unresolved | `PROVISIONAL [D/I]` |
-| Body OML length | CLEAN/V1 = 739.70/757.51 mm; generated from the respective layout | `PROVISIONAL [D/I]` |
+| Camera | DJI O4 envelope 13.44 × 12.36 × 16.50 mm; CLEAN/V1 centre x = −445.98 mm; lens faces −x | `FIXED [M/D]` |
+| VTX | 30 × 30 × 6 mm; CLEAN/V1 centre x = −418.0 mm, z = +31.5 mm; provide airflow | `FIXED [M/D]` |
+| Camera–VTX cable | CLEAN/V1 centre-distance lower bound 45.99 mm; routing and bend radius unresolved | `PROVISIONAL [D/I]` |
+| Body OML length | CLEAN/V1 = 739.70 mm; generated from the respective layout | `PROVISIONAL [D/I]` |
 | FC cavity | 64 × 45 × 21 mm with 30.5 × 30.5 mm, Ø4 mm mounting pattern | `PROVISIONAL [M]` |
 | FC station | Approximately x = 0…+40 mm | `PROVISIONAL [E]` |
 | ESC station | Approximately x = +60 mm | `PROVISIONAL [E]` |

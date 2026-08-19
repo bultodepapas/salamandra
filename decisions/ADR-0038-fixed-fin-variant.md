@@ -1,8 +1,8 @@
 # ADR-0038 — Dual directional configuration: finless baseline + passive twin-fin variant (V1)
 
 **Status:** 🔄 Provisional · **Date:** 2026-08-19 · **Confidence:** Medium `[D]`/`[E]`
-**Reversible:** Yes; the two fins and aft booms are additive CORE modules.
-**Feeds:** I-20, I-29, G10, F2, E8, O1 and O14.
+**Reversible:** Yes; the two fins and short root supports are additive CORE modules.
+**Feeds:** I-20, I-29, I-30, G10, F2, E8, O1 and O14.
 
 ## Context
 
@@ -36,11 +36,11 @@ neither supports a floating plate behind the propeller.
    stabilising yaw arm. Rejected for this planform.
 4. **Split drag rudders.** They can generate control moment but provide no passive static
    directional stiffness when closed and would make the baseline FC-dependent. Deferred.
-5. **Two aft CORE booms with fixed fins outside the propeller disk.** Retains the existing
-   propeller station, separates the fin root loads, and provides a direct wing/CORE load
-   path. A Python station sweep selects the first mass-feasible knee at `x_ac = +280 mm`;
-   the resulting mass then drives the coupled CG and forward-packaging solve. Accepted
-   provisionally.
+5. **Two CORE-rooted fixed fins forward of the propeller hazard.** Retains the immutable
+   motor and propeller stations, separates the root loads at y = ±140 mm, and provides a
+   direct wing/CORE load path. A Python sweep selects the minimum-mass candidate satisfying
+   stability, 250 mm print height, 60 g mass, root support, radial clearance and at least
+   8 mm axial residual beyond the inflated propeller hazard. Accepted provisionally.
 
 ## Decision
 
@@ -51,36 +51,38 @@ SALAMANDRA-CLEAN   Finless O1 efficiency baseline. Directionally unstable by the
                    current analytical band; FC-dependent and not the first-flight default.
 
 SALAMANDRA-V1a     Two identical passive fixed fins, no movable rudder.
-                   Each fin: S_v = 1.7368 dm², span 186.4 mm,
-                   root/tip chord 128.5/57.8 mm, AR 2.0, taper 0.45,
-                   25° leading-edge and 20.379° quarter-chord sweep.
-                   Total S_v = 3.4737 dm²; x_ac = +280 mm.
-                   Two 18 × 14 mm aft boom envelopes at y = ±140 mm,
-                   x = +156…+372.4 mm; 29.4 mm nominal / 13.4 mm residual
-                   propeller radial clearance after a 16.0 mm allowance.
+                   Each fin: S_v = 3.0718 dm², span 247.9 mm,
+                   root/tip chord 170.9/76.9 mm, AR 2.0, taper 0.45,
+                   20° leading-edge and 15.064° quarter-chord sweep.
+                   Total S_v = 6.1437 dm²; x_ac = +115.5 mm.
+                   Two 18 × 14 mm aft root supports at y = ±140 mm,
+                   x = +156.0…+216.6 mm; 29.4/13.4 mm nominal/residual
+                   radial clearance and 8.33 mm controlling axial residual.
+                   Side-view propeller overlap is zero.
                    The dorsal root fillet remains inside the credited planform.
 ```
 
 The V1a planform is a conventional low-aspect-ratio swept trapezoid. The 0.45 taper avoids
-the former needle-like tip, while the 25° leading edge provides a continuous external Ø3 mm
+the former needle-like tip, while the 20° leading edge provides a continuous external Ø3 mm
 aluminium nose spar. Both trailing-edge vertices are derived from the same trapezoid; no
 vertical trailing-edge constraint is imposed. These are engineering choices, not styling cues.
 
 V1a is still a **marginal test configuration**, not a released production geometry. V1b is
-the positive-corner alternative if F2 mass closure permits its larger 4.63 dm² total area.
+the positive-corner alternative if F2 mass closure permits its larger 8.18 dm² total area.
 
 ## Consequences and gates
 
-- V1a analytical lower assembly: **59.97 g**, including both fin shells/mounts, both
-  leading-edge spars and both carbon booms. The 60.00 g allocation leaves **0.03 g**, so
-  measured F2 mass and final root-fillet/saddle mass are mandatory closure items.
-- The coupled solution adds **2.40 g** of forward boom/cradle support, moves the battery to
-  x = −386.74 mm, camera to x = −463.79 mm and VTX to x = −429.61 mm, and extends the nose
-  **17.81 mm**. Resulting AUW is **1615.63 g** and analytical stall speed **44.93 km/h**.
-- At 180 km/h, each V1a fin carries an estimated **26.6 N**, with **2.17 N·m** root moment.
-  A 3.0 mm solid PETG root gives analytical yield FS **4.45** without spar credit; first
-  bending mode is approximately **14.6 Hz**, so structural and flutter testing remain open.
-- Estimated parasite-drag increment is **ΔCD0 = +0.0019**, approximately **+13.3%** against
+- V1a analytical lower assembly: **48.73 g**, including 35.61 g of LW-PLA-HT
+  shells/mounts, 10.07 g of aluminium leading-edge spars and 3.04 g of carbon root
+  supports. The 60.00 g allocation leaves **11.27 g**; coupon density/strength and final
+  root-fillet/saddle mass remain mandatory F2 items.
+- The coupled solution adds no forward support, leaves camera/VTX at −445.98/−418.00 mm,
+  and moves only the battery to x = −363.27 mm. Resulting AUW is **1601.98 g** and
+  analytical stall speed **44.74 km/h**.
+- At 180 km/h, each V1a fin carries an estimated **47.0 N**, with **5.09 N·m** root moment.
+  A 3.0 mm root screen gives analytical yield FS **2.52** without spar credit; first
+  bending mode is approximately **8.2 Hz**, so structural and flutter testing remain open.
+- Estimated parasite-drag increment is **ΔCD0 = +0.0034**, approximately **+23.1%** against
   the clean drag model. CLEAN alone retains the headline O1 efficiency claim.
 - V1a's independent lower `Cnβ` corner is still negative. E8 yaw perturbation and decay
   testing is mandatory; the drawing must continue to say `MARGINAL`, not `STABLE`.
