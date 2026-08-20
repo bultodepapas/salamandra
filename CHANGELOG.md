@@ -4,6 +4,30 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.44] — 2026-08-20
+
+**C53 — the battery catalog multiplied ampere-hours through a series string, and the
+6S/8S choice had no coupled packaging, balance or aircraft-level calculation.**
+
+- I-16 printed 4S1P/6S1P P42A capacity as 16.8/25.2 Ah. A series-only string retains
+  the cell's **4.2 Ah**; voltage and energy, not Ah, multiply by cell count. Corrected
+  `battery_pack_layout.py` and the published I-16 tables, and added a validation guard.
+- Added I-32 and `battery_6s_8s_trade.py`. The calculator uses current P42A v4 maximum
+  dimensions and enumerates all **18 six-cell / 20 eight-cell** rectangular layouts.
+  It separates the manufacturer's 15.5/14.7 Wh typical/minimum rating from the
+  15.12 Wh arithmetic nominal cell energy.
+- The installed design cases are **6S 445 ± 5 g / 90.72 Wh** and
+  **8S 585 ± 5 g / 120.96 Wh**. The 8S pack centre solves 62.2 mm aft of 6S, but
+  CLEAN becomes **1693.25 g / 46.00 km/h**, failing the 45 km/h gate by 72.9 g.
+- The complete common-bay screen now distinguishes the user's flat/narrow option
+  (**340.5 × 44.0 × 22.6 mm** pack union) from flat moderate-width
+  (**246.7 × 70.8 × 22.6 mm**) and stacked alternatives. Rail length includes the
+  one-ended lead envelope and ±10 mm pack travel; dimensions remain pre-wall `[E]`.
+- No design baseline changes: Article #1 remains the released 6S1P power system, and
+  no 8S motor, ESC, PDB, bay or OML is authorized by this research calculation.
+
+---
+
 ## [1.43] — 2026-08-19
 
 **C52 — the repository was renamed and the documentation site still pointed at the old

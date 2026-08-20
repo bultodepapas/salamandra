@@ -36,7 +36,10 @@ GAP       = 0.0      # mm inter-cell clearance, 0.0 = tight, 0.5 = with slack
 BAY = (190.0, 70.0, 32.0)   # (x, y, z) mm
 
 # --- reference cells (datasheet [M], masses/pack via [D]) -------------------
-# name : (mass_g, cap_Ah, Vnom, I_cont_A, I_chg_A, energy_Wh)
+# name : (mass_g, cap_Ah, Vnom, I_cont_A, I_chg_A, arithmetic_nominal_energy_Wh)
+# In a series-only pack, voltage and energy multiply by cell count; Ah and
+# current capability do not.  The energy entry is Vnom * Ah, intentionally
+# distinct from any separately rated manufacturer typical-energy value.
 CELLS = {
     "Molicel P42A": (70.0, 4.2, 3.6, 45.0, 8.4, 15.12),
     "Samsung 50E":  (68.0, 5.0, 3.6, 9.8, 4.9, 18.00),
@@ -48,6 +51,15 @@ CELL_ALIASES = {"P42A": "Molicel P42A", "50E": "Samsung 50E"}
 P42A_DATASHEET_URL = (
     "https://www.molicel.com/wp-content/uploads/INR21700P42A-V4-80092.pdf"
 )
+# Additional P42A v4 manufacturer values needed by the 6S/8S trade.  The
+# data-sheet typical/minimum energy is deliberately separate from the CELLS
+# tuple's arithmetic Vnom*Ah value.
+P42A_CAPACITY_MINIMUM_AH = 4.0
+P42A_VOLTAGE_FULL_V = 4.2
+P42A_VOLTAGE_CUTOFF_V = 2.5
+P42A_ENERGY_TYPICAL_WH = 15.5
+P42A_ENERGY_MINIMUM_WH = 14.7
+P42A_DC_RESISTANCE_OHM = 16.0e-3
 # Maximum sleeved cell envelope for CAD packaging.  This is deliberately
 # separate from the nominal generic-21700 model above: fit decisions must use
 # manufacturer maxima, while concept enumeration may retain nominal geometry.
@@ -270,7 +282,7 @@ def main():
             pwh = N * wh
             pakw = pm + HARDWARE
             print(f"    {cname:>20} {pm:>7.0f} {pakw:>7.0f} {pwh:>7.1f} "
-                  f"{N*q:>6.2f} {N*v:>6.1f} {N*4.2:>6.1f} {pwh/pakw*1000:>7.0f} {ic:>7.1f}")
+                  f"{q:>6.2f} {N*v:>6.1f} {N*4.2:>6.1f} {pwh/pakw*1000:>7.0f} {ic:>7.1f}")
         print()
 
     checks = {
@@ -292,6 +304,9 @@ def main():
         "released 4S1P and 6S1P layouts fit the bay": all(
             fits(reference_pack_envelope(name), BAY)
             for name in REFERENCE_LAYOUTS),
+        "series-only packs preserve cell Ah instead of multiplying it": all(
+            cell[1] in (4.2, 5.0) for cell in CELLS.values()
+        ),
         "invalid pack configuration is rejected": _invalid_pack_is_rejected(),
     }
     print("VALIDATION")

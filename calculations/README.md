@@ -47,6 +47,8 @@ Data sources consumed (all `[M]`):
 | `fuselage_contract.py` | **Provisional body design contract** — separates body-owned from wing-owned installation envelopes and defines three bounded, deliberately non-cylindrical OML families plus wall/clearance policy | `fuselage_geometry.py`, I-28, OP-21/F2 | stdlib only |
 | `fuselage_geometry.py` | **Analytical fuselage backend** — asymmetric superelliptic sections driven by clamped cubic B-spline laws and smooth envelope maxima; emits a watertight mesh, plan/side outlines, containment margins, fairness and projected-area diagnostics | OML review drawing, trade manifest/OBJ, CAD review | numpy; `equipment_layout.py` |
 | `fuselage_trade.py` | **Deterministic provisional OML trade** — seeded Latin-hypercube perturbations, feasibility-first scoring and Pareto filtering across the three family priors; writes the review manifest and OBJ without claiming aircraft closure | `geometry/fuselage/provisional/`, I-28 | numpy; fuselage contract/geometry |
+| `fuselage_length_trade.py` | **I-31 flat-pack and fuselage-length screen** — compares the selected 2x2 flat 4S1P and 3x2 flat 6S1P P42A envelopes, separates physical fit from CG-compatible rail length, and quantifies first-order friction, yaw-moment, structure and pitch-inertia sensitivities without changing the OML | I-31, I-16, future fuselage trade | numpy; battery, balance and provisional fuselage geometry |
+| `battery_6s_8s_trade.py` | **I-32 complete 6S1P/8S1P P42A trade** — enumerates all 18/20 rectangular layouts from manufacturer-maximum cells; compares common flat/stacked bays, mass, CG, stall, estimated cruise sensitivity, pack losses and voltage/Kv consequences without releasing a layout | I-32, I-16/I-31, future battery/propulsion/fuselage ADRs | numpy; battery, balance, drag and propulsion contracts |
 | `verify_calculations.py` | **Cross-module verification** — proves geometry, mass, battery, CG, stall, power, propulsion, speed-role, airfoil, stability, control and yaw contracts agree; runs every deterministic local CLI by default (`--fast` skips them); each contract group is exception-isolated | Whole calculation system, I-23 | numpy |
 | `sweep_trade.py` | **Coupled sweep selection** — full VLM + Weissinger NP, trim/twist/reflex, section-Cl margin, self-consistent balance/packaging and NASA TP-1685 divergence trend for −20…−10° candidates | I-21, ADR-0040 | numpy |
 | `vlm_ala_volante.py` | Panel vortex lattice for the forward-swept wing (taper + twist). NP, CL_α, load distribution, Cm0-per-degree twist yield | I-07, G8, guide §4.3 | numpy |
@@ -362,6 +364,20 @@ manufacturer-maximum P42A path: **153.0 × 65.7 × 22.6 mm** for the same 2×3 l
 The maximum datasheet dimensions already include the cell sleeve, so the script does
 not add the nominal wrapper twice; it adds only the declared pack-level wrap, nickel
 and lead allowances. `equipment_layout.py` imports this maximum envelope directly.
+
+#### I-32 extension: complete 6S1P/8S1P trade
+
+```bash
+python3 battery_6s_8s_trade.py
+```
+
+Enumerates all **18 six-cell** and **20 eight-cell** rectangular arrangements with
+maximum P42A dimensions. It corrects the series-pack capacity semantics (both packs are
+4.2 Ah), compares the 445 ± 5 g 6S and 585 ± 5 g 8S cases, solves their pack stations,
+and prints five common-bay alternatives. Published flat-pair results: narrow
+**340.5 × 44.0 × 22.6 mm** pack union, moderate **246.7 × 70.8 × 22.6 mm**, and
+short/wide **235.2 × 87.4 × 22.6 mm**; rail length includes the asymmetric 12 mm aft
+lead and ±10 mm centre travel. These are pre-wall screening envelopes, not CAD authority.
 
 ### 7.1 Servo hinge moment (I-18)
 

@@ -16,7 +16,7 @@
         "longest_parallel_side_fraction": 0.15625,
         "maximum_area_in_root_band": false,
         "maximum_area_mm2": 5828.817344202402,
-        "maximum_area_x_mm": -403.5040195359815,
+        "maximum_area_x_mm": -403.5040195359814,
         "no_long_parallel_sides": false,
         "no_payload_to_root_neck": false,
         "payload_to_root_minimum_area_ratio": 0.0
@@ -24,10 +24,10 @@
       "family": "slender_spindle",
       "geometry_feasible": false,
       "id": "slender_spindle-000",
-      "minimum_envelope_margin_mm": 0.15027039783648002,
+      "minimum_envelope_margin_mm": 0.15027039783651627,
       "objectives": {
         "curvature_energy": 144620.02069033592,
-        "gross_body_area_m2": 0.18020965559581403,
+        "gross_body_area_m2": 0.180209655595814,
         "maximum_width_mm": 104.0
       },
       "open_project_blockers": [
@@ -54,7 +54,7 @@
         "longest_parallel_side_fraction": 0.03875,
         "maximum_area_in_root_band": true,
         "maximum_area_mm2": 9300.002365478134,
-        "maximum_area_x_mm": -22.558437172462334,
+        "maximum_area_x_mm": -22.55843717246222,
         "no_long_parallel_sides": true,
         "no_payload_to_root_neck": true,
         "payload_to_root_minimum_area_ratio": 1.0
@@ -62,10 +62,10 @@
       "family": "integrated_spindle",
       "geometry_feasible": true,
       "id": "integrated_spindle-000",
-      "minimum_envelope_margin_mm": 2.509585029573593,
+      "minimum_envelope_margin_mm": 2.5095850295736315,
       "objectives": {
         "curvature_energy": 127809.75570565242,
-        "gross_body_area_m2": 0.22832002510632357,
+        "gross_body_area_m2": 0.22832002510632354,
         "maximum_width_mm": 152.0
       },
       "open_project_blockers": [
@@ -92,7 +92,7 @@
         "longest_parallel_side_fraction": 0.06875,
         "maximum_area_in_root_band": false,
         "maximum_area_mm2": 6633.692524230434,
-        "maximum_area_x_mm": -398.8808935364242,
+        "maximum_area_x_mm": -398.8808935364241,
         "no_long_parallel_sides": true,
         "no_payload_to_root_neck": false,
         "payload_to_root_minimum_area_ratio": 0.0
@@ -100,7 +100,7 @@
       "family": "service_spindle",
       "geometry_feasible": false,
       "id": "service_spindle-000",
-      "minimum_envelope_margin_mm": 0.787182391822684,
+      "minimum_envelope_margin_mm": 0.7871823918227049,
       "objectives": {
         "curvature_energy": 145382.90441516432,
         "gross_body_area_m2": 0.20502325729065726,
@@ -133,22 +133,22 @@
         "placed_x_mm": -337.7443630249043,
         "reachable": true,
         "required_x_mm": -337.7443630249043,
-        "travel_max_x_mm": -336.1044131881771,
-        "travel_min_x_mm": -371.2001599291635
+        "travel_max_x_mm": -336.10441318817686,
+        "travel_min_x_mm": -371.20015992916336
       },
       "v1": {
-        "cg_x_mm": -93.78395276913182,
-        "placed_x_mm": -363.2712331969533,
+        "cg_x_mm": -93.7839527691318,
+        "placed_x_mm": -363.27123319695323,
         "reachable": true,
-        "required_x_mm": -363.2712331969533,
-        "travel_max_x_mm": -336.1044131881771,
-        "travel_min_x_mm": -371.2001599291635
+        "required_x_mm": -363.27123319695323,
+        "travel_max_x_mm": -336.10441318817686,
+        "travel_min_x_mm": -371.20015992916336
       }
     },
     "camera_aperture": {
       "forward_oml_extension_mm": 22.0,
-      "lens_face_x_mm": -452.7001599291635,
-      "outer_nose_x_mm": -474.7001599291635,
+      "lens_face_x_mm": -452.70015992916336,
+      "outer_nose_x_mm": -474.70015992916336,
       "status": "reserved_not_cut"
     },
     "coordinate_system": "mm; x aft, y starboard, z up; root c/4 origin",
@@ -166,7 +166,7 @@
       "longest_parallel_side_fraction": 0.03875,
       "maximum_area_in_root_band": true,
       "maximum_area_mm2": 9300.002365478134,
-      "maximum_area_x_mm": -22.558437172462334,
+      "maximum_area_x_mm": -22.55843717246222,
       "no_long_parallel_sides": true,
       "no_payload_to_root_neck": true,
       "payload_to_root_minimum_area_ratio": 1.0
@@ -176,7 +176,7 @@
         "authority": "[D]",
         "identifier": "o4_camera",
         "limiting_point_mm": [
-          -452.7001599291635,
+          -452.70015992916336,
           -8.629999999999999,
           -15.7
         ],
@@ -191,18 +191,18 @@
           -17.45,
           36.95
         ],
-        "minimum_margin_mm": 9.475532022339426,
+        "minimum_margin_mm": 9.475532022339355,
         "passed": true
       },
       {
         "authority": "[D]/[E]",
         "identifier": "battery_6s1p",
         "limiting_point_mm": [
-          -432.60228656113577,
+          -432.6022865611357,
           -35.3,
           29.549999999999997
         ],
-        "minimum_margin_mm": 4.496968830696327,
+        "minimum_margin_mm": 4.496968830696311,
         "passed": true
       },
       {
@@ -213,14 +213,14 @@
           -6.45,
           6.45
         ],
-        "minimum_margin_mm": 14.948303024603982,
+        "minimum_margin_mm": 14.948303024603877,
         "passed": true
       },
       {
         "authority": "[M]",
         "identifier": "fc",
         "limiting_point_mm": [
-          -114.48395276913186,
+          -114.48395276913183,
           -20.7,
           -0.9500000000000002
         ],
@@ -246,7 +246,7 @@
           -12.45,
           -17.45
         ],
-        "minimum_margin_mm": 7.636418347154401,
+        "minimum_margin_mm": 7.636418347154396,
         "passed": true
       },
       {
@@ -257,7 +257,7 @@
           39.95,
           -2.45
         ],
-        "minimum_margin_mm": 12.793047598285323,
+        "minimum_margin_mm": 12.793047598285332,
         "passed": true
       },
       {
@@ -268,7 +268,7 @@
           -16.45,
           16.45
         ],
-        "minimum_margin_mm": 2.509585029573593,
+        "minimum_margin_mm": 2.5095850295736315,
         "passed": true
       }
     ],
@@ -283,12 +283,12 @@
     "family_name": "B - reference integrated spindle",
     "geometry_feasible": true,
     "mesh": {
-      "area_m2": 0.22832002510632357,
+      "area_m2": 0.22832002510632354,
       "boundary_edges": 0,
       "centroid_mm": [
-        -121.80986442746327,
-        -0.0005202243436269935,
-        8.124692230103603
+        -121.80986442746322,
+        -0.0005202243436312738,
+        8.124692230103614
       ],
       "circumferential": 72,
       "faces": 11664,
@@ -332,8 +332,8 @@
       "side_projected_area_m2": 0.04907180032992476
     },
     "resolution_convergence": {
-      "area_relative_change": 0.0006808527193182714,
-      "volume_relative_change": 0.0012822937651378171
+      "area_relative_change": 0.0006808527193183928,
+      "volume_relative_change": 0.001282293765137641
     },
     "schema": 2,
     "structural_corridor_ownership": [
@@ -352,7 +352,7 @@
       "pitot_probe_tube"
     ],
     "x_range_mm": [
-      -474.7001599291635,
+      -474.70015992916336,
       265.0
     ]
   },

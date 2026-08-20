@@ -8,6 +8,12 @@
 > bay simply needs the bay (or the fuselage) sized accordingly. Nothing here forbids
 > any arrangement.
 
+> **Correction C53 (2026-08-20):** the former §6.1 tables multiplied cell Ah by
+> the number of series cells. That is electrically incorrect: a 1P series string
+> retains the cell capacity, so both 4S1P and 6S1P P42A packs are **4.2 Ah**;
+> voltage and Wh, not Ah, scale with series count. The calculator and tables now
+> preserve Ah correctly. I-32 extends the verified catalog to 8S1P.
+
 ## 1. Objective and scope
 
 This thread establishes, from reproducible calculation (`[D]`), the **physical
@@ -223,17 +229,17 @@ Pack mass, energy, voltage and available current are computed per reference cell
 
 | Cell | Cells | Mass (+hw) | Wh | Ah | Vnom | Vmax | Wh/kg | I pack |
 |---|---|---|---|---|---|---|---|---|
-| Molicel P42A | 4 | **280 (305) g** | 60.5 | 16.8 | 14.4 | 16.8 | 198 | **45 A** |
-| Samsung 50E | 4 | **272 (297) g** | 72.0 | 20.0 | 14.4 | 16.8 | 242 | 9.8 A |
-| Average | 4 | **276 (301) g** | 66.2 | 18.4 | 14.4 | 16.8 | 220 | 27.4 A |
+| Molicel P42A | 4 | **280 (305) g** | 60.5 | **4.2** | 14.4 | 16.8 | 198 | **45 A** |
+| Samsung 50E | 4 | **272 (297) g** | 72.0 | **5.0** | 14.4 | 16.8 | 242 | 9.8 A |
+| Average | 4 | **276 (301) g** | 66.2 | **4.6** | 14.4 | 16.8 | 220 | 27.4 A |
 
 **6S1P (2×3, single layer — 153 × 64 × 22 mm):**
 
 | Cell | Cells | Mass (+hw) | Wh | Ah | Vnom | Vmax | Wh/kg | I pack |
 |---|---|---|---|---|---|---|---|---|
-| Molicel P42A | 6 | **420 (445) g** | 90.7 | 25.2 | 21.6 | 25.2 | 204 | **45 A** |
-| Samsung 50E | 6 | **408 (433) g** | 108.0 | 30.0 | 21.6 | 25.2 | 249 | 9.8 A |
-| Average | 6 | **414 (439) g** | 99.4 | 27.6 | 21.6 | 25.2 | 226 | 27.4 A |
+| Molicel P42A | 6 | **420 (445) g** | 90.7 | **4.2** | 21.6 | 25.2 | 204 | **45 A** |
+| Samsung 50E | 6 | **408 (433) g** | 108.0 | **5.0** | 21.6 | 25.2 | 249 | 9.8 A |
+| Average | 6 | **414 (439) g** | 99.4 | **4.6** | 21.6 | 25.2 | 226 | 27.4 A |
 
 > **Comparison with the mission table (docs/00 §3.3):** the guide quotes 4S1P ≈ 300 g /
 > 65 Wh and 6S1P ≈ 455 g / 97 Wh (`[E]`). The datasheet-derived numbers above put

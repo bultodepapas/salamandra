@@ -29,6 +29,7 @@ import aircraft_scene
 import airfoil_reflex_trade
 import b3_screening
 import balance_cg
+import battery_6s_8s_trade
 import battery_pack_layout
 import design_config
 import divergence
@@ -62,11 +63,13 @@ LOCAL_SCRIPTS = (
     "fuselage_contract.py",
     "fuselage_geometry.py",
     "fuselage_trade.py",
+    "fuselage_length_trade.py",
     "drag_model.py",
     "aero_contract.py",
     "contract_lint.py",
     "generate_blueprints.py",
     "battery_pack_layout.py",
+    "battery_6s_8s_trade.py",
     "mass_budget.py",
     "balance_cg.py",
     "equipment_layout.py",
@@ -236,6 +239,12 @@ def check_balance_and_battery(add):
             for value in equipment_layout.PACK_6S1P_CAD_ENVELOPE_MM
         ) + " mm",
     )
+    for name, passed in battery_6s_8s_trade.validation_checks().items():
+        add(
+            f"battery 6S/8S trade: {name}",
+            passed,
+            "I-32 maximum-cell geometry/electrical screen",
+        )
 
 
 def check_equipment_layout(add):
