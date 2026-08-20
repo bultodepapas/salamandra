@@ -17,7 +17,7 @@ estimated input. Validation cases must pass before a modification is trusted.
 | Tool | Version | Used for | Where to get it |
 |---|---|---|---|
 | Python | ≥ 3.10 | All harnesses below | python.org |
-| numpy | ≥ 1.24, < 3.0 | VLM, Weissinger-L, screening harness | `pip install -r calculations/requirements.txt` |
+| numpy | ≥ 2.0, < 3.0 | VLM, Weissinger-L, screening harness | `pip install -r calculations/requirements.txt` |
 | **XFOIL** | **6.99** (official MIT Windows console build) | Airfoil polar generation | <https://web.mit.edu/drela/Public/web/xfoil/> → `XFOIL6.99.zip` (GPL; the source ships in the zip too) |
 | PowerShell 7 / cmd | Windows | Batch driving (see the Fortran stdin note below) | Built into Windows |
 
@@ -50,6 +50,9 @@ Data sources consumed (all `[M]`):
 | `fuselage_length_trade.py` | **I-31 flat-pack and fuselage-length screen** — compares the selected 2x2 flat 4S1P and 3x2 flat 6S1P P42A envelopes, separates physical fit from CG-compatible rail length, and quantifies first-order friction, yaw-moment, structure and pitch-inertia sensitivities without changing the OML | I-31, I-16, future fuselage trade | numpy; battery, balance and provisional fuselage geometry |
 | `battery_6s_8s_trade.py` | **I-32 complete 6S1P/8S1P P42A trade** — enumerates all 18/20 rectangular layouts from manufacturer-maximum cells; compares common flat/stacked bays, mass, CG, stall, estimated cruise sensitivity, pack losses and voltage/Kv consequences without releasing a layout | I-32, I-16/I-31, future battery/propulsion/fuselage ADRs | numpy; battery, balance, drag and propulsion contracts |
 | `verify_calculations.py` | **Cross-module verification** — proves geometry, mass, battery, CG, stall, power, propulsion, speed-role, airfoil, stability, control and yaw contracts agree; runs every deterministic local CLI by default (`--fast` skips them); each contract group is exception-isolated | Whole calculation system, I-23 | numpy |
+| `nf_design_guide_audit.py` | **NF Design Guide 2024 audit evidence** — fingerprints the reviewed PDF and re-derives the planform/Reynolds, printable-edge, section-axis, mass/CG, divergence and twin-fin quantities cited by the repository review | `design/NF-Design-Guide-2024-Repository-Audit.md` | numpy; current design-contract modules |
+| `nf_design_guide_part2_airfoil_trim.py` | **NF Design Guide Part 2 evidence** — contrasts fitted and operating-point airfoil moments, exposes the low-speed trim gap, propagates moment/NP/CG/inertia sensitivities and optionally runs finite-trailing-edge XFOIL cases | Part 2 airfoil/trim audit | numpy; current design-contract modules; optional XFOIL 6.99 |
+| `nf_design_guide_part3_directional_stability.py` | **NF Design Guide Part 3 evidence** — propagates the V1 `Cn_beta` band into reduced modes, audits configuration inertia and fin side-force assumptions, and quantifies fin Reynolds number, lever-arm, span-load and finite-sideslip sensitivities | Part 3 lateral-directional audit | numpy; current design-contract modules |
 | `sweep_trade.py` | **Coupled sweep selection** — full VLM + Weissinger NP, trim/twist/reflex, section-Cl margin, self-consistent balance/packaging and NASA TP-1685 divergence trend for −20…−10° candidates | I-21, ADR-0040 | numpy |
 | `vlm_ala_volante.py` | Panel vortex lattice for the forward-swept wing (taper + twist). NP, CL_α, load distribution, Cm0-per-degree twist yield | I-07, G8, guide §4.3 | numpy |
 | `weissinger_np.py` | **C2: independent NP check** — Weissinger-L swept lifting line (bound vortex on the c/4 line, control points at 3/4 chord). Structurally different formulation from the panel VLM | I-07, C2, G8 | numpy |
