@@ -25,6 +25,7 @@ XFOIL is an **external GPL binary**, not bundled with this repository. Point the
 scripts at it with `--xfoil <path>` or the `XFOIL_EXE` environment variable.
 
 Data sources consumed (all `[M]`):
+
 - **UIUC Airfoil Data Site** (<https://m-selig.ae.illinois.edu/ads/coord_database.html>)
   — E205, S5010, E387 coordinates and measured E387 polar.
 - **aerodesign.de tailless-airfoil database** (Siegmann; MH data from Hepperle) — MH60
@@ -53,6 +54,7 @@ Data sources consumed (all `[M]`):
 | `nf_design_guide_audit.py` | **NF Design Guide 2024 audit evidence** — fingerprints the reviewed PDF and re-derives the planform/Reynolds, printable-edge, section-axis, mass/CG, divergence and twin-fin quantities cited by the repository review | `design/NF-Design-Guide-2024-Repository-Audit.md` | numpy; current design-contract modules |
 | `nf_design_guide_part2_airfoil_trim.py` | **NF Design Guide Part 2 evidence** — contrasts fitted and operating-point airfoil moments, exposes the low-speed trim gap, propagates moment/NP/CG/inertia sensitivities and optionally runs finite-trailing-edge XFOIL cases | Part 2 airfoil/trim audit | numpy; current design-contract modules; optional XFOIL 6.99 |
 | `nf_design_guide_part3_directional_stability.py` | **NF Design Guide Part 3 evidence** — propagates the V1 `Cn_beta` band into reduced modes, audits configuration inertia and fin side-force assumptions, and quantifies fin Reynolds number, lever-arm, span-load and finite-sideslip sensitivities | Part 3 lateral-directional audit | numpy; current design-contract modules |
+| `nf_design_guide_part4_structure_aeroelasticity.py` | **NF Design Guide Part 4 evidence** — derives rigid-wing semispan load-path screens, audits joint torque/stiffness and dowel shear geometry, quantifies divergence clearance and the elevon-balance inertia trade, and inventories propulsion forcing and manufacturing authority | Part 4 structure/aeroelastic release audit | numpy; current design-contract modules |
 | `sweep_trade.py` | **Coupled sweep selection** — full VLM + Weissinger NP, trim/twist/reflex, section-Cl margin, self-consistent balance/packaging and NASA TP-1685 divergence trend for −20…−10° candidates | I-21, ADR-0040 | numpy |
 | `vlm_ala_volante.py` | Panel vortex lattice for the forward-swept wing (taper + twist). NP, CL_α, load distribution, Cm0-per-degree twist yield | I-07, G8, guide §4.3 | numpy |
 | `weissinger_np.py` | **C2: independent NP check** — Weissinger-L swept lifting line (bound vortex on the c/4 line, control points at 3/4 chord). Structurally different formulation from the panel VLM | I-07, C2, G8 | numpy |
@@ -588,6 +590,7 @@ the V1 fin near the trailing edge; carbon optimisation deferred (ADR-0015).
 **Any modification to a script must pass its validation case before use.** This is not a
 formality: two real bugs were caught exactly this way during the 2026-08-05 session
 (recorded in CHANGELOG [1.11]):
+
 - a MAC-normalization error in the VLM (historic, C17);
 - an odd `y·tanΛ` moment arm in Weissinger-L — the c/4 line sweeps forward on **both**
   halves, so the arm is `|y|·tanΛ`; the bug zeroed the sweep moment by symmetry and was

@@ -7,6 +7,7 @@ launch and landing control**
 **Source:** Peter Wick, *Designing Flying Wings* (2024 English PDF), principally PDF
 pages 70–120, 151–169, 199–212 and 270–303  
 **Previous:** [Part 2 — airfoil fidelity, pitch trim, static margin and elevon authority](NF-Design-Guide-2024-Repository-Audit-Part-02-Airfoil-Trim.md)
+**Next:** [Part 4 — printed structure, joints and aeroelastic release](NF-Design-Guide-2024-Repository-Audit-Part-04-Structure-Aeroelasticity.md)
 
 ## 1. Part 3 disposition
 
@@ -613,5 +614,6 @@ the complete derivative set is measured or credibly modeled, and yawed launch/la
 states are demonstrated, V1a remains a useful experimental geometry—not a flight-released
 solution.
 
-Part 4 will continue with structure, aeroelasticity, printed joints, full-aircraft test
-strategy and a consolidated release-gate roadmap.
+[Part 4](NF-Design-Guide-2024-Repository-Audit-Part-04-Structure-Aeroelasticity.md)
+continues with structure, aeroelasticity, printed joints, full-aircraft test strategy and
+a consolidated release-gate roadmap.

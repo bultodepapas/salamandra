@@ -1,0 +1,974 @@
+# NF Design Guide 2024 — Salamandra Repository Audit
+
+**Part 4 of 4: printed structure, load paths, joints, divergence, flutter, physical
+verification and release closure**  
+**Audit date:** 20 August 2026  
+**Aircraft baseline:** Salamandra Article #1, release v0.6.0, Design Guide v0.24  
+**Source:** Peter Wick, *Designing Flying Wings* (2024 English PDF), principally PDF
+pages 109–113, 246–266 and 303–308  
+**Previous:** [Part 3 — lateral-directional stability and operations](NF-Design-Guide-2024-Repository-Audit-Part-03-Directional-Stability.md)
+
+## 1. Part 4 disposition
+
+**Salamandra has a rational preliminary structural architecture, but it does not yet
+have a substantiated structure, a flutter clearance or a manufacturing-authoritative
+aircraft definition.**
+
+The repository has made several good decisions that agree with the NF guide:
+
+- it uses a closed multicell printed shell instead of treating rods as a complete wing;
+- it recognizes skin buckling as a stiffness failure and uses infill as skin support;
+- it distinguishes stiffness from strength in several component trades;
+- it places the removable joint away from the root and provides a two-member torque
+  couple;
+- it separates manoeuvre limit loads from ultimate structural loads;
+- it exposes a large divergence uncertainty band instead of publishing only the nominal
+  result;
+- it requires elevon mass balance and low-free-play actuation; and
+- its release notes explicitly say that v0.6.0 is not flight qualification.
+
+Those are substantial strengths. The problem is maturity, not the absence of engineering
+thought. Most structural dimensions are still requirements or estimates, while the
+physical properties and integrated load paths needed to validate them do not exist.
+
+The principal quantitative results of this part are:
+
+| Audit result | Current value | Consequence |
+|---|---:|---|
+| Right-semispan aerodynamic root moment, +6 g limit `[I]` | **13.38 N·m** | No complete CORE/root/skin/spar load-path substantiation exists. |
+| Right-semispan aerodynamic root moment, +9 g ultimate `[I]` | **20.06 N·m** | No complete ultimate or proof-load case exists. |
+| CORE–PANEL torque at y = 195 mm, +6 g `[I]` | **1.185 N·m** | Already 18.5% above the current joint trade's 1.0 N·m upper band, before control-load movement. |
+| CORE–PANEL torque at y = 195 mm, +9 g `[I]` | **1.778 N·m** | The joint demand basis must be replaced. |
+| Conservative calculated `Vdiv` | **129.6 km/h** | Fails the repository criterion `Vdiv >= 1.5 VNE = 240 km/h`. |
+| GJ multiplier needed to retain `VNE = 160 km/h` | **3.43×** | Coupon confirmation alone cannot be presumed to close the requirement. |
+| Static twist amplification at the 105 km/h cap | **2.91×** | The active cap is close enough to the conservative boundary that measured stiffness and disciplined expansion matter. |
+| Current E7 points above conservative `Vdiv` | **130 and 150 km/h** | The written schedule is unsafe and must be withdrawn. |
+| Meaningful files in `cad/` and `stl/` | **0** | No manufacturing authority or inspectable integrated structure exists. |
+
+The current modal evidence is still more serious. `I-05` publishes approximately
+25/106/82 Hz bending/torsion/elevon estimates without a reproducible structural owner and
+concludes that classic bending–torsion flutter is not critical. The NF guide identifies
+the missing mechanism directly: swept-wing body-freedom flutter couples aircraft pitch,
+wing bending and sweep-induced twist. A ratio between three unmeasured component
+frequencies cannot clear that mechanism.
+
+Accordingly:
+
+| Item | Part 4 disposition |
+|---|---|
+| Closed PETG multicell shell | **Retain as a provisional architecture** |
+| Ø12 carbon bending tube and Ø6 anti-rotation pin | **Retain pending absolute joint and load-path tests** |
+| Five-times-section joint stiffness requirement | **Retain as a system target; not demonstrated by the present geometry** |
+| Gyroid 5% as skin stabilizer | **Retain; direct stiffness and buckling credit remain unmeasured** |
+| +6/−3 g limit and +9/−4.5 g ultimate semantics | **Retain as provisional structural cases** |
+| `VNE = 160 km/h` as substantiated article limit | **Not demonstrated** |
+| 105 km/h initial operational cap | **Do not increase; it is not a structural qualification** |
+| Claim that classic bending–torsion flutter is not critical | **Withdraw** |
+| Blackbox FFT from first flight as flutter verification | **Reject as the primary preflight gate** |
+| E7 schedule at 90/110/130/150 km/h | **Withdraw immediately** |
+| Repository v0.6.0 as a documentation integration release | **Valid within its explicit non-claims** |
+| Manufacturing or flight release | **Blocked** |
+
+## 2. Evidence, scope and reproducibility
+
+The reviewed PDF is:
+
+```text
+/home/bulto/salmandra/INSPIRATION/NF Design guide 2024 english.pdf
+SHA-256: a0e81c98b884c7a9c29f75a9bd7ccdf19ff2255642ba2ac5bdd4337696daabca
+```
+
+The calculations cited in this part are generated by
+[`calculations/nf_design_guide_part4_structure_aeroelasticity.py`](../calculations/nf_design_guide_part4_structure_aeroelasticity.py):
+
+```bash
+python3 -m pip install -r calculations/requirements.txt
+python3 calculations/nf_design_guide_part4_structure_aeroelasticity.py
+```
+
+The audit script consumes, rather than recopies, the current:
+
+- Article #1 mass and load factors from `design_config.py`;
+- 40×6 VLM planform, wash-in and span-load solution from `vlm_ala_volante.py`;
+- conservative, nominal and optimistic divergence cases from `divergence.py`;
+- joint geometry and torque band from `joint_pin_trade.py`;
+- filament-dowel geometry and material bands from `filament_dowel_pins.py`; and
+- O1 propeller operating point from `propulsion_match.py`.
+
+Evidence tags retain the repository convention:
+
+- `[M]`: measured evidence on a relevant physical article;
+- `[D]`: deterministic consequence of declared inputs;
+- `[E]`: engineering estimate or transferred empirical band; and
+- `[I]`: audit diagnostic or incomplete model, not a flight prediction.
+
+The semispan load calculations in this part are deliberately `[I]`. They apply the
+current rigid-wing VLM load shape at `CL = 0.589` to the +6 g and +9 g aircraft
+resultants. They do **not** contain:
+
+- distributed structural and equipment inertia relief;
+- control-deflection movement of the aerodynamic center;
+- elastic load redistribution;
+- nonlinear section stall;
+- local loads from propulsion, landing, handling or asymmetric flight;
+- cut-outs, openings, seams, stress concentrations or bearing transfer; or
+- material allowables.
+
+Their purpose is to test whether the current component load assumptions are at least
+consistent with the repository's own global load case. They are not a substitute for the
+structural model the project still needs.
+
+## 3. What the NF guide contributes
+
+### 3.1 Stiffness and strength are separate design problems
+
+The guide describes swept-wing models that fluttered despite spars sized for high load
+with a 1.5 strength factor. The transferable lesson is not that a specific safety factor
+is wrong. It is that **static strength does not establish dynamic stiffness, modal
+separation or aeroelastic stability** (PDF pp. 248–249 and 303–308).
+
+For a mode dominated by bending,
+
+```text
+frequency scales approximately as sqrt(EI / modal mass)
+```
+
+Adding low-modulus material can raise failure load while doing little for frequency, and
+its added mass can consume part of the frequency gain. The guide therefore favors high
+specific modulus, stiff load paths and mass placement near modal nodes over indiscriminate
+reinforcement.
+
+This is directly relevant to Salamandra. The printed PETG shell may have adequate local
+stress margin and still be too flexible for divergence or body-freedom flutter. Conversely,
+the Ø12 pultruded carbon tube can be useful in bending even though its torsional
+contribution is small. Every component needs both:
+
+1. a strength/buckling/fatigue check under the applicable load case; and
+2. an assembly stiffness/modal check with the actual boundary conditions and mass.
+
+### 3.2 Spar position must follow aerodynamic and inertial torque
+
+For nearly unswept planks, the guide notes that reflexed sections keep the aerodynamic
+load near the quarter chord, while the wing's own mass center may lie near 45% chord. A
+spar near 30% chord can reduce the combined aerodynamic and inertial torsion, and a rigid
+D-box uses section depth effectively (PDF pp. 109–112).
+
+The important lesson is not the universal adoption of `x/c = 0.30`. Salamandra is a
+forward-swept, powered, printed wing with distributed equipment and elevons. Its required
+process is:
+
+```text
+as-built aerodynamic load line
+        +
+as-built spanwise/chordwise mass and inertia
+        +
+control-surface load movement
+        +
+actual shear-center line
+        -> spar/web/load-path placement and aeroelastic coupling
+```
+
+The repository currently defines the tube at `x/c = 0.25`, brackets the elastic axis at
+`x/c = 0.30…0.45`, and treats the shell as the primary torsion path. That is a coherent
+preliminary arrangement, but the as-built mass distribution and shear center have not
+been measured and the control-deflected load line has not been propagated into structure.
+
+### 3.3 Control deflection creates structural loads behind the main spar
+
+The guide emphasizes that a deflected flap moves its load aft and can create much larger
+torsion than the nominal pressure-point-fixed section. It also identifies longitudinal
+loads and low stiffness in the thin trailing region behind the main spar (PDF p. 111).
+
+This is a major missing Salamandra case. The current structural screen and divergence
+model apply an aerodynamic-center/elastic-axis eccentricity but do not calculate:
+
+- the pressure-center shift under symmetric pitch command;
+- differential elevon torsion during roll;
+- hinge-line load transfer into the fixed trailing-edge bridge;
+- combined pitch and roll command at manoeuvre load;
+- servo hard-point and pushrod loads; or
+- the aft-cell/hinge-region buckling path.
+
+The static servo torque calculation is useful, but it does not establish the structural
+load path or dynamic stiffness of the complete surface and linkage.
+
+### 3.4 Swept spars and joints redirect load
+
+At a change in swept-spar direction, cap forces cannot simply turn a corner. The guide
+describes local load peaks and the need to carry the unresolved force into a shell,
+auxiliary spar or stiff node. It recommends A-shaped spar paths, mechanically effective
+node connections and, where appropriate, two spars or a double D-box (PDF pp. 249–251).
+
+The Horten XIV case history is especially useful. Earlier aircraft from the same kit
+fluttered; the successful aircraft added a stiffer/lighter carbon spar, a lower spar in
+the center section, a three-dimensional center truss, a stiffer joiner and an additional
+lower-spar connection. The important outcome is the system change: no single material
+substitution closed the problem (PDF pp. 252–264).
+
+Salamandra's analogous critical nodes are:
+
+- the end of each panel tube inside the CORE socket;
+- the transition from two separated panel members into the central printed CORE;
+- the y = 195 mm removable interface;
+- the y = 347 and 498 mm bonded segment joints;
+- the motor mount and its pusher-vibration path;
+- the elevon servo pocket and fixed root bridge;
+- the V1 fin saddles and root-support booms; and
+- every opening through the closed torsion cells.
+
+None can be validated from a plan-view tube line alone. The three-dimensional node and
+its shell/bearing/bond load transfer are the design.
+
+### 3.5 Soft joints, gaps and free play are aeroelastic elements
+
+The guide treats straight hinge axes, sealed hinge gaps, light control surfaces and
+stiff, play-free linkages as structural/aeroelastic requirements, not finishing details
+(PDF pp. 246–249). It also calls soft wing joints a flutter risk (PDF p. 308).
+
+This reinforces Salamandra's mass balance and no-free-play decisions, but it raises their
+closure standard. A declared pin diameter, servo catalog torque or nominal TPU strip
+dimension does not establish:
+
+- joint rotational stiffness;
+- hinge stiffness and damping;
+- control-free and control-fixed frequencies;
+- backlash, deadband, friction or hysteresis;
+- servo holding stiffness under powered conditions; or
+- the evolution of those quantities after cycles, heat and landing impacts.
+
+They must be measured on representative assemblies.
+
+### 3.6 Swept-wing flutter includes body freedom and bending–twist coupling
+
+The NF guide's central flutter mechanism is the coupling between aircraft pitch/angle of
+attack and swept-wing bending. Sweep geometrically converts bending into twist, while
+winglets, controls, propulsion and turbulence can provide excitation. On the SB13 work
+summarized by the guide, the remedies included higher-modulus bending structure, more
+stiffness, reduced spar sweep and tailored coupling (PDF pp. 303–308).
+
+The guide reports configuration-specific improvements of approximately:
+
+- 36% flutter-speed increase from the same amount of high-modulus rather than
+  high-strength carbon;
+- 93% from a stiffer high-modulus spar;
+- 16% from reducing spar sweep by 2.5 degrees; and
+- 145% from the combined optimized design.
+
+These values are evidence that the levers can be powerful. They are **not transferable
+Salamandra multipliers**. Aspect ratio, sweep direction, mode shapes, stiffness ratios,
+mass distribution and boundary conditions differ. The transferable requirement is to
+model and measure the Salamandra coupling.
+
+The current repository model does not contain aircraft pitch or bending–twist coupling.
+Static torsional divergence and a table of three estimated frequencies cannot answer a
+body-freedom flutter question.
+
+### 3.7 Mass placement is a modal variable
+
+The guide recommends placing concentrated masses near structural modal nodes where
+possible, while keeping winglets and controls light (PDF pp. 304 and 308). Salamandra
+already has a detailed three-dimensional equipment ledger, which is a strong foundation,
+but that ledger is optimized mainly for packaging and CG. It has not been projected onto
+measured mode shapes.
+
+Servo, battery, motor, fin and balance-weight placement must therefore be evaluated in a
+correlated modal model. A CG-feasible arrangement is not automatically a flutter-favorable
+arrangement.
+
+### 3.8 Each flying wing must be translated, not copied
+
+The guide explicitly warns that all flying-wing functions are coupled and that successful
+details cannot simply be transferred between configurations (PDF p. 113). That warning
+applies equally to the guide itself:
+
+- its 25-degree sweep observation is an experience trend, not a Salamandra design rule;
+- the SB13 sensitivity percentages are not scale factors;
+- composite-shell behavior does not transfer directly to printed PETG;
+- Horten high-aspect-ratio mode shapes are not Salamandra mode shapes; and
+- a flying precedent is useful evidence but not an absolute clearance.
+
+The repository is correct to use external designs as anchors and hypotheses. It must not
+use them as substitutes for representative properties and full-aircraft tests.
+
+## 4. Where the repository is already strong
+
+### 4.1 The structural architecture acknowledges torsion
+
+ADR-0002 defines a closed D-box plus center cell and ends the useful fixed torsion box at
+the elevon hinge. `divergence.py` correctly excludes the movable hinge cell. This is far
+more defensible than treating an open printed shell or a small pultruded rod as a torsion
+box.
+
+### 4.2 Skin buckling is recognized as a loss of effective GJ
+
+ADR-0028 correctly states that Bredt–Batho assumes a stable skin and that local skin
+buckling can collapse effective torsional stiffness before material failure. Assigning
+5% gyroid primarily to skin stabilization, without automatically crediting it as a
+quantified torsion path, is the correct conservative distinction.
+
+### 4.3 Carbon roles are separated by load mechanism
+
+ADR-0015 distinguishes pultruded axial fibers from ±45-degree torsional laminates and
+requires continuous bonding before a tube receives torsional credit. `divergence.py`
+quantifies the current Ø12 tube's limited effect rather than using “carbon” as a generic
+approval word.
+
+### 4.4 Modularity is treated as a structural penalty
+
+ADR-0032 places the removable joint at 30% half-span rather than at the root and explicitly
+models joint compliance in series with the panel. The use of a main tube plus an aft pin
+to form a torque couple is directionally correct and better than relying on sleeve friction.
+
+### 4.5 The load-factor semantics are now clear
+
+ADR-0044 and `flight_envelope.py` distinguish +6/−3 g manoeuvre limit loads from
++9/−4.5 g ultimate structural loads. They also state that a component checked at limit
+load requires at least 1.5 failure margin and that printed-process uncertainty may demand
+an additional special factor. That is sound discipline.
+
+### 4.6 Divergence uncertainty is visible
+
+`docs/07` and `divergence.py` publish the conservative 129.6 km/h failure beside the
+327.2 km/h nominal result. They also state that the 129.6–852.0 km/h spread is not a
+statistical confidence interval. This prevents a nominal analytical result from being
+misrepresented as a tested limit.
+
+### 4.7 The release package contains explicit non-claims
+
+Release v0.6.0 says that the body OML is provisional, `aircraft_feasible` is false,
+drawings are not for manufacture and E2/F2/S3/G7/G10/G11 remain open. The release process
+itself is mature. The weakness is that a repository integration release, a CAD baseline,
+a manufacturing release and a flight clearance do not yet have a single consolidated
+gate matrix. Section 8 below supplies that distinction.
+
+## 5. Quantitative contrast with the repository
+
+### 5.1 Aerodynamic semispan load screen
+
+At the V1 lower-model mass of 1.60198 kg, the current +6 g/+9 g rigid VLM screen gives:
+
+| Case | Right-semispan force | Load centroid | Root bending moment | Root EA torque at `xEA/c = 0.45` |
+|---|---:|---:|---:|---:|
+| +6 g limit | 47.15 N | 283.7 mm | **13.38 N·m** | **2.132 N·m** |
+| +9 g ultimate | 70.72 N | 283.7 mm | **20.06 N·m** | **3.198 N·m** |
+
+The load distribution is evaluated at the released wing `CLmax = 0.589`, corresponding
+to the positive manoeuvring corner. It is a useful first structural shape, but the final
+net internal loads require inertia relief from the actual spanwise mass distribution.
+
+That missing input matters. Wing shell, carbon, servo, elevon and balance masses accelerate
+with the structure and reduce or redistribute net bending relative to an aerodynamic-only
+load. Central battery/body/propulsion masses enter through the CORE. Without an as-built
+mass-per-length and chordwise inertia distribution, neither a point-load proof fixture nor
+a finite-element load case can be correct.
+
+### 5.2 Interface demand and the incomplete main load path
+
+The same screen produces:
+
+| Interface | Case | Outboard force | Local bending moment | EA torque | Force in a 65 mm ideal couple |
+|---:|---|---:|---:|---:|---:|
+| y = 195 mm, removable | +6 g | 29.43 N | 5.878 N·m | **1.185 N·m** | 18.24 N |
+| y = 195 mm, removable | +9 g | 44.14 N | 8.816 N·m | **1.778 N·m** | 27.36 N |
+| y = 347 mm, bonded | +6 g | 18.17 N | 2.280 N·m | 0.669 N·m | 10.29 N |
+| y = 347 mm, bonded | +9 g | 27.25 N | 3.419 N·m | 1.003 N·m | 15.44 N |
+| y = 498 mm, bonded | +6 g | 7.22 N | 0.450 N·m | 0.238 N·m | 3.66 N |
+| y = 498 mm, bonded | +9 g | 10.84 N | 0.675 N·m | 0.357 N·m | 5.49 N |
+
+The current `joint_pin_trade.py` uses 0.15–1.0 N·m at y = 195 mm. The +6 g rigid-wing
+screen is already 18.5% above that upper value, and +9 g is 77.8% above it. These values
+still omit the aft load shift under elevon command emphasized by the NF guide.
+
+The Ø12/10 mm tube has section modulus `8.783e-8 m3`. If it alone carried the y = 195 mm
+bending screen, nominal axial stress would be 66.9 MPa at limit and 100.4 MPa at ultimate.
+Those numbers do **not** establish a pass because the repository has not released:
+
+- a tube axial/compressive/buckling allowable;
+- a bonded length and shear-lag solution;
+- socket bearing, ovalization and local wall allowables;
+- the transition from tube into the central CORE;
+- combined bending, torsion and pull-out;
+- process/environmental special factors; or
+- fatigue and impact requirements.
+
+More importantly, the panel tube does not run continuously through the aircraft center.
+The printed CORE must collect the left and right socket loads and distribute them around
+the body, motor mount and openings. With no native CAD assembly or structural model, that
+central load path cannot yet be inspected.
+
+### 5.3 The removable-joint stiffness is a target, not a derived property
+
+The requirement `k_joint >= 5 k_section` is sensible as a system constraint. The current
+geometry does not demonstrate it.
+
+`joint_pin_trade.py` proves that an Ø1.75 mm polymer filament has negligible flexural
+stiffness relative to an Ø6 mm carbon pin under identical boundary conditions. That is a
+valid material/diameter trade. It does **not** calculate the absolute rotational stiffness
+of the actual joint, whose compliance includes:
+
+- pin and main-tube bending;
+- socket-wall bending and bearing;
+- local shell distortion;
+- contact length and clearance;
+- bonded embedment and shear lag;
+- fit, wear and assembly preload; and
+- the three-dimensional CORE load path.
+
+There is also a mechanics correction. For two members separated by arm `a`, a small joint
+rotation produces relative displacement `delta = a theta`. With translational member/socket
+stiffness `k_linear`:
+
+```text
+F = k_linear a theta
+T = F a
+k_theta = T/theta = k_linear a^2
+```
+
+Couple **strength** force scales as `T/a`; rotational stiffness scales with `a²`, not
+linearly with the arm as ADR-0031 currently states. The full assembly still requires a
+proper compliance model or test, so this correction is not permission to reduce a pin or
+socket.
+
+### 5.4 The bonded-dowel calculation uses the wrong shear geometry
+
+`filament_dowel_pins.py` treats each dowel as being in double shear. A dowel crossing one
+butt-joint interface has one shear plane unless a clevis-like geometry creates two
+distinct planes. The present segment-joint description creates one.
+
+Using the repository's lower PETG shear strength of 26 MPa, two Ø1.75 mm pins provide:
+
+```text
+two-pin single-shear capacity = 125.1 N
+worst y=347 declared limit demand = 33.0 N
+worst y=347 ultimate demand = 49.5 N
+screen FS at ultimate = 2.53
+```
+
+The corrected screen still looks adequate for a redundant alignment feature, but it is
+not the published FS of approximately 11. The final acceptance must also include printed
+orientation, collar bearing, hole tolerance, adhesive load sharing and cyclic joint
+behavior. The adhesive remains the primary path, as the ADR correctly states.
+
+### 5.5 The adhesive rule has no representative substantiation
+
+ADR-0023 specifies bond area at least three times the skin section and selects 3D-Gloop
+PETG or 30-minute epoxy. `I-04` provides useful comparative evidence, but no coupon or
+joint representative of Salamandra has measured:
+
+- surface preparation and cleaning;
+- printer/material/lot interaction;
+- lap shear and peel;
+- mixed-mode bending/torsion;
+- cure thickness and temperature;
+- ageing, humidity, fuel/cleaner exposure and thermal cycling;
+- creep under sustained socket load; or
+- failure location relative to the printed laminae.
+
+The three-times-area rule is therefore a design starting point `[I]`, not an allowable.
+The status of `I-04` as “Closed” can be read only as closure of the literature trade; it
+does not close the aircraft material/process qualification.
+
+### 5.6 The material decision is structurally expensive but honestly stated
+
+The repository's own comparison ranks PETG last among the considered materials in
+specific torsional stiffness, at about 59% of normal PLA's `G/rho`. PETG is retained for
+toughness and thermal/handling reasons. That can be a correct aircraft-level trade, but
+it makes measured stiffness and creep more important, not less.
+
+The required property set is orthotropic and process-specific. One scalar `E` and one
+scalar `G` cannot qualify a 45-degree rolled, segmented, gyroid-supported printed shell.
+At minimum the structural model needs relevant:
+
+```text
+Ex, Ey, Ez, Gxy, Gxz, Gyz, nu,
+tension/compression/shear allowables,
+creep and temperature reduction factors,
+fatigue/cycle behavior,
+wall-thickness and void statistics
+```
+
+for the actual printer, nozzle, layer height, raster, temperature, speed, filament
+conditioning and orientation. LW-PLA-HT used in the V1 fins requires a separate property
+and density basis.
+
+### 5.7 Static divergence remains open by the repository's own criterion
+
+The current divergence model reports:
+
+| Case | `Vdiv` | Margin to 240 km/h | Audit use |
+|---|---:|---:|---|
+| Conservative, unmeasured | **129.6 km/h** | **0.540×** | Governing pre-test case |
+| Nominal | 327.2 km/h | 1.363× | Sensitivity only |
+| Optimistic | 852.0 km/h | 3.550× | Non-design sensitivity |
+| Published combined GXY/gyroid/1.1 mm wall | 206.8 km/h | 0.862× | Still fails |
+
+Because `Vdiv` scales with the square root of effective torsional stiffness, retaining
+the present aerodynamic/geometric conservative corner and reaching 240 km/h requires:
+
+```text
+required GJ multiplier = (240 / 129.6)^2 = 3.43
+```
+
+If attributed to wall thickness alone under the linear thin-wall analogy, 0.9 mm would
+become approximately 3.09 mm. This is not a design recommendation; it shows that the
+criterion cannot be presumed to close with a minor slicer adjustment. Even the published
+combined 206.8 km/h sensitivity needs another 1.35× effective GJ.
+
+The conservative model supports only:
+
+```text
+VNE <= 129.6 / 1.5 = 86.4 km/h
+```
+
+under the repository's strict `Vdiv >= 1.5 VNE` criterion. The 105 km/h value is a
+separate operational cap derived from `0.85 Vdiv` and then reduced from 110 to 105 km/h.
+It is not evidence that the 160 km/h article `VNE` is structurally substantiated.
+
+### 5.8 The active cap is already in a high-amplification part of the model
+
+Using the repository's stated linear amplification
+`1 / (1 - q/qdiv)` gives:
+
+| Speed | `q/qdiv` at conservative `Vdiv` | Static twist amplification | Status |
+|---:|---:|---:|---|
+| 90 km/h | 0.482 | 1.93× | Inside current cap |
+| 95 km/h | 0.537 | 2.16× | Cruise design point |
+| 105 km/h | 0.657 | **2.91×** | Current cap |
+| 110 km/h | 0.721 | 3.58× | Above current cap |
+| 130 km/h | 1.006 | **Supercritical** | Above cap and conservative `Vdiv` |
+| 150 km/h | 1.340 | **Supercritical** | Above cap and conservative `Vdiv` |
+
+The 129.6–852.0 km/h corner range is a 6.57× speed spread and a 43.2× dynamic-pressure
+spread. It is not an uncertainty distribution. No probability of failure or confidence
+level can be inferred from it.
+
+### 5.9 The E7 schedule is not a subcritical Southwell programme
+
+`I-05` and `tests/README.md` prescribe 90, 110, 130 and 150 km/h. Against the active
+repository state:
+
+- 110 km/h exceeds the released 105 km/h operational cap;
+- 130 km/h is slightly above conservative predicted divergence;
+- 150 km/h is well above conservative predicted divergence; and
+- no flutter boundary has been calculated at any of those speeds.
+
+Calling Southwell extrapolation a method that avoids reaching the critical speed does not
+make supercritical scheduled points safe. The schedule must be removed now. A replacement
+may be written only after representative stiffness, elastic-axis and GVT correlation
+establish a reviewed subcritical range.
+
+The reduction also needs more definition. Raw trim contains rigid aerodynamic trim,
+controller bias, hinge friction, propulsion effects and calibration offset. The
+aeroelastic increment and its uncertainty must be isolated before fitting an intercept.
+
+### 5.10 The current flutter conclusion is unsupported
+
+The repository publishes:
+
+| Mode | Published estimate | Reproducible structural owner | Measurement |
+|---|---:|---|---|
+| Wing bending | ~25 Hz | **None found** | None |
+| Wing torsion | ~106 Hz | **None found** | None |
+| Elevon | ~82 Hz | **None found** | None |
+| Nose-boom two-support mode | ~32 Hz | Component beam model | None |
+| V1 fin bending | ~8.2 Hz | Component beam estimate | None |
+| Aircraft pitch/body-freedom mode | **Absent** | None | None |
+
+The ratio `25/106 = 0.23` says only that two estimated uncoupled frequencies are
+separated. It does not establish:
+
+- full-aircraft mode shapes and generalized masses;
+- sweep-induced bending/twist coupling;
+- aerodynamic damping and unsteady loads;
+- pitch/bending body freedom;
+- control-free and control-fixed modes;
+- fin/boom/motor coupling;
+- structural or aerodynamic damping;
+- joint and hinge nonlinearities;
+- controller/servo dynamics; or
+- a flutter speed.
+
+The statement “classic bending–torsion flutter is not critical” must therefore be
+reclassified as an unsupported preliminary hypothesis. The mass-balance decision can
+remain; its justification does not need that overclaim.
+
+### 5.11 Elevon balance removes a coupling term but adds modal inertia
+
+ADR-0025 correctly aims to put the elevon CG on the hinge. With its own point-mass proxy:
+
+```text
+22.5 g at 24 mm aft -> 0.540 g·m
+27.0 g at 20 mm forward -> 0.540 g·m
+```
+
+Static balance is achieved. However, the balance mass adds rotational inertia. A
+lower-bound point-mass illustration gives:
+
+```text
+unbalanced proxy inertia     = 12.96e-6 kg·m²
+balance-weight inertia added = 10.80e-6 kg·m²
+fixed-K frequency ratio      = sqrt(12.96 / 23.76) = 0.739
+```
+
+The real elevon has distributed inertia, so this is not its frequency prediction. It
+demonstrates the trade: balance removes the first mass moment that feeds control-surface
+flutter, while added mass tends to lower the control frequency. The final weight, horn,
+hinge stiffness and mode must be measured together.
+
+### 5.12 Propulsion forcing must be included in the modal survey
+
+At the O1 boundary the current propeller model gives 8,484 rpm:
+
+| Excitation | Frequency |
+|---|---:|
+| Motor/propeller 1/rev | 141.4 Hz |
+| Two-blade passage | 282.8 Hz |
+| 1/rev at APC 18,750 rpm limit | 312.5 Hz |
+| Two-blade passage at APC limit | 625.0 Hz |
+
+The old 82 and 106 Hz estimates do not coincide with these primary frequencies, but
+harmonics, subharmonics, motor imbalance, mount flexibility and modal coupling cannot be
+cleared by inspection. The engine/motor is one of the excitation sources identified by
+the NF guide.
+
+A 1 kHz blackbox log has a theoretical 500 Hz Nyquist frequency before sensor filtering;
+it cannot observe the 625 Hz blade-passage limit without aliasing, and flight-controller
+gyro filters may strongly attenuate lower structural content. Blackbox FFT is valuable
+flight evidence, but it is not a substitute for instrumented ground vibration testing.
+
+### 5.13 No manufacturing-authoritative aircraft exists
+
+The current artifact inventory is:
+
+| Artifact | Count | Authority |
+|---|---:|---|
+| Meaningful files in `cad/` and `stl/` | **0** | None |
+| Generated SVG review drawings | 6 | Design review; explicitly not for manufacture |
+| Provisional fuselage OBJ meshes | 2 | Packaging/OML trade only |
+| Native parametric aircraft assembly | 0 | None |
+| Released STEP/3MF/STL part package | 0 | None |
+| As-built configuration and deviation record | 0 | None |
+
+Without the assembly, the following cannot be audited in their final form:
+
+- wall paths and minimum thickness;
+- web continuity and cell closure;
+- joint socket and bond geometry;
+- local reinforcements and transitions;
+- openings, cooling and cable penetrations;
+- servo, motor and fin hard points;
+- print orientation per part;
+- interferences and assembly sequence;
+- mass properties from net solids; or
+- proof-load fixture interfaces.
+
+The repository correctly labels the current drawings. The next mistake to avoid is using
+their visual completeness as implicit manufacturing authority.
+
+### 5.14 Structural documentation is drifting behind its numerical owners
+
+Several live documents carry superseded structural inputs:
+
+- `I-24` reports CLEAN/V1 masses of 1,583.5/1,626.5 g and +6 g resultants of
+  93.2/95.7 N; the current owner gives 1,553.25/1,601.98 g and 91.4/94.3 N.
+- `docs/05` reports manoeuvring speeds of 109.0/110.4 km/h; the current script gives
+  107.92/109.60 km/h.
+- `docs/05` carries an approximately 7.9 Hz fin mode while the current open-point table
+  gives approximately 8.2 Hz.
+- `tests/README.md` treats the unowned 106/82 Hz estimates as expected measured modes and
+  assigns their discovery to first flight.
+
+These differences are not the dominant structural risk, but they make proof-load and test
+planning error-prone. Load tables, modal inventories and active speed gates should be
+generated from their owners or marked historical.
+
+## 6. Findings and priorities
+
+| ID | Priority | Weak point | Required closure |
+|---|---|---|---|
+| NF4-01 | **P0** | No native CAD assembly or manufacturing part package defines the integrated shell, sockets, webs, openings and hard points. | Create and review the controlled parametric assembly, STEP review export, manufacturing meshes, material/process specifications and deviation register. |
+| NF4-02 | **P0** | No complete wing/CORE structural model carries the +6/−3 limit and +9/−4.5 ultimate cases through aerodynamic loads, inertia relief and local load introduction. | Build one configuration-controlled load owner and correlated structural model; substantiate strength, buckling, stiffness and fatigue at every critical path. |
+| NF4-03 | **P0** | Conservative `Vdiv = 129.6 km/h` fails the 240 km/h criterion; the published 160 km/h `VNE` is not substantiated. | Measure representative GXY/GJ/elastic axis, update the model and either redesign for the criterion or lower the declared `VNE`. |
+| NF4-04 | **P0** | The E7 schedule includes 110 km/h above the active cap and 130/150 km/h at or above conservative divergence. | Remove the schedule immediately; establish test points only after ground correlation and formal clearance review. |
+| NF4-05 | **P0** | The flutter conclusion uses three unowned component-frequency estimates and omits body pitch, bending–twist coupling, complete mass distribution and unsteady aerodynamics. | Withdraw the clearance claim; perform full-aircraft GVT, correlate an integrated model and calculate flutter boundaries with uncertainty. |
+| NF4-06 | **P0** | E5 expects first-flight gyro FFT to provide primary flutter/modal evidence. | Move structural modal identification to a preflight GVT; retain blackbox spectra only for correlation and anomaly monitoring. |
+| NF4-07 | **P0** | The removable joint's 1.0 N·m load band is below the +6 g EA-torque screen and no absolute assembly stiffness demonstrates R-JOINT. | Re-derive combined load cases including control deflection; test absolute rotational stiffness, strength, free play, hysteresis and cycles on representative joints. |
+| NF4-08 | **P1** | The printed central CORE load path between the two panel sockets is undefined and unsubstantiated. | Design explicit three-dimensional cap/web/shell paths around the body and motor openings; validate by FEA and proof test. |
+| NF4-09 | **P1** | The bonded-dowel model assumes double shear across a one-plane butt joint and compares mean limit demand. | Use single-shear geometry, adverse material/demand corners and ultimate load; retain dowels as secondary until joint tests validate load sharing. |
+| NF4-10 | **P1** | The joint ADR states arm enters stiffness linearly; rotational stiffness of an ideal couple scales with arm squared. | Correct the mechanics description and use a complete socket/pin/shell compliance model or direct measurement. |
+| NF4-11 | **P1** | PETG, gyroid, seams and adhesive have no representative allowables, creep data or environmental reduction factors. | Execute material, bond and section coupon matrices using the final machines, filament lots, orientations and process settings. |
+| NF4-12 | **P1** | Skin stabilization is assumed but local panel buckling and post-buckling GJ loss are not calculated or tested. | Measure torsion and buckling of representative cells with production gyroid, seams, cut-outs and thermal conditioning. |
+| NF4-13 | **P1** | Elevon static balance is estimated; its added inertia, hinge stiffness, servo holding stiffness, free play and control modes are unmeasured. | Balance the as-built surfaces, identify control-free/control-fixed modes and measure stiffness/damping/backlash across voltage and temperature. |
+| NF4-14 | **P1** | Propulsion, V1 fins, boom, controller and equipment modes are not included in one modal/Campbell assessment. | Survey full-aircraft modes and damping in CLEAN/V1, power-off/power-on configurations; compare across the full propeller-speed range. |
+| NF4-15 | **P1** | No representative semispan, CORE or complete-aircraft proof test is defined. | Design fixtures and distributed loads from the accepted net-load model; proof to the approved factor with deflection, strain and damage acceptance limits. |
+| NF4-16 | **P1** | Dynamic gust, negative `CLmin`, asymmetric and combined control/load cases remain open. | Complete the load envelope before final structural sizing and include simultaneous manoeuvre, gust, control and propulsion cases. |
+| NF4-17 | **P2** | Structural research, roadmap and test documents contain stale masses, loads, speeds and modes. | Generate active tables from numerical owners and move superseded results into clearly historical sections. |
+| NF4-18 | **P2** | Repository, CAD, manufacturing and flight “release” are described in separate places without one readiness matrix. | Adopt the consolidated authority/gate matrix in Section 8 and require its status in future release notes. |
+
+## 7. Engineering verification programme learned from the book
+
+### 7.1 Gate S0 — freeze structural requirements and configuration
+
+Before detailed analysis, issue one configuration-specific structural requirements file
+for CLEAN and V1 containing:
+
+1. mass, CG and full inertia-tensor ranges;
+2. manoeuvre, gust, control, propulsion, landing and handling load cases;
+3. limit, ultimate and proof factors with printed-process special factors;
+4. active operational speeds and the separate target `VNE`;
+5. strength, buckling, deflection, twist and modal acceptance criteria;
+6. temperature, humidity, ageing, cycle and inspection environments;
+7. required fail-safe/redundant behavior at removable and bonded joints; and
+8. configuration control for material, slicer, printer and bought-in hardware.
+
+No component analysis should invent a private load case after this gate.
+
+### 7.2 Gate S1 — material and process allowables
+
+Print statistically meaningful coupon sets in the production orientations and wall
+process. Measure:
+
+- tensile and compressive modulus/strength in relevant axes;
+- in-plane and interlaminar shear modulus/strength;
+- bearing, open-hole and filled-hole response at sockets and pins;
+- wall thickness, voids, density and dimensional statistics;
+- creep/relaxation under representative sustained load;
+- fatigue or stiffness degradation under representative cycles;
+- hot, cold, humidity-conditioned and thermally cycled properties; and
+- adhesive lap-shear, peel and mixed-mode failure after the same conditioning.
+
+Publish basis values and reduction factors, not only means. A material data sheet or a
+coupon printed flat at 100% infill is not representative evidence for the wing shell.
+
+### 7.3 Gate S2 — representative section tests
+
+Print root, midspan and tip closed-cell articles with the production:
+
+- r1 contour and wall paths;
+- 5% gyroid;
+- shear web;
+- tube channel and bond;
+- seams/segment joints;
+- servo or equipment openings where applicable; and
+- actual print roll/orientation.
+
+Measure:
+
+1. torsional stiffness `GJ` through the linear range and into local buckling;
+2. bending stiffness `EI` in both relevant planes;
+3. coupled bend/twist response;
+4. shear-center/no-twist load line;
+5. hysteresis and residual set;
+6. damage onset and ultimate failure; and
+7. stiffness after cycles and environmental conditioning.
+
+Correlate the analytical section and local shell finite-element models. Do not tune one
+scalar `G` to hide incorrect web, cell or boundary mechanics.
+
+### 7.4 Gate S3 — joint and control-assembly qualification
+
+For the removable CORE–PANEL joint, test a representative socket pair under combined:
+
+- bending moment;
+- vertical shear;
+- torsion;
+- pull-out/axial load;
+- installation clearance extremes; and
+- repeated assembly and flight-load cycles.
+
+Measure absolute rotational stiffness, load sharing, free play, hysteresis, strain and
+damage. Demonstrate `k_joint >= 5 k_section` against the measured adjacent section, not
+against an assumed spring.
+
+For each bonded segment joint, compare intact-section and jointed-section strength and
+stiffness. The joint must not merely retain its pins; it must transfer shell shear flow,
+spar-cap force, web load and local bending without premature peel or buckling.
+
+For the elevon/servo assembly, measure:
+
+- mass, CG and mass moment of inertia;
+- hinge stiffness and damping;
+- linkage/gear free play and hysteresis;
+- actuator holding stiffness versus voltage and temperature;
+- control-free and powered/control-fixed modes; and
+- fatigue/wear after representative cycles.
+
+### 7.5 Gate S4 — semispan and CORE static proof
+
+Build production-equivalent semispan and CORE articles. Apply distributed aerodynamic
+loads and mass inertia relief derived from the frozen load owner. Instrument deflection,
+twist, strain and joint slip.
+
+The programme should include at least:
+
+- positive and negative manoeuvre limit cases;
+- the accepted gust cases;
+- ultimate/proof cases according to the approved test philosophy;
+- combined symmetric elevon and differential elevon cases;
+- propulsion and fin-root loads;
+- landing/handling cases; and
+- residual-stiffness/damage inspection after proof.
+
+Acceptance values must be written before loading. Surviving a test without a deflection,
+damage or residual-stiffness criterion is not substantiation.
+
+### 7.6 Gate S5 — full-aircraft ground vibration test
+
+Perform GVT on the flight-mass aircraft in CLEAN and V1 with:
+
+- battery, avionics, propeller, cameras and balance weights installed;
+- control-free, mechanically restrained and servo-powered conditions;
+- representative support approximating free-free boundaries;
+- calibrated accelerometers at wing, CORE, elevons, fins, motor mount and boom;
+- impact hammer or controlled shaker excitation in multiple directions; and
+- measurements of frequency, damping and mode shape, not FFT peaks alone.
+
+Identify at least global symmetric/antisymmetric bending, torsion, bend–twist, body pitch,
+elevon, fin, boom and motor-mount modes. Survey servo and motor excitations separately.
+
+### 7.7 Gate S6 — correlated coupled aeroelastic model
+
+Update the finite-element mass and stiffness model to match static tests and GVT within
+predeclared tolerances. Couple it to an appropriate unsteady aerodynamic model containing:
+
+- rigid-body pitch/plunge as required;
+- symmetric and antisymmetric wing bending;
+- torsion and geometric sweep coupling;
+- elevon degrees of freedom and actuator impedance;
+- V1 fin/boom modes;
+- propulsion mass/gyroscopic/forcing effects where relevant; and
+- structural and aerodynamic damping uncertainty.
+
+Calculate divergence and flutter boundaries across mass, CG, material, joint, hinge,
+temperature and configuration corners. Modal separation may be a diagnostic; it is not
+the acceptance criterion. The acceptance criterion is a reviewed stable boundary with
+the required margin over the active flight envelope.
+
+### 7.8 Gate S7 — manufacturing conformity and preflight release
+
+For the actual flight article:
+
+1. inspect and record part mass, wall thickness and print defects;
+2. verify material lot, drying, slicer profile and machine;
+3. inspect every bond and socket fit;
+4. measure complete mass, CG and inertia;
+5. verify elevon balance, hinge alignment, free play and actuator stiffness;
+6. repeat a reduced modal survey and compare with the qualified baseline;
+7. verify propeller balance, runout and powered vibration;
+8. perform the approved proof/load check and post-test inspection; and
+9. issue an as-built configuration and deviation record.
+
+Only conforming articles inherit the structural analysis.
+
+### 7.9 Gate S8 — incremental flight expansion
+
+Flight expansion comes after S0–S7, not instead of them. The card must define:
+
+- permitted configuration, mass/CG, temperature and wind;
+- speed increments below the active cleared boundary;
+- dwell, excitation and data-quality requirements;
+- real-time/after-flight indicators for twist, control activity and vibration;
+- abort thresholds and inspection after each point; and
+- an independent review before raising the cap.
+
+Southwell-style divergence correlation can then use only formally cleared subcritical
+points. The present 110/130/150 km/h points are prohibited. Blackbox spectra should be
+compared with GVT/Campbell predictions, not searched after flight for unexplained peaks.
+
+## 8. Consolidated release and authority matrix
+
+The word “release” must identify what is being released. The following matrix keeps four
+different products separate.
+
+| Gate | Repository/document release | CAD baseline | Manufacturing release | Flight release |
+|---|---|---|---|---|
+| Requirements and conventions controlled | **Pass** | Required | Required | Required |
+| Reproducible preliminary calculations | **Pass with open physical gates** | Required | Required | Required |
+| Native parametric aircraft assembly | Not required for repository tag | **Fail / absent** | Required | Required |
+| Net part geometry and interfaces | Review drawings only | **Fail / absent** | Required | Required |
+| Production material/process specification | Open | Open | **Fail / absent** | Required |
+| Representative allowables and coupons | Open S1 | Open | **Fail / absent** | Required |
+| Complete load envelope | Partial; G11/`CLmin` open | Partial | **Fail** | Required |
+| Wing/CORE strength and buckling | Not substantiated | Not substantiated | **Fail** | Required |
+| Joint absolute stiffness and strength | Assumed/trade only | Not substantiated | **Fail** | Required |
+| Measured section `EI/GJ` and shear center | Open S3 | Open | **Fail** | Required |
+| Divergence criterion | Conservative **fail** | Fail | **Fail** | Required |
+| Full-aircraft GVT | Absent | Absent | **Fail** | Required |
+| Coupled flutter clearance | Absent | Absent | **Fail** | Required |
+| Directional adverse-corner stability | Part 3 fail/open | Open | Open | Required |
+| Printed aerodynamic/stall evidence | Part 2/3 open | Open | Open | Required |
+| Static proof and post-test inspection | Absent | Absent | **Fail** | Required |
+| As-built mass/CG/inertia/conformity | No physical article | No physical article | **Fail** | Required |
+| Safe flight-expansion card | Current E7 invalid | Open | Open | **Fail** |
+
+Current conclusions:
+
+- **Repository v0.6.0:** valid as an immutable preliminary-design/documentation package
+  because its non-claims are explicit.
+- **CAD baseline:** not complete; the guide is an input to CAD, not the CAD model.
+- **Manufacturing release:** not available.
+- **First-flight release:** not available.
+- **160 km/h article `VNE`:** a target requirement, not a substantiated limit.
+- **105 km/h cap:** a retained analytical operational restriction, not authorization to
+  fly before the other P0 gates close.
+
+## 9. Immediate repository changes recommended
+
+1. Remove the 90/110/130/150 km/h E7 schedule from `I-05` and `tests/README.md`; replace
+   it with “points assigned after S3/GVT/aeroelastic clearance.”
+2. Reclassify “classic bending–torsion flutter is not critical” in `I-05` and ADR-0025
+   as an unsupported preliminary hypothesis.
+3. Remove E5's role as preflight flutter verification. Define a full-aircraft GVT owner;
+   retain flight FFT only for correlation and monitoring.
+4. Add a configuration-controlled `structural_loads.py` owner that combines aerodynamic
+   distributions, as-built inertia relief, control loads, gust, propulsion and asymmetric
+   cases.
+5. Replace the y = 195 mm joint torque band with the accepted combined-load envelope;
+   the current +6 g diagnostic already exceeds it.
+6. Correct the joint-arm stiffness statement and calculate or measure absolute assembly
+   rotational stiffness.
+7. Correct `filament_dowel_pins.py` to one shear plane and adverse ultimate demand.
+8. Create a material/process allowable manifest with test lot, orientation, temperature,
+   statistical basis and reduction factors.
+9. Create representative section, joint and semispan test specifications with acceptance
+   criteria written before testing.
+10. Create the native parametric assembly and explicitly model every primary load path,
+    web, socket, bond, opening, hard point and print orientation.
+11. Add a correlated finite-element/GVT/unsteady-aeroelastic workflow that includes body
+    pitch, bend–twist coupling, controls, V1 fins and propulsion.
+12. Generate load, mass, speed and modal tables from their numerical owners to eliminate
+    the current drift in `I-24`, `docs/05` and the experimental plan.
+13. Add the Section 8 readiness matrix to each future release document so a repository tag
+    cannot be mistaken for manufacturing or flight authority.
+
+## 10. Part 4 conclusion
+
+The NF Design Guide validates the direction of Salamandra's structural concept: a stiff
+closed section, deliberate spar and joint paths, light/play-free controls, stiffness-led
+material use and conservative treatment of swept-wing aeroelasticity. It also explains
+why the existing evidence is not enough. Swept-wing flutter is an integrated
+stiffness-to-mass and coupling problem, and joints are often where an apparently strong
+wing becomes dynamically soft.
+
+Salamandra's repository is unusually good at recording assumptions and correcting its own
+errors. Its strongest structural result is therefore also an honest negative one: the
+conservative divergence model fails the stated criterion. The right response is not to
+select the favorable 327 km/h corner. It is to measure the printed structure, model the
+complete aircraft, prove the load paths and either redesign the structure or reduce the
+speed requirement.
+
+The initial four-part audit is now complete:
+
+1. [Part 1](NF-Design-Guide-2024-Repository-Audit.md) — whole-book triage and release
+   disposition;
+2. [Part 2](NF-Design-Guide-2024-Repository-Audit-Part-02-Airfoil-Trim.md) — airfoil,
+   trim and longitudinal control;
+3. [Part 3](NF-Design-Guide-2024-Repository-Audit-Part-03-Directional-Stability.md) —
+   lateral-directional behavior and operations; and
+4. **Part 4** — printed structure, joints, aeroelasticity and release closure.
+
+The next useful work is no longer another literature-only chapter. It is implementation
+of Gates S0–S5: structural requirements, representative coupons/sections/joints,
+manufacturing-authoritative CAD, semispan proof work and full-aircraft GVT. Until those
+gates and the Part 2–3 aerodynamic P0 findings close, no first flight or speed expansion is
+authorized by this audit.

@@ -73,8 +73,9 @@ This living audit is being developed in four parts:
 3. [**Part 3 — Lateral-directional stability and operations**](NF-Design-Guide-2024-Repository-Audit-Part-03-Directional-Stability.md):
    finite sideslip, adverse yaw, fin section behavior, body integration, stall, launch,
    landing and flight-test identification.
-4. **Printed structure and release closure:** load paths, joints, ground vibration test,
-   flutter model, proof-test articles, CAD/manufacturing data and final closure matrix.
+4. [**Part 4 — Printed structure and release closure**](NF-Design-Guide-2024-Repository-Audit-Part-04-Structure-Aeroelasticity.md):
+   load paths, joints, ground vibration test, flutter model, proof-test articles,
+   CAD/manufacturing data and final closure matrix.
 
 Part 1 includes a complete guide coverage map so later parts can deepen the analysis
 without losing whole-book context.
@@ -517,3 +518,7 @@ lesson into a specific reproducible test matrix for Salamandra r1.
 [Part 3](NF-Design-Guide-2024-Repository-Audit-Part-03-Directional-Stability.md) propagates
 the published directional uncertainty into the dynamics and audits finite sideslip,
 adverse yaw, stall, launch, landing and E8 identification.
+
+[Part 4](NF-Design-Guide-2024-Repository-Audit-Part-04-Structure-Aeroelasticity.md)
+closes the initial audit series with printed load paths, joint mechanics, divergence,
+body-freedom flutter, physical verification and a consolidated release matrix.
