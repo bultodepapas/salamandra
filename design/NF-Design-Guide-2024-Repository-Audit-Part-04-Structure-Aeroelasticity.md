@@ -1,12 +1,14 @@
 # NF Design Guide 2024 — Salamandra Repository Audit
 
-**Part 4 of 4: printed structure, load paths, joints, divergence, flutter, physical
+**Part 4: printed structure, load paths, joints, divergence, flutter, physical
 verification and release closure**  
 **Audit date:** 20 August 2026  
 **Aircraft baseline:** Salamandra Article #1, release v0.6.0, Design Guide v0.24  
 **Source:** Peter Wick, *Designing Flying Wings* (2024 English PDF), principally PDF
 pages 109–113, 246–266 and 303–308  
 **Previous:** [Part 3 — lateral-directional stability and operations](NF-Design-Guide-2024-Repository-Audit-Part-03-Directional-Stability.md)
+
+**Next:** [Part 5 — wingtips, drag, stall and flap management](NF-Design-Guide-2024-Repository-Audit-Part-05-Wingtips-Drag-Flaps.md)
 
 ## 1. Part 4 disposition
 
@@ -966,6 +968,11 @@ The initial four-part audit is now complete:
 3. [Part 3](NF-Design-Guide-2024-Repository-Audit-Part-03-Directional-Stability.md) —
    lateral-directional behavior and operations; and
 4. **Part 4** — printed structure, joints, aeroelasticity and release closure.
+
+The requested continuation is
+[Part 5](NF-Design-Guide-2024-Repository-Audit-Part-05-Wingtips-Drag-Flaps.md), a focused
+deep dive into winglets, induced-versus-parasite drag, forward-swept yaw-arm geometry,
+outer-wing reserve and flap management.
 
 The next useful work is no longer another literature-only chapter. It is implementation
 of Gates S0–S5: structural requirements, representative coupons/sections/joints,

@@ -1,6 +1,6 @@
 # NF Design Guide 2024 — Salamandra Repository Audit
 
-**Part 3 of 4: lateral-directional stability, adverse yaw, finite sideslip, stall,
+**Part 3: lateral-directional stability, adverse yaw, finite sideslip, stall,
 launch and landing control**  
 **Audit date:** 20 August 2026  
 **Aircraft baseline:** Salamandra Article #1, release v0.6.0  

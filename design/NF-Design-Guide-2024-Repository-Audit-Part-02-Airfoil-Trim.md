@@ -1,6 +1,6 @@
 # NF Design Guide 2024 — Salamandra Repository Audit
 
-**Part 2 of 4: airfoil fidelity, pitch trim, static margin and elevon authority**  
+**Part 2: airfoil fidelity, pitch trim, static margin and elevon authority**
 **Audit date:** 20 August 2026  
 **Aircraft baseline:** Salamandra Article #1, release v0.6.0  
 **Source:** Peter Wick, *Designing Flying Wings* (2024 English PDF), principally PDF

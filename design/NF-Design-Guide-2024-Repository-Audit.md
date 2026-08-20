@@ -1,6 +1,6 @@
 # NF Design Guide 2024 — Salamandra Repository Audit
 
-**Part 1 of 4: full-book triage, configuration risk and release disposition**  
+**Part 1: full-book triage, configuration risk and release disposition**
 **Audit date:** 20 August 2026  
 **Aircraft:** Salamandra Article #1, CLEAN and V1 configurations  
 **Repository baseline:** README revision 1.20, release v0.6.0, design guide v0.24  
@@ -63,7 +63,8 @@ without a Salamandra-specific calculation or test.
 
 ### 2.1 Part structure
 
-This living audit is being developed in four parts:
+This living audit began as a four-part release review and now continues with focused
+technical deep dives:
 
 1. **This part — full-book triage and critical disposition:** configuration, airfoil
    moment, directional stability, aeroelasticity, manufacturing maturity and test safety.
@@ -76,6 +77,12 @@ This living audit is being developed in four parts:
 4. [**Part 4 — Printed structure and release closure**](NF-Design-Guide-2024-Repository-Audit-Part-04-Structure-Aeroelasticity.md):
    load paths, joints, ground vibration test, flutter model, proof-test articles,
    CAD/manufacturing data and final closure matrix.
+5. [**Part 5 — Wingtips, drag, stall and flap management**](NF-Design-Guide-2024-Repository-Audit-Part-05-Wingtips-Drag-Flaps.md):
+   winglet crossover, forward-swept yaw-arm geometry, outer-wing lift reserve,
+   junction/low-Reynolds-number behavior and multi-state control scheduling.
+6. [**Part 6 — Design-method synthesis**](NF-Design-Guide-2024-Repository-Audit-Part-06-Design-Method-Synthesis.md):
+   airfoil geometry and optimization, swept-section interpretation, state-dependent
+   spanloads, static margin, active stability and flap-chord closure.
 
 Part 1 includes a complete guide coverage map so later parts can deepen the analysis
 without losing whole-book context.
@@ -522,3 +529,11 @@ adverse yaw, stall, launch, landing and E8 identification.
 [Part 4](NF-Design-Guide-2024-Repository-Audit-Part-04-Structure-Aeroelasticity.md)
 closes the initial audit series with printed load paths, joint mechanics, divergence,
 body-freedom flutter, physical verification and a consolidated release matrix.
+
+[Part 5](NF-Design-Guide-2024-Repository-Audit-Part-05-Wingtips-Drag-Flaps.md) extends the
+series with a focused systems audit of winglets, induced-versus-parasite drag, the
+forward-swept wingtip yaw arm, outer-wing reserve and flap management.
+
+[Part 6](NF-Design-Guide-2024-Repository-Audit-Part-06-Design-Method-Synthesis.md) reaches
+the end of the source and converts its future-design questions into airfoil-geometry,
+section-plane, statewise spanload, static-margin, active-stability and flap-chord gates.
