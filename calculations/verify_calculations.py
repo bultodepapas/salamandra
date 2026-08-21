@@ -44,6 +44,7 @@ import fuselage_contract
 import fuselage_geometry
 import inav_fc_match
 import launch_speed
+import low_speed_trim_redesign
 import mass_budget
 import propulsion_match
 import servo_torque
@@ -99,6 +100,8 @@ EXTERNAL_WORKFLOWS = (
     "airfoil_reflex_trade.py (XFOIL)",
     "b3_screening.py (XFOIL)",
     "calibra_xfoil_e387.py (network + XFOIL)",
+    "low_speed_trim_redesign.py predict (XFOIL)",
+    "E2A printed-section measured polar campaign",
 )
 
 
@@ -321,6 +324,23 @@ def check_aerodynamics(add):
             close(value, v1_cl, 1e-12),
             f"CL={value:.8f}",
         )
+    generated_root = airfoil_reflex_trade.make_profile(
+        design_config.ROOT_TC, 1.0
+    )
+    leading_edge = min(generated_root, key=lambda point: point[0])
+    trailing_edge = (
+        0.5 * (generated_root[0][0] + generated_root[-1][0]),
+        0.5 * (generated_root[0][1] + generated_root[-1][1]),
+    )
+    generated_chord = (
+        (trailing_edge[0] - leading_edge[0]) ** 2
+        + (trailing_edge[1] - leading_edge[1]) ** 2
+    ) ** 0.5
+    add(
+        "airfoil generator: LE-to-mean-TE chord is exactly normalized",
+        close(generated_chord, 1.0, 2e-8),
+        f"generated chord={generated_chord:.10f}",
+    )
     add(
         "aerodynamics: allocation and C32 V1 model pass released CLmax",
         ventana_torsion.CL_ALLOCATION_REQUIRED <= design_config.CL_MAX_WING
@@ -346,6 +366,39 @@ def check_aerodynamics(add):
             1e-12,
         ),
         f"{v1['vs']:.4f} km/h",
+    )
+
+    output = ROOT / "calculations" / "trim_redesign_out"
+    r1_matrix, r1_sources = low_speed_trim_redesign.read_matrix(
+        output / "r1-sm8-xfoil-matrix.csv"
+    )
+    r2_matrix, r2_sources = low_speed_trim_redesign.read_matrix(
+        output / "r2a-sm5-xfoil-matrix.csv"
+    )
+    r1 = low_speed_trim_redesign.summary(
+        low_speed_trim_redesign.evaluate_matrix(
+            r1_matrix, low_speed_trim_redesign.BASELINE
+        )
+    )
+    r2_candidate = low_speed_trim_redesign.Candidate(
+        "r2a-sm5", 3.0, 2.5, 3.0, 0.05
+    )
+    r2 = low_speed_trim_redesign.summary(
+        low_speed_trim_redesign.evaluate_matrix(r2_matrix, r2_candidate)
+    )
+    add(
+        "low-speed trim: r1 fails the complete mechanical screen",
+        not r1["mechanical_screen_pass"] and r1_sources == {"xfoil"},
+        "ADR-0047 design hold; no measured closure",
+    )
+    add(
+        "low-speed trim: r2a is the sole bounded mechanical test candidate",
+        r2["mechanical_screen_pass"]
+        and not r2["all_pass"]
+        and r2_sources == {"xfoil"}
+        and abs(r2["maximum_absolute_trim_deg"] - 11.0301013348) < 1e-6,
+        f"max |trim|={r2['maximum_absolute_trim_deg']:.3f} deg; "
+        "control extrapolation keeps physical closure open",
     )
 
 
@@ -482,20 +535,20 @@ def check_controls(add):
         f"servo y={equipment_layout.SERVO_STATION_MM:.2f} mm",
     )
     add(
-        "controls: the hinge-moment band covers the commanded trim deflection",
+        "controls: historical cruise-only trim fits inside the hinge-load case",
         abs(selected_pitch["trim_n12_deg"]) <= servo_torque.DELTA_TRIM_DEG
         and abs(selected_pitch["trim_n10_deg"]) <= servo_torque.DELTA_TRIM_DEG
         and servo_torque.DELTA_SIZING_DEG
         > abs(selected_pitch["trim_n12_deg"]),
-        f"commanded trim <= {servo_torque.DELTA_TRIM_DEG:.1f} deg; Ch band "
+        f"historical cruise trim <= {servo_torque.DELTA_TRIM_DEG:.1f} deg; Ch band "
         f"declared at {servo_torque.DELTA_SIZING_DEG:.1f} deg",
     )
     add(
-        "controls: selected surface closes trim and retains roll authority",
+        "controls: historical cruise screen and roll derivative reproduce",
         abs(selected_pitch["trim_n12_deg"]) <= 0.6
         and selected_roll["cl_delta_a_per_rad"] > 0.0
         and selected_roll["cl_p_per_rad"] < 0.0,
-        f"trim={selected_pitch['trim_n12_deg']:+.3f} deg; "
+        f"cruise-only trim={selected_pitch['trim_n12_deg']:+.3f} deg; "
         f"Cl_da={selected_roll['cl_delta_a_per_rad']:.4f}/rad",
     )
 

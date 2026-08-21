@@ -51,12 +51,13 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | [0038](ADR-0038-fixed-fin-variant.md) | Dual directional config: finless baseline + fixed-fin variant V1 (no rudder) | 🔄 | Medium `[D]`/`[E]` | Yes |
 | [0039](ADR-0039-filament-dowel-pins.md) | Filament dowel pins in the glued segment joints | ✅ | High `[D]`/`[E]` | Yes |
 | [0040](ADR-0040-quarter-chord-sweep.md) | Quarter-chord sweep reduced to −15° | 🔄 | Medium `[D]`/`[E]` | Yes, before CAD freeze |
-| [0041](ADR-0041-salamandra-r1-airfoil-family.md) | Salamandra r1 coupled root/tip airfoil family | ✅ | Medium `[D]` | Yes, before tooling |
+| [0041](ADR-0041-salamandra-r1-airfoil-family.md) | Salamandra r1 coupled root/tip airfoil family | ⬜ Held by ADR-0047; coupon reference | Medium `[D]` | Yes, before tooling |
 | [0042](ADR-0042-cruise-propulsion-equilibrium.md) | Bound cruise propulsion by total power; close equilibrium with E2 drag | ✅ | Medium `[D]`/`[E]` | Yes |
 | [0043](ADR-0043-article-1-mass-allocation.md) | Article #1 mass allocation; CLEAN/V1 analytically close 45 km/h, physical F2 open | 🔄 | Medium `[M]`/`[D]`/`[E]` | Yes |
 | [0044](ADR-0044-flight-load-envelope.md) | Separate +6/−3 manoeuvre limits, +9/−4.5 ultimate loads and gust screening | 🔄 | Medium `[D]`/`[E]` | Yes |
-| [0045](ADR-0045-article-1-elevon-geometry.md) | Shorten Article #1 elevons to 35–90 % half-span | 🔄 | Medium `[D]`/`[E]`/`[I]` | Yes, before tooling |
+| [0045](ADR-0045-article-1-elevon-geometry.md) | Shorten Article #1 elevons to 35–90 % half-span | ⬜ Held by ADR-0047; E2A starting geometry | Medium `[D]`/`[E]`/`[I]` | Yes, before tooling |
 | [0046](ADR-0046-single-declaration-contract.md) | One declaration site per physical quantity, enforced by lint and mutation | ✅ | High `[M]` | Yes, but reverting reopens C39–C43 |
+| [0047](ADR-0047-low-speed-trim-redesign-candidate.md) | Place r1 on low-speed trim hold; test r2a at 5% nominal static margin | 🔄 | Low `[D]`/`[I]` | Yes, before wing CAD/tooling |
 
 ### Superseded or cancelled
 

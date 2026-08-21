@@ -12,8 +12,8 @@ static margin, active stability and flap-chord synthesis**
 **Previous:** [Part 5 — wingtips, drag, stall and flap management](NF-Design-Guide-2024-Repository-Audit-Part-05-Wingtips-Drag-Flaps.md)
 
 **Source-series status:** this part reaches PDF page 331 and completes the current book.
-A subsequent part, if required, should consolidate the six audits into one prioritized
-verification and redesign programme rather than invent another source-page range.
+The resulting single roadmap is the [Consolidated Salamandra Audit and Release
+Programme](NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md).
 
 ## 1. Part 6 disposition
 
@@ -846,7 +846,7 @@ changes strongly with flight `CL`. The permitted CG band moves predicted trim mo
 the airfoil-selection cap. Neutral or negative margin cannot be reached with current
 packaging and would not be safe with the current evidence.
 
-The present configuration should therefore remain conservative:
+The original audit disposition was:
 
 - retain the passive 8% target and current battery rail for Article #1;
 - retain the 28% elevon as a provisional compromise;
@@ -856,6 +856,12 @@ The present configuration should therefore remain conservative:
 - replace endpoint/nominal optimization with a full state and uncertainty matrix; and
 - close the loop with measured printed geometry, aerodynamic moments, CG/inertia,
   structural dynamics and flight identification.
+
+**Implementation update, 21 August 2026:** ADR-0047 executed the priority airfoil/trim
+work and supersedes the first bullet as the current test disposition. r1/8% is held;
+r2a (3.0/2.5 deg root/tip reflex, +3 deg wash-in, 5% nominal SM) is the sole E2A coupon
+candidate. Its 30-case screen stays within 11.04 deg, but 22 cases extrapolate control
+slope, so measured closure remains open.
 
 This part reaches the end of the 331-page source. The logical next deliverable is a single
 prioritized programme that merges Parts 1–6 into configuration decisions, calculation

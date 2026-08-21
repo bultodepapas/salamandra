@@ -17,6 +17,7 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 *.xflr5
+calculations/trim_redesign_out/.xfoil-cache/
 
 # Raw flight data (large) — use LFS
 tests/**/raw/*.bin

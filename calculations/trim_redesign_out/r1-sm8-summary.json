@@ -1,0 +1,30 @@
+{
+  "all_pass": false,
+  "case_count": 18,
+  "limiting_case": {
+    "alpha_deg": 11.25928172546947,
+    "cd_profile": 0.015535091462136011,
+    "cg_case": "nominal",
+    "cl": 0.5823046158784194,
+    "cm_cg": 0.0,
+    "cm_root_c4": 0.2427609021791919,
+    "cm_section": 0.06747973951232895,
+    "control_extrapolated": true,
+    "local_cl_max": 0.6487890535411863,
+    "local_cl_min": 0.07012551773364491,
+    "ncrit": 10,
+    "speed_kmh": 45.0,
+    "static_margin_percent": 8.0,
+    "status": "SCREEN",
+    "trim_deg": -18.27111511208159
+  },
+  "maximum_absolute_trim_deg": 18.27111511208159,
+  "measured_trim_subgate_pass": false,
+  "mechanical_screen_pass": false,
+  "pass_count": 12,
+  "physical_gate_closed": false,
+  "physical_gate_reason": "E2A requires separate uncertainty, CLmax/stall-order, hinge-hysteresis and O1 drag dispositions; this solver evaluates the trim subgate only",
+  "sources": [
+    "xfoil"
+  ]
+}

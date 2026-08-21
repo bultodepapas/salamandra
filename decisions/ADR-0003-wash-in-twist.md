@@ -1,6 +1,6 @@
 # ADR-0003 — Wash-in twist for trim (forward sweep)
 
-**Status:** ✅ Active · **Date:** 2026-07-27 · **Reviewed:** 2026-08-17 · **Confidence:** Medium `[D]` · **Reversible:** Partial
+**Status:** 🔄 Retained for r2a E2A; flight-wing closure held by ADR-0047 · **Date:** 2026-07-27 · **Reviewed:** 2026-08-21 · **Confidence:** Medium `[D]` · **Reversible:** Partial
 **Research:** [I-02 — Tailless trim and forward sweep](../research/I-02-tailless-trim.md), I-07, I-15
 
 ## Context
@@ -45,3 +45,8 @@ root/tip moments with c² weighting: +3.0° wash-in closes neutral trim at
 ## Review conditions
 
 Review if E2 moment/stall data move neutral trim outside ±0.6°, then verify in E7.
+
+**2026-08-21 review:** ADR-0047 fired this condition before E2 flight testing. The
+operating-`Cm(CL)`/deflected-section model reopens twist as a coupled variable. +3.0°
+is retained in r2a coupon geometry only; the historical cruise intercept no longer
+constitutes trim closure.

@@ -1,6 +1,6 @@
 # ADR-0041 — Salamandra r1 spanwise airfoil family
 
-**Status:** ✅ Active · **Date:** 2026-08-17 · **Confidence:** Medium `[D]` · **Reversible:** Yes, before tooling
+**Status:** ⬜ Held for flight-wing CAD by ADR-0047; retained as reference/coupon geometry · **Date:** 2026-08-17 · **Confidence:** Medium `[D]` · **Reversible:** Yes, before tooling
 **Gaps:** G2 / E2 measured acceptance · **Research:** I-15 §8, I-22
 
 ## Context
@@ -41,3 +41,12 @@ measured stall guarantee.
 - The root and tip cannot be replaced independently: trim uses their c²-weighted
   moment integral.
 - `airfoil_reflex_trade.py` is the only generator. Direct ordinate scaling is forbidden.
+
+## 2026-08-21 review-trigger disposition
+
+The E2/low-speed review condition fired before tooling. The cruise-only `Cm0`
+selection does not close the 45 km/h/full-CG trim envelope when section moment
+is evaluated at operating `CL` and deflected-section `Cm` is included. ADR-0047
+therefore blocks r1 from new flight-wing CAD and selects r2a only for physical
+coupon testing. The r1 files remain controlled historical evidence; they are
+not silently regenerated or deleted.

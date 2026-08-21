@@ -115,8 +115,8 @@ def normalize_chord(points):
     chord = math.hypot(dx, dy)
     ca, sa = dx / chord, dy / chord
     return [
-        ((x - le[0]) * ca + (y - le[1]) * sa,
-         (-(x - le[0]) * sa + (y - le[1]) * ca))
+        (((x - le[0]) * ca + (y - le[1]) * sa) / chord,
+         (-(x - le[0]) * sa + (y - le[1]) * ca) / chord)
         for x, y in points
     ]
 

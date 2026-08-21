@@ -6,6 +6,9 @@
 **Repository baseline:** README revision 1.20, release v0.6.0, design guide v0.24  
 **Auditor role:** senior aircraft configuration, stability and aeroelasticity review
 
+**Canonical consolidated roadmap:** [NF Design Guide 2024 — Consolidated Salamandra Audit
+and Release Programme](NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md)
+
 ## 1. Disposition
 
 **Salamandra is a rigorous and unusually transparent preliminary design study. It is not

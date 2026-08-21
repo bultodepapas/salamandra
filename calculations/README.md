@@ -12,13 +12,14 @@ estimated input. Validation cases must pass before a modification is trusted.
 
 ---
 
-## Tools and versions used (updated 2026-08-18)
+## Tools and versions used (updated 2026-08-21)
 
 | Tool | Version | Used for | Where to get it |
 |---|---|---|---|
 | Python | ≥ 3.10 | All harnesses below | python.org |
 | numpy | ≥ 2.0, < 3.0 | VLM, Weissinger-L, screening harness | `pip install -r calculations/requirements.txt` |
 | **XFOIL** | **6.99** (official MIT Windows console build) | Airfoil polar generation | <https://web.mit.edu/drela/Public/web/xfoil/> → `XFOIL6.99.zip` (GPL; the source ships in the zip too) |
+| **XFOIL** | **7.00** (official MIT `xfoil6.996.tgz`, local gfortran double-precision build) | Deflected-section r2a trim matrix | <https://web.mit.edu/drela/Public/web/xfoil/> |
 | PowerShell 7 / cmd | Windows | Batch driving (see the Fortran stdin note below) | Built into Windows |
 
 XFOIL is an **external GPL binary**, not bundled with this repository. Point the
@@ -57,6 +58,7 @@ Data sources consumed (all `[M]`):
 | `nf_design_guide_part4_structure_aeroelasticity.py` | **NF Design Guide Part 4 evidence** — derives rigid-wing semispan load-path screens, audits joint torque/stiffness and dowel shear geometry, quantifies divergence clearance and the elevon-balance inertia trade, and inventories propulsion forcing and manufacturing authority | Part 4 structure/aeroelastic release audit | numpy; current design-contract modules |
 | `nf_design_guide_part5_wingtip_efficiency.py` | **NF Design Guide Part 5 evidence** — separates speed-dependent induced sensitivity from device parasite drag, derives optimistic crossover speeds and forward-swept wingtip yaw arms, audits outer-wing local-`cl` reserve and maps virtual flap-segment pitch yield | Part 5 wingtip/drag/stall/flap audit | numpy; current design-contract modules |
 | `nf_design_guide_part6_design_synthesis.py` | **NF Design Guide Part 6 evidence** — audits released airfoil geometry and polar-cache identity, brackets swept-section conventions, derives state-dependent Fourier span-efficiency diagnostics, propagates NP/CG trim sensitivity, tests active-stability battery reach and screens elevon chord | Part 6 design-method synthesis | numpy; current design-contract modules |
+| `low_speed_trim_redesign.py` | **ADR-0047 low-speed trim owner** — couples root/mid/tip operating `Cm(CL)` and deflected-section XFOIL polars to the VLM over 45–105 km/h and the full CG band; keeps prediction and measured E2A paths separate | r1 hold, r2a test candidate, E2A | numpy; XFOIL for prediction |
 | `sweep_trade.py` | **Coupled sweep selection** — full VLM + Weissinger NP, trim/twist/reflex, section-Cl margin, self-consistent balance/packaging and NASA TP-1685 divergence trend for −20…−10° candidates | I-21, ADR-0040 | numpy |
 | `vlm_ala_volante.py` | Panel vortex lattice for the forward-swept wing (taper + twist). NP, CL_α, load distribution, Cm0-per-degree twist yield | I-07, G8, guide §4.3 | numpy |
 | `weissinger_np.py` | **C2: independent NP check** — Weissinger-L swept lifting line (bound vortex on the c/4 line, control points at 3/4 chord). Structurally different formulation from the panel VLM | I-07, C2, G8 | numpy |
@@ -206,7 +208,7 @@ for anyone maintaining it):
 The corrected screening invalidates the old root-only trim conclusion. It is retained
 as a candidate diagnostic; the coupled r1 generator below is the controlling CAD tool.
 
-### 2.1 Salamandra r1 coupled airfoil closure (ADR-0041)
+### 2.1 Salamandra r1 historical cruise closure (ADR-0041; held by ADR-0047)
 
 ```bash
 python3 airfoil_reflex_trade.py --xfoil /path/to/xfoil.exe
@@ -218,8 +220,29 @@ root/tip moment weights 0.6071/0.3929, and the VLM twist/elevon yields. It selec
 then writes the endpoint and seven intermediate station DAT files. The full-envelope
 polars give neutral elevon **−0.04°/+0.41°** at the corrected V1 analytical mass and
 +3.0° wash-in, inside the ±0.6° cap;
-all endpoint cases have section clmax ≥1.076. These are `[D]` CAD inputs; E2 is still
-the physical polar/stall acceptance.
+all endpoint cases have section clmax ≥1.076. This is now historical cruise-only
+evidence. ADR-0047 showed that r1 does not close the complete low-speed/CG envelope;
+the files remain reference/coupon inputs and do not authorize a new flight-wing loft.
+
+### 2.2 Low-speed trim redesign and E2A coupling (ADR-0047)
+
+```bash
+python3 low_speed_trim_redesign.py predict \
+  --xfoil /path/to/xfoil-7.00 \
+  --name r2a-sm5 --root-reflex 3.0 --tip-reflex 2.5 \
+  --twist 3.0 --static-margin 5.0
+```
+
+The tool uses root/mid/tip polars at the exact 45/60/75/95/105 km/h Reynolds
+numbers, includes finite trailing-edge and deflected-section moment, integrates
+the local operating `Cm(CL)` with c-squared weights and evaluates the nominal
+CG plus/minus 5 mm. Positive physical deflection is trailing-edge down.
+
+The r2a screen keeps all 30 Ncrit/CG/speed cases within 11.04 deg, but only 8
+are bracketed by the converged deflection matrix; 22 are explicitly marked
+`SCREEN` because they extrapolate the boundary control slope. XFOIL therefore
+cannot close the gate. The [E2A procedure](../tests/E2A-printed-section-polars/README.md)
+defines the measured input and acceptance criteria.
 
 ### 3. Balance and CG reachability (OP-01, guide §8.2)
 

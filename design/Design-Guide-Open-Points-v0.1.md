@@ -1,6 +1,6 @@
 # Salamandra — Design Guide: Open Points and Evolution
 
-**Version 0.19** · 19 August 2026 · **released with v0.6.0**, companion to
+**Version 0.20** · 21 August 2026 · **engineering hold addendum to v0.6.0**, companion to
 the concise [`Salamandra Design Guide`](Salamandra-Design-Guide-v0.1.md) and the
 [`Advanced Design Guide`](Salamandra-Design-Guide-Advanced-v0.1.md) (technical baseline
 v0.24)
@@ -21,16 +21,16 @@ v0.23 value stands; v0.4.0 remains the historical release snapshot.
 | # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
 | **OP-01** | **CG reachability** | Target CG −93.8 mm. CLEAN E01 solution −337.74 mm is inside travel. Coupled V1 needs no nose extension or added support and solves battery x −363.27 mm with exact target xCG in one iteration. This is analytical, not physical closure. | Real mass properties, support stiffness and central-body NP; verify V1 station/travel with the built carrier | F2/P1–P3; first-print balance |
-| **OP-02** | **Measured airfoil acceptance** | **CAD coordinate closure complete (ADR-0041):** Salamandra r1, 13.5/9 % t/c, +1.0°/+0.5° added reflex. With ADR-0045 physical-surface effectiveness, neutral elevon is −0.14°/+0.50° at Ncrit 10/12 and 3.0° wash-in. | Printed-section/flight polar, hinge-gap loss, drag and stall progression may revise exposed profile/twist/control parameters | **E2**; computational/CAD part closed |
+| **OP-02** | **Measured airfoil acceptance** | **REOPENED / CAD HOLD (ADR-0047):** r1 fails at least one low-speed/full-CG-band trim corner. r2a (+3.0°/+2.5° root/tip reflex) screens inside 11.04° at 5% nominal SM, but 22/30 cases extrapolate control slope. | Printed root/mid/tip `CL/CD/Cm`, actual TE/hinge, drag, stall and complete measured trim matrix | **E2A**; no flight-profile CAD release |
 
 ### Geometry and stability
 
 | # | Item | v0.4 value | What changes it | Trigger |
 |---|---|---|---|---|
-| OP-03 | Twist ε | **CLOSED FOR CAD:** +3.0° printed wash-in; selected r1/elevon model needs −0.14°…+0.50° neutral elevon over Ncrit 10–12 at the V1 lower mass | E2 may refine the exposed parameter before production | ADR-0041/0045 / E2 |
+| OP-03 | Twist ε | **REOPENED WITH G2:** +3.0° wash-in is retained only in the r2a coupon screen; the full speed/CG trim and stall interaction is unmeasured | E2A may change twist together with reflex, elevon or CG | ADR-0047 / E2A |
 | OP-04 | Dihedral Γ | 2.0° total, piecewise-polyhedral (kinks at y = 195/347/498; 0 / 1.07 / 1.53 / 2.0°) | Roll-stability verification; may be revised by the stability analysis | Phase 1 stability (C-series), first flights |
 | OP-05 | Neutral point | **25.72 % MAC / −75.8 mm** `[D]` (32×5 VLM); Weissinger-L **27.0 % / −72.9 mm**, 2.9 mm difference (I-21) | Central-body model and measured balance/flight NP | C2 body model; E-series |
-| OP-06 | Elevon span / travel | **ADR-0045 CAD baseline:** 227.5–585 mm (35–90 %), 357.5 mm, 0.28 c, servo y ±406.25. Rigid VLM retains 94.5 % roll derivative, gives +0.001828 Cm/physical deg and +0.500° limiting trim. Hinge proxy −11.7 %; DS-939MG factored margin 1.52× at 180 km/h. ±20° is only a mechanical envelope; no flap mode/final throw is released. | Measured authority/stall, hinge-gap loss, servo stiffness/freeplay and G7 modal response | I-27; E2 / E5 / G7 |
+| OP-06 | Elevon span / travel | ADR-0045 geometry remains the r2a starting point, but its ideal VLM pitch derivative is invalid as trim closure. Physical sign is TE-down positive; E2A acceptance is trim within ±15° and uncertainty within ±20°. | Measured deflected `Cm(CL)`, hinge-gap loss, authority/stall, servo stiffness/freeplay and G7 modal response | ADR-0047; E2A / E5 / G7 |
 | OP-07 | Hinge line x/c | 0.72 | Fixed by structure (ADR-0002); keep unless section is redesigned | — |
 
 ### Structure and materials
@@ -111,6 +111,7 @@ point that forced the change is closed with the resolution.
 
 | Version | Date | Change |
 |---|---|---|
+| 0.20 | 2026-08-21 | **ADR-0047 engineering hold:** reopens OP-02/03/06 after the operating-`Cm(CL)`/deflected-section coupling invalidates r1 whole-envelope trim. Selects r2a only for E2A coupons: 3.0/2.5° reflex, +3° wash-in, 5% nominal SM, maximum 11.04° computational screen over 30 cases; 22 cases remain extrapolated and physical closure is false. |
 | 0.19 | 2026-08-19 | **Released with v0.6.0 / guide v0.24.** The V1 directional gate changes shape rather than closing: the centreline fin is rejected (C47) and the released twin-fin solution (C48/I-30) is analytical — nominal Cnβ ≈ +0.00050 /deg with a band that still crosses zero, and a V1 stall margin under 1 km/h at 1601.98 g. **F2 gains the fuselage OML**: the body is now generated and containment-audited, but `aircraft_feasible` is false and every OML value stays `[I]`. G3 is unchanged and now visible — the fin ΔCD0 is the only component drag term the project owns. E2, S3, G6, G7, G10, G11 and D2/E3 are untouched. |
 | 0.18 | 2026-08-18 | **Released with v0.5.0 / guide v0.23.** The open-gate state is unchanged by the release: the ADR-0046 declaration contract, the C39–C43 corrections and the drawing set are traceability and verification work, not new evidence. OP-06 elevon geometry is now released rather than working; G7 flutter remains open **without** the withdrawn `sqrt(2)` two-servo stiffness credit; G10 yaw is republished at the single-source inertia (ω_n 5.35 rad/s, ζ 0.231) and stays damped across the whole declared band; E2, F2, S3, G6, G11, D2/E3 and OP-21 are untouched. |
 | 0.17 | 2026-08-18 | Guide v0.22/I-27/ADR-0045 propagated: OP-06 adopts the 35–90 % elevon as the working CAD baseline while retaining E2/E5/G7; OP-01/16 expose the 2.72 mm V1 battery-station shortfall; OP-24 credits only the 6 g balance reduction. No flap mode, final throw or flutter closure is claimed. |

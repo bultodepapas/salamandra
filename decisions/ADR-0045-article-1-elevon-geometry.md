@@ -1,6 +1,6 @@
 # ADR-0045 — Shorten the Article #1 elevons to 35–90 % half-span
 
-**Status:** 🔄 Provisional — in force for Article #1 CAD; physical closure open  
+**Status:** ⬜ Held for flight-wing CAD by ADR-0047; retained for E2A coupons
 **Date:** 2026-08-18  
 **Confidence:** Medium `[D]`/`[E]`/`[I]`  
 **Reversible:** Yes, before tooling  
@@ -19,7 +19,7 @@ documented comparison against shorter, tip-extended and different-chord alternat
 | Option | For | Against | Disposition |
 |---|---|---|---|
 | Retain 30–90 %, 0.28 c | Maximum continuity with v0.4 | Hinge begins at removable joint; unnecessary moving area | Superseded for Article #1 |
-| **35–90 %, 0.28 c** | Retains 94.5 % roll derivative; closes trim; fixed root bridge and tip | Still requires physical validation | **Selected** |
+| **35–90 %, 0.28 c** | Retains 94.5 % roll derivative; historical cruise-only trim screen closed; fixed root bridge and tip | Full-envelope physical trim remains open | **E2A starting geometry** |
 | 40–90 %, 0.28 c | Lower moving area and hinge load | Greater roll-authority loss before E2 | Deferred |
 | 35–95/100 %, 0.28 c | More pitch and roll authority | Tip Reynolds, damage, inertia and aeroelastic exposure; authority not needed | Deferred |
 | 35–90 %, 0.24 c | Lower hinge load and mass | Ncrit-12 trim too near ±0.6° after ideal assumptions | Rejected for first prototype |
@@ -66,3 +66,9 @@ stall behavior or hinge-gap loss; if E5/G7 shows inadequate stiffness, freeplay 
 modal margin; or if F2 cannot package and balance the selected surface. Any extension
 to 95/100 % span or any flap schedule requires its own aerodynamic and aeroelastic
 review.
+
+**2026-08-21:** the pitch-authority review condition has fired through ADR-0047.
+The 35–90%, 28% chord geometry remains the r2a coupon starting point, but the
+ideal VLM derivative and former +0.500° cruise result no longer constitute trim
+closure. E2A must measure the physical deflected-section moment and hinge
+effectiveness before this ADR can authorize flight-wing CAD.

@@ -78,9 +78,9 @@ def main():
     if not all(checks.values()):
         raise SystemExit(1)
 
-    print("\n  DECISION: the r1 root/tip profile family plus 3.0 deg wash-in closes")
-    print("  the complete Ncrit 10--12 neutral-trim band.  Measured E2 polars remain")
-    print("  the flight-release acceptance gate; no provisional 1.9 deg offset remains.")
+    print("\n  HISTORICAL CRUISE SCREEN ONLY: this intercept-based result does not close")
+    print("  the low-speed/full-CG trim envelope. ADR-0047 holds r1 flight-wing CAD;")
+    print("  low_speed_trim_redesign.py and measured E2A data now own trim closure.")
 
 
 if __name__ == "__main__":

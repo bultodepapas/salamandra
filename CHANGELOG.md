@@ -4,6 +4,31 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.45] — 2026-08-21
+
+**C54 — the cruise-only trim closure hid an infeasible low-speed/CG corner and used an
+incomplete section-moment model.**
+
+- Reopened the r1 airfoil, twist, elevon and CG decisions. The previous constant-`Cm0`
+  screen requires approximately +27° to +37° at 45 km/h, outside the +/-20° mechanical
+  travel in part of the CG band; it cannot support release of new wing CAD.
+- Added `low_speed_trim_redesign.py`, which evaluates root/mid/tip section polars at the
+  local lift coefficient and couples their `Cm(CL)` and control effect to the aircraft
+  VLM over 45–105 km/h and the complete +/-5 mm CG band. Positive deflection is now
+  unambiguously trailing-edge down.
+- Selected r2a only as a physical-test candidate: +3.0°/+2.5° root/tip reflex, +3.0°
+  wash-in and 5% nominal static margin. Its XFOIL screen stays within 11.03° absolute
+  trim, but 22 of 30 cases require bounded control extrapolation and therefore provide
+  no physical release evidence.
+- Added E2A, requiring measured printed root/mid/tip specimens with their real trailing
+  edge and hinge. Release requires every speed/CG case inside +/-15° nominal trim, its
+  95% uncertainty bound inside +/-20°, 10% local `CLmax` margin and no tip-first stall.
+- The XFOIL cache key includes its exact executable hash and model schema. The official
+  XFOIL 7.00 build used for the prediction matrix is retained outside the repository;
+  its SHA-256 is recorded in the generated metadata.
+
+---
+
 ## [1.44] — 2026-08-20
 
 **C53 — the battery catalog multiplied ampere-hours through a series string, and the

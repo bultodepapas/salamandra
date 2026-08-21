@@ -3,6 +3,12 @@
 **Version 0.24** · 19 August 2026 · **RELEASED in v0.6.0**
 **Purpose:** concise, canonical execution specification for the Article #1 CAD model.
 
+**ENGINEERING HOLD — 21 AUGUST 2026 (ADR-0047).** Do not start or continue the
+aerodynamic wing loft from the r1 profiles. The low-speed/full-CG trim gate has
+reopened. r1 is reference/coupon geometry; r2a is an E2A test candidate and has no
+manufacturing-authoritative coordinate release. Work is limited to reversible
+coupon, fixture and test preparation until measured `CL/CD/Cm` selects a profile.
+
 > **CAD DESIGNER: START HERE.** Model only the requirements in this document. Do not
 > infer missing geometry from renders or sketches. Items marked `PROVISIONAL` must remain
 > parametric and require approval before manufacture. For calculations, rationale,
@@ -25,12 +31,12 @@ unchanged from v0.23; any V1 fin or carrier solid modelled from v0.23 is obsolet
 | CAD authority | This document defines what must be modelled and delivered |
 | Numerical owners | `calculations/design_config.py` and the generated airfoil coordinate files |
 | Detailed engineering authority | [Advanced Design Guide](Salamandra-Design-Guide-Advanced-v0.1.md) |
-| Status | Released CAD baseline; physical gates remain open |
+| Status | Historical v0.24 baseline under ADR-0047 aerodynamic design hold |
 
 ### 1.1 Rules for use
 
-1. Start a new parametric model from this v0.23 baseline. Do not reuse v0.1.0 wing,
-   CORE, 390 mm elevon or battery-cradle geometry.
+1. Do not start a new wing loft while ADR-0047 is open. Non-aerodynamic parametric
+   work may use this historical baseline only where it cannot freeze r1 ordinates.
 2. Use named parameters for every value marked `FIXED` or `PROVISIONAL`.
 3. Import the released `.dat` profiles; do not redraw or rescale them.
 4. Treat generated SVG sheets as design-review aids, not manufacturing authority.
@@ -171,6 +177,9 @@ tip rise is approximately 12 mm. The complete dihedral schedule is `PROVISIONAL 
 
 ### 4.4 Required modelling sequence
 
+**HOLD:** Steps 2–6 are suspended for a flight article. They may be executed only in a
+clearly named r1 comparison coupon or r2a test-coupon configuration.
+
 1. Sketch the LE, TE and quarter-chord control lines.
 2. Place the nine released profiles from §5 at their exact y stations.
 3. Scale only by the chord values in §4.2 and apply the twist law in §4.3.
@@ -184,7 +193,8 @@ tip rise is approximately 12 mm. The complete dihedral schedule is `PROVISIONAL 
 
 ## 5. Airfoil definition
 
-Use only the Salamandra r1 files below from `geometry/airfoils/`.
+The Salamandra r1 files below are controlled **historical reference and E2A coupon
+inputs only**. They are not authorized for a new flight-wing loft after ADR-0047.
 
 | y | Coordinate file | Added reflex | Status |
 |---:|---|---:|---|
@@ -201,6 +211,11 @@ Use only the Salamandra r1 files below from `geometry/airfoils/`.
 Do not use `mh60-135.dat` or `mh60-9.dat`; they are generator inputs, not released
 sections. Keep profile links and twist parameters replaceable for later physical-test
 updates. The 13.0 mm tip thickness does not contain a servo.
+
+The r2a test candidate retains the thickness schedule and uses 3.0/2.5 deg added
+root/tip reflex, +3 deg wash-in and a 5% nominal static-margin target. It intentionally
+has no canonical nine-station DAT release: first close E2A using as-built root/mid/tip
+specimens and [ADR-0047](../decisions/ADR-0047-low-speed-trim-redesign-candidate.md).
 
 ---
 
@@ -458,7 +473,7 @@ The following items remain open and must not be frozen invisibly in CAD:
 
 - [ ] Coordinate system, handedness and units match §2.
 - [ ] Planform corners and all nine loft stations match §4.
-- [ ] Released r1 profiles are linked without manual redrawing.
+- [ ] No flight-wing loft uses r1 or r2a before ADR-0047/E2A closure.
 - [ ] Twist is about local quarter-chord; polyhedral is applied only in assembly.
 - [ ] CORE and three PANEL segments per side are separate components.
 - [ ] CORE–PANEL joints are removable; internal PANEL joints are bonded.
@@ -484,7 +499,8 @@ Use these only when the concise requirement needs interpretation.
 | Why values were selected | [Design Guide Justification](Design-Guide-Justification-v0.1.md) |
 | Unresolved tests and decisions | [Design Guide Open Points](Design-Guide-Open-Points-v0.1.md) |
 | Shared numerical inputs | `calculations/design_config.py` |
-| Released profiles | `geometry/airfoils/salamandra-*-r1.dat` |
+| Historical/coupon profiles | `geometry/airfoils/salamandra-*-r1.dat` |
+| Low-speed trim hold and candidate | [ADR-0047](../decisions/ADR-0047-low-speed-trim-redesign-candidate.md) |
 | Visual arrangement | [SLM-GA-001](../geometry/drawings/SLM-GA-001-general-arrangement.svg) |
 | Wing interfaces | [SLM-WNG-001](../geometry/drawings/SLM-WNG-001-half-wing-layout.svg) |
 | Equipment envelopes | [SLM-EQP-001](../geometry/drawings/SLM-EQP-001-equipment-mass-skeleton.svg) |
@@ -493,3 +509,7 @@ Use these only when the concise requirement needs interpretation.
 
 **Editorial revision:** 19 August 2026 — created the concise canonical CAD guide and
 renamed the former full guide as the Advanced Design Guide. No technical value changed.
+
+**Engineering hold addendum:** 21 August 2026 — ADR-0047 reopened the airfoil/trim and
+CG decision after the operating-`Cm(CL)` analysis. This addendum changes authorization,
+not the historical v0.24 geometry.

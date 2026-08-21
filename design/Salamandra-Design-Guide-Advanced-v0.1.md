@@ -6,6 +6,12 @@ Planform, airfoil coordinates, twist, propulsion reference and mass allocation a
 controlling. Values still flagged `PROVISIONAL` (principally the CORE outer shape and
 unmeasured structural properties) retain an explicit trigger in the open-points register.
 
+**ADR-0047 ENGINEERING HOLD — 21 AUGUST 2026:** the v0.24 r1/8%-SM wing
+remains historical release evidence, but no longer authorizes a new flight-wing loft.
+r2a (3.0/2.5 deg reflex, 5% nominal SM) is an E2A coupon candidate only. Where this
+guide states r1 trim closure, read it as the superseded cruise-only screen and use
+[the low-speed redesign](Low-Speed-Trim-Redesign-and-E2A-Plan.md) for current status.
+
 > **AUTHORITATIVE ADVANCED REFERENCE:** this guide v0.24 preserves the complete
 > engineering specification of release `v0.6.0`. The concise
 > [`Salamandra Design Guide`](Salamandra-Design-Guide-v0.1.md) is the primary CAD

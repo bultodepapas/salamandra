@@ -4,6 +4,7 @@
 |---|---|---|---|---|
 | **E1** | Geometry extraction from reference meshes | G1 | Low | 🔄 Partial |
 | **E2** | Glide polar with pitot and blackbox | G3, G2 · validates **O1** | Medium | ⬜ |
+| **E2A** | **Printed root/mid/tip section `CL/CD/Cm` with real TE/hinge** | **G2, OP-02/03/06** · validates low-speed trim | High | ⬜ |
 | **E3** | Propeller-matching sweep | **Realizes O1** | Low | ⬜ |
 | **E5** | FFT of blackbox gyro traces | G4, G7 | Null | ⬜ |
 | **E7** | **Southwell in flight** | **G6** | Low | ⬜ |
@@ -37,6 +38,17 @@ Flights with the motor off at stabilized speeds, recording descent rate with the
 Produces the real polar of the complete aircraft without a wind tunnel. **It is the only instrument that separates propulsive losses from aerodynamic losses.**
 
 ⚠️ Without pitot it is not valid: ground speed is contaminated by the wind.
+
+## E2A — printed-section polar and elevon trim
+
+E2A is now the upstream aerodynamic gate. It measures root/mid/tip printed
+sections, manufactured trailing edges and representative hinges at the exact
+Reynolds ladder, including physical deflections. See the complete
+[E2A procedure](E2A-printed-section-polars/README.md).
+
+E2 and E2A are complementary: a motor-off aircraft glide polar cannot isolate
+section pitching moment or hinge effectiveness, while a 2-D section test does
+not measure complete-aircraft interference or total drag.
 
 ## E3 — propeller-matching sweep
 

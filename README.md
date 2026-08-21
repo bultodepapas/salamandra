@@ -14,6 +14,11 @@ carries its source and the reasoning is the deliverable.**
 **Revision 1.20** · 19 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
 **Phase 1 in progress** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
 
+**Engineering hold — 21 August 2026.** The released r1 wing geometry does not close
+the complete low-speed/CG trim envelope. Do not issue new wing CAD for manufacture.
+The provisional r2a section–twist candidate and its mandatory E2A physical gate are
+defined in [ADR-0047](decisions/ADR-0047-low-speed-trim-redesign-candidate.md).
+
 > 📖 **Read this project as a website:** <https://bultodepapas.github.io/salamandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
 
@@ -27,6 +32,7 @@ carries its source and the reasoning is the deliverable.**
 | **See the aircraft** | [Salamandra, Article #1](#the-aircraft--salamandra-article-1) · [drawing set](#drawing-set--generated-design-review-sheets) |
 | **Build the CAD model** | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) — the primary execution spec |
 | **Know what is still unknown** | [`gaps/`](gaps/README.md) · [Open Points](design/Design-Guide-Open-Points-v0.1.md) |
+| **Review the NF book audit and release programme** | [**Consolidated NF Design Guide audit**](design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md) — one prioritized engineering and verification roadmap |
 | **Trace why a number exists** | [`decisions/`](decisions/README.md) · [`research/`](research/) · [CHANGELOG](CHANGELOG.md) |
 | **Reproduce the numbers** | [Tools and reproduction](#tools-and-reproducing-the-numbers) |
 | **Contribute a part or a variant** | [Contributing](#contributing) · [CONTRIBUTING.md](CONTRIBUTING.md) |
@@ -93,8 +99,8 @@ comes from the propulsion chain, which is where the data say the gap is.
 | Aspect ratio | 6.0 · S = 0.282 m² `[E]` | [ADR-0004](decisions/ADR-0004-aspect-ratio.md) |
 | Quarter-chord sweep | **−15°** | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
 | **t/c** | **13.5 % root / 9 % tip** | [ADR-0027](decisions/ADR-0027-relative-thickness.md) |
-| Airfoil | **Salamandra r1:** MH60 mean line, +1.0°/+0.5° root/tip reflex | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md) |
-| Printed wash-in | **+3.0°**; selected physical-elevon model trims −0.14°…+0.50° at the corrected V1 mass `[D]` | [ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md), [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
+| Airfoil | **DESIGN HOLD:** r1 is reference/coupon geometry only; **r2a** (+3.0°/+2.5° root/tip reflex) is the E2A test candidate, not released CAD | [ADR-0047](decisions/ADR-0047-low-speed-trim-redesign-candidate.md) |
+| Printed wash-in | **+3.0° provisional** in r2a; whole-envelope trim remains open pending measured root/mid/tip deflected polars | [ADR-0047](decisions/ADR-0047-low-speed-trim-redesign-candidate.md) |
 | Material | **Conventional PETG** primary airframe; V1 fin shells use bounded LW-PLA-HT pending F2 coupons | [ADR-0021](decisions/ADR-0021-base-material.md), [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md) |
 | Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** | [ADR-0028](decisions/ADR-0028-gyroid-infill.md) |
 | Section | Three cells: D-box + center + hinge | [ADR-0002](decisions/ADR-0002-closed-shell.md) |
@@ -102,7 +108,7 @@ comes from the propulsion chain, which is where the data say the gap is.
 | Elevons | **0.28 c, y 227.5…585 mm (35–90 %), 357.5 mm; fixed 32.5 mm root bridge and 65 mm tip; servo y ±406.25 mm** | [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
 | AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; coupled twin-fin V1 1601.98 g / 44.74 km/h** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), [I-30](research/I-30-fin-station-mass-cg-and-connected-scene-closure.md) |
 | Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; two-servo O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
-| Target CG | **−93.8 mm** from root c/4 | [ADR-0040](decisions/ADR-0040-quarter-chord-sweep.md) |
+| Target CG | r1 reference **−93.8 mm**; r2a test target **−87.0 mm (5% MAC)**, physical balance open | [ADR-0047](decisions/ADR-0047-low-speed-trim-redesign-candidate.md) |
 | V_NE article #1 | **160 km/h** (design 180) | — |
 | Initial V_limit | **105 km/h**; 150 only after GXY validation | [`docs/07`](docs/07-divergence-margin.md) |
 | Avionics | INAV 9.1+ or ArduPlane · **pitot mandatory** | — |
@@ -277,6 +283,7 @@ they are not competing specifications.
 | [**Advanced Design Guide v0.24**](design/Salamandra-Design-Guide-Advanced-v0.1.md) | Detailed engineering limits, calculation results, release migration and complete technical context | Lead designer and engineering reviewer | **Canonical advanced engineering reference** |
 | [**Design Guide Justification**](design/Design-Guide-Justification-v0.1.md) | Understanding why each selected value exists and what evidence supports it | Reviewer or contributor challenging a requirement | Rationale and evidence companion |
 | [**Design Guide Open Points**](design/Design-Guide-Open-Points-v0.1.md) | Finding provisional values, unresolved gates and the event that can change each value | CAD designer, test engineer and release reviewer | Open-work and change-trigger register |
+| [**Consolidated NF Design Guide audit**](design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md) | Applying all 331 source pages to the current repository through one risk register, test sequence and release matrix | Lead designer, test engineer and independent reviewer | **Canonical NF-audit engineering programme** |
 
 **Normal CAD workflow:** begin with the concise Design Guide. Open the Advanced Design
 Guide only when a requirement needs interpretation. Check the Open Points before freezing
@@ -328,10 +335,10 @@ working tree.
 | 5 — Systems and propulsion | ⬜ |
 | 6 — Manufacturing and release | ⬜ |
 
-**Current physical gates:** E2 measured r1 polar/stall acceptance, F2 CAD/weighed mass,
-OP-29 measured torsional stiffness/elastic axis and G11 dynamic gust closure before the
-speed envelope can expand beyond 105 km/h. Airfoil coordinate generation is no longer a
-CAD blocker.
+**Current physical gates:** **E2A printed-section `CL/CD/Cm` and trim acceptance**, E2
+complete-aircraft glide polar, F2 CAD/weighed mass, OP-29 measured torsional
+stiffness/elastic axis and G11 dynamic gust closure before the speed envelope can expand
+beyond 105 km/h. New wing loft/CAD is held until E2A selects or rejects r2a.
 
 <details>
 <summary><strong>Phase-1 detail (2026-08-18)</strong> — gap-by-gap state of the geometry and stability work</summary>
@@ -340,13 +347,12 @@ CAD blocker.
   **25.72 % MAC / −75.8 mm** by the full panel VLM, cross-checked by Weissinger-L at
   **27.0 % / −72.9 mm (2.9 mm agreement)** ([I-21](research/I-21-sweep-trade-and-elastic-axis-correction.md)). The
   central-body effect remains unquantified and moves the NP forward.
-- **G2 (airfoil) — closed for CAD, open for measured acceptance.** The corrected B3
-  pipeline preserves the mean line, invalidates stale polar caches and uses the local
-  Reynolds envelope. The released Salamandra r1 family integrates root/tip moments with
-  c² weights and, with the selected physical-elevon effectiveness, trims at
-  **−0.14°…+0.50° neutral elevon** with +3.0° wash-in
-  ([ADR-0041](decisions/ADR-0041-salamandra-r1-airfoil-family.md),
-  [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md)); E2 remains mandatory.
+- **G2 (airfoil/trim) — reopened; new wing CAD held.** The former r1 closure used a
+  cruise `Cm0` intercept and ideal VLM control incidence. The corrected root/mid/tip
+  operating-`Cm(CL)` coupling shows r1 fails at least one low-speed/full-CG-band corner.
+  r2a (+3.0°/+2.5° reflex, +3° wash-in, 5% nominal SM) screens 30 cases inside
+  **11.04°**, but 22 use control-slope extrapolation. Only measured E2A printed-section
+  polars can close the gate ([ADR-0047](decisions/ADR-0047-low-speed-trim-redesign-candidate.md)).
 - **ADR-0040/0043/0045 — coupled planform, control surface, mass and balance updated.** The −15° planform
   and target CG **−93.8 mm** remain. With Article #1 hardware and the 550 g PETG-shell
   cap and two-servo baseline, CLEAN is **1553.25 g**. Its component-level pack solution
@@ -414,7 +420,7 @@ a defined job, from research to flight:
 |---|---|---|
 | **Research** | Web search via **Firecrawl MCP** | Primary-source search; every query and source logged in [`research/`](research/) |
 | **Analysis** | Python 3.11 + numpy | In-house panel VLM, Weissinger-L independent check, sizing, balance and screening harnesses |
-| **Aerodynamics** | **XFOIL** 6.99 (official MIT build, GPL) | Airfoil polar generation for the B3 screening and the E387 calibration |
+| **Aerodynamics** | **XFOIL** 6.99 historical baseline + locally compiled official-source 7.00 | B3/E387 history and ADR-0047 deflected-section matrix; both remain computational `[D]` |
 | **Input data** | UIUC Airfoil Data Site, aerodesign.de | Measured/published data (`[M]`); coordinates in `geometry/airfoils/` |
 | **Design** | **Fusion 360** (connected via an MCP server) | Community parametric CAD; STL/STEP export for printing and sharing |
 | **Manufacturing** | Bambu Studio · 256 mm printer (P1S class) · **PETG** | Printability is a hard requirement (O3/O4), not an afterthought |
@@ -433,6 +439,8 @@ python3 calculations/verify_calculations.py --all-scripts  # deterministic local
 python3 calculations/vlm_ala_volante.py       # NP (I-07)
 python3 calculations/weissinger_np.py         # C2 independent NP check (I-15 §6.3)
 python3 calculations/airfoil_reflex_trade.py --xfoil /path/to/xfoil.exe  # r1 coordinates/trim
+python3 calculations/low_speed_trim_redesign.py predict --xfoil /path/to/xfoil-7.00 \
+  --name r2a-sm5 --root-reflex 3.0 --tip-reflex 2.5 --static-margin 5.0
 python3 calculations/propulsion_match.py      # APC E 8x8 O1 power/drag boundary
 python3 calculations/mass_budget.py --config all  # Article #1 allocation and variants
 python3 calculations/balance_cg.py            # coupled 6S1P station / nose-boom sizing

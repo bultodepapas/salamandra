@@ -1,0 +1,13 @@
+{
+  "candidate": {
+    "name": "r2a-sm5",
+    "root_reflex_deg": 3.0,
+    "target_static_margin": 0.05,
+    "tip_reflex_deg": 2.5,
+    "twist_deg": 3.0
+  },
+  "evidence": "[D] on sealed-hinge finite-TE [I] geometry; not measured",
+  "executable_sha256": "000b0468d9a7f4fce42d6fac24bd14147d7d326c8a9035909c8e9f98d180f50e",
+  "matrix": "calculations/trim_redesign_out/r2a-sm5-xfoil-matrix.csv",
+  "xfoil": "XFOIL Version 7.00"
+}
