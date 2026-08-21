@@ -11,7 +11,7 @@ carries its source and the reasoning is the deliverable.**
 
 <!-- END GENERATED: drawing-hero -->
 
-**Revision 1.23** · 21 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
+**Revision 1.24** · 21 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
 **Programme reset — Gate M0 closed; Gate M1 open** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
 
 **Engineering hold — 21 August 2026.** The released r1 wing geometry does not close
@@ -33,6 +33,7 @@ not the automatically selected final aircraft.
 |---|---|
 | **Understand what is being defined first and what follows** | [**Master design plan**](docs/05-master-plan.md) — canonical programme control |
 | **Read the active mission and requirements** | [**Article #1 requirements v2.0**](docs/00-objectives-and-requirements.md) — Gate-M0 product, configuration and mission contract |
+| **Review the candidate electronics and power architecture** | [**Article #1 hardware manifest**](docs/17-article-1-hardware-manifest.md) — MP-03 6S-R/CLEAN baseline and separate 8S study overlay |
 | **Understand the idea** | [What this project is](#what-this-project-is) |
 | **See the aircraft** | [Salamandra, Article #1](#the-aircraft--salamandra-article-1) · [drawing set](#drawing-set--generated-design-review-sheets) |
 | **Review the historical v0.6 CAD baseline** | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) — held until Master Plan Gate M7 |
@@ -296,7 +297,8 @@ programme gates.
 
 | Document | Use it for | Intended reader | Authority |
 |---|---|---|---|
-| [**Master Design Plan v2.2**](docs/05-master-plan.md) | Defining the mission, hardware baseline, architecture trade, evidence gates and CAD handoff order | Project lead, engineering reviewer and CAD lead | **Canonical programme control** |
+| [**Master Design Plan v2.3**](docs/05-master-plan.md) | Defining the mission, hardware baseline, architecture trade, evidence gates and CAD handoff order | Project lead, engineering reviewer and CAD lead | **Canonical programme control** |
+| [**Article #1 hardware manifest**](docs/17-article-1-hardware-manifest.md) | Reviewing the 6S-R/CLEAN candidate equipment, 8S study overlay, masses, envelopes, power rails and measurement queue | Systems, test, packaging and CAD contributors | **Canonical pre-measurement hardware/power interface** |
 | [**Article #1 requirements v2.0**](docs/00-objectives-and-requirements.md) | Reading the active product intent, configurations, mission states, constraints and inherited-value disposition | Every contributor | **Canonical mission and product specification** |
 | [**ADR redesign-disposition ledger**](decisions/REDESIGN-DISPOSITION.md) | Determining whether a historical decision is retained, method-only, candidate-only, reopened, superseded or cancelled for Article #1 | Every contributor importing prior work | **Canonical ADR applicability map** |
 | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) | Reconstructing/reviewing the held v0.6 geometry, interfaces and equipment envelopes | CAD designer | Historical v0.6 CAD baseline; not active production authority |
@@ -349,7 +351,7 @@ working tree.
 | Master gate | Status |
 |---|---|
 | **M0 — Mission, scoring and configuration** | ✅ **Closed — specification v2.0, ADR-0048 and executable contract** |
-| **M1 — Bought-in hardware and measurement chain** | 🔄 **Open — next design gate; partial catalog evidence exists** |
+| **M1 — Bought-in hardware and measurement chain** | 🔄 **Open — MP-03 manifest complete; H01–H22 physical closure next** |
 | **M2 — Mass skeleton and battery rail** | 🔄 Existing v0.6 work must be rebuilt for 6S/R/CLEAN plus 8S study |
 | **M3 — Equal-requirements architecture trade** | ⬜ Current forward-swept aircraft is candidate A |
 | **M4 — Printed section/aerodynamic evidence** | ⬜ Blocked by M3 |
@@ -359,8 +361,9 @@ working tree.
 | **M8 — Native CAD and ground qualification** | ⬜ Blocked |
 | **M9 — Flight identification and optimization** | ⬜ Blocked |
 
-**Immediate work:** MP-02 is complete. MP-03 now builds the machine-readable 6S-R/CLEAN
-candidate hardware and power manifest with an 8S study overlay.
+**Immediate work:** MP-03 is complete. MP-04 now procures or creates hard dummies and
+executes H01–H22: real pack/equipment envelopes, motor/ESC/power-chain selection, mass,
+current, thermal, servo, RF, pneumatic and blackbox measurements.
 
 **Current authorization:** mission/equipment research, electronics integration, mass
 skeletons, reversible calculations, coupons and test fixtures. New production wing/body
@@ -461,8 +464,10 @@ validation discipline) is in [`calculations/README.md`](calculations/README.md).
 The current high-value results reproduce with:
 
 ```bash
-python3 calculations/verify_calculations.py        # fast cross-module contracts
-python3 calculations/verify_calculations.py --all-scripts  # deterministic local suite
+python3 calculations/hardware_manifest.py             # MP-03 hardware/power contract
+python3 calculations/hardware_manifest.py --json      # complete machine-readable export
+python3 calculations/verify_calculations.py        # contracts + deterministic local suite
+python3 calculations/verify_calculations.py --fast # cross-module contracts only
 python3 calculations/vlm_ala_volante.py       # NP (I-07)
 python3 calculations/weissinger_np.py         # C2 independent NP check (I-15 §6.3)
 python3 calculations/airfoil_reflex_trade.py --xfoil /path/to/xfoil.exe  # r1 coordinates/trim

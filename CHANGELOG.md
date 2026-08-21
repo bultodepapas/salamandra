@@ -4,6 +4,37 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.49] — 2026-08-21
+
+**C58 — The programme named a plausible 6S electronics baseline, but its identity, mass,
+envelopes, configuration membership and rail loads remained distributed across catalogs,
+historical mass allocations and the v0.6 equipment layout. That made the next physical
+measurement step ambiguous and allowed an estimated component class to look frozen.**
+
+- Completed MP-03 with `docs/17-article-1-hardware-manifest.md` and the machine-readable
+  `calculations/hardware_manifest.py`: 22 controlled rows spanning 6S-R, 6S-CLEAN and a
+  separate 8S-STUDY power architecture.
+- Distinguished named reference parts, bounded reference classes, reserved envelopes and
+  study-only classes. The exact 6S/8S motors, ESCs, rudder servo and 8S FC/PDB/BEC remain
+  open until measured selection; none is silently promoted to a released part.
+- Reconciled the 6S-CLEAN candidate equipment subtotal to 821.85 g and exposed the 72.38 g
+  historical wiring/connectors/mounts allocation as a reserve that MP-04 must decompose.
+  6S-R adds one 12.5 g rudder-servo reservation; its directional structure remains outside
+  this equipment-only subtotal.
+- Published reference, design-continuous and brief-peak hotel-load cases plus every
+  low-voltage rail load/capacity. The existing CLEAN model reproduces at 11.54 W battery
+  input; the conservative continuous screens are 13.75 W CLEAN and 15.75 W R.
+- Preserved both flat-narrow and flat-moderate P42A envelopes and kept the required 20 mm
+  battery travel separate from pack, connector, installation and wall dimensions.
+- Added JSON export, generated-document synchronization and global contract checks. The
+  mutation campaign now removes one hardware row deliberately, increasing its proof set
+  from 22 to 23 seeded defects.
+- Advanced the Master Design Plan to v2.3: MP-04 H01–H22 physical hardware/dummy
+  measurement and power-chain selection is next. M1 remains open and production CAD
+  remains held.
+
+---
+
 ## [1.48] — 2026-08-21
 
 **C57 — ADR status described the historical v0.6 record but did not consistently state

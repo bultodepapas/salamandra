@@ -272,11 +272,12 @@ Gate M0 is closed because the programme now has:
 - an executable contract with repository-level verification; and
 - a decision record that supersedes the conflicting v0.6 mission assumptions.
 
-M0 closure does not release hardware. **Gate M1 is now open.** Its next controlled output
-is the electronics/propulsion candidate matrix and uncertainty-aware mass ledger. It shall
-identify candidate 21700 cells, 6S and 8S pack layouts, motor/propeller/ESC envelopes,
+M0 closure does not release hardware. **Gate M1 is now open.** Its first controlled output,
+the [MP-03 hardware and power manifest](17-article-1-hardware-manifest.md), now identifies
+candidate 21700 packs, 6S and 8S power architectures, motor/propeller/ESC envelopes,
 servos, flight controller, FPV system, power conversion, sensors and wiring without
-prematurely selecting geometry.
+prematurely selecting geometry. MP-04/MP-05 must replace its catalog/estimated inputs and
+prove the measurement chain before M1 can close.
 
 | Open numerical question | Owner/gate | Closure evidence |
 |---|---|---|

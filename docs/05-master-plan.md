@@ -1,6 +1,6 @@
 # Salamandra master design plan
 
-**Revision 2.2** · 21 August 2026 · **Programme reset — Gate M0 closed; Gate M1 open**
+**Revision 2.3** · 21 August 2026 · **Programme reset — Gate M0 closed; Gate M1 open**
 
 **Document role:** canonical programme-control document for defining, designing,
 validating and handing Salamandra Article #1 to a human CAD designer.
@@ -30,13 +30,16 @@ Where documents conflict:
 1. this plan owns **programme intent, sequence, gate status and authorization**;
 2. [`00-objectives-and-requirements.md`](00-objectives-and-requirements.md) owns the
    active Article #1 mission and product requirements;
-3. `calculations/mission_contract.py` owns the redesign mission/configuration constants,
-   while `calculations/design_config.py` owns only the current v0.6 numerical baseline
-   until a new candidate is selected;
-4. [`decisions/REDESIGN-DISPOSITION.md`](../decisions/REDESIGN-DISPOSITION.md) owns each
+3. `calculations/mission_contract.py` owns the redesign mission/configuration constants;
+4. [`17-article-1-hardware-manifest.md`](17-article-1-hardware-manifest.md) and
+   `calculations/hardware_manifest.py` own the pre-measurement 6S-R/CLEAN candidate
+   equipment and power interface plus the separate 8S study overlay;
+5. `calculations/design_config.py` owns only the current v0.6 numerical baseline until a
+   new candidate is selected;
+6. [`decisions/REDESIGN-DISPOSITION.md`](../decisions/REDESIGN-DISPOSITION.md) owns each
    ADR's applicability to the redesigned Article #1;
-5. ADRs own accepted technical decisions for their declared configuration; and
-6. the concise Design Guide owns CAD execution only after this plan authorizes a new
+7. ADRs own accepted technical decisions for their declared configuration; and
+8. the concise Design Guide owns CAD execution only after this plan authorizes a new
    controlled edition.
 
 No existing `FIXED` label silently carries into the redesigned aircraft. Each value is
@@ -164,6 +167,11 @@ Article #1 purchased part.
 Electronics must be defined early enough to establish mass, volume, power, heat, wiring
 and CG. They must not be frozen more precisely than the evidence allows. The programme
 therefore uses three statuses:
+
+**MP-03 status:** the baseline below is now instantiated and contract-checked by the
+[Article #1 hardware and power manifest](17-article-1-hardware-manifest.md) and its
+[machine-readable owner](../calculations/hardware_manifest.py). It remains a candidate
+input to MP-04 measurement, not a released bill of materials.
 
 - **CLASS:** capability and bounding envelope required for architecture work;
 - **REFERENCE PART:** named component used for the first mass skeleton and procurement;
@@ -667,10 +675,13 @@ Work shall proceed in this order:
 2. **MP-02 — Decision reset ledger — COMPLETE.** All 40 ADRs are classified as retained,
    method-only, candidate-only, reopened, superseded or cancelled, with one owning gate;
    `decision_ledger.py` enforces complete coverage and matching ADR preambles.
-3. **MP-03 — Hardware manifest — NEXT.** Create one machine-readable 6S/R/CLEAN equipment and
-   power manifest, with an 8S study overlay.
-4. **MP-04 — Measure hardware.** Procure or mock the packs, O4, FC, servos, motor/ESC,
-   sensors and connectors; replace catalog-only installation estimates.
+3. **MP-03 — Hardware manifest — COMPLETE.** The machine-readable 6S-R/CLEAN candidate
+   contains 22 controlled hardware rows, explicit mass/envelope uncertainty, a
+   rail-by-rail power budget and a separate 8S study module; its human-readable tables are
+   generated and contract-checked.
+4. **MP-04 — Measure hardware — NEXT.** Procure or mock the packs, O4, FC, servos,
+   motor/ESC, sensors and connectors; execute H01–H22 and replace catalog-only
+   installation estimates.
 5. **MP-05 — Instrument first.** Complete the pitot/current/blackbox iron bird and test
    the reduction chain on an existing aircraft.
 6. **MP-06 — Rebuild the mass skeleton.** Solve measured 6S/R/CLEAN placement, 20 mm
@@ -689,8 +700,9 @@ Work shall proceed in this order:
 12. **MP-12 — Issue the CAD package.** Publish the new Design Guide/SVG set and start the
     controlled human CAD build.
 
-The next engineering task is **MP-03**, the M1 candidate hardware and power manifest—not
-another refinement of the current wing loft or fuselage OML.
+The next engineering task is **MP-04**, physical hardware/dummy measurement and
+motor/ESC/power-chain selection—not another refinement of the current wing loft or
+fuselage OML.
 
 ---
 
@@ -699,7 +711,7 @@ another refinement of the current wing loft or fuselage OML.
 | Gate | Status | Existing useful evidence | Principal missing evidence |
 |---|---|---|---|
 | **M0** | **Closed** | Revision-2 specification, ADR-0048 and executable mission contract | No M0 evidence missing; changes require controlled reopen |
-| **M1** | **Open — next design gate** | I-16/I-17/I-18/I-19/I-32 catalogs and power models | Versioned candidate manifest, procured-part measurements and integrated iron bird |
+| **M1** | **Open — physical closure next** | MP-03 candidate manifest; I-16/I-17/I-18/I-19/I-32 catalogs and power models | H01–H22 procured-part/dummy measurements, verified power tree and integrated iron bird |
 | **M2** | Partial, to rebuild | Equipment ledger, balance solvers, SLM-EQP-001, I-31/I-32 | Unified measured 6S/R/CLEAN skeleton and 20 mm travel proof |
 | **M3** | Open | Current forward-sweep trade and v0.6 candidate A | Equal-requirements straight and aft-swept optimized candidates |
 | **M4** | Blocked by M3 | r1/r2a calculations and E2A plan | Selected printed sections and measured `CL/CD/Cm` |
@@ -713,6 +725,9 @@ another refinement of the current wing loft or fuselage OML.
 
 ## 13. Governing evidence
 
+- [MP-03 Article #1 hardware and power manifest](17-article-1-hardware-manifest.md) —
+  controlled 6S-R/CLEAN candidate, separate 8S overlay, configuration masses, rail loads
+  and the H01–H22 physical closure queue.
 - [MP-02 ADR redesign-disposition ledger](../decisions/REDESIGN-DISPOSITION.md) — complete
   authority map separating v0.6 records from decisions and methods that govern v2.
 - [Consolidated NF Design Guide audit](../design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md)

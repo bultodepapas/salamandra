@@ -43,6 +43,7 @@ import flight_envelope
 import fpv_power_budget
 import fuselage_contract
 import fuselage_geometry
+import hardware_manifest
 import inav_fc_match
 import launch_speed
 import low_speed_trim_redesign
@@ -61,6 +62,7 @@ ROOT = Path(__file__).resolve().parent.parent
 LOCAL_SCRIPTS = (
     "mission_contract.py",
     "decision_ledger.py",
+    "hardware_manifest.py",
     "design_config.py",
     "aircraft_scene.py",
     "drawing_index.py",
@@ -174,6 +176,11 @@ def check_mission(add):
 def check_decision_ledger(add):
     for name, passed in decision_ledger.validation_checks().items():
         add(f"decision ledger: {name}", passed, "MP-02 authority contract")
+
+
+def check_hardware_manifest(add):
+    for name, passed in hardware_manifest.validation_checks().items():
+        add(f"hardware manifest: {name}", passed, "MP-03 M1 candidate contract")
 
 
 def check_mass(add):
@@ -677,6 +684,7 @@ def check_aircraft_scene(add):
 CONTRACT_GROUPS = (
     ("mission", check_mission),
     ("decision ledger", check_decision_ledger),
+    ("hardware manifest", check_hardware_manifest),
     ("geometry", check_geometry),
     ("mass", check_mass),
     ("aero contract", check_aero_contract),

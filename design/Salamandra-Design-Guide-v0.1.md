@@ -22,7 +22,10 @@ CAD. A replacement CAD guide is issued only at
 > the [Master Design Plan](../docs/05-master-plan.md) and the
 > [active Article #1 requirements](../docs/00-objectives-and-requirements.md). The
 > [MP-02 ADR disposition ledger](../decisions/REDESIGN-DISPOSITION.md) determines which
-> historical decisions may inform, but not constrain, the redesign.
+> historical decisions may inform, but not constrain, the redesign. The
+> [MP-03 hardware manifest](../docs/17-article-1-hardware-manifest.md) is the current
+> candidate equipment/power interface, but it does not authorize equipment stations or
+> production CAD before physical measurement and mass-skeleton closure.
 
 This edition releases the **twin-fin V1 architecture** and the generated **provisional
 fuselage OML**. The wing, airfoil, twist, elevons, materials, loads and flight limits are
