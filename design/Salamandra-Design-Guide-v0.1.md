@@ -1,7 +1,8 @@
 # Salamandra — Design Guide
 
 **Version 0.24** · 19 August 2026 · **RELEASED in v0.6.0**
-**Purpose:** concise, canonical execution specification for the Article #1 CAD model.
+**Purpose:** concise reconstruction/review specification for the historical v0.6
+Article #1 CAD baseline. It is not the active redesigned-aircraft execution specification.
 
 **ENGINEERING HOLD — 21 AUGUST 2026 (ADR-0047).** Do not start or continue the
 aerodynamic wing loft from the r1 profiles. The low-speed/full-CG trim gate has
@@ -9,11 +10,16 @@ reopened. r1 is reference/coupon geometry; r2a is an E2A test candidate and has 
 manufacturing-authoritative coordinate release. Work is limited to reversible
 coupon, fixture and test preparation until measured `CL/CD/Cm` selects a profile.
 
-> **CAD DESIGNER: START HERE.** Model only the requirements in this document. Do not
-> infer missing geometry from renders or sketches. Items marked `PROVISIONAL` must remain
-> parametric and require approval before manufacture. For calculations, rationale,
-> release history and engineering discussion, use the
-> [Advanced Design Guide](Salamandra-Design-Guide-Advanced-v0.1.md).
+**PROGRAMME RESET — MASTER PLAN v2.0.** Mission, bought-in hardware, sweep family,
+directional module and body architecture are now being reselected. This guide is the
+historical v0.6 comparison baseline, not the execution specification for new production
+CAD. A replacement CAD guide is issued only at
+[Master Plan Gate M7](../docs/05-master-plan.md#m7--final-equipment-freeze-body-oml-and-human-cad-handoff).
+
+> **CAD DESIGNER:** do not begin production CAD from this edition. For reversible review
+> or historical reconstruction, model only the requirements in this document and do not
+> infer missing geometry from renders or sketches. For the active work order, start with
+> the [Master Design Plan](../docs/05-master-plan.md).
 
 This edition releases the **twin-fin V1 architecture** and the generated **provisional
 fuselage OML**. The wing, airfoil, twist, elevons, materials, loads and flight limits are
@@ -28,15 +34,16 @@ unchanged from v0.23; any V1 fin or carrier solid modelled from v0.23 is obsolet
 |---|---|
 | Configuration | Cruise — Article #1 |
 | Directional variants | `SALAMANDRA-CLEAN` and `SALAMANDRA-V1` |
-| CAD authority | This document defines what must be modelled and delivered |
+| CAD authority | Historical v0.6 reconstruction/review only; active production CAD blocked by Master Plan v2.0 |
 | Numerical owners | `calculations/design_config.py` and the generated airfoil coordinate files |
 | Detailed engineering authority | [Advanced Design Guide](Salamandra-Design-Guide-Advanced-v0.1.md) |
 | Status | Historical v0.24 baseline under ADR-0047 aerodynamic design hold |
 
 ### 1.1 Rules for use
 
-1. Do not start a new wing loft while ADR-0047 is open. Non-aerodynamic parametric
-   work may use this historical baseline only where it cannot freeze r1 ordinates.
+1. Do not start a new production wing/body model until Master Plan Gate M7. Reversible
+   review work may use this historical baseline only where it cannot freeze a redesigned
+   aircraft decision.
 2. Use named parameters for every value marked `FIXED` or `PROVISIONAL`.
 3. Import the released `.dat` profiles; do not redraw or rescale them.
 4. Treat generated SVG sheets as design-review aids, not manufacturing authority.

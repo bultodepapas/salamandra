@@ -11,13 +11,16 @@ carries its source and the reasoning is the deliverable.**
 
 <!-- END GENERATED: drawing-hero -->
 
-**Revision 1.20** · 19 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
-**Phase 1 in progress** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
+**Revision 1.21** · 21 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
+**Programme reset — Gate M0 open** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
 
 **Engineering hold — 21 August 2026.** The released r1 wing geometry does not close
 the complete low-speed/CG trim envelope. Do not issue new wing CAD for manufacture.
 The provisional r2a section–twist candidate and its mandatory E2A physical gate are
-defined in [ADR-0047](decisions/ADR-0047-low-speed-trim-redesign-candidate.md).
+defined in [ADR-0047](decisions/ADR-0047-low-speed-trim-redesign-candidate.md). The
+programme has now reopened mission, hardware and architecture selection under the
+[canonical master design plan](docs/05-master-plan.md); v0.6 is a comparison baseline,
+not the automatically selected final aircraft.
 
 > 📖 **Read this project as a website:** <https://bultodepapas.github.io/salamandra/>
 > — searchable, with auto-generated indexes and an onboarding guide.
@@ -28,9 +31,10 @@ defined in [ADR-0047](decisions/ADR-0047-low-speed-trim-redesign-candidate.md).
 
 | If you want to… | Go to |
 |---|---|
+| **Understand what is being defined first and what follows** | [**Master design plan**](docs/05-master-plan.md) — canonical programme control |
 | **Understand the idea** | [What this project is](#what-this-project-is) |
 | **See the aircraft** | [Salamandra, Article #1](#the-aircraft--salamandra-article-1) · [drawing set](#drawing-set--generated-design-review-sheets) |
-| **Build the CAD model** | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) — the primary execution spec |
+| **Review the historical v0.6 CAD baseline** | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) — held until Master Plan Gate M7 |
 | **Know what is still unknown** | [`gaps/`](gaps/README.md) · [Open Points](design/Design-Guide-Open-Points-v0.1.md) |
 | **Review the NF book audit and release programme** | [**Consolidated NF Design Guide audit**](design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md) — one prioritized engineering and verification roadmap |
 | **Trace why a number exists** | [`decisions/`](decisions/README.md) · [`research/`](research/) · [CHANGELOG](CHANGELOG.md) |
@@ -75,6 +79,11 @@ It currently targets a PETG forward-swept flying wing, but that is only the firs
 **Salamandra** is the first reference design on the platform: a PETG forward-swept flying
 wing, modular and configurable, built around a standard center module with interchangeable
 wing panels. Efficient FPV cruise flight, with electronics chosen by the builder.
+
+> **Reset status:** the numbers below describe the controlled v0.6 analytical baseline.
+> They remain valuable comparison data, but span, sweep, airfoil, controls, directional
+> module and OML are being reselected through equal-requirements trades in the
+> [Master Design Plan](docs/05-master-plan.md). They are not manufacturing authority.
 
 ### Measurable objective
 
@@ -274,23 +283,25 @@ This is the project's central rule. Every quantitative claim carries a tag:
 
 ### Which design document should I use?
 
-These documents have different jobs. They describe the same released aircraft baseline;
-they are not competing specifications.
+The Master Design Plan governs the redesign. The other documents retain the v0.6
+analytical baseline or its detailed evidence; they are not permission to bypass the
+programme gates.
 
 | Document | Use it for | Intended reader | Authority |
 |---|---|---|---|
-| [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) | Building and reviewing the CAD model: geometry, interfaces, equipment envelopes, mass limits and delivery checklist | CAD designer | **Primary CAD execution specification** |
+| [**Master Design Plan v2.0**](docs/05-master-plan.md) | Defining the mission, hardware baseline, architecture trade, evidence gates and CAD handoff order | Project lead, engineering reviewer and CAD lead | **Canonical programme control** |
+| [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) | Reconstructing/reviewing the held v0.6 geometry, interfaces and equipment envelopes | CAD designer | Historical v0.6 CAD baseline; not active production authority |
 | [**Advanced Design Guide v0.24**](design/Salamandra-Design-Guide-Advanced-v0.1.md) | Detailed engineering limits, calculation results, release migration and complete technical context | Lead designer and engineering reviewer | **Canonical advanced engineering reference** |
 | [**Design Guide Justification**](design/Design-Guide-Justification-v0.1.md) | Understanding why each selected value exists and what evidence supports it | Reviewer or contributor challenging a requirement | Rationale and evidence companion |
 | [**Design Guide Open Points**](design/Design-Guide-Open-Points-v0.1.md) | Finding provisional values, unresolved gates and the event that can change each value | CAD designer, test engineer and release reviewer | Open-work and change-trigger register |
 | [**Consolidated NF Design Guide audit**](design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md) | Applying all 331 source pages to the current repository through one risk register, test sequence and release matrix | Lead designer, test engineer and independent reviewer | **Canonical NF-audit engineering programme** |
 
-**Normal CAD workflow:** begin with the concise Design Guide. Open the Advanced Design
-Guide only when a requirement needs interpretation. Check the Open Points before freezing
-any provisional feature. Use the Justification when reviewing or proposing a change. Both
-guides link directly to the
-[current manifest-controlled SVG drawing set](geometry/drawings/README.md); begin with
-`SLM-GA-001` and select the task-specific sheet from the guide table.
+**Current workflow:** begin with the Master Design Plan. The concise Design Guide is a
+historical v0.6 implementation baseline under hold; a new controlled CAD edition is issued
+only at Gate M7. Use the Advanced Guide, Open Points and Justification to recover evidence,
+not to freeze the redesigned aircraft. The guides link to the
+[current manifest-controlled SVG drawing set](geometry/drawings/README.md), which remains
+a review aid rather than manufacturing authority.
 
 ### Releases
 
@@ -303,8 +314,9 @@ working tree.
 > **📦 Current release — `v0.6.0`: twin-fin directional architecture and the parametric
 > fuselage programme.**
 >
-> The concise Design Guide is the authoritative CAD entry point. v0.5.0 left two shapes as
-> sketches; this release replaces both with derivations. The centreline fin is **rejected**
+> For the tagged v0.6 release, the concise Design Guide was the authoritative CAD entry
+> point. It is now a historical comparison baseline under the Master Plan reset. v0.5.0
+> left two shapes as sketches; v0.6 replaced both with derivations. The centreline fin is **rejected**
 > — its load path crossed the propeller plane — and superseded by two CORE-rooted fixed
 > fins at y = ±140 mm whose station comes out of a coupled clearance/mass/CG trade
 > ([ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), I-29/I-30): 6.1437 dm² total, fin
@@ -325,20 +337,22 @@ working tree.
 
 ## Status
 
-| Phase | Status |
+| Master gate | Status |
 |---|---|
-| 0 — Specification | ✅ **Closed** |
-| **1 — Geometry and stability** | 🔄 In progress · see [`docs/03-phase-1-plan.md`](docs/03-phase-1-plan.md) |
-| 2 — Weights and balancing | ⬜ |
-| 3 — Performance | ⬜ |
-| 4 — Loads and structure | ⬜ |
-| 5 — Systems and propulsion | ⬜ |
-| 6 — Manufacturing and release | ⬜ |
+| **M0 — Mission, scoring and configuration** | 🔄 **Open — next task** |
+| **M1 — Bought-in hardware and measurement chain** | 🔄 Partial catalog evidence; physical integration open |
+| **M2 — Mass skeleton and battery rail** | 🔄 Existing v0.6 work must be rebuilt for 6S/R/CLEAN plus 8S study |
+| **M3 — Equal-requirements architecture trade** | ⬜ Current forward-swept aircraft is candidate A |
+| **M4 — Printed section/aerodynamic evidence** | ⬜ Blocked by M3 |
+| **M5 — Integrated stability and control** | ⬜ Blocked |
+| **M6 — Loads, structure and aeroelasticity** | ⬜ Blocked |
+| **M7 — Final systems, OML and CAD handoff** | ⬜ Blocked |
+| **M8 — Native CAD and ground qualification** | ⬜ Blocked |
+| **M9 — Flight identification and optimization** | ⬜ Blocked |
 
-**Current physical gates:** **E2A printed-section `CL/CD/Cm` and trim acceptance**, E2
-complete-aircraft glide polar, F2 CAD/weighed mass, OP-29 measured torsional
-stiffness/elastic axis and G11 dynamic gust closure before the speed envelope can expand
-beyond 105 km/h. New wing loft/CAD is held until E2A selects or rejects r2a.
+**Current authorization:** mission/equipment research, electronics integration, mass
+skeletons, reversible calculations, coupons and test fixtures. New production wing/body
+CAD remains held until the master-plan gates select and validate an architecture.
 
 <details>
 <summary><strong>Phase-1 detail (2026-08-18)</strong> — gap-by-gap state of the geometry and stability work</summary>
@@ -396,7 +410,7 @@ beyond 105 km/h. New wing loft/CAD is held until E2A selects or rejects r2a.
 | Folder | What it contains |
 |---|---|
 | [`design/`](design/) | **Concise Salamandra Design Guide v0.24** — the primary CAD execution specification; plus the canonical Advanced Design Guide, justification and open points |
-| [`docs/`](docs/) | Specification, status, phase plan, conventions, [master plan up to the first prototype](docs/05-master-plan.md) |
+| [`docs/`](docs/) | Specification, status, conventions and the [canonical master design plan](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |
 | [`gaps/`](gaps/) | Register of what we do **not** know and how it gets closed |
@@ -406,6 +420,7 @@ beyond 105 km/h. New wing loft/CAD is held until E2A selects or rejects r2a.
 | [`wiki/`](wiki/) | **The served documentation site** (Astro Starlight): onboarding guide, auto-generated indexes, search. Deployed to GitHub Pages via `.github/workflows/docs.yml` |
 
 **Reading order for a newcomer:**
+[`docs/05-master-plan.md`](docs/05-master-plan.md) →
 [`docs/00-objectives-and-requirements.md`](docs/00-objectives-and-requirements.md) →
 [`decisions/README.md`](decisions/README.md) → [`gaps/README.md`](gaps/README.md)
 

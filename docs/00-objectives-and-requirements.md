@@ -1,7 +1,14 @@
 # Objectives and requirements — Phase 0 specification
 
-**Revision 1.5** · 18 August 2026 · **Phase 0 closed; Article #1 working allocation updated by ADR-0045**
-Defines **what is built and why**. No geometry line precedes this document.
+**Revision 1.5-reset** · 21 August 2026 · **INHERITED v0.6 SPECIFICATION — GATE M0 REOPENED**
+Defines the former v0.6 objectives and requirements. It is evidence for, but no longer the
+programme authority for, the redesigned aircraft.
+
+> **Reset notice.** The [Master Design Plan v2.0](05-master-plan.md) reopens mission,
+> scoring, 6S/8S architecture, sweep family and R/CLEAN directional configurations. The
+> arbitrary range/endurance targets and the former 4S–6S platform objective below are not
+> active redesign requirements. This file will be reissued by task MP-01; until then, use
+> it only to trace the v0.6 baseline.
 
 This is an **open, community-driven, modular 3D-printed FPV aircraft platform**. The core
 design principles are developed largely through **AI-assisted research**, while the final

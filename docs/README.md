@@ -8,11 +8,11 @@ define the reference design and the platform's conventions. See the
 
 | File | Content |
 |---|---|
-| [`00-objectives-and-requirements.md`](00-objectives-and-requirements.md) | **Specification (Phase 0).** Objectives, requirements, non-goals |
+| [`00-objectives-and-requirements.md`](00-objectives-and-requirements.md) | **Inherited v0.6 specification.** Reopened for Master Plan Gate M0 reissue |
 | [`02-measured-references.md`](02-measured-references.md) | Primary `[M]` data measured by the project |
-| [`03-phase-1-plan.md`](03-phase-1-plan.md) | Phase 1 execution plan |
+| [`03-phase-1-plan.md`](03-phase-1-plan.md) | Historical v0.6 geometry/stability workstream; superseded for programme sequence |
 | [`04-conventions.md`](04-conventions.md) | Tags, identifiers, symbols, signs |
-| [`05-master-plan.md`](05-master-plan.md) | Roadmap F1→F6 to the first prototype, integrating the CAD flow |
+| [`05-master-plan.md`](05-master-plan.md) | **Canonical Master Design Plan.** Mission → hardware → mass skeleton → equal-requirements architecture trade → evidence → human CAD → prototype |
 | [`06-material-mass-variants.md`](06-material-mass-variants.md) | **Mass budget tool and results** — PETG / AERO-PLA wings / PLA+ policies, per-part materials, battery/FC/FPV options (`calculations/mass_budget.py`) |
 | [`07-divergence-margin.md`](07-divergence-margin.md) | **Absolute divergence speed (G6, rev. 4)** — released r1 section and elastic-axis uncertainty at −15°: nominal 327.2 km/h, conservative 129.6 (**FAIL**), AERO 91.6; combined GXY+gyroid+1.1 mm wall 207; released initial **V_limit 105 km/h**, 150 only after S3 validates GXY (`calculations/divergence.py`) |
 | [`08-release-v0.1.md`](08-release-v0.1.md) | **First release (tag v0.1.0)** — the design package (CAD baseline): contents, verification status, frozen vs open items, binding constraints |

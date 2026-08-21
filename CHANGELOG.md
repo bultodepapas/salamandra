@@ -4,6 +4,37 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.46] — 2026-08-21
+
+**C55 — the repository had detailed subsystem work but no current master design contract;
+the roadmap assumed the selected geometry before mission, hardware and architecture had
+been revalidated.**
+
+- Replaced the former F1→F6 roadmap with the canonical Master Design Plan v2.0. Its M0→M9
+  gates run from mission/scoring through measured hardware, a 3-D mass skeleton,
+  equal-requirements architecture selection, printed aerodynamic/structural evidence,
+  human CAD handoff, ground qualification and instrumented flight.
+- Reopened arbitrary range/endurance targets and retained `≤1.15 Wh/km at 95 km/h` only
+  as a legacy comparator. Efficiency is now the primary multi-state objective; practical
+  agility is a handling/control-reserve requirement rather than an arbitrary roll target.
+- Fixed the working electronics architecture early enough to design around it: 6S1P P42A
+  first prototype, 8S1P study module, APC E 8×8 / 500–550 Kv 6S datum, two digital
+  12–15 g elevon servos, full-size SpeedyBee F405 WING-class instrumentation and a front
+  DJI O4 installation. Exact bought-in parts remain subject to measurement and bench gates.
+- Made the equipment mass skeleton ↔ wing/neutral-point loop the formal design method and
+  moved fuselage OML selection after that loop converges. Battery adjustment is at least
+  20 mm total travel, kept separate from connector and installation allowances.
+- Reopened −15° forward sweep. The v0.6 aircraft is candidate A and must compete against
+  optimized straight and aft-swept tailless families under identical requirements.
+- Defined reversible `SALAMANDRA-R` (rudder-capable vertical module, first flight) and
+  `SALAMANDRA-CLEAN` configurations. Existing passive twin-fin V1a remains one candidate,
+  not the redesigned-aircraft decision.
+- Updated the README, inherited objectives file, docs index and concise Design Guide so
+  none authorizes production CAD while Gate M0 and the architecture trade remain open.
+  No released v0.6 numerical geometry or calculation changed.
+
+---
+
 ## [1.45] — 2026-08-21
 
 **C54 — the cruise-only trim closure hid an infeasible low-speed/CG corner and used an
