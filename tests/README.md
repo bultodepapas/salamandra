@@ -1,5 +1,11 @@
 # Experimental program
 
+Before aircraft experiments, Gate M1 uses the separate
+[MP-04 H01–H22 hardware-characterisation campaign](MP04-hardware-characterisation/README.md).
+Its schema-controlled record is intentionally blank: the repository supplies the method,
+not invented measurements. The generated external-envelope/ballast fixtures live in
+[`geometry/equipment-dummies/`](../geometry/equipment-dummies/README.md).
+
 | # | Test | Closes | Effort | Status |
 |---|---|---|---|---|
 | **E1** | Geometry extraction from reference meshes | G1 | Low | 🔄 Partial |

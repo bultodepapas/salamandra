@@ -1,6 +1,7 @@
 # Article #1 candidate hardware and power manifest
 
-**Revision 1.0** · 21 August 2026 · **MP-03 complete; Gate M1 remains open**
+**Revision 1.1** · 21 August 2026 · **MP-03 complete; MP-04 catalog screen complete;
+Gate M1 remains open**
 
 **Document role:** canonical pre-measurement equipment, configuration and electrical
 interface for SALAMANDRA-6S-R, SALAMANDRA-6S-CLEAN and SALAMANDRA-8S-STUDY.
@@ -23,8 +24,9 @@ The first functional prototype remains **6S1P**. The candidate baseline is now e
 
 - Molicel P42A cells in a one-layer 6S1P pack, retaining both flat-narrow and
   flat-moderate envelope options for the M2 packaging trade;
-- one centreline pusher motor in the 500–550 Kv / approximately 400 W or greater class,
-  an APC Thin Electric 8x8 datum and a 6S, 30 A-minimum ESC class;
+- a measured-map shortlist of **T-Motor MN3110 KV470 / MN4010 KV475**, an APC Thin
+  Electric 8x8 datum with 8x6 and conditional 9x7.5 sensitivity articles, and an
+  **APD 80F3[X]v2** 6S procurement reference;
 - the SpeedyBee F405 WING FC and its 6S PDB/current/BEC board as reference parts;
 - two Corona DS-939MG elevon servos as reference parts, plus a bounded but unselected
   rudder-servo pocket only in 6S-R;
@@ -33,15 +35,15 @@ The first functional prototype remains **6S1P**. The candidate baseline is now e
 - a visible 72.38 g historical installation reserve that MP-04 must decompose instead of
   hiding it in an “avionics” lump.
 
-The exact motor and ESC are deliberately **not named**. Existing evidence defines a
-credible voltage/Kv/current/mass class but does not contain a measured motor/ESC/propeller
-map. Naming a product now would add false precision and could bias the later propulsion
-trade.
+The shortlist names **procurement specimens, not a flight powertrain**. I-33 screens
+manufacturer voltage, Kv/RPM, mass and envelope data; no catalog entry supplies the
+required APC 8x8 map at Salamandra's launch, climb and cruise points. H04/H06 and D2 must
+measure both 6S motor candidates before a future propulsion ADR selects one.
 
-The 8S overlay is a **separate study architecture**: its own pack, 375–413 Kv starting
-motor class, explicitly 8S-rated ESC and an 8S-qualified FC/PDB/BEC/current-logging
-assembly. The SpeedyBee PDB is officially a 2–6S product and is not accepted at 8S merely
-because the same page also prints a 36 V numerical input range.
+The 8S overlay is a **separate study architecture**: its own pack, MN4010 KV370 / MN4012
+KV400 catalog candidates, an APD 120F3[X]v2 study ESC and an 8S-qualified
+FC/PDB/BEC/current-logging assembly. The SpeedyBee PDB is officially a 2–6S product and is
+not accepted at 8S merely because the same page also prints a 36 V numerical input range.
 
 ### 1.1 Status vocabulary
 
@@ -68,7 +70,7 @@ at the ESC input, while total battery-terminal energy combines both branches.
 SALAMANDRA-6S-R / 6S-CLEAN
 
 6S1P P42A pack (21.6 V nominal; 25.2 V full)
-  +-- main-current path --> 6S ESC class --> 500-550 Kv motor class --> APC 8x8 datum
+  +-- main-current path --> APD 80F3[X]v2 reference --> MN3110-470 / MN4010-475 --> APC 8x8 datum
   `-- SpeedyBee PDB/current sensor
         +-- 5.2 V FC rail --> FC + RX + GPS/mag + pitot + buzzer + MicroSD
         +-- 5.0 V VTX rail --> DJI O4 transmission module/camera
@@ -77,7 +79,7 @@ SALAMANDRA-6S-R / 6S-CLEAN
 SALAMANDRA-8S-STUDY
 
 8S1P P42A pack (28.8 V nominal; 33.6 V full)
-  +-- separate 8S ESC --> 375-413 Kv starting motor class --> remapped propeller candidates
+  +-- APD 120F3[X]v2 study ESC --> MN4010-370 / MN4012-400 --> remapped propeller candidates
   `-- unselected 8S-qualified PDB/BEC/current logger --> equivalent low-voltage loads
 ```
 
@@ -92,9 +94,9 @@ simultaneous transient behavior; those are MP-04/MP-05 bench results.
 
 | Configuration | Installed rows | Candidate equipment mass | RSS input uncertainty | Reference hotel power | Design-continuous hotel power | Brief hotel peak |
 |---|---:|---:|---:|---:|---:|---:|
-| **6S-R** | 18 | 834.35 g | 44.19 g | 12.79 W | 15.75 W | 29.75 W |
-| **6S-CLEAN** | 17 | 821.85 g | 44.12 g | 11.54 W | 13.75 W | 23.08 W |
-| **8S-STUDY** | 16 | 991.55 g | 47.92 g | 11.54 W | 13.75 W | 23.08 W |
+| **6S-R** | 18 | 766.85 g | 37.86 g | 12.79 W | 15.75 W | 29.75 W |
+| **6S-CLEAN** | 17 | 754.35 g | 37.77 g | 11.54 W | 13.75 W | 23.08 W |
+| **8S-STUDY** | 16 | 942.55 g | 36.77 g | 11.54 W | 13.75 W | 23.08 W |
 
 ### Component manifest
 
@@ -103,10 +105,10 @@ simultaneous transient behavior; those are MP-04/MP-05 bench results.
 | `pack_6s1p_p42a` | 6S-R, 6S-CLEAN | **REFERENCE-PART** | 6S1P Molicel INR-21700-P42A pack | 1 | 445.00 +/- 5.00 g [D]/[E] | flat-narrow: 223.2 x 44 x 22.6 mm [D]<br>flat-moderate: 142.8 x 70.8 x 22.6 mm [D] | MP-04 H01: build and measure pack, leads, connector sweep, mass centre and usable energy. |
 | `pack_8s1p_p42a` | 8S-STUDY | **STUDY-CLASS** | 8S1P Molicel INR-21700-P42A study pack | 1 | 585.00 +/- 5.00 g [D]/[E] | flat-narrow: 293.4 x 44 x 22.6 mm [D]<br>flat-moderate: 186.2 x 70.8 x 22.6 mm [D] | MP-04 H02: build a hard dummy or pack and measure the complete 8S installation. |
 | `propeller_8x8` | 6S-R, 6S-CLEAN, 8S-STUDY | **REFERENCE-PART** | APC Thin Electric 8x8 datum plus adapter | 1 | 25.00 +/- 3.00 g [M]/[E] | rotating-disk: 25.4 x 203.2 x 203.2 mm [M]/[E] | MP-04 H03: weigh blade/adapter and bench-map at least two credible propeller alternatives. |
-| `motor_6s_class` | 6S-R, 6S-CLEAN | **REFERENCE-CLASS** | 28-class 500-550 Kv, approximately 400 W or greater | 1 | 170.00 +/- 30.00 g [E] | class-bound: 35 x 28 x 28 mm [E] | MP-04 H04: shortlist real motors, then measure mass, Kv, winding resistance, envelope and thermal map. |
-| `motor_8s_class` | 8S-STUDY | **STUDY-CLASS** | 8S 375-413 Kv starting class, approximately 400 W or greater | 1 | 170.00 +/- 30.00 g [E] | class-bound: 35 x 28 x 28 mm [E] | MP-04 H05: select and bench an 8S motor candidate without exceeding propeller RPM or temperature limits. |
-| `esc_6s_class` | 6S-R, 6S-CLEAN | **REFERENCE-CLASS** | 6S ESC, 30 A continuous minimum, telemetry preferred | 1 | 35.00 +/- 10.00 g [E] | class-bound: 60 x 30 x 15 mm [E] | MP-04 H06: select with the motor and measure efficiency, current, rpm, temperature and failure behavior. |
-| `esc_8s_class` | 8S-STUDY | **STUDY-CLASS** | 8S ESC, 30 A continuous minimum, telemetry preferred | 1 | 45.00 +/- 15.00 g [E] | class-bound: 70 x 35 x 18 mm [E] | MP-04 H07: select and bench with the 8S motor, PDB/BEC and propeller. |
+| `motor_6s_class` | 6S-R, 6S-CLEAN | **REFERENCE-CLASS** | T-Motor MN3110 KV470 primary / MN4010 KV475 alternate | 1 | 117.50 +/- 19.50 g [D] | mn3110-body: 28.5 x 37.7 x 37.7 mm [M]<br>mn4010-body: 30.5 x 44.7 x 44.7 mm [M] | MP-04 H04: procure both candidates if practical, then measure mass, Kv, winding resistance, envelope and thermal map with APC 8x8 alternatives. |
+| `motor_8s_class` | 8S-STUDY | **STUDY-CLASS** | T-Motor MN4010 KV370 primary / MN4012 KV400 alternate | 1 | 146.00 +/- 9.00 g [D] | mn4010-body: 30.5 x 44.7 x 44.7 mm [M]<br>mn4012-body: 32.5 x 44.7 x 44.7 mm [M] | MP-04 H05: procure only after the 6S bench result justifies 8S work; measure without exceeding propeller RPM or temperature limits. |
+| `esc_6s_class` | 6S-R, 6S-CLEAN | **REFERENCE-PART** | Advanced Power Drives 80F3[X]v2 procurement reference | 1 | 20.00 +/- 10.00 g [M]/[E] | body: 44 x 22 x 12 mm [M] | MP-04 H06: bench with both motor candidates; measure efficiency, current, rpm, temperature, firmware/protocol behavior and faults. |
+| `esc_8s_class` | 8S-STUDY | **STUDY-CLASS** | Advanced Power Drives 120F3[X]v2 study reference | 1 | 20.00 +/- 10.00 g [M]/[E] | body: 70 x 30 x 20 mm [M] | MP-04 H07: bench with the 8S motor, PDB/BEC and propeller only if the 8S study proceeds. |
 | `fc_6s` | 6S-R, 6S-CLEAN | **REFERENCE-PART** | SpeedyBee F405 WING FC board | 1 | 8.90 +/- 0.30 g [M] | body: 36.5 x 36.5 x 7 mm [M] | MP-04 H08: procure board, verify resources/firmware and measure mass/current/current-sensor calibration. |
 | `pdb_6s` | 6S-R, 6S-CLEAN | **REFERENCE-PART** | SpeedyBee F405 WING PDB/current/BEC board | 1 | 11.40 +/- 0.50 g [M] | body-bound: 36.5 x 36.5 x 5 mm [M]/[E] | MP-04 H09: measure complete board stack, rail regulation, ripple, current calibration and thermal margin. |
 | `fc_pdb_8s_class` | 8S-STUDY | **STUDY-CLASS** | 8S-qualified FC/PDB/BEC/current-logging assembly | 1 | 40.00 +/- 15.00 g [E] | station-bound: 64 x 45 x 21 mm [D]/[E] | MP-04 H10: select an 8S-rated logging/power assembly and bench every rail at 33.6 V. |
@@ -209,7 +211,9 @@ representative iron bird.
   [I-17](../research/I-17-inav-flight-controllers.md),
   [I-18](../research/I-18-servo-catalog.md),
   [I-19](../research/I-19-fpv-system-dji-o4.md),
-  [I-32](../research/I-32-6s-8s-p42a-pack-and-aircraft-trade.md) and
+  [I-32](../research/I-32-6s-8s-p42a-pack-and-aircraft-trade.md),
+  [I-33](../research/I-33-mp04-propulsion-procurement-and-hardware-characterisation.md)
+  and
   [ADR-0048](../decisions/ADR-0048-article-1-mission-and-configurations.md).
 
 Reproduce and export the complete data structure with:
@@ -217,4 +221,7 @@ Reproduce and export the complete data structure with:
 ```bash
 python3 calculations/hardware_manifest.py
 python3 calculations/hardware_manifest.py --json
+python3 calculations/hardware_candidate_trade.py
+python3 calculations/hardware_measurements.py --check
+python3 calculations/generate_hardware_dummies.py --check
 ```

@@ -124,7 +124,7 @@ vector, rather than assuming in advance where every gain will come from.
 | Carbon | Bending tube + pin. **Not torsional** | [ADR-0015](decisions/ADR-0015-carbon-non-torsional.md) |
 | Elevons | **0.28 c, y 227.5…585 mm (35–90 %), 357.5 mm; fixed 32.5 mm root bridge and 65 mm tip; servo y ±406.25 mm** | [ADR-0045](decisions/ADR-0045-article-1-elevon-geometry.md) |
 | AUW (6S1P) | **1553.25 g CLEAN / 44.1 km/h; coupled twin-fin V1 1601.98 g / 44.74 km/h** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md), [I-30](research/I-30-fin-station-mass-cg-and-connected-scene-closure.md) |
-| Propulsion | **APC E 8×8, 6S1P, 500–550 Kv; two-servo O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md) |
+| Propulsion | **Historical APC E 8×8 / 6S1P / 500–550 Kv screen; current MP-04 specimens are MN3110 KV470 and MN4010 KV475; O1 boundary J 0.918 / 8,484 rpm / drag ≤2.12 N** | [ADR-0042](decisions/ADR-0042-cruise-propulsion-equilibrium.md), [I-33](research/I-33-mp04-propulsion-procurement-and-hardware-characterisation.md) |
 | Target CG | r1 reference **−93.8 mm**; r2a test target **−87.0 mm (5% MAC)**, physical balance open | [ADR-0047](decisions/ADR-0047-low-speed-trim-redesign-candidate.md) |
 | V_NE article #1 | **160 km/h** (design 180) | — |
 | Initial V_limit | **105 km/h**; 150 only after GXY validation | [`docs/07`](docs/07-divergence-margin.md) |
@@ -297,8 +297,9 @@ programme gates.
 
 | Document | Use it for | Intended reader | Authority |
 |---|---|---|---|
-| [**Master Design Plan v2.3**](docs/05-master-plan.md) | Defining the mission, hardware baseline, architecture trade, evidence gates and CAD handoff order | Project lead, engineering reviewer and CAD lead | **Canonical programme control** |
+| [**Master Design Plan v2.4**](docs/05-master-plan.md) | Defining the mission, hardware baseline, architecture trade, evidence gates and CAD handoff order | Project lead, engineering reviewer and CAD lead | **Canonical programme control** |
 | [**Article #1 hardware manifest**](docs/17-article-1-hardware-manifest.md) | Reviewing the 6S-R/CLEAN candidate equipment, 8S study overlay, masses, envelopes, power rails and measurement queue | Systems, test, packaging and CAD contributors | **Canonical pre-measurement hardware/power interface** |
+| [**MP-04 procurement and characterisation campaign**](research/I-33-mp04-propulsion-procurement-and-hardware-characterisation.md) | Buying the bounded 6S specimens, printing dummies and executing H01–H22 without confusing catalog data with measurements | Systems, test and propulsion contributors | **Canonical MP-04 research/test method; physical evidence still open** |
 | [**Article #1 requirements v2.0**](docs/00-objectives-and-requirements.md) | Reading the active product intent, configurations, mission states, constraints and inherited-value disposition | Every contributor | **Canonical mission and product specification** |
 | [**ADR redesign-disposition ledger**](decisions/REDESIGN-DISPOSITION.md) | Determining whether a historical decision is retained, method-only, candidate-only, reopened, superseded or cancelled for Article #1 | Every contributor importing prior work | **Canonical ADR applicability map** |
 | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) | Reconstructing/reviewing the held v0.6 geometry, interfaces and equipment envelopes | CAD designer | Historical v0.6 CAD baseline; not active production authority |
@@ -351,7 +352,7 @@ working tree.
 | Master gate | Status |
 |---|---|
 | **M0 — Mission, scoring and configuration** | ✅ **Closed — specification v2.0, ADR-0048 and executable contract** |
-| **M1 — Bought-in hardware and measurement chain** | 🔄 **Open — MP-03 manifest complete; H01–H22 physical closure next** |
+| **M1 — Bought-in hardware and measurement chain** | 🔄 **Open — MP-04 shortlist/schema/dummies ready; H01–H22 physical closure next** |
 | **M2 — Mass skeleton and battery rail** | 🔄 Existing v0.6 work must be rebuilt for 6S/R/CLEAN plus 8S study |
 | **M3 — Equal-requirements architecture trade** | ⬜ Current forward-swept aircraft is candidate A |
 | **M4 — Printed section/aerodynamic evidence** | ⬜ Blocked by M3 |
@@ -361,9 +362,11 @@ working tree.
 | **M8 — Native CAD and ground qualification** | ⬜ Blocked |
 | **M9 — Flight identification and optimization** | ⬜ Blocked |
 
-**Immediate work:** MP-03 is complete. MP-04 now procures or creates hard dummies and
-executes H01–H22: real pack/equipment envelopes, motor/ESC/power-chain selection, mass,
-current, thermal, servo, RF, pneumatic and blackbox measurements.
+**Immediate work:** MP-04 is active. Its primary-source propulsion shortlist, blank
+H01–H22 evidence record and generated OpenSCAD envelope/ballast shells are ready. The next
+irreducible step is physical: print/ballast Tranche-A dummies, procure identified specimens
+and execute real envelope, motor/ESC/power, mass, thermal, servo, RF, pneumatic and
+blackbox measurements.
 
 **Current authorization:** mission/equipment research, electronics integration, mass
 skeletons, reversible calculations, coupons and test fixtures. New production wing/body
@@ -466,6 +469,9 @@ The current high-value results reproduce with:
 ```bash
 python3 calculations/hardware_manifest.py             # MP-03 hardware/power contract
 python3 calculations/hardware_manifest.py --json      # complete machine-readable export
+python3 calculations/hardware_candidate_trade.py      # MP-04 purchase shortlist/screen
+python3 calculations/hardware_measurements.py --check # current blank H01--H22 record
+python3 calculations/generate_hardware_dummies.py --check # OpenSCAD fixture source
 python3 calculations/verify_calculations.py        # contracts + deterministic local suite
 python3 calculations/verify_calculations.py --fast # cross-module contracts only
 python3 calculations/vlm_ala_volante.py       # NP (I-07)

@@ -10,7 +10,7 @@ reopened. r1 is reference/coupon geometry; r2a is an E2A test candidate and has 
 manufacturing-authoritative coordinate release. Work is limited to reversible
 coupon, fixture and test preparation until measured `CL/CD/Cm` selects a profile.
 
-**PROGRAMME RESET — MASTER PLAN v2.0.** Mission, bought-in hardware, sweep family,
+**PROGRAMME RESET — MASTER PLAN v2.4.** Mission, bought-in hardware, sweep family,
 directional module and body architecture are now being reselected. This guide is the
 historical v0.6 comparison baseline, not the execution specification for new production
 CAD. A replacement CAD guide is issued only at
@@ -24,8 +24,10 @@ CAD. A replacement CAD guide is issued only at
 > [MP-02 ADR disposition ledger](../decisions/REDESIGN-DISPOSITION.md) determines which
 > historical decisions may inform, but not constrain, the redesign. The
 > [MP-03 hardware manifest](../docs/17-article-1-hardware-manifest.md) is the current
-> candidate equipment/power interface, but it does not authorize equipment stations or
-> production CAD before physical measurement and mass-skeleton closure.
+> candidate equipment/power interface. [I-33](../research/I-33-mp04-propulsion-procurement-and-hardware-characterisation.md)
+> now controls the procurement specimens and MP-04 method, but neither source authorizes
+> equipment stations or production CAD before physical measurement and mass-skeleton
+> closure.
 
 This edition releases the **twin-fin V1 architecture** and the generated **provisional
 fuselage OML**. The wing, airfoil, twist, elevons, materials, loads and flight limits are
@@ -40,7 +42,7 @@ unchanged from v0.23; any V1 fin or carrier solid modelled from v0.23 is obsolet
 |---|---|
 | Configuration | Cruise — Article #1 |
 | Directional variants | `SALAMANDRA-CLEAN` and `SALAMANDRA-V1` |
-| CAD authority | Historical v0.6 reconstruction/review only; active production CAD blocked by Master Plan v2.0 |
+| CAD authority | Historical v0.6 reconstruction/review only; active production CAD blocked by Master Plan v2.4 |
 | Numerical owners | `calculations/design_config.py` and the generated airfoil coordinate files |
 | Active redesign mission | [Article #1 requirements v2.0](../docs/00-objectives-and-requirements.md); this guide does not supersede it |
 | Detailed engineering authority | [Advanced Design Guide](Salamandra-Design-Guide-Advanced-v0.1.md) |
@@ -417,6 +419,12 @@ two balance tabs at the target CG.
 
 Article #1 uses a centreline pusher envelope. The exact motor selection remains
 provisional, but CAD shall reserve the following:
+
+> **Active-redesign override:** the table below records the historical v0.6 envelope. It
+> is not a valid new packaging bound. I-33 replaces it with MN3110 KV470 and MN4010 KV475
+> procurement specimens (up to 30.5 × Ø44.7 mm and 137 g with catalog leads) plus an
+> APD 80F3[X]v2 reference. Use the generated MP-04 hard dummies now; a new CAD envelope is
+> released only after H04/H06 measurements and MP-06 placement closure.
 
 | Item | Requirement | Status |
 |---|---|---|

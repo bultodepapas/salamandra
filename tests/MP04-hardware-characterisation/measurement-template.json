@@ -1,0 +1,858 @@
+{
+  "schema": "salamandra-mp04-hardware-measurements-v1",
+  "authority": "BLANK-TEMPLATE-NOT-MEASURED-EVIDENCE",
+  "article": "SALAMANDRA Article #1",
+  "created_utc": null,
+  "measurement_environment": {
+    "location": null,
+    "ambient_temperature_c": null,
+    "ambient_pressure_pa": null,
+    "instruments_file": null
+  },
+  "gates": [
+    {
+      "gate_id": "H01",
+      "hardware_ids": [
+        "pack_6s1p_p42a"
+      ],
+      "objective": "Complete 6S pack geometry, mass properties and usable energy",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "width_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "height_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "mass_centre_from_forward_face_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "connector_sweep_length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "usable_energy_wh": {
+          "value": null,
+          "unit": "Wh"
+        }
+      }
+    },
+    {
+      "gate_id": "H02",
+      "hardware_ids": [
+        "pack_8s1p_p42a"
+      ],
+      "objective": "Complete 8S study pack or inert hard-dummy geometry",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "mass_or_ballasted_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "width_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "height_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "mass_centre_from_forward_face_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "connector_sweep_length_mm": {
+          "value": null,
+          "unit": "mm"
+        }
+      }
+    },
+    {
+      "gate_id": "H03",
+      "hardware_ids": [
+        "propeller_8x8"
+      ],
+      "objective": "Reference propeller/adapter mass and multi-prop bench artifact",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "tested_propeller_count": {
+          "value": null,
+          "unit": "count"
+        },
+        "reference_propeller_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "adapter_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "maximum_test_rpm": {
+          "value": null,
+          "unit": "rpm"
+        },
+        "maximum_test_current_a": {
+          "value": null,
+          "unit": "A"
+        },
+        "maximum_test_temperature_c": {
+          "value": null,
+          "unit": "degC"
+        }
+      }
+    },
+    {
+      "gate_id": "H04",
+      "hardware_ids": [
+        "motor_6s_class"
+      ],
+      "objective": "6S motor specimen geometry and electrical constants",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "selected_model": {
+          "value": null,
+          "unit": "text"
+        },
+        "mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "body_length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "body_diameter_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "mass_centre_from_mount_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "measured_kv_rpm_per_v": {
+          "value": null,
+          "unit": "rpm/V"
+        },
+        "phase_resistance_mohm": {
+          "value": null,
+          "unit": "mOhm"
+        },
+        "maximum_bench_temperature_c": {
+          "value": null,
+          "unit": "degC"
+        }
+      }
+    },
+    {
+      "gate_id": "H05",
+      "hardware_ids": [
+        "motor_8s_class"
+      ],
+      "objective": "8S-study motor specimen and voltage/RPM/thermal proof",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "selected_model": {
+          "value": null,
+          "unit": "text"
+        },
+        "mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "body_length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "body_diameter_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "measured_kv_rpm_per_v": {
+          "value": null,
+          "unit": "rpm/V"
+        },
+        "maximum_test_rpm": {
+          "value": null,
+          "unit": "rpm"
+        },
+        "maximum_bench_temperature_c": {
+          "value": null,
+          "unit": "degC"
+        }
+      }
+    },
+    {
+      "gate_id": "H06",
+      "hardware_ids": [
+        "esc_6s_class"
+      ],
+      "objective": "6S ESC efficiency, control and thermal map",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "selected_model": {
+          "value": null,
+          "unit": "text"
+        },
+        "installed_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "width_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "height_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "efficiency_at_o1_boundary": {
+          "value": null,
+          "unit": "fraction"
+        },
+        "maximum_current_a": {
+          "value": null,
+          "unit": "A"
+        },
+        "maximum_temperature_c": {
+          "value": null,
+          "unit": "degC"
+        }
+      }
+    },
+    {
+      "gate_id": "H07",
+      "hardware_ids": [
+        "esc_8s_class"
+      ],
+      "objective": "8S ESC voltage, efficiency and thermal proof",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "selected_model": {
+          "value": null,
+          "unit": "text"
+        },
+        "installed_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "maximum_bus_voltage_v": {
+          "value": null,
+          "unit": "V"
+        },
+        "efficiency_at_o1_boundary": {
+          "value": null,
+          "unit": "fraction"
+        },
+        "maximum_current_a": {
+          "value": null,
+          "unit": "A"
+        },
+        "maximum_temperature_c": {
+          "value": null,
+          "unit": "degC"
+        }
+      }
+    },
+    {
+      "gate_id": "H08",
+      "hardware_ids": [
+        "fc_6s"
+      ],
+      "objective": "FC hardware/firmware resources, mass and current calibration",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "hardware_revision": {
+          "value": null,
+          "unit": "text"
+        },
+        "firmware_target_and_version": {
+          "value": null,
+          "unit": "text"
+        },
+        "mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "idle_current_ma": {
+          "value": null,
+          "unit": "mA"
+        },
+        "current_scale_error_pct": {
+          "value": null,
+          "unit": "%"
+        },
+        "available_uart_count": {
+          "value": null,
+          "unit": "count"
+        },
+        "available_servo_output_count": {
+          "value": null,
+          "unit": "count"
+        }
+      }
+    },
+    {
+      "gate_id": "H09",
+      "hardware_ids": [
+        "pdb_6s"
+      ],
+      "objective": "6S PDB stack, every regulated rail, ripple and heat",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "stack_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "stack_height_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "five_volt_rail_error_pct": {
+          "value": null,
+          "unit": "%"
+        },
+        "servo_rail_error_pct": {
+          "value": null,
+          "unit": "%"
+        },
+        "vtx_rail_error_pct": {
+          "value": null,
+          "unit": "%"
+        },
+        "maximum_ripple_mv_peak_to_peak": {
+          "value": null,
+          "unit": "mVpp"
+        },
+        "maximum_temperature_c": {
+          "value": null,
+          "unit": "degC"
+        }
+      }
+    },
+    {
+      "gate_id": "H10",
+      "hardware_ids": [
+        "fc_pdb_8s_class"
+      ],
+      "objective": "Selected 8S-rated FC/PDB/BEC/logging assembly proof",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "selected_assembly": {
+          "value": null,
+          "unit": "text"
+        },
+        "installed_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "maximum_test_voltage_v": {
+          "value": null,
+          "unit": "V"
+        },
+        "maximum_ripple_mv_peak_to_peak": {
+          "value": null,
+          "unit": "mVpp"
+        },
+        "current_scale_error_pct": {
+          "value": null,
+          "unit": "%"
+        },
+        "maximum_temperature_c": {
+          "value": null,
+          "unit": "degC"
+        }
+      }
+    },
+    {
+      "gate_id": "H11",
+      "hardware_ids": [
+        "elevon_servos"
+      ],
+      "objective": "Two-servo batch deadband, stiffness, rate, current and heat",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "pair_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "maximum_deadband_deg": {
+          "value": null,
+          "unit": "deg"
+        },
+        "maximum_backlash_deg": {
+          "value": null,
+          "unit": "deg"
+        },
+        "minimum_rate_deg_per_s": {
+          "value": null,
+          "unit": "deg/s"
+        },
+        "minimum_output_stiffness_nm_per_rad": {
+          "value": null,
+          "unit": "N*m/rad"
+        },
+        "maximum_stall_current_a_each": {
+          "value": null,
+          "unit": "A"
+        },
+        "maximum_temperature_c": {
+          "value": null,
+          "unit": "degC"
+        }
+      }
+    },
+    {
+      "gate_id": "H12",
+      "hardware_ids": [
+        "rudder_servo_reserve"
+      ],
+      "objective": "R-module actuator specimen after M5 sizing",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "selected_model": {
+          "value": null,
+          "unit": "text"
+        },
+        "mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "maximum_deadband_deg": {
+          "value": null,
+          "unit": "deg"
+        },
+        "minimum_rate_deg_per_s": {
+          "value": null,
+          "unit": "deg/s"
+        },
+        "maximum_stall_current_a": {
+          "value": null,
+          "unit": "A"
+        }
+      }
+    },
+    {
+      "gate_id": "H13",
+      "hardware_ids": [
+        "o4_camera"
+      ],
+      "objective": "Camera/lens datum, mount mass and optical keep-out",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "camera_with_mount_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "lens_datum_x_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "lens_datum_y_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "lens_datum_z_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "connector_keepout_length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "minimum_unobstructed_fov_deg": {
+          "value": null,
+          "unit": "deg"
+        }
+      }
+    },
+    {
+      "gate_id": "H14",
+      "hardware_ids": [
+        "o4_vtx_antenna"
+      ],
+      "objective": "VTX/coax/antenna installed route, power and cooling",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "installed_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "minimum_coax_bend_radius_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "maximum_current_a": {
+          "value": null,
+          "unit": "A"
+        },
+        "maximum_power_w": {
+          "value": null,
+          "unit": "W"
+        },
+        "maximum_temperature_c": {
+          "value": null,
+          "unit": "degC"
+        }
+      }
+    },
+    {
+      "gate_id": "H15",
+      "hardware_ids": [
+        "gps_mag"
+      ],
+      "objective": "GNSS harness/current and installed magnetic-interference proof",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "installed_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "harness_length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "current_ma": {
+          "value": null,
+          "unit": "mA"
+        },
+        "maximum_compass_deviation_deg": {
+          "value": null,
+          "unit": "deg"
+        },
+        "minimum_satellite_count": {
+          "value": null,
+          "unit": "count"
+        }
+      }
+    },
+    {
+      "gate_id": "H16",
+      "hardware_ids": [
+        "pitot_sensor"
+      ],
+      "objective": "Differential-pressure board envelope, zero, scale and leak proof",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "installed_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "width_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "height_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "zero_offset_pa": {
+          "value": null,
+          "unit": "Pa"
+        },
+        "scale_error_pct": {
+          "value": null,
+          "unit": "%"
+        },
+        "leak_rate_pa_per_s": {
+          "value": null,
+          "unit": "Pa/s"
+        },
+        "current_ma": {
+          "value": null,
+          "unit": "mA"
+        }
+      }
+    },
+    {
+      "gate_id": "H17",
+      "hardware_ids": [
+        "pitot_probe_tubing"
+      ],
+      "objective": "Probe, fittings and tube-route installed measurement",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "installed_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "probe_length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "tube_route_length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "maximum_outer_diameter_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "assembled_leak_rate_pa_per_s": {
+          "value": null,
+          "unit": "Pa/s"
+        }
+      }
+    },
+    {
+      "gate_id": "H18",
+      "hardware_ids": [
+        "receiver"
+      ],
+      "objective": "Receiver hardware/firmware, current, failsafe and range proof",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "firmware_version": {
+          "value": null,
+          "unit": "text"
+        },
+        "installed_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "current_ma": {
+          "value": null,
+          "unit": "mA"
+        },
+        "failsafe_latency_ms": {
+          "value": null,
+          "unit": "ms"
+        },
+        "ground_range_m": {
+          "value": null,
+          "unit": "m"
+        }
+      }
+    },
+    {
+      "gate_id": "H19",
+      "hardware_ids": [
+        "receiver_antenna"
+      ],
+      "objective": "Chosen antenna/pigtail geometry and installed RF result",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "installed_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "route_length_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "minimum_bend_radius_mm": {
+          "value": null,
+          "unit": "mm"
+        },
+        "range_test_minimum_lq_pct": {
+          "value": null,
+          "unit": "%"
+        }
+      }
+    },
+    {
+      "gate_id": "H20",
+      "hardware_ids": [
+        "buzzer"
+      ],
+      "objective": "Buzzer part, mass, current and through-shell function",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "selected_model": {
+          "value": null,
+          "unit": "text"
+        },
+        "installed_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "current_ma": {
+          "value": null,
+          "unit": "mA"
+        },
+        "sound_level_at_1m_dba": {
+          "value": null,
+          "unit": "dBA"
+        }
+      }
+    },
+    {
+      "gate_id": "H21",
+      "hardware_ids": [
+        "blackbox_card"
+      ],
+      "objective": "Card identity and complete-rate logging integrity",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "selected_card": {
+          "value": null,
+          "unit": "text"
+        },
+        "capacity_gb": {
+          "value": null,
+          "unit": "GB"
+        },
+        "logging_rate_hz": {
+          "value": null,
+          "unit": "Hz"
+        },
+        "test_duration_s": {
+          "value": null,
+          "unit": "s"
+        },
+        "dropped_frame_pct": {
+          "value": null,
+          "unit": "%"
+        },
+        "decode_error_count": {
+          "value": null,
+          "unit": "count"
+        }
+      }
+    },
+    {
+      "gate_id": "H22",
+      "hardware_ids": [
+        "installation_reserve"
+      ],
+      "objective": "Replace distributed reserve with weighed installation line items",
+      "status": "pending",
+      "specimen_ids": [],
+      "operator": null,
+      "measured_utc": null,
+      "evidence_files": [],
+      "measurements": {
+        "wire_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "connector_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "mount_and_strain_relief_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "service_loop_mass_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "measured_installation_total_g": {
+          "value": null,
+          "unit": "g"
+        },
+        "catalog_reserve_delta_g": {
+          "value": null,
+          "unit": "g"
+        }
+      }
+    }
+  ]
+}

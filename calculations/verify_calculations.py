@@ -43,7 +43,10 @@ import flight_envelope
 import fpv_power_budget
 import fuselage_contract
 import fuselage_geometry
+import generate_hardware_dummies
+import hardware_candidate_trade
 import hardware_manifest
+import hardware_measurements
 import inav_fc_match
 import launch_speed
 import low_speed_trim_redesign
@@ -63,6 +66,9 @@ LOCAL_SCRIPTS = (
     "mission_contract.py",
     "decision_ledger.py",
     "hardware_manifest.py",
+    "hardware_candidate_trade.py",
+    "hardware_measurements.py",
+    "generate_hardware_dummies.py",
     "design_config.py",
     "aircraft_scene.py",
     "drawing_index.py",
@@ -181,6 +187,15 @@ def check_decision_ledger(add):
 def check_hardware_manifest(add):
     for name, passed in hardware_manifest.validation_checks().items():
         add(f"hardware manifest: {name}", passed, "MP-03 M1 candidate contract")
+
+
+def check_hardware_measurement_campaign(add):
+    for name, passed in hardware_candidate_trade.validation_checks().items():
+        add(f"hardware candidates: {name}", passed, "MP-04 procurement screen")
+    for name, passed in hardware_measurements.validation_checks().items():
+        add(f"hardware measurements: {name}", passed, "MP-04 H01--H22 record contract")
+    for name, passed in generate_hardware_dummies.validation_checks().items():
+        add(f"hardware dummies: {name}", passed, "MP-04 OpenSCAD envelope fixtures")
 
 
 def check_mass(add):
@@ -685,6 +700,7 @@ CONTRACT_GROUPS = (
     ("mission", check_mission),
     ("decision ledger", check_decision_ledger),
     ("hardware manifest", check_hardware_manifest),
+    ("hardware measurement campaign", check_hardware_measurement_campaign),
     ("geometry", check_geometry),
     ("mass", check_mass),
     ("aero contract", check_aero_contract),

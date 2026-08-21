@@ -88,6 +88,14 @@ def _patch_function(module_name, attribute, replacement_factory):
 
 MUTATIONS = (
     Mutation(
+        "hardware: one propulsion procurement candidate disappears",
+        "MP-04 names a bounded motor/ESC shortlist; removing an option that is still "
+        "listed for procurement must fail the candidate contract.",
+        _patch_function(
+            "hardware_candidate_trade", "MOTORS", lambda old: old[:-1]
+        ),
+    ),
+    Mutation(
         "hardware: one candidate-manifest row disappears",
         "MP-03 requires the human-readable manifest, configuration totals and "
         "machine-readable hardware list to remain one object; a missing row must fail.",

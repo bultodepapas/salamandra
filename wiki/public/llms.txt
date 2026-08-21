@@ -35,7 +35,7 @@
 ## Platform
 
 - [Project readme](https://bultodepapas.github.io/salamandra/platform/readme/): Status and full navigation
-- [Changelog](https://bultodepapas.github.io/salamandra/platform/changelog/): Correction record through C52
+- [Changelog](https://bultodepapas.github.io/salamandra/platform/changelog/): Correction record through C59
 - [Contributing](https://bultodepapas.github.io/salamandra/platform/contributing/): Full contribution guide
 
 ## Optional

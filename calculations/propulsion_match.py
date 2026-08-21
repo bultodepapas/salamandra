@@ -25,6 +25,7 @@ from dataclasses import dataclass
 from functools import cache
 from itertools import pairwise
 
+import battery_pack_layout
 from design_config import (
     ARTICLE_CLEAN_MASS_KG,
     CRUISE_SPEED_KMH,
@@ -46,6 +47,17 @@ O1_WH_PER_KM = O1_ENERGY_LIMIT_WH_PER_KM
 MOTOR_ESC_EFF = 0.85                # centre of declared 0.80--0.88 band [E]
 MOTOR_ESC_EFF_BAND = (0.80, 0.88)
 APC_MAX_RPM = 150_000.0 / 8.0       # Thin Electric rule [M]
+P42A_NOMINAL_CELL_V = battery_pack_layout.CELLS["Molicel P42A"][2]
+P42A_FULL_CELL_V = battery_pack_layout.P42A_VOLTAGE_FULL_V
+
+
+def pack_voltage(cells, cell_voltage=P42A_NOMINAL_CELL_V):
+    """Return series-pack voltage from the selected P42A cell model."""
+    if cells < 1 or cell_voltage <= 0.0:
+        raise ValueError("cell count and cell voltage must be positive")
+    return cells * cell_voltage
+
+
 @cache
 def reference_hotel_load():
     """Article #1 continuous hotel load [W] (lazy; see fpv_power_budget)."""
@@ -266,13 +278,16 @@ def main():
           "until E2, only the O1 boundary is known.")
 
     print("\nMotor and propeller checks")
-    for cells, volts in ((6, 22.2), (4, 14.8)):
-        fractions = [point.rpm / (volts * kv) for kv in (500, 550)]
-        print(f"  {cells}S, 500--550 Kv: required rpm is "
+    for cells, kv_range in ((6, (470, 550)), (8, (350, 400))):
+        volts = pack_voltage(cells)
+        fractions = [point.rpm / (volts * kv) for kv in kv_range]
+        print(f"  {cells}S P42A ({volts:.1f} V nominal), "
+              f"{kv_range[0]}--{kv_range[1]} Kv: required rpm is "
               f"{min(fractions)*100:.0f}--{max(fractions)*100:.0f}% of no-load rpm")
-    kv_4s_at_80 = point.rpm / (14.8 * 0.80)
-    print(f"  4S needs approximately {kv_4s_at_80:.0f} Kv at an 80% loaded/no-load "
-          "rpm ratio; it is not the same motor as the 6S reference.")
+    kv_6s_at_80 = point.rpm / (pack_voltage(6) * 0.80)
+    kv_8s_at_80 = point.rpm / (pack_voltage(8) * 0.80)
+    print(f"  80% loaded/no-load planning points: {kv_6s_at_80:.0f} Kv at 6S "
+          f"and {kv_8s_at_80:.0f} Kv at 8S.")
     print(f"  APC Thin Electric limit={APC_MAX_RPM:.0f} rpm; operating margin="
           f"{APC_MAX_RPM/point.rpm:.2f}x")
 
@@ -290,11 +305,19 @@ def main():
             or abs(args.hotel_load_w
                    - 10.3875 / REFERENCE_BEC_EFFICIENCY) < 1e-12),
         "propeller has at least 1.5x RPM margin": APC_MAX_RPM / point.rpm >= 1.5,
-        "6S 500--550 Kv has a plausible loaded rpm ratio":
-            0.65 <= min(point.rpm / (22.2 * kv) for kv in (500, 550))
-            and max(point.rpm / (22.2 * kv) for kv in (500, 550)) <= 0.85,
-        "4S 500--550 Kv cannot reach the required rpm unloaded":
-            max(14.8 * kv for kv in (500, 550)) < point.rpm,
+        "6S P42A 470--550 Kv has a plausible loaded rpm ratio":
+            0.65 <= min(point.rpm / (pack_voltage(6) * kv)
+                        for kv in (470, 550))
+            and max(point.rpm / (pack_voltage(6) * kv)
+                    for kv in (470, 550)) <= 0.85,
+        "8S P42A 350--400 Kv has a plausible loaded rpm ratio":
+            0.65 <= min(point.rpm / (pack_voltage(8) * kv)
+                        for kv in (350, 400))
+            and max(point.rpm / (pack_voltage(8) * kv)
+                    for kv in (350, 400)) <= 0.85,
+        "screened full-charge no-load speeds remain below APC limit":
+            max(pack_voltage(6, P42A_FULL_CELL_V) * 550,
+                pack_voltage(8, P42A_FULL_CELL_V) * 400) < APC_MAX_RPM,
     }
     print("\nVALIDATION")
     for name, passed in checks.items():
@@ -302,7 +325,7 @@ def main():
     if not all(checks.values()):
         raise SystemExit(1)
     print("\nDECISION: Article #1 remains 6S1P with APC E 8x8 and a "
-          "500--550 Kv motor. E2 must supply drag before a unique cruise "
+          "470--550 Kv screened motor range. E2 must supply drag before a unique cruise "
           "equilibrium can be claimed; D2 supplies the hardware map.")
 
 

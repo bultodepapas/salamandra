@@ -4,6 +4,45 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.50] — 2026-08-21
+
+**C59 — The propulsion screen treated the P42A series pack as a 3.7 V/cell LiPo and
+reported 22.2 V nominal for 6S. The selected P42A source specifies 3.6 V nominal and
+4.2 V charge voltage, so the controlled pack values are 21.6/25.2 V for 6S and
+28.8/33.6 V for 8S. The former generic motor/ESC class also did not identify specimens
+that could actually close MP-04.**
+
+- Corrected `propulsion_match.py` to import the P42A voltage model, check full-charge
+  no-load RPM and report current 6S/8S planning bands. The O1 boundary remains 8,484 rpm,
+  109.25 W total battery power and 97.71 W motor/ESC input; it remains a boundary, not a
+  predicted aircraft equilibrium.
+- Added I-33 and `hardware_candidate_trade.py`. The controlled 6S procurement specimens
+  are T-Motor MN3110 KV470 and MN4010 KV475 with APD 80F3[X]v2; the separate 8S study
+  candidates are MN4010 KV370 / MN4012 KV400 with APD 120F3[X]v2. APC 8x8E, 8x6E and a
+  clearance-conditional 9x7.5E define the bench articles. Catalog ratings are screened,
+  not promoted to flight performance.
+- Rejected the APD 40F3 as the 6S reference and APD 80F3[X]v2 as the 8S reference because
+  they leave only 0.3 V and 0.4 V, respectively, above full pack charge. The 5% explicit
+  voltage-headroom rule is a declared procurement estimate, not a component standard.
+- Updated the manifest's real candidate envelopes and catalog-mass bands. Equipment-only
+  planning subtotals are now 766.85 g for 6S-R, 754.35 g for 6S-CLEAN and 942.55 g for
+  8S-STUDY; all remain pre-measurement quantities.
+- Added `hardware_measurements.py` and the synchronized blank H01–H22 JSON template. It
+  accepts pending planning records but refuses `--require-closure` until every gate has
+  specimen identity, timestamp, evidence and complete accepted values.
+- Added generated OpenSCAD external-envelope shells with ballast cavities for packaging,
+  removal, FOV and battery-travel trials. They explicitly carry no flight, cooling,
+  connector, tolerance or structural authority.
+- Added the current INAV board/firmware regression matrix, guarded propulsion-bench data
+  grid and phased procurement sequence. Advanced the Master Design Plan to v2.4: MP-04 is
+  active, its research and executable infrastructure are complete, but physical H01–H22,
+  D2 and the iron bird remain open; M1 and production CAD remain held.
+- Integrated all three new contracts into the global verifier and added a disappearing
+  propulsion-candidate mutation, increasing the falsifiability campaign from 23 to 24
+  seeded defects.
+
+---
+
 ## [1.49] — 2026-08-21
 
 **C58 — The programme named a plausible 6S electronics baseline, but its identity, mass,

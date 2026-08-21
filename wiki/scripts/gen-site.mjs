@@ -180,6 +180,38 @@ add(DESIGN_GUIDE_SOURCE, 'salamandra/design-guide.md');
 add('design/Salamandra-Design-Guide-Advanced-v0.1.md', 'salamandra/design-guide-advanced.md');
 add('design/Design-Guide-Justification-v0.1.md', 'salamandra/design-guide-justification.md');
 add('design/Design-Guide-Open-Points-v0.1.md', 'salamandra/design-guide-open-points.md');
+add(
+  'design/Low-Speed-Trim-Redesign-and-E2A-Plan.md',
+  'salamandra/low-speed-trim-redesign-and-e2a-plan.md',
+);
+add(
+  'design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md',
+  'salamandra/nf-design-guide-consolidated-audit-and-release-programme.md',
+);
+add(
+  'design/NF-Design-Guide-2024-Repository-Audit-Part-06-Design-Method-Synthesis.md',
+  'salamandra/nf-design-guide-part-06-design-method-synthesis.md',
+);
+add(
+  'design/NF-Design-Guide-2024-Repository-Audit.md',
+  'salamandra/nf-design-guide-repository-audit.md',
+);
+add(
+  'design/NF-Design-Guide-2024-Repository-Audit-Part-02-Airfoil-Trim.md',
+  'salamandra/nf-design-guide-part-02-airfoil-trim.md',
+);
+add(
+  'design/NF-Design-Guide-2024-Repository-Audit-Part-03-Directional-Stability.md',
+  'salamandra/nf-design-guide-part-03-directional-stability.md',
+);
+add(
+  'design/NF-Design-Guide-2024-Repository-Audit-Part-04-Structure-Aeroelasticity.md',
+  'salamandra/nf-design-guide-part-04-structure-aeroelasticity.md',
+);
+add(
+  'design/NF-Design-Guide-2024-Repository-Audit-Part-05-Wingtips-Drag-Flaps.md',
+  'salamandra/nf-design-guide-part-05-wingtips-drag-flaps.md',
+);
 
 for (const f of readdirSync(path.join(ROOT, 'decisions'))
   .filter((f) => /^ADR-\d{4}.*\.md$/.test(f))
@@ -187,6 +219,7 @@ for (const f of readdirSync(path.join(ROOT, 'decisions'))
   add(`decisions/${f}`, `decisions/${f.toLowerCase()}`);
 }
 add('decisions/README.md', 'decisions/overview.md');
+add('decisions/REDESIGN-DISPOSITION.md', 'decisions/redesign-disposition.md');
 
 for (const f of readdirSync(path.join(ROOT, 'research'))
   .filter((f) => /^I-\d{2}.*\.md$/.test(f))
@@ -198,7 +231,19 @@ add('first_investigation.md', 'research/first-investigation.md');
 
 add('gaps/README.md', 'gaps/index.md');
 add('tests/README.md', 'tests/index.md');
+add(
+  'tests/E2A-printed-section-polars/README.md',
+  'tests/e2a-printed-section-polars.md',
+);
+add(
+  'tests/MP04-hardware-characterisation/README.md',
+  'tests/mp04-hardware-characterisation.md',
+);
 add('calculations/README.md', 'calculations/reproduction-guide.md');
+add(
+  'calculations/trim_redesign_out/README.md',
+  'calculations/trim-redesign-output.md',
+);
 add('decisions/TEMPLATE.md', 'decisions/template.md');
 
 for (const f of readdirSync(path.join(ROOT, 'docs'))
@@ -358,6 +403,12 @@ function rewriteLinks(md, siteDir) {
     // other canonical geometry files (drawing contract, airfoil coordinates) are
     // not served pages: link them to the repository so traceability survives.
     if (/^geometry\//.test(norm)) {
+      return '](' + `https://github.com/${REPO}/blob/main/${norm}` + anchor + ')';
+    }
+
+    // Large reference PDFs are intentionally excluded from the generated site.
+    // Preserve their evidence links through the repository source view.
+    if (/^INSPIRATION\//.test(norm)) {
       return '](' + `https://github.com/${REPO}/blob/main/${norm}` + anchor + ')';
     }
 

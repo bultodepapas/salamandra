@@ -38,6 +38,7 @@ Separated from `decisions/` on purpose: an ADR says *what was decided*; a resear
 | [I-30](I-30-fin-station-mass-cg-and-connected-scene-closure.md) | **Fin station, volume/mass, CG, forward packaging and connected SVG scene** | 🔄 **Analytical coupling executed; F2/E8 physical closure open** | ADR-0038, I-29, SLM-GA-002, SLM-FIN-001, SLM-EQP-001 |
 | [I-31](I-31-flat-dual-pack-bay-and-fuselage-length-trade.md) | **Flat dual-pack bay and fuselage forebody-length trade** | 🔄 **Scientific screening executed; coupled mass/CG/OML and physical pack closure open** | I-16, I-28, OP-01/21/23/24, future fuselage ADR |
 | [I-32](I-32-6s-8s-p42a-pack-and-aircraft-trade.md) | **6S1P/8S1P P42A pack geometry and aircraft trade** | 🔄 **Complete layout/electrical screen executed; physical pack, OML and 8S power-module closure open** | I-16/I-31, OP-01/21/23/24, future propulsion/fuselage ADRs |
+| [I-33](I-33-mp04-propulsion-procurement-and-hardware-characterisation.md) | **MP-04 propulsion procurement and hardware-characterisation campaign** | 🔄 **Primary-source catalog screen and executable test infrastructure complete; procurement and H01–H22 measurements open** | M1, MP-04/05/06, D2, E2/E3, future propulsion ADR |
 
 ## Source quality
 

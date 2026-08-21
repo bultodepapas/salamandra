@@ -237,40 +237,48 @@ HARDWARE = (
         "APC product/RPM data and UIUC APC 8x8 curve; I-03/I-32", "MP-04 H03: weigh blade/adapter and bench-map at least two credible propeller alternatives.",
     ),
     HardwareItem(
-        "motor_6s_class", "propulsion", "28-class 500-550 Kv, approximately 400 W or greater",
-        REFERENCE_CLASS, CONFIGS_6S, 1, 170.0, 30.0, "[E]",
-        (_envelope("class-bound", (35.0, 28.0, 28.0), "[E]",
-                   "historical packaging class; shaft, wires and mount excluded"),),
+        "motor_6s_class", "propulsion", "T-Motor MN3110 KV470 primary / MN4010 KV475 alternate",
+        REFERENCE_CLASS, CONFIGS_6S, 1, 117.5, 19.5, "[D]",
+        (
+            _envelope("mn3110-body", (28.5, 37.7, 37.7), "[M]",
+                      "manufacturer axial length x diameter x diameter"),
+            _envelope("mn4010-body", (30.5, 44.7, 44.7), "[M]",
+                      "manufacturer axial length x diameter x diameter"),
+        ),
         (14.8, 25.2), None, None, "Three-phase ESC output; centreline pusher mount",
         "Shaft, connector, cooling and rotating-bell clearances remain unmeasured.",
-        "Master Plan section 3; I-03/I-32 voltage/Kv screen", "MP-04 H04: shortlist real motors, then measure mass, Kv, winding resistance, envelope and thermal map.",
+        "I-33 manufacturer-data procurement screen", "MP-04 H04: procure both candidates if practical, then measure mass, Kv, winding resistance, envelope and thermal map with APC 8x8 alternatives.",
     ),
     HardwareItem(
-        "motor_8s_class", "propulsion", "8S 375-413 Kv starting class, approximately 400 W or greater",
-        STUDY_CLASS, (CONFIG_8S_STUDY,), 1, 170.0, 30.0, "[E]",
-        (_envelope("class-bound", (35.0, 28.0, 28.0), "[E]",
-                   "provisional equality bound; no product selected"),),
+        "motor_8s_class", "propulsion", "T-Motor MN4010 KV370 primary / MN4012 KV400 alternate",
+        STUDY_CLASS, (CONFIG_8S_STUDY,), 1, 146.0, 9.0, "[D]",
+        (
+            _envelope("mn4010-body", (30.5, 44.7, 44.7), "[M]",
+                      "manufacturer axial length x diameter x diameter"),
+            _envelope("mn4012-body", (32.5, 44.7, 44.7), "[M]",
+                      "manufacturer axial length x diameter x diameter"),
+        ),
         (19.8, 33.6), None, None, "Separate 8S ESC and centreline pusher mount",
         "No credit for 8S efficiency until the complete motor/ESC/propeller map exists.",
-        "I-32 voltage/Kv screen", "MP-04 H05: select and bench an 8S motor candidate without exceeding propeller RPM or temperature limits.",
+        "I-33 manufacturer-data procurement screen", "MP-04 H05: procure only after the 6S bench result justifies 8S work; measure without exceeding propeller RPM or temperature limits.",
     ),
     HardwareItem(
-        "esc_6s_class", "power", "6S ESC, 30 A continuous minimum, telemetry preferred",
-        REFERENCE_CLASS, CONFIGS_6S, 1, 35.0, 10.0, "[E]",
-        (_envelope("class-bound", (60.0, 30.0, 15.0), "[E]",
-                   "historical 6S packaging estimate; wires/capacitor excluded"),),
-        (14.8, 25.2), 30.0, 40.0, "6S pack bus; motor phases; throttle/telemetry",
+        "esc_6s_class", "power", "Advanced Power Drives 80F3[X]v2 procurement reference",
+        REFERENCE_PART, CONFIGS_6S, 1, 20.0, 10.0, "[M]/[E]",
+        (_envelope("body", (44.0, 22.0, 12.0), "[M]",
+                   "manufacturer external envelope; wires/capacitor excluded"),),
+        (15.0, 34.0), 80.0, 140.0, "6S pack bus; motor phases; PWM/DShot and telemetry",
         "Cooling airflow, capacitor, lead bends and braking behavior are open.",
-        "Master Plan section 3; existing mass/layout model", "MP-04 H06: select with the motor and measure efficiency, current, rpm, temperature and failure behavior.",
+        "I-33; APD official product and F-Series documentation", "MP-04 H06: bench with both motor candidates; measure efficiency, current, rpm, temperature, firmware/protocol behavior and faults.",
     ),
     HardwareItem(
-        "esc_8s_class", "power", "8S ESC, 30 A continuous minimum, telemetry preferred",
-        STUDY_CLASS, (CONFIG_8S_STUDY,), 1, 45.0, 15.0, "[E]",
-        (_envelope("class-bound", (70.0, 35.0, 18.0), "[E]",
-                   "study allowance; wires/capacitor excluded"),),
-        (19.8, 33.6), 30.0, 40.0, "8S pack bus; motor phases; throttle/telemetry",
-        "Must be an explicitly 8S-rated part; the 6S ESC is not reused by assumption.",
-        "I-32 separate-power-module requirement", "MP-04 H07: select and bench with the 8S motor, PDB/BEC and propeller.",
+        "esc_8s_class", "power", "Advanced Power Drives 120F3[X]v2 study reference",
+        STUDY_CLASS, (CONFIG_8S_STUDY,), 1, 20.0, 10.0, "[M]/[E]",
+        (_envelope("body", (70.0, 30.0, 20.0), "[M]",
+                   "manufacturer external envelope; wires/capacitors excluded"),),
+        (16.8, 50.4), 120.0, 200.0, "8S pack bus; motor phases; PWM/DShot and telemetry",
+        "The 12S voltage class preserves headroom; complete wiring, capacitors and cooling remain open.",
+        "I-33; APD official product and F-Series documentation", "MP-04 H07: bench with the 8S motor, PDB/BEC and propeller only if the 8S study proceeds.",
     ),
     HardwareItem(
         "fc_6s", "flight-control", "SpeedyBee F405 WING FC board",
@@ -622,6 +630,18 @@ def _document_block_is_current() -> bool:
     return text[start:end] == generated_block()
 
 
+def write_document_block() -> None:
+    """Replace only the controlled block in the existing MP-03 document."""
+    text = DOCUMENT_PATH.read_text(encoding="utf-8")
+    if text.count(BEGIN_MARKER) != 1 or text.count(END_MARKER) != 1:
+        raise ValueError("docs/17 generated markers are missing or duplicated")
+    start = text.index(BEGIN_MARKER)
+    end = text.index(END_MARKER, start) + len(END_MARKER)
+    DOCUMENT_PATH.write_text(
+        text[:start] + generated_block() + text[end:], encoding="utf-8"
+    )
+
+
 def validation_checks() -> dict[str, bool]:
     hardware_ids = [item.identifier for item in HARDWARE]
     config_categories = {
@@ -676,8 +696,8 @@ def validation_checks() -> dict[str, bool]:
         "battery travel remains a separate 20 mm requirement": isclose(
             BATTERY_TRAVEL_TOTAL_MM, 20.0, abs_tol=1e-12
         ),
-        "6S-CLEAN candidate equipment subtotal reconciles the historical rows": isclose(
-            clean_mass, 821.85, abs_tol=1e-9
+        "6S-CLEAN candidate equipment subtotal includes the I-33 propulsion references": isclose(
+            clean_mass, 754.35, abs_tol=1e-9
         ),
         "6S-R adds exactly one reserved rudder-servo mass": isclose(
             r_mass - clean_mass, 12.5, abs_tol=1e-9
@@ -710,6 +730,10 @@ def main() -> int:
         "--render-markdown", action="store_true",
         help="print the generated Markdown block for docs/17",
     )
+    parser.add_argument(
+        "--write-document", action="store_true",
+        help="replace the controlled Markdown block in docs/17",
+    )
     args = parser.parse_args()
 
     if args.json:
@@ -717,6 +741,10 @@ def main() -> int:
         return 0
     if args.render_markdown:
         print(generated_block())
+        return 0
+    if args.write_document:
+        write_document_block()
+        print(f"Wrote {DOCUMENT_PATH.relative_to(ROOT)}")
         return 0
 
     print("SALAMANDRA MP-03 — CANDIDATE HARDWARE AND POWER MANIFEST")

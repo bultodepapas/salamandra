@@ -1,6 +1,6 @@
 # Salamandra master design plan
 
-**Revision 2.3** · 21 August 2026 · **Programme reset — Gate M0 closed; Gate M1 open**
+**Revision 2.4** · 21 August 2026 · **Programme reset — Gate M0 closed; Gate M1 open**
 
 **Document role:** canonical programme-control document for defining, designing,
 validating and handing Salamandra Article #1 to a human CAD designer.
@@ -34,12 +34,16 @@ Where documents conflict:
 4. [`17-article-1-hardware-manifest.md`](17-article-1-hardware-manifest.md) and
    `calculations/hardware_manifest.py` own the pre-measurement 6S-R/CLEAN candidate
    equipment and power interface plus the separate 8S study overlay;
-5. `calculations/design_config.py` owns only the current v0.6 numerical baseline until a
+5. [I-33](../research/I-33-mp04-propulsion-procurement-and-hardware-characterisation.md),
+   `calculations/hardware_candidate_trade.py` and
+   `calculations/hardware_measurements.py` own the MP-04 procurement screen and the
+   H01–H22 physical-evidence schema, but do not release a component;
+6. `calculations/design_config.py` owns only the current v0.6 numerical baseline until a
    new candidate is selected;
-6. [`decisions/REDESIGN-DISPOSITION.md`](../decisions/REDESIGN-DISPOSITION.md) owns each
+7. [`decisions/REDESIGN-DISPOSITION.md`](../decisions/REDESIGN-DISPOSITION.md) owns each
    ADR's applicability to the redesigned Article #1;
-7. ADRs own accepted technical decisions for their declared configuration; and
-8. the concise Design Guide owns CAD execution only after this plan authorizes a new
+8. ADRs own accepted technical decisions for their declared configuration; and
+9. the concise Design Guide owns CAD execution only after this plan authorizes a new
    controlled edition.
 
 No existing `FIXED` label silently carries into the redesigned aircraft. Each value is
@@ -150,7 +154,7 @@ Article #1 purchased part.
 | Python/NumPy, XFOIL, VLM, Weissinger-L and generated SVG workflow | **Retain** | Existing reproducible toolchain; each method keeps its known validity limits |
 | Single motor, front FPV camera, 21700 cells, PETG and printed modular construction | **Retain as intent** | Direct user and platform constraints |
 | Current 1.300 m forward-swept v0.6 aircraft | **Reference candidate A** | Substantial useful evidence, but trim, yaw, OML, structure and physical validation remain open |
-| 6S1P P42A + APC E 8×8 + 500–550 Kv power chain | **Working Article #1 baseline** | Current calculations close the 6S screening point; exact motor and operating point still need bench/drag data |
+| 6S1P P42A + APC E 8×8 + 470/475 Kv motor shortlist | **Working Article #1 procurement baseline** | I-33 identifies two physical motor specimens and one voltage-qualified ESC reference; exact motor and operating point still need bench/drag data |
 | 8S1P | **Reopened variant trade** | Adds 140 g and presently fails the 45 km/h analytical screen; it also requires an 8S-rated electrical chain |
 | −15° forward sweep | **Reopened** | Selected inside a restricted historical trade; must compete against straight and aft-swept tailless candidates |
 | r1/r2a airfoil and +3° wash-in | **Hold / test candidates** | Operating-`Cm(CL)` and printed-section evidence are not closed |
@@ -168,10 +172,12 @@ Electronics must be defined early enough to establish mass, volume, power, heat,
 and CG. They must not be frozen more precisely than the evidence allows. The programme
 therefore uses three statuses:
 
-**MP-03 status:** the baseline below is now instantiated and contract-checked by the
+**MP-04 status:** the MP-03 baseline below is instantiated and contract-checked by the
 [Article #1 hardware and power manifest](17-article-1-hardware-manifest.md) and its
-[machine-readable owner](../calculations/hardware_manifest.py). It remains a candidate
-input to MP-04 measurement, not a released bill of materials.
+[machine-readable owner](../calculations/hardware_manifest.py). I-33 has added the
+primary-source propulsion purchase screen, synchronized H01–H22 record and printable
+envelope/ballast dummies. All catalog entries remain candidate inputs to physical
+measurement, not a released bill of materials.
 
 - **CLASS:** capability and bounding envelope required for architecture work;
 - **REFERENCE PART:** named component used for the first mass skeleton and procurement;
@@ -184,8 +190,8 @@ input to MP-04 measurement, not a released bill of materials.
 | Battery | **6S1P Molicel P42A**, one-cell-high pack | 445 ±5 g installed estimate; 90.72 Wh arithmetic nominal; compare the 223.2×44.0×22.6 mm narrow and 142.8×70.8×22.6 mm moderate-width layouts | Build pack/dummy; measure complete envelope, leads, connector sweep, mass, removal and usable energy |
 | 8S study pack | **8S1P P42A** | 585 ±5 g; 120.96 Wh; separate power module | Must recover current stall/mass deficit and pass an 8S electrical/thermal bench map |
 | Propeller | **APC Thin Electric 8×8** datum | 203.2 mm disk; existing UIUC/APC model and rpm-limit evidence | Bench map with selected motor/ESC; compare at least two credible diameter/pitch alternatives after aircraft drag is known |
-| Motor | 28-class, **500–550 Kv**, approximately 170 g, ≥400 W peak reference class | Envelope and mass for 6S packaging; no exact product release | Select from measured 6S motor/ESC/propeller maps at the aircraft operating points |
-| ESC | 6S, ≥30 A class with current/temperature margin | Approximately 35 g reference envelope; telemetry desirable | Bench voltage, current, rpm, efficiency, thermal state, braking and failure behaviour |
+| Motor | **T-Motor MN3110 KV470 primary / MN4010 KV475 alternate** | 98/137 g catalog mass with 600 mm leads; 28.5×Ø37.7 / 30.5×Ø44.7 mm catalog body; neither is selected for flight | Procure and measure both when practical; map APC 8x8/8x6 and launch/climb/cruise points before selection |
+| ESC | **APD 80F3[X]v2** procurement reference; Hobbywing FlyFun 60A V5 bench fallback | APD 34.0 V maximum gives 8.8 V explicit headroom over 25.2 V full 6S; 44×22×12 mm and 20 ±10 g planning mass | Bench voltage, current, rpm, efficiency, thermal state, capacitor/lead installation, protocol, braking and faults |
 | Flight controller | **SpeedyBee F405 WING** reference; Matek F405-WING-V2 fallback | Pitot/I2C, current sensing, barometer, microSD blackbox, adequate PWM/UART; use the full WING board, not the MINI by assumption | Procured-board pin/resource test and current calibration; firmware target verified at build time |
 | Elevon servos | **2× digital metal-gear 12–15 g class**; Corona DS-939MG reference | One per elevon; ≥1.643 kgf·cm current factored static screen; low free play and adequate holding stiffness dominate | Measure actual batch mass, travel, speed, deadband, stiffness, current and heat; final torque/rate from the selected control surface |
 | Rudder servo | Same class or smaller, **reserved only** | Bounding mass/envelope included in SALAMANDRA-6S-R mass skeleton | Select only after rudder authority, hinge load and required rate are known |
@@ -209,7 +215,7 @@ The first prototype is **6S1P**. Current reproducible screening gives:
 | Arithmetic nominal energy | 90.72 Wh | 120.96 Wh | 8S adds 33.3% energy |
 | Current CLEAN stall screen | 44.06 km/h | 46.00 km/h | 8S fails the inherited 45 km/h requirement at unchanged aircraft |
 | Current FC/PDB compatibility | 6S baseline | Not released | SpeedyBee's official page states `7–36 V` and `2–6S`; treat as 6S-only until resolved |
-| Motor starting band for APC 8×8 | 500–550 Kv | approximately 375–413 Kv | A different motor/ESC/PDB map is required |
+| I-33 motor specimens for APC 8×8 screen | MN3110 KV470 / MN4010 KV475 | MN4010 KV370 / MN4012 KV400 | A different motor/ESC/PDB map is required; 8S specimens are not yet authorized for purchase |
 
 This decision does not reject 8S. It prevents the first article from carrying the mass,
 stall, voltage and procurement risks of two aircraft at once. Gate M2 shall preserve a
@@ -679,9 +685,10 @@ Work shall proceed in this order:
    contains 22 controlled hardware rows, explicit mass/envelope uncertainty, a
    rail-by-rail power budget and a separate 8S study module; its human-readable tables are
    generated and contract-checked.
-4. **MP-04 — Measure hardware — NEXT.** Procure or mock the packs, O4, FC, servos,
-   motor/ESC, sensors and connectors; execute H01–H22 and replace catalog-only
-   installation estimates.
+4. **MP-04 — Measure hardware — ACTIVE.** I-33, the propulsion shortlist, H01–H22 JSON
+   schema and generated OpenSCAD envelope/ballast dummies are complete. Print/mock Tranche
+   A, procure the exact avionics and 6S bench chain, then execute H01–H22 and replace every
+   catalog-only installation estimate.
 5. **MP-05 — Instrument first.** Complete the pitot/current/blackbox iron bird and test
    the reduction chain on an existing aircraft.
 6. **MP-06 — Rebuild the mass skeleton.** Solve measured 6S/R/CLEAN placement, 20 mm
@@ -700,9 +707,10 @@ Work shall proceed in this order:
 12. **MP-12 — Issue the CAD package.** Publish the new Design Guide/SVG set and start the
     controlled human CAD build.
 
-The next engineering task is **MP-04**, physical hardware/dummy measurement and
-motor/ESC/power-chain selection—not another refinement of the current wing loft or
-fuselage OML.
+The next engineering task remains **MP-04 physical work**: print and ballast Tranche-A
+dummies, procure/identify specimens, then run the H01–H22 measurements and guarded 6S
+motor/ESC/propeller map. It is not another refinement of the current wing loft or fuselage
+OML.
 
 ---
 
@@ -711,7 +719,7 @@ fuselage OML.
 | Gate | Status | Existing useful evidence | Principal missing evidence |
 |---|---|---|---|
 | **M0** | **Closed** | Revision-2 specification, ADR-0048 and executable mission contract | No M0 evidence missing; changes require controlled reopen |
-| **M1** | **Open — physical closure next** | MP-03 candidate manifest; I-16/I-17/I-18/I-19/I-32 catalogs and power models | H01–H22 procured-part/dummy measurements, verified power tree and integrated iron bird |
+| **M1** | **Open — executable campaign ready; physical closure next** | MP-03 manifest; I-16/I-17/I-18/I-19/I-32/I-33; propulsion screen, H01–H22 record and generated hard-dummy source | Procured-part/dummy measurements, guarded 6S propulsion map, verified power tree and integrated iron bird |
 | **M2** | Partial, to rebuild | Equipment ledger, balance solvers, SLM-EQP-001, I-31/I-32 | Unified measured 6S/R/CLEAN skeleton and 20 mm travel proof |
 | **M3** | Open | Current forward-sweep trade and v0.6 candidate A | Equal-requirements straight and aft-swept optimized candidates |
 | **M4** | Blocked by M3 | r1/r2a calculations and E2A plan | Selected printed sections and measured `CL/CD/Cm` |
@@ -728,6 +736,9 @@ fuselage OML.
 - [MP-03 Article #1 hardware and power manifest](17-article-1-hardware-manifest.md) —
   controlled 6S-R/CLEAN candidate, separate 8S overlay, configuration masses, rail loads
   and the H01–H22 physical closure queue.
+- [I-33 MP-04 propulsion procurement and hardware characterisation](../research/I-33-mp04-propulsion-procurement-and-hardware-characterisation.md)
+  — manufacturer-data shortlist, voltage/Kv/RPM screens, firmware regression matrix,
+  procurement tranches, bench grid and physical-evidence tooling.
 - [MP-02 ADR redesign-disposition ledger](../decisions/REDESIGN-DISPOSITION.md) — complete
   authority map separating v0.6 records from decisions and methods that govern v2.
 - [Consolidated NF Design Guide audit](../design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md)
