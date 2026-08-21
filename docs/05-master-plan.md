@@ -1,6 +1,6 @@
 # Salamandra master design plan
 
-**Revision 2.1** · 21 August 2026 · **Programme reset — Gate M0 closed; Gate M1 open**
+**Revision 2.2** · 21 August 2026 · **Programme reset — Gate M0 closed; Gate M1 open**
 
 **Document role:** canonical programme-control document for defining, designing,
 validating and handing Salamandra Article #1 to a human CAD designer.
@@ -33,8 +33,10 @@ Where documents conflict:
 3. `calculations/mission_contract.py` owns the redesign mission/configuration constants,
    while `calculations/design_config.py` owns only the current v0.6 numerical baseline
    until a new candidate is selected;
-4. ADRs own accepted technical decisions for their declared configuration; and
-5. the concise Design Guide owns CAD execution only after this plan authorizes a new
+4. [`decisions/REDESIGN-DISPOSITION.md`](../decisions/REDESIGN-DISPOSITION.md) owns each
+   ADR's applicability to the redesigned Article #1;
+5. ADRs own accepted technical decisions for their declared configuration; and
+6. the concise Design Guide owns CAD execution only after this plan authorizes a new
    controlled edition.
 
 No existing `FIXED` label silently carries into the redesigned aircraft. Each value is
@@ -662,9 +664,10 @@ Work shall proceed in this order:
 1. **MP-01 — Reissue objectives — COMPLETE.** Revision 2 removes the arbitrary
    range/endurance requirements, defines the M0 mission/handling matrix and is enforced by
    `mission_contract.py` plus ADR-0048.
-2. **MP-02 — Decision reset ledger — NEXT.** Mark every active ADR as retained, candidate-only,
-   reopened or superseded for the redesign.
-3. **MP-03 — Hardware manifest.** Create one machine-readable 6S/R/CLEAN equipment and
+2. **MP-02 — Decision reset ledger — COMPLETE.** All 40 ADRs are classified as retained,
+   method-only, candidate-only, reopened, superseded or cancelled, with one owning gate;
+   `decision_ledger.py` enforces complete coverage and matching ADR preambles.
+3. **MP-03 — Hardware manifest — NEXT.** Create one machine-readable 6S/R/CLEAN equipment and
    power manifest, with an 8S study overlay.
 4. **MP-04 — Measure hardware.** Procure or mock the packs, O4, FC, servos, motor/ESC,
    sensors and connectors; replace catalog-only installation estimates.
@@ -686,8 +689,8 @@ Work shall proceed in this order:
 12. **MP-12 — Issue the CAD package.** Publish the new Design Guide/SVG set and start the
     controlled human CAD build.
 
-The next engineering task is **MP-02**, followed by the M1 hardware manifest and
-measurement chain—not another refinement of the current wing loft or fuselage OML.
+The next engineering task is **MP-03**, the M1 candidate hardware and power manifest—not
+another refinement of the current wing loft or fuselage OML.
 
 ---
 
@@ -710,6 +713,8 @@ measurement chain—not another refinement of the current wing loft or fuselage 
 
 ## 13. Governing evidence
 
+- [MP-02 ADR redesign-disposition ledger](../decisions/REDESIGN-DISPOSITION.md) — complete
+  authority map separating v0.6 records from decisions and methods that govern v2.
 - [Consolidated NF Design Guide audit](../design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md)
   — application of Peter Wick's *Designing Flying Wings* and the full physical gate model.
 - [NF design-method synthesis](../design/NF-Design-Guide-2024-Repository-Audit-Part-06-Design-Method-Synthesis.md)

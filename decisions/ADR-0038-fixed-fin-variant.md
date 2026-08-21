@@ -10,6 +10,8 @@ candidate · **Date:** 2026-08-19 · **Confidence:** Medium `[D]`/`[E]`
 > interface for first-flight development. The passive V1a geometry below remains useful
 > evidence, but is not the v2 directional release.
 
+**Article #1 redesign:** `SUPERSEDED` · **Gate:** `M0/M5` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 SALAMANDRA is a forward-swept flying wing with a centreline pusher propeller and elevons.

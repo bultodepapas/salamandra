@@ -7,6 +7,8 @@
 **Related gaps:** OP-06, F2, E2, E5, G7  
 **Supporting research:** [I-27](../research/I-27-elevon-geometry-trade.md)
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M4/M5` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The v0.4 elevon ran from y = 195 to 585 mm. Its inner hinge termination coincided

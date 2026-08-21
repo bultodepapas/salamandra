@@ -4,6 +4,8 @@
 **Replaces:** ADR-0005 ("thin" airfoil)
 **Data:** [02-measured-references](../docs/02-measured-references.md)
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M3/M4/M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The original decision (ADR-0005) asked for a **thin** airfoil, on a parasitic-drag argument. Three later analyses reversed it.

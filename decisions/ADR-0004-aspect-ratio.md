@@ -3,6 +3,8 @@
 **Status:** 🔄 Provisional · **Date:** 2026-07-28 · **Confidence:** Medium `[E]` · **Reversible:** No
 **Gaps:** G1, G6 · **Research:** [I-01](../research/I-01-aspect-ratio-reynolds.md), [I-05](../research/I-05-divergence-flutter.md)
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M3` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 Intuition says "more aspect ratio, less induced drag". At low Reynolds numbers that stops being true past a certain point, and in forward sweep there is a second reason not to raise it.
@@ -19,6 +21,7 @@ Intuition says "more aspect ratio, less induced drag". At low Reynolds numbers t
 ## Rationale
 
 **Argument 1 — Reynolds (I-01).** The correct causal chain:
+
 1. The induced term still falls as 1/(π·AR·e_i) — raising AR **does work**.
 2. The viscous term k·C_L² **does not depend on aspect ratio**.
 3. Therefore the benefit **saturates**.
@@ -28,7 +31,9 @@ Point 4 generates the optimum; point 3 makes it flat.
 
 **Argument 2 — Divergence (I-05).** The divergence speed scales as:
 
-    V_div ∝ AR^(−3/4)
+```text
+V_div ∝ AR^(−3/4)
+```
 
 Raising from 6 to 8 costs ~19 % of V_div, in addition to the chord penalty.
 

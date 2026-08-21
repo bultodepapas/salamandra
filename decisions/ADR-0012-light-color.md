@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High · **Reversible:** Yes
 **Research:** [I-04 — Printing materials](../research/I-04-printing-materials.md), [ADR-0021](ADR-0021-base-material.md)
 
+**Article #1 redesign:** `REOPENED` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The primary structure is PETG (ADR-0021). A wing lives outdoors, on the ground and in the

@@ -2,7 +2,28 @@
 
 One decision, one file. Each ADR declares **context, alternatives considered, decision, consequences and confidence**.
 
-## States
+## Article #1 redesign authority
+
+An ADR's record status and its authority over the redesigned aircraft are separate. The
+status icon preserves the decision history; it does not silently freeze v2 hardware,
+geometry or limits.
+
+The [MP-02 redesign-disposition ledger](REDESIGN-DISPOSITION.md) is the canonical map for
+Article #1. All 40 ADR files carry a matching preamble field and are mechanically checked
+by [`decision_ledger.py`](../calculations/decision_ledger.py). Current disposition:
+
+<!-- BEGIN GENERATED: ADR redesign counts · calculations/decision_ledger.py · do not edit by hand -->
+
+| Retained | Retained method | Candidate only | Reopened | Superseded | Cancelled |
+|---:|---:|---:|---:|---:|---:|
+| 5 | 8 | 16 | 7 | 3 | 1 |
+
+<!-- END GENERATED: ADR redesign counts -->
+
+When using an ADR for M1–M9 work, read its `Article #1 redesign` field and the ledger scope
+before importing any value. Historical `Active` status alone is not redesign authority.
+
+## ADR record states
 
 | State | Meaning |
 |---|---|
@@ -15,6 +36,9 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 ---
 
 ## Index
+
+The `State` column below describes the ADR record. The separate Article #1 disposition is
+controlled by the [MP-02 ledger](REDESIGN-DISPOSITION.md).
 
 | # | Decision | State | Confidence | Reversible |
 |---|---|---|---|---|

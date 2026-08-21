@@ -4,6 +4,34 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.48] — 2026-08-21
+
+**C57 — ADR status described the historical v0.6 record but did not consistently state
+whether that decision could constrain the redesigned Article #1. An `Active` label could
+therefore re-freeze hardware or geometry that the Master Plan had reopened.**
+
+- Completed MP-02 with `decisions/REDESIGN-DISPOSITION.md`, a complete authority map for
+  all 40 ADR files. The ledger separates historical record state from Article #1 redesign
+  authority and assigns every disposition to an owning gate.
+- Classified the records as 5 retained programme/product decisions, 8 retained methods,
+  16 candidate-only decisions, 7 reopened questions, 3 superseded decisions and 1
+  cancelled option.
+- Kept only PETG-primary scope, community/licence policy, the executable calculation rule
+  and ADR-0048 directly binding. Preserved drag, propulsion, structure, aeroelastic,
+  thrust-line and load-taxonomy methods without carrying their v0.6 component or geometry
+  values into v2.
+- Added a matching `Article #1 redesign` field to every ADR preamble. Exact v0.6 planform,
+  airfoil, control, mass, segmentation, joint and process selections are now visibly
+  candidate-only or reopened at M2–M8.
+- Added `calculations/decision_ledger.py`. It fails if an ADR is unclassified, duplicated,
+  uses an uncontrolled class, disagrees with its preamble or leaves the published ledger
+  stale; the global verification harness runs it as a contract and deterministic CLI.
+- Advanced the Master Design Plan to v2.2: MP-02 is complete and MP-03, the M1
+  machine-readable candidate hardware and power manifest, is next. Production CAD remains
+  held.
+
+---
+
 ## [1.47] — 2026-08-21
 
 **C56 — Gate M0 had a roadmap but still lacked an active, executable mission contract;

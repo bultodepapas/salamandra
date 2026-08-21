@@ -8,6 +8,8 @@ principle · **Date:** 2026-07-28 · **Confidence:** Decided for v0.6
 > must bind a reproducible pack, motor, propeller, ESC, power-conversion, servo and avionics
 > configuration. Those items participate in mass, CG, energy and safety closure.
 
+**Article #1 redesign:** `SUPERSEDED` · **Gate:** `M0` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 An open project can prescribe a closed bill of materials or leave the electronics open. The first gives reproducible results; the second gives adoption.

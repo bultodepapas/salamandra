@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-07-27 · **Confidence:** High · **Reversible:** Yes
 **Research:** [I-03 — Propulsion chain](../research/I-03-propulsion-chain.md), first_investigation §5.3 (D8)
 
+**Article #1 redesign:** `RETAINED-METHOD` · **Gate:** `M4` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The reference competitor (TBS Mojito) uses a 7×12 propeller. Its pitch/diameter is

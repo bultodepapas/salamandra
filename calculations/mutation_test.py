@@ -88,6 +88,14 @@ def _patch_function(module_name, attribute, replacement_factory):
 
 MUTATIONS = (
     Mutation(
+        "governance: one ADR disappears from the redesign ledger",
+        "MP-02 requires complete ADR coverage; a newly omitted or unclassified "
+        "decision must fail before its historical status can be mistaken for v2 authority.",
+        _patch_function(
+            "decision_ledger", "DISPOSITIONS", lambda old: old[:-1]
+        ),
+    ),
+    Mutation(
         "planform: quarter-chord sweep loses its forward sign",
         "The forward sweep is the whole point of the aircraft; a sign flip "
         "must never survive.",

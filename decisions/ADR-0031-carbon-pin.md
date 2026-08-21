@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High · **Reversible:** Yes
 **Feeds:** guide §7.2/§7.3, [ADR-0032](ADR-0032-modularity.md) (R-JOINT)
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 A single tube transmits bending but leaves torsion to the sleeve fit of the removable

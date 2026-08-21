@@ -3,6 +3,8 @@
 **Status:** 🔄 Provisional · **Date:** 2026-07-28 · **Confidence:** Medium · **Reversible:** Yes
 **Research:** [I-04 — Printing materials](../research/I-04-printing-materials.md), [ADR-0032](ADR-0032-modularity.md)
 
+**Article #1 redesign:** `REOPENED` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The wing halves print in segments (ADR-0024) and the panels join the CORE with a

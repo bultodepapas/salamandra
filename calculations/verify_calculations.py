@@ -31,6 +31,7 @@ import b3_screening
 import balance_cg
 import battery_6s_8s_trade
 import battery_pack_layout
+import decision_ledger
 import design_config
 import divergence
 import drag_model
@@ -59,6 +60,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 LOCAL_SCRIPTS = (
     "mission_contract.py",
+    "decision_ledger.py",
     "design_config.py",
     "aircraft_scene.py",
     "drawing_index.py",
@@ -167,6 +169,11 @@ def check_mission(add):
             f"post-release target={launch_speed.K_REF:.2f} Vs"
         ),
     )
+
+
+def check_decision_ledger(add):
+    for name, passed in decision_ledger.validation_checks().items():
+        add(f"decision ledger: {name}", passed, "MP-02 authority contract")
 
 
 def check_mass(add):
@@ -669,6 +676,7 @@ def check_aircraft_scene(add):
 # ---------------------------------------------------------------------------
 CONTRACT_GROUPS = (
     ("mission", check_mission),
+    ("decision ledger", check_decision_ledger),
     ("geometry", check_geometry),
     ("mass", check_mass),
     ("aero contract", check_aero_contract),

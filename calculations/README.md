@@ -40,10 +40,11 @@ Data sources consumed (all `[M]`):
 | File | What it does | Feeds | Depends on |
 |---|---|---|---|
 | `mission_contract.py` | **Gate-M0 redesign mission contract** — owns the 6S-R/CLEAN/8S-STUDY order, mission states, product constraints and Pareto total-energy comparison while labelling inherited v0.6 values as screens or comparators | `docs/00`, ADR-0048, M1–M9 | stdlib; v0.6 aliases from `design_config.py` |
+| `decision_ledger.py` | **MP-02 ADR-authority contract** — classifies every ADR as retained, method-only, candidate-only, reopened, superseded or cancelled; verifies complete file coverage, matching ADR preambles and the generated human-readable ledger | `decisions/REDESIGN-DISPOSITION.md`, M1–M9 | stdlib only |
 | `aero_contract.py` | **Derived aerodynamic contract** — re-derives and caches the neutral point, lift-curve slope and CG target from the planform, keeping the published values as regression anchors with a declared tolerance. Replaces the hand-copied `NP_VLM` literal (C39) | Balance, packaging, drawings, yaw | numpy |
 | `drag_model.py` | **Shared drag polar** — viscous and induced terms returned separately per ADR-0009, with a declared launch-configuration transfer and band (C42) | `yaw_stability`, `launch_speed` | stdlib only |
 | `contract_lint.py` | **Single-declaration lint** — fails when a physical quantity is declared in two modules, when a bare literal duplicates a contract value, or when a banded constant is frozen as a default argument | Whole system, CI | stdlib only |
-| `mutation_test.py` | **Proof that the suite can fail** — seeds 21 deliberate defects (sign flips, dropped normalisations, desynchronised copies and defeated OML predicates) and requires each to turn at least one contract check red (C43) | Whole system, CI | stdlib only |
+| `mutation_test.py` | **Proof that the suite can fail** — seeds 22 deliberate defects (missing governance records, sign flips, dropped normalisations, desynchronised copies and defeated OML predicates) and requires each to turn at least one contract check red (C43) | Whole system, CI | stdlib only |
 | `design_config.py` | **Canonical v0.6 numerical baseline contract** — historical planform, atmosphere, mission/stall/speed points, load factor and released mass targets; validates geometry and shared invariants but does not govern redesign selection | Historical guide and coupled v0.6 scripts | stdlib only |
 | `generate_blueprints.py` | **Metric SVG drawing generator** — emits and validates the A3 general-arrangement, fuselage OML review, equipment mass-skeleton and half-wing sheets from the canonical planform, common NumPy body loft, 3D equipment ledger, calculated balance solution and released airfoil sections; visually distinguishes provisional geometry | `geometry/drawings/`, I-25/I-28, wiki drawing guide, CAD review | numpy; `fuselage_geometry.py`; `equipment_layout.py` |
 | `drawing_index.py` | **Drawing publication contract** — one registry of sheet number, purpose, sheet scale, authority and reviewer note; writes `geometry/drawings/manifest.json` and the generated drawing blocks in the repository README and drawing index, and fails when any of them is stale | `README.md`, `geometry/drawings/`, wiki drawing page | stdlib only |
@@ -94,6 +95,7 @@ Run the system contract first:
 python3 -m pip install -r requirements.txt
 
 python3 mission_contract.py              # Gate-M0 mission/configuration contract
+python3 decision_ledger.py               # MP-02 complete ADR disposition
 python3 verify_calculations.py           # contracts + every deterministic script (~35 s)
 python3 verify_calculations.py --fast    # interface contracts only
 python3 contract_lint.py                 # one declaration per physical quantity

@@ -9,6 +9,8 @@
 > branch no longer governs. Revision 2 compares total Wh/km over E0–E3 and treats range and
 > endurance as outcomes.
 
+**Article #1 redesign:** `SUPERSEDED` · **Gate:** `M0` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 There were two mutually exclusive objective functions. **They are not a continuous trade-off: they diverge from the first stroke.**

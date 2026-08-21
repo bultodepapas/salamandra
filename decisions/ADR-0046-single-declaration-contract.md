@@ -7,6 +7,8 @@
 **Related gaps:** G8, G10, G11 (all three were mis-served by duplicated declarations)  
 **Supporting research:** [`docs/12-calculation-system-audit-and-remediation.md`](../docs/12-calculation-system-audit-and-remediation.md), [I-23](../research/I-23-calculation-system-integration-audit.md)
 
+**Article #1 redesign:** `RETAINED` · **Gate:** `All` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The `calculations/` tree grew to 33 modules with a clean acyclic import graph, and still

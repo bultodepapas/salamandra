@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-07-27 · **Confidence:** High · **Reversible:** No
 **Research:** [I-01 — Aspect-ratio / Reynolds frontier](../research/I-01-aspect-ratio-reynolds.md), first_investigation §4.2 (D9)
 
+**Article #1 redesign:** `RETAINED-METHOD` · **Gate:** `All` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 **Correction C1:** it was claimed that the Oswald factor collapses with aspect ratio for

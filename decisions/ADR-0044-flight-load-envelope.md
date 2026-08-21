@@ -7,6 +7,8 @@
 **Research:** I-24  
 **Verification:** `calculations/flight_envelope.py`, B3 negative-polar extension, E9, F4/S3
 
+**Article #1 redesign:** `RETAINED-METHOD` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The specification said `+6/−3 g, later +9, gust-dominated` without distinguishing

@@ -3,6 +3,8 @@
 **Status:** 🔄 Provisional · **Date:** 2026-07-28 · **Confidence:** Medium · **Reversible:** Yes
 **Research:** [I-09 — Flightory practice](../research/I-09-flightory-inspiration.md), [ADR-0025](ADR-0025-elevon-balancing.md)
 
+**Article #1 redesign:** `REOPENED` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The elevon hinge line at x/c = 0.72 (ADR-0002) is a structural joint of the control

@@ -8,6 +8,8 @@
 > budget to the motor. That was incorrect: equilibrium additionally requires E2
 > aircraft drag, and the avionics/FPV/BEC battery load must be reserved first.
 
+**Article #1 redesign:** `RETAINED-METHOD` · **Gate:** `M4` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 ADR-0007 correctly selected the APC Thin Electric 8×8 from measured UIUC data, but the

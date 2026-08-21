@@ -20,7 +20,9 @@ CAD. A replacement CAD guide is issued only at
 > or historical reconstruction, model only the requirements in this document and do not
 > infer missing geometry from renders or sketches. For the active work order, start with
 > the [Master Design Plan](../docs/05-master-plan.md) and the
-> [active Article #1 requirements](../docs/00-objectives-and-requirements.md).
+> [active Article #1 requirements](../docs/00-objectives-and-requirements.md). The
+> [MP-02 ADR disposition ledger](../decisions/REDESIGN-DISPOSITION.md) determines which
+> historical decisions may inform, but not constrain, the redesign.
 
 This edition releases the **twin-fin V1 architecture** and the generated **provisional
 fuselage OML**. The wing, airfoil, twist, elevons, materials, loads and flight limits are

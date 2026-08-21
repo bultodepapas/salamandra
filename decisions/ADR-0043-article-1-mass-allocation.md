@@ -7,10 +7,12 @@
 > reduce moving PETG by 5 g and balance mass by 6 g while retaining the 550 g total
 > shell cap. Current connected totals and torque margin below supersede the original
 > figures preserved in repository history.
-
+>
 > **2026-08-19 amendment — ADR-0038/I-29:** the invalid centreline-fin carrier is
 > replaced by two CORE-rooted fins forward of the propeller hazard. The 60.00 g complete-assembly allocation and
 > connected totals below supersede the former 36.72 g fin-only target.
+
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M2/M3` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
 
 ## Context
 

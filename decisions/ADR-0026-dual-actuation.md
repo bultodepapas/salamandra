@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-08-18 · **Confidence:** Medium · **Reversible:** Yes
 **Research:** [I-18 — Servo catalog](../research/I-18-servo-catalog.md), [ADR-0025](ADR-0025-elevon-balancing.md)
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M1/M5` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 Each selected 0.28 c elevon spans y = 227.5…585 mm (357.5 mm; ADR-0045). The former baseline used two

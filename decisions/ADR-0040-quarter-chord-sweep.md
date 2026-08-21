@@ -19,6 +19,8 @@ the canonical redesigned planform. Existing calculations remain valid for that c
 > result. The −15° planform and wing-only neutral point remain the analytical baseline,
 > but r1 and the 8% CG target are held. r2a tests a 5% nominal target at xCG −87.035 mm.
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M3` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The −20° quarter-chord sweep was inherited from the concept geometry. It had not been

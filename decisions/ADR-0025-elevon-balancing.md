@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High · **Reversible:** No
 **Gaps:** G7 · **Research:** [I-05](../research/I-05-divergence-flutter.md)
 
+**Article #1 redesign:** `RETAINED-METHOD` · **Gate:** `M5/M6/M8` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 Preliminary flutter analysis `[E]`:

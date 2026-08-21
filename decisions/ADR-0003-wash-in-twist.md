@@ -3,6 +3,8 @@
 **Status:** 🔄 Retained for r2a E2A; flight-wing closure held by ADR-0047 · **Date:** 2026-07-27 · **Reviewed:** 2026-08-21 · **Confidence:** Medium `[D]` · **Reversible:** Partial
 **Research:** [I-02 — Tailless trim and forward sweep](../research/I-02-tailless-trim.md), I-07, I-15
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M4` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 A tailless wing requires a positive pitching moment. There are only two paths: an airfoil

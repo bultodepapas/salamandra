@@ -7,6 +7,8 @@
 > prescribe cruise rpm. ADR-0042 now solves rpm where propeller thrust/power matches
 > aircraft drag and the O1 power ceiling.
 
+**Article #1 redesign:** `RETAINED-METHOD` · **Gate:** `M4` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The propulsion chain is the term of the range equation with the largest margin for immediate improvement, and the one that sustains objective O1 (≤ 1.15 Wh/km).

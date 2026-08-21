@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-08-05 · **Confidence:** Decided · **Reversible:** No
 **Related decisions:** ADR-0032 (modularity), ADR-0037 (licence)
 
+**Article #1 redesign:** `RETAINED` · **Gate:** `All` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The project had been framed as a single forward-swept flying-wing design. In reality its

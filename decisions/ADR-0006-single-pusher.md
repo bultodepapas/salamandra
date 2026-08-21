@@ -4,6 +4,8 @@
 **Research:** [I-13 — Pusher vs tractor slipstream at low Re](../research/I-13-pusher-tractor-slipstream.md) (proposed), [I-02](../research/I-02-tailless-trim.md)
 **Gap:** [G5](../gaps/README.md)
 
+**Article #1 redesign:** `REOPENED` · **Gate:** `M3/M4` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The reference layout of the Salamandra is a single rear pusher. The alternative is a twin

@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High `[M]` · **Reversible:** —
 **Research:** [I-04 — Printing materials](../research/I-04-printing-materials.md)
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 ABS **yellows and embrittles in the sun in a few months** `[M]` (I-04). A wing lives

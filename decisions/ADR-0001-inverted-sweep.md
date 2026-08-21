@@ -9,6 +9,8 @@ candidate record · **Date:** 2026-07-27 · **Confidence:** High · **Reversible
 > aerodynamic, packaging and aeroelastic effects must be compared with straight and
 > aft-swept candidates under the same mission contract.
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M3` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The mission (FPV cruise, hand launch, compact transport) admits a flying wing or a tailed configuration. Within a flying wing, the sweep can be aft or forward.

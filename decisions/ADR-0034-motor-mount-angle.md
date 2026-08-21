@@ -3,6 +3,8 @@
 **Status:** 🔄 Provisional · **Date:** 2026-07-28 · **Confidence:** Medium · **Reversible:** Yes
 **Research:** [docs/02 — Peregrine measured references](../docs/02-measured-references.md) (`[M]`)
 
+**Article #1 redesign:** `RETAINED-METHOD` · **Gate:** `M4/M5` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The thrust line geometry couples power with pitch: a misaligned thrust line adds a

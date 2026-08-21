@@ -2,6 +2,8 @@
 
 **Status:** ❌ **CANCELLED** · **Cancellation date:** 2026-07-28
 
+**Article #1 redesign:** `CANCELLED` · **Gate:** `—` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## What it proposed
 
 Lay up 80 g/m² carbon fabric at ±45° over the inner 60 % of the half-span, continuous over the joints between segments.

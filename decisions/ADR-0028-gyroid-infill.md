@@ -4,6 +4,8 @@
 **Associated correction:** C12
 **Research:** [I-05](../research/I-05-divergence-flutter.md)
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The original specification said **infill 0 %, only perimeters**, inherited from LW-PLA vase-mode practice, where the goal is minimum mass.

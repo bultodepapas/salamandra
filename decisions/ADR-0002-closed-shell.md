@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** Medium `[I]` · **Reversible:** No
 **Research:** [I-05](../research/I-05-divergence-flutter.md)
 
+**Article #1 redesign:** `REOPENED` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 In forward sweep, torsional stiffness governs the dominant risk. The construction determines that stiffness more than the material.

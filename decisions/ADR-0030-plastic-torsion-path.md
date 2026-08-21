@@ -5,6 +5,8 @@
 [I-21 — sweep/elastic-axis correction](../research/I-21-sweep-trade-and-elastic-axis-correction.md),
 [ADR-0015](ADR-0015-carbon-non-torsional.md)
 
+**Article #1 redesign:** `REOPENED` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 Torsional stiffness is the project's dominant risk (divergence, G4/G6). ADR-0015 assigns

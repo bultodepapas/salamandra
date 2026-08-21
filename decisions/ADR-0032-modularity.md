@@ -2,6 +2,8 @@
 
 **Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High · **Reversible:** No
 
+**Article #1 redesign:** `REOPENED` · **Gate:** `M2/M3/M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The project must support different uses (range, cruise, sport) and different batteries (4S–6S) without redesigning the aircraft. The natural path is to modularize. **On a tailless aircraft that path has a trap.**
@@ -34,7 +36,9 @@ There is no panel freedom: there is a **validated catalog that shares the balanc
 
 The joint is a **torsional spring in series** with the wing:
 
-    1/k_eff = 1/k_wing + 1/k_joint
+```text
+1/k_eff = 1/k_wing + 1/k_joint
+```
 
 | Joint stiffness | Effective GJ | Penalty in V_div |
 |---|---|---|

@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-08-05 · **Confidence:** Decided · **Reversible:** Yes
 **Related decisions:** ADR-0036 (open community platform)
 
+**Article #1 redesign:** `RETAINED` · **Gate:** `All` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The project is free and as open as possible to the community. It mixes three kinds of

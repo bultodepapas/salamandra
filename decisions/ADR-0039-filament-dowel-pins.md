@@ -6,6 +6,8 @@
 [filament_dowel_pins.py](../calculations/filament_dowel_pins.py) (this decision)
 **Feeds:** guide §7.3/§7.4/§12, ADR-0023, ADR-0024
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The glued segment joints (y = 347 and 498 mm, ADR-0024) are aligned by the tenon and

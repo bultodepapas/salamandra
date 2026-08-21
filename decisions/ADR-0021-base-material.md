@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High · **Reversible:** Partial
 **Research:** [I-04 — Printing materials](../research/I-04-printing-materials.md)
 
+**Article #1 redesign:** `RETAINED` · **Gate:** `M0/M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The primary structure is a printed shell. The material governs torsional stiffness, which is the project's dominant risk ([ADR-0001](ADR-0001-inverted-sweep.md)).

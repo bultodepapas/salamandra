@@ -7,6 +7,8 @@
 **Related gaps:** G2, OP-02, OP-03, OP-06, F2  
 **Evidence:** [Low-speed trim redesign](../design/Low-Speed-Trim-Redesign-and-E2A-Plan.md)
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M4` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 ADR-0041 selected r1 using a cruise-only `Cm0` intercept and an ideal VLM

@@ -3,6 +3,8 @@
 **Status:** ⬜ Held for flight-wing CAD by ADR-0047; retained as reference/coupon geometry · **Date:** 2026-08-17 · **Confidence:** Medium `[D]` · **Reversible:** Yes, before tooling
 **Gaps:** G2 / E2 measured acceptance · **Research:** I-15 §8, I-22
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M4` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The v0.2 root candidate was not a valid CAD release profile. Its thickness routine

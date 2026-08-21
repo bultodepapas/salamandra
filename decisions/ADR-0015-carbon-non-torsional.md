@@ -3,6 +3,8 @@
 **Status:** ✅ Active (corrected) · **Date:** 2026-07-28 · **Confidence:** High `[D]`
 **Associated correction:** C11
 
+**Article #1 redesign:** `RETAINED-METHOD` · **Gate:** `M6` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 Modeling intuition says that "adding carbon" solves any structural problem. In wing torsion that is false in the common case and true in a specific one — and the difference matters.

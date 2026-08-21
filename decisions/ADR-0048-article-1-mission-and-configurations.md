@@ -7,6 +7,8 @@ programme contract; Medium `[D]`/`[E]` for the initial architecture order
 **Specification:** [Article #1 objectives and mission requirements](../docs/00-objectives-and-requirements.md)
 **Calculation:** [`mission_contract.py`](../calculations/mission_contract.py)
 
+**Article #1 redesign:** `RETAINED` · **Gate:** `M0–M9` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 The released v0.6 repository contained a detailed aircraft, but its controlling statements
@@ -124,7 +126,7 @@ Review this decision if one of the following occurs:
    the operational basis needed to verify it;
 2. M1 shows that no safe, practical 6S architecture can meet the mission while a complete
    8S architecture can;
-3. M2/M5 shows that the rudder-capable module creates a safety or control disadvantage that
+3. M3/M5 shows that the rudder-capable module creates a safety or control disadvantage that
    cannot be removed by sizing or interface changes;
 4. physical energy tests show that the selected comparison states do not discriminate the
    aircraft's actual use; or

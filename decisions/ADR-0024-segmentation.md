@@ -3,6 +3,8 @@
 **Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** High · **Reversible:** Yes
 **Feeds:** guide §7.4 (printability, O3/O5)
 
+**Article #1 redesign:** `CANDIDATE-ONLY` · **Gate:** `M6/M8` · [MP-02 ledger](REDESIGN-DISPOSITION.md)
+
 ## Context
 
 Printer class: 256 mm bed (Bambu P1S, O3). The 1300 mm wing must be segmented to fit.

@@ -11,7 +11,7 @@ carries its source and the reasoning is the deliverable.**
 
 <!-- END GENERATED: drawing-hero -->
 
-**Revision 1.22** · 21 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
+**Revision 1.23** · 21 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
 **Programme reset — Gate M0 closed; Gate M1 open** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
 
 **Engineering hold — 21 August 2026.** The released r1 wing geometry does not close
@@ -38,7 +38,7 @@ not the automatically selected final aircraft.
 | **Review the historical v0.6 CAD baseline** | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) — held until Master Plan Gate M7 |
 | **Know what is still unknown** | [`gaps/`](gaps/README.md) · [Open Points](design/Design-Guide-Open-Points-v0.1.md) |
 | **Review the NF book audit and release programme** | [**Consolidated NF Design Guide audit**](design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md) — one prioritized engineering and verification roadmap |
-| **Trace why a number exists** | [`decisions/`](decisions/README.md) · [`research/`](research/) · [CHANGELOG](CHANGELOG.md) |
+| **Trace why a number exists** | [Article #1 ADR disposition](decisions/REDESIGN-DISPOSITION.md) · [`decisions/`](decisions/README.md) · [`research/`](research/) · [CHANGELOG](CHANGELOG.md) |
 | **Reproduce the numbers** | [Tools and reproduction](#tools-and-reproducing-the-numbers) |
 | **Contribute a part or a variant** | [Contributing](#contributing) · [CONTRIBUTING.md](CONTRIBUTING.md) |
 
@@ -296,8 +296,9 @@ programme gates.
 
 | Document | Use it for | Intended reader | Authority |
 |---|---|---|---|
-| [**Master Design Plan v2.1**](docs/05-master-plan.md) | Defining the mission, hardware baseline, architecture trade, evidence gates and CAD handoff order | Project lead, engineering reviewer and CAD lead | **Canonical programme control** |
+| [**Master Design Plan v2.2**](docs/05-master-plan.md) | Defining the mission, hardware baseline, architecture trade, evidence gates and CAD handoff order | Project lead, engineering reviewer and CAD lead | **Canonical programme control** |
 | [**Article #1 requirements v2.0**](docs/00-objectives-and-requirements.md) | Reading the active product intent, configurations, mission states, constraints and inherited-value disposition | Every contributor | **Canonical mission and product specification** |
+| [**ADR redesign-disposition ledger**](decisions/REDESIGN-DISPOSITION.md) | Determining whether a historical decision is retained, method-only, candidate-only, reopened, superseded or cancelled for Article #1 | Every contributor importing prior work | **Canonical ADR applicability map** |
 | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) | Reconstructing/reviewing the held v0.6 geometry, interfaces and equipment envelopes | CAD designer | Historical v0.6 CAD baseline; not active production authority |
 | [**Advanced Design Guide v0.24**](design/Salamandra-Design-Guide-Advanced-v0.1.md) | Detailed engineering limits, calculation results, release migration and complete technical context | Lead designer and engineering reviewer | **Canonical advanced engineering reference** |
 | [**Design Guide Justification**](design/Design-Guide-Justification-v0.1.md) | Understanding why each selected value exists and what evidence supports it | Reviewer or contributor challenging a requirement | Rationale and evidence companion |
@@ -357,6 +358,9 @@ working tree.
 | **M7 — Final systems, OML and CAD handoff** | ⬜ Blocked |
 | **M8 — Native CAD and ground qualification** | ⬜ Blocked |
 | **M9 — Flight identification and optimization** | ⬜ Blocked |
+
+**Immediate work:** MP-02 is complete. MP-03 now builds the machine-readable 6S-R/CLEAN
+candidate hardware and power manifest with an 8S study overlay.
 
 **Current authorization:** mission/equipment research, electronics integration, mass
 skeletons, reversible calculations, coupons and test fixtures. New production wing/body
