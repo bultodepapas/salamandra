@@ -8,7 +8,7 @@ define the reference design and the platform's conventions. See the
 
 | File | Content |
 |---|---|
-| [`00-objectives-and-requirements.md`](00-objectives-and-requirements.md) | **Inherited v0.6 specification.** Reopened for Master Plan Gate M0 reissue |
+| [`00-objectives-and-requirements.md`](00-objectives-and-requirements.md) | **Active Article #1 specification v2.0.** Product intent, configurations, mission states, requirements, inherited-value disposition and Gate-M0 closure |
 | [`02-measured-references.md`](02-measured-references.md) | Primary `[M]` data measured by the project |
 | [`03-phase-1-plan.md`](03-phase-1-plan.md) | Historical v0.6 geometry/stability workstream; superseded for programme sequence |
 | [`04-conventions.md`](04-conventions.md) | Tags, identifiers, symbols, signs |

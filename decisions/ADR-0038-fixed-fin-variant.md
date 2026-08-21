@@ -1,8 +1,14 @@
 # ADR-0038 — Dual directional configuration: finless baseline + passive twin-fin variant (V1)
 
-**Status:** 🔄 Provisional · **Date:** 2026-08-19 · **Confidence:** Medium `[D]`/`[E]`
+**Status:** ⬜ Superseded for the redesigned Article #1 by
+[ADR-0048](ADR-0048-article-1-mission-and-configurations.md); retained as a v0.6 comparison
+candidate · **Date:** 2026-08-19 · **Confidence:** Medium `[D]`/`[E]`
 **Reversible:** Yes; the two fins and short root supports are additive CORE modules.
 **Feeds:** I-20, I-29, I-30, G10, F2, E8, O1 and O14.
+
+> **2026-08-21 reset:** `SALAMANDRA-6S-R` now requires a rudder-capable removable vertical
+> interface for first-flight development. The passive V1a geometry below remains useful
+> evidence, but is not the v2 directional release.
 
 ## Context
 

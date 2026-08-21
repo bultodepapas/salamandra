@@ -4,6 +4,35 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.47] — 2026-08-21
+
+**C56 — Gate M0 had a roadmap but still lacked an active, executable mission contract;
+v0.6 requirements and ADRs could therefore continue to look authoritative during the
+redesign.**
+
+- Reissued `docs/00-objectives-and-requirements.md` as the active Revision-2 Article #1
+  specification. It defines the product objective hierarchy, 6S-R/6S-CLEAN/8S-STUDY
+  configuration order, launch/approach/efficiency/handling states and explicit non-goals.
+- Replaced the single-point objective with a total battery-terminal Wh/km vector at
+  candidate-best-range, 65, 80 and 95 km/h. Candidate selection is Pareto-based after
+  safety gates; no fixed range, endurance, scalar weights or roll-rate target is invented.
+- Classified inherited values instead of silently carrying them forward. The 95 km/h,
+  1.15 Wh/km point is a historical comparator; 45 km/h stall, +6/-3 loads and the 1.5
+  ultimate factor are provisional screens; the v0.6 160/180 km/h cases and geometry no
+  longer govern the redesign.
+- Added `calculations/mission_contract.py` and connected it to the repository verification
+  harness. It owns the new mission/configuration invariants, checks Pareto behavior and
+  cross-checks the 20 mm battery travel and I-14 launch-state separation against their
+  existing numerical owners.
+- Added ADR-0048. It supersedes the Article #1 mission scope of ADR-0010/0033, reopens
+  ADR-0001/0040 as v0.6 forward-sweep candidate evidence and supersedes ADR-0038's
+  no-rudder first-flight concept with a rudder-capable 6S-R interface.
+- Closed Master Plan Gate M0 and opened M1. Updated the README, document/calculation/ADR
+  indexes and historical Design Guide boundary; MP-02, the complete ADR reset ledger, is
+  now the immediate governance task before the M1 hardware manifest.
+
+---
+
 ## [1.46] — 2026-08-21
 
 **C55 — the repository had detailed subsystem work but no current master design contract;

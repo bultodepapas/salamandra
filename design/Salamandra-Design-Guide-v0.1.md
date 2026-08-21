@@ -19,7 +19,8 @@ CAD. A replacement CAD guide is issued only at
 > **CAD DESIGNER:** do not begin production CAD from this edition. For reversible review
 > or historical reconstruction, model only the requirements in this document and do not
 > infer missing geometry from renders or sketches. For the active work order, start with
-> the [Master Design Plan](../docs/05-master-plan.md).
+> the [Master Design Plan](../docs/05-master-plan.md) and the
+> [active Article #1 requirements](../docs/00-objectives-and-requirements.md).
 
 This edition releases the **twin-fin V1 architecture** and the generated **provisional
 fuselage OML**. The wing, airfoil, twist, elevons, materials, loads and flight limits are
@@ -36,6 +37,7 @@ unchanged from v0.23; any V1 fin or carrier solid modelled from v0.23 is obsolet
 | Directional variants | `SALAMANDRA-CLEAN` and `SALAMANDRA-V1` |
 | CAD authority | Historical v0.6 reconstruction/review only; active production CAD blocked by Master Plan v2.0 |
 | Numerical owners | `calculations/design_config.py` and the generated airfoil coordinate files |
+| Active redesign mission | [Article #1 requirements v2.0](../docs/00-objectives-and-requirements.md); this guide does not supersede it |
 | Detailed engineering authority | [Advanced Design Guide](Salamandra-Design-Guide-Advanced-v0.1.md) |
 | Status | Historical v0.24 baseline under ADR-0047 aerodynamic design hold |
 

@@ -1,194 +1,315 @@
-# Objectives and requirements — Phase 0 specification
+# Salamandra Article #1 — objectives and mission requirements
 
-**Revision 1.5-reset** · 21 August 2026 · **INHERITED v0.6 SPECIFICATION — GATE M0 REOPENED**
-Defines the former v0.6 objectives and requirements. It is evidence for, but no longer the
-programme authority for, the redesigned aircraft.
+**Revision 2.0** · 21 August 2026 · **GATE M0 CLOSED — ACTIVE PROGRAMME SPECIFICATION**
 
-> **Reset notice.** The [Master Design Plan v2.0](05-master-plan.md) reopens mission,
-> scoring, 6S/8S architecture, sweep family and R/CLEAN directional configurations. The
-> arbitrary range/endurance targets and the former 4S–6S platform objective below are not
-> active redesign requirements. This file will be reissued by task MP-01; until then, use
-> it only to trace the v0.6 baseline.
+This document controls what the redesigned Salamandra Article #1 must do. It does not
+release a planform, airfoil, mass, motor, propeller, servo, structure or CAD geometry.
+Those are candidate-dependent decisions made by the gated process in the
+[Master Design Plan](05-master-plan.md).
 
-This is an **open, community-driven, modular 3D-printed FPV aircraft platform**. The core
-design principles are developed largely through **AI-assisted research**, while the final
-aircraft and its 3D models are created collaboratively by humans and AI. The forward-swept
-flying wing below is the **first, reference design**; the platform is intended to grow into
-a family of airframes, parts and configurations contributed by the community (see §2.4).
+The machine-readable owner of the mission states, configuration order and inherited
+comparators is [`calculations/mission_contract.py`](../calculations/mission_contract.py).
+[ADR-0048](../decisions/ADR-0048-article-1-mission-and-configurations.md) records the
+programme decision. A value marked **provisional screen** is useful for rejecting clearly
+unsuitable concepts, but is not a released-aircraft limit.
 
 ---
 
-# 1. The central tension, resolved
+## 1. Product intent
 
-The initial analysis showed that **the TBS Mojito is not energy-efficient**: 0.74 Wh/(km·kg), the same as a USD 40 foam wing. Its achievement is sustaining that consumption at 2–3× the speed.
+Salamandra Article #1 is an open, single-motor, 3D-printed FPV flying wing intended to
+demonstrate the lowest practical total energy consumption that the project can achieve
+without becoming a fragile, slow-handling pure glider. It must remain controllable,
+repairable and useful as an instrumented development aircraft.
 
-Therefore "efficient" and "Mojito-like" are only compatible if efficiency is sought **where the Mojito is leaving it on the table**:
+The objective priority is deliberately lexicographic:
 
-| Source of improvement | Potential | Basis |
-|---|---|---|
-| **Propeller matching** (η 0.50 → 0.60) | **+20 %** | [I-03](../research/I-03-propulsion-chain.md) `[D]` |
-| Surface finish and C_D0 | +5–8 % | `[E]` |
-| Optimized aspect ratio and twist | +3–5 % | `[E]` |
+1. safety and controllability;
+2. total-energy efficiency;
+3. practical handling;
+4. durability and repairability;
+5. simplicity and open reproducibility; and
+6. aesthetic preference.
 
-**Target: ≤ 1.15 Wh/km.** An 18 % improvement justifiable **only with the propulsion chain**. It is falsifiable: measured with E2 and E3.
+An item lower in this list cannot compensate for failure of an item above it. Forward
+sweep is therefore an aesthetic and research preference, not a requirement: it is selected
+only if the coupled architecture trade shows a defensible benefit or no material penalty.
 
----
+The programme has **no fixed range or endurance requirement**. Range and endurance will be
+reported as outcomes of usable battery energy, measured total energy consumption,
+operating state and declared reserve policy. This avoids designing backwards from an
+unsupported 80 km, 100 km or 60 minute target.
 
-# 2. Objectives
+## 2. Controlled configurations
 
-## 2.1 Must-haves
+The suffix is part of the aircraft identity. Data from one configuration must not be used
+as if it came from another.
 
-| # | Objective | Acceptance criterion |
-|---|---|---|
-| **O1** | Demonstrated efficiency | ≤ 1.15 Wh/km at 95 km/h, measured with blackbox |
-| **O2** | Flexible 4S–6S platform | The platform may host 4S and 6S power modules without changing the wing/CORE interface. Each module has its own matched motor and carrier; Article #1 is 6S1P only (ADR-0042) |
-| **O3** | Printable on a 256 mm machine | Bambu P1S class. No active chamber. No exotic filament |
-| **O4** | PETG as the single structural material | Price, availability, thermal tolerance, ease |
-| **O5** | Easy to manufacture | ≤ 20 h of printing per wing half · ≤ 3 h of assembly · **no fiber lamination** |
-| **O6** | Published rationale | Every figure with a confidence tag and a source |
-| **O11** | Modularity | Standard center + interchangeable panels with a common NP |
+| Configuration | Electrical architecture | Directional hardware | Programme role | Release order |
+|---|---|---|---|---:|
+| **SALAMANDRA-6S-R** | 6S, 21700 Li-ion | Removable vertical module with rudder capability | First-flight development baseline after all ground gates close | 1 |
+| **SALAMANDRA-6S-CLEAN** | Same controlled 6S power module | Vertical module removed | Post-baseline efficiency and directional-stability experiment | 2 |
+| **SALAMANDRA-8S-STUDY** | Separate 8S, 21700 Li-ion power module | Not released | Voltage, loss, mass, packaging and propulsion trade only | Study may run in parallel; no flight order assigned |
 
-## 2.2 Desirable
+`6S-R` is the only first-flight configuration authorized by this specification. “Rudder
+capability” means that the geometry and installation shall support a movable surface and
+actuator if the directional/control analysis selects them; it does not predetermine their
+size or control law. `6S-CLEAN` may proceed only after `6S-R` supplies correlated stability,
+control and launch evidence. `8S-STUDY` cannot inherit a motor, ESC, propeller, bay or flight
+release from 6S merely because it fits electrically. Its M1/M2 analysis may proceed in
+parallel; only an 8S flight release is unordered and outside the first-article baseline.
 
-| # | Objective |
+## 3. Mission-state matrix
+
+Every architecture candidate shall be evaluated at the same named states. Candidate-
+specific stall, optimum-efficiency and limit speeds are outputs, not copied constants.
+
+| ID | State | Speed definition | Required output | Authority |
+|---|---|---|---|---|
+| **L0** | Hand-launch release | `V_release >= 1.00 V_s` | Release margin, torque-roll margin and acceleration to the I-14 `1.20 V_s` target | Requirement plus inherited I-14 method |
+| **L1** | Approach/low-speed handling | `1.30 V_s` | Trim, remaining pitch/roll/yaw authority, mode behavior and stall recovery | Provisional engineering state `[E]`; not a certification rule |
+| **E0** | Best range | Candidate-derived speed that minimizes total battery Wh/km inside its admissible envelope | Speed, total Wh/km and uncertainty | Primary efficiency state |
+| **E1** | Low cruise comparison | 65 km/h TAS at the standard comparison atmosphere | Total Wh/km and subsystem breakdown | Common reporting state |
+| **E2** | Normal FPV cruise | 80 km/h TAS at the standard comparison atmosphere | Total Wh/km, trim/control reserve, propulsion equilibrium and temperatures | Provisional design state `[E]` |
+| **E3** | v0.6 continuity comparison | 95 km/h TAS at the standard comparison atmosphere | Total Wh/km and delta from the historical 1.15 Wh/km target | Historical comparator, not the sole objective |
+| **H0** | Handling envelope | L1, E2 and candidate manoeuvre points established at Gate M5 | Static/dynamic stability, control time histories, actuator load/rate and recovery | Gate-M5 analytical contract, Gate-M9 flight validation |
+| **S0** | Structural/aeroelastic envelope | Derived from the accepted mass, handling envelope, gust basis and propulsion cases | Net loads, stiffness, strength, divergence and flutter clearance | Gates M6–M8 |
+
+For candidate-to-candidate calculations, the comparison atmosphere is ISA sea level,
+`rho = 1.225 kg/m3`. This is a repeatability convention, not an assumed operating altitude.
+Physical tests shall record air density, temperature, pressure, wind, aircraft mass, CG,
+configuration and battery state. Energy-per-distance tests shall use air distance or
+reciprocal-course correction so that wind is not credited as aerodynamic efficiency.
+
+The admissible speed range for the E0 search is bounded by the later low-speed,
+propulsion, control, structural and aeroelastic gates. E0 is invalid if an optimizer finds
+a mathematical minimum outside that envelope.
+
+## 4. Efficiency and comparison method
+
+### 4.1 Metric boundary
+
+The controlled metric is energy removed at the battery terminals divided by air distance:
+
+```text
+total Wh/km = (propulsion + ESC + BEC/conversion + avionics + FPV energy) / air distance
+```
+
+Reports shall include the subsystem breakdown, measurement uncertainty and configuration.
+Motor-only or shaft-only figures do not satisfy the objective. Range is then an explicitly
+conditional result:
+
+```text
+range [km] = usable battery energy [Wh] / total energy [Wh/km]
+```
+
+Usable energy and operational reserve shall be reported, not hidden inside a claimed range.
+
+### 4.2 Selection rule
+
+The efficiency result is the vector `(E0, E1, E2, E3)`. Candidate A is unambiguously more
+efficient than candidate B only when A is no worse at every state, within declared model or
+test tolerance, and materially better at at least one. Otherwise both remain on the Pareto
+front until a stakeholder decision supplies explicit weights. No undocumented weighted
+score may select the aircraft.
+
+Safety, stability, launchability, structure, aeroelasticity, packaging and manufacturing
+constraints are pass/fail gates before efficiency ranking. A low Wh/km result cannot buy
+its way through a failed gate.
+
+The former `<= 1.15 Wh/km at 95 km/h` objective remains a useful v0.6 comparator at E3.
+It is not the redesign's only success criterion and is not evidence of range.
+
+## 5. Practical handling objective
+
+“Agile” means that the aircraft is not optimized into glider-like handling that consumes
+all available control just to trim or makes ordinary FPV bank changes impractical. It does
+**not** create an arbitrary roll-rate or aerobatic-roll requirement.
+
+A candidate satisfies the preliminary handling objective only when the Gate-M5 model shows:
+
+- passive static stability for the first-flight `6S-R` configuration over the physical CG
+  and aerodynamic-uncertainty band;
+- stable or explicitly bounded dynamic modes at L1, E2 and the candidate manoeuvre states;
+- equilibrium without actuator saturation or unmodelled control extrapolation;
+- absolute trim no greater than 75% of one-sided mechanical travel, leaving at least 25%
+  trim-only reserve in the limiting direction before simultaneous pitch/roll allocation;
+- usable bank establishment and reversal without continuous full control, with the actual
+  response time, roll rate and remaining authority reported rather than prescribed here;
+- adequate servo torque, rate, thermal margin and linkage stiffness for simultaneous
+  commands; and
+- a recoverable stall/lost-lift sequence about the adverse CG, including directional
+  behavior and propeller effects.
+
+Gate M5 shall convert “usable bank establishment and reversal” into a test card and
+quantitative acceptance band based on the selected candidate's simulated response and
+actuator capability. That band must be frozen before flight validation; flight performance
+must not be judged after observing the result.
+
+## 6. Article #1 requirements
+
+Evidence status uses `[M]` measured, `[D]` reproducibly derived, `[E]` engineering estimate
+and `[I]` incomplete-model inference. “Open” means the requirement exists but the design
+has not demonstrated compliance.
+
+| ID | Requirement | Verification | Current evidence |
+|---|---|---|---|
+| **A1-R01** | Article #1 shall be a tailless flying wing. Sweep direction, taper, span, area and airfoil family remain open until M3/M4. | Configuration review and controlled CAD identity | Requirement fixed; geometry open |
+| **A1-R02** | One propulsion motor shall be used. A pusher is the working baseline, not a frozen architecture. | Architecture review, hazard/launch analysis and propulsion trade | Requirement fixed; installation open |
+| **A1-R03** | A forward-facing FPV camera shall have an unobstructed view and a replaceable protective installation. | Packaging drawing, field-of-view check and inspection | Requirement fixed; device and envelope open |
+| **A1-R04** | The first-flight power system shall be 6S and use 21700 Li-ion cells. | Pack manifest, electrical inspection and measured mass | Requirement fixed; cell, layout and capacity open |
+| **A1-R05** | 8S shall be evaluated only as a separate complete architecture, including cell mass, voltage limits, motor Kv, propeller, ESC, BEC, wiring, CG and thermal effects. | Controlled 6S/8S trade | Open at M1 |
+| **A1-R06** | The battery installation shall provide at least 20 mm total usable longitudinal adjustment, with retention, wiring and access valid at both ends. | Mass-skeleton solution, CAD measurement and physical travel test | Numerical requirement fixed; packaging open |
+| **A1-R07** | Conventional PETG, preferably light colored, is the primary printed-airframe material. Any exception requires a part-specific structural, thermal and process decision. | Material/process specification and coupon evidence | Material intent fixed; allowables open |
+| **A1-R08** | Every printed aircraft part shall fit a printer with a 256 mm minimum bed dimension without fiber lamination. | Oriented bounding-box check in CAD and slicer | Requirement fixed; segmentation open |
+| **A1-R09** | The aircraft shall be designed around the equipment mass/envelope skeleton before the fuselage OML is lofted. Only battery position is an automatic CG variable; other movement requires an explicit installation allowance. | Mass ledger, CG solver, equipment SVG and OML containment check | Method fixed; v2 ledger open |
+| **A1-R10** | `6S-R` shall support a removable rudder-capable vertical module; `6S-CLEAN` shall preserve the controlled interfaces needed for an A/B comparison. | Interface drawing, mass/configuration manifest and stability/control evidence | Requirement fixed; geometry open |
+| **A1-R11** | Pitot/airspeed, battery voltage/current, blackbox flight logging, GPS and attitude data shall support launch, efficiency and model-correlation tests. | Instrumentation plan, calibration and synchronized log audit | Functional requirement fixed; hardware open |
+| **A1-R12** | Flight-control geometry shall not depend on one autopilot firmware. INAV and ArduPlane compatibility remain objectives where practical. | I/O/interface review and configuration records | Open at M1/M5 |
+| **A1-R13** | Native CAD shall be produced by a human CAD designer from the released handoff package; repository scripts own requirements, calculations, parametric evidence and SVG review drawings. | Signed CAD handoff and round-trip drawing review | Process fixed; handoff blocked until M7 |
+| **A1-R14** | Every released value shall identify its numerical owner, evidence class, uncertainty and verification event. | Contract lint, calculation verification and review | Active repository policy |
+| **A1-R15** | Source, documentation and reusable hardware interfaces shall remain open and versioned under the repository's published licences. | Release audit | Active programme objective |
+
+## 7. Provisional screening assumptions
+
+These values prevent unbounded early trades. They must be rederived or explicitly adopted
+before they can enter a CAD release.
+
+| Screen | Provisional value | Use now | Required closure |
+|---|---:|---|---|
+| Stall-speed ceiling | 45 km/h | Compare initial area/mass/`CLmax` combinations and launch burden | M3/M5 candidate-specific requirement and E2 physical aerodynamic evidence |
+| Manoeuvre limit loads | +6 / -3 | Initial structure and actuator sensitivity only | M5 operational handling envelope and M6 complete net-load model |
+| Ultimate factor | 1.5 x limit | Initial strength sensitivity | M6 materials/process basis and approved load cases |
+| Post-release launch target | 1.20 `V_s` | I-14 acceleration comparison after the `V_release >= V_s` gate | M5 candidate propulsion/launch analysis |
+| Trim-only reserve | >=25% of one-sided mechanical travel | Reject trim-saturated concepts | M5 simultaneous pitch/roll/control allocation |
+
+The v0.6 values of 105 km/h initial cap, 160 km/h article `V_NE` and 180 km/h structural
+case do **not** govern the redesign. M6 shall derive a candidate-specific expansion limit
+from manoeuvre/gust/control/propulsion loads and independent structural, divergence and
+flutter clearance. Likewise, 1.300 m span, 0.282 m2 area, aspect ratio 6, -15 degree
+quarter-chord sweep and the r1/r2a airfoils are comparison candidates, not requirements.
+
+No fixed all-up mass is declared. M2/M3 shall derive the feasible mass/area region from the
+selected battery architecture, equipment ledger, launch/low-speed screens, structural
+allowance and uncertainty. The fuselage is then modelled around that solved skeleton;
+nose length is not chosen aesthetically or shortened before CG closes.
+
+## 8. Operations, manufacture and instrumentation assumptions
+
+The working concept uses hand launch and a controlled belly landing on a suitable clear,
+soft surface. Site, altitude, wind and pilot limitations are intentionally not invented at
+M0; they become explicit release-card inputs at M8. Until then, calculations shall sweep
+plausible density and wind rather than claiming one universal operating condition.
+
+The aircraft should be segmented for repair by reprinting damaged modules. Print time,
+assembly time, structure cost and transport-case length shall be measured and reported as
+design outcomes. They are not acceptance requirements until physical workflow data show
+that a defensible limit is needed. Carbon or metal may provide local bending, joint or
+hard-point functions when justified; PETG remains the primary printed load path and fiber
+lamination is outside Article #1 scope.
+
+## 9. Non-goals
+
+- A speed record, aerobatic roll-rate target or unlimited manoeuvre envelope.
+- A thermal-soaring or maximum-endurance glider optimized at the expense of FPV handling.
+- A guaranteed distance or flight time before measured energy and reserve policy exist.
+- Active, neutral-margin or negative-static-margin stability on Article #1.
+- Automatic selection of forward sweep for visual reasons.
+- One motor, propeller, servo or battery layout chosen before the coupled trade.
+- Production CAD, STL publication or free flight before the applicable gates close.
+- Certification claims. The NF Design Guide is expert model-aircraft evidence, not a
+  certification specification.
+
+## 10. Method inherited from the NF Design Guide audit
+
+The repository's review of Peter Wick's *Designing Flying Wings* is integrated as a method,
+not copied as geometry. The applicable sequence is:
+
+| NF synthesis step | Salamandra implementation |
 |---|---|
-| O7 | Repairable by reprinting a segment |
-| O8 | Structure cost < €60 against the USD 189.95 reference kit |
-| O9 | Transportable — detachable wing halves, 700 mm case |
-| O10 | Compatible with INAV and ArduPlane without firmware-dependent geometry |
+| D0 — define task/configurations | This specification, `mission_contract.py` and ADR-0048 |
+| D1 — one parametric geometry authority | M3 architecture and M4 geometry contract |
+| D2 — local aerodynamic evidence | M4 printed-section/XFOIL matrix with measured closure |
+| D3 — complete 3-D aircraft | M4/M5 viscous 3-D, finite-sideslip and control models |
+| D4 — close trim, stability and control together | M5 full CG/uncertainty/control envelope |
+| D5 — couple aerodynamics, mass and structure | M2 mass skeleton and M6 structural/aeroelastic loop |
+| D6 — robust multi-state optimization | M3 Pareto comparison across E0–E3 with retained alternatives |
+| D7 — calibrate with physical evidence | M6 coupons through M9 instrumented flights |
+| D8 — release by configuration/evidence | Configuration manifest, hashes and gate-specific release |
 
-## 2.3 Non-goals
+This preserves the book audit's central lessons: analyze a flying wing as a coupled system;
+carry low-Reynolds-number and manufactured-geometry uncertainty; solve the entire physical
+CG band; preserve Pareto alternatives; and never call an optimizer output a release.
 
-- **Not a single fixed design.** This is a platform, not one aircraft. The reference
-  design is a forward-swept flying wing, but the platform is not limited to it; future
-  directions may include conventional fuselages, V-tails, and tractor or pusher layouts.
-- **Not a speed-record aircraft.** The Eliminator covers that, same lineage, 360 km/h.
-- **Not a thermal glider.** Pure endurance requires AR 8–12 and 25–35 g/dm², incompatible with PETG at this scale.
-- **Not a first aircraft.** No tail, forward sweep, hand launch.
-- **Not seeking minimum mass at any cost.** Torsional stiffness rules.
-- **Not prescribing motor or battery.** See [ADR-0033](../decisions/ADR-0033-electronics-out.md).
+## 11. Inherited v0.6 requirement disposition
 
-## 2.4 Platform and community objectives
-
-These are the objectives that define the *platform*, as opposed to the reference design:
-
-| # | Objective | Criterion |
+| Inherited item | Revision-2 disposition | Reason |
 |---|---|---|
-| **O12** | Open and free | Fully free to use, build and share; no paywall or locked files |
-| **O13** | Community-driven | Contributions (PRs) with modifications, improvements and new variants are encouraged |
-| **O14** | Modular and extensible | Replaceable wings; fuselage, wingtip, rudder and control-surface variants; entirely different configurations over time |
-| **O15** | AI-assisted research, human-built parts | AI does aerodynamic/theoretical research and design exploration; the community creates the actual 3D parts (CAD/STL), experiments and manufacturing know-how |
-| **O16** | Hardware archive | Central archive for adapters and mounts for FPV equipment, electronics, propulsion and related hardware |
-| **O17** | Reciprocal licensing | Hardware/design under CERN-OHL-S-2.0; documentation under CC BY-SA 4.0 |
+| `<=1.15 Wh/km at 95 km/h` | **Retain as E3 historical comparator** | Valuable continuity point, too narrow to define global efficiency |
+| 80 km / 100 km / 60 min | **Withdraw** | Unsupported scalar targets; now reported outcomes |
+| 90–105 km/h cruise | **Replace** | E0–E3 expose best-range, low, nominal and legacy behavior |
+| 4S–6S platform | **Supersede** | 6S first-flight baseline; 8S separate study; no current 4S requirement |
+| 45 km/h stall | **Retain as provisional screen** | Useful launch/area comparator; final value requires candidate and evidence |
+| 160 km/h `V_NE` / 180 km/h design case | **Withdraw from redesign authority** | Must follow candidate load and aeroelastic closure |
+| +6/-3 limit, x1.5 ultimate | **Retain as provisional screens** | Starting sensitivity values, not yet a complete load basis |
+| Forward sweep -15 degrees | **Reopen** | Candidate A only; benefit must survive the coupled trade |
+| Fixed fins, no rudder | **Supersede** | First configuration is now rudder-capable `6S-R`; CLEAN follows evidence |
+| Fixed 1.300 m / 0.282 m2 / AR 6 geometry | **Reopen** | Candidate must follow mission, energy, mass and packaging trades |
+| PETG and 256 mm printer | **Retain** | Explicit product/manufacturing intent |
+| <=20 h print/half, <=3 h assembly, <EUR60, 700 mm case | **Demote to reported outcomes** | No evidence-based thresholds at M0 |
+| Modularity and repairability | **Retain with evidence** | Interfaces must not impose unjustified mass, drag or stiffness penalties |
+| Exact v0.6 motor/propeller/servo choices | **Comparison data only** | M1 must reselect against the v2 mission and mass skeleton |
 
----
+## 12. Gate-M0 acceptance and next closure
 
-# 3. Requirements
+Gate M0 is closed because the programme now has:
 
-## 3.1 Mission
+- a single product intent and objective order;
+- named 6S-R, 6S-CLEAN and 8S-STUDY configurations with release order;
+- a repeatable mission-state matrix and total-energy metric boundary;
+- an explicit no-range/no-endurance/no-arbitrary-roll-rate disposition;
+- hard requirements separated from provisional screens and historical comparators;
+- an executable contract with repository-level verification; and
+- a decision record that supersedes the conflicting v0.6 mission assumptions.
 
-| Requirement | Value | Confidence |
+M0 closure does not release hardware. **Gate M1 is now open.** Its next controlled output
+is the electronics/propulsion candidate matrix and uncertainty-aware mass ledger. It shall
+identify candidate 21700 cells, 6S and 8S pack layouts, motor/propeller/ESC envelopes,
+servos, flight controller, FPV system, power conversion, sensors and wiring without
+prematurely selecting geometry.
+
+| Open numerical question | Owner/gate | Closure evidence |
 |---|---|---|
-| Design range | 80 km with 20 % reserve | `[E]` |
-| Extended target range | 100 km, contingent on E3 | `[E]` |
-| Endurance | 60 min at minimum-power speed | `[E]` |
-| Cruise speed | 90–105 km/h | Decided |
-| Design V_NE | 180 km/h | Decided |
-| **V_NE article #1** | **160 km/h** | Conservative until E7 |
-| Manoeuvre limit loads | **+6 / −3 g** | Provisional `[E]`; ADR-0044/I-24 |
-| Structural ultimate loads | **+9 / −4.5 g** | Limit × 1.5 `[D]`; not flight targets (C33) |
-| Gust basis | **Open — legacy Part 23 screen is not adopted as a design load** | G11/E9; nonlinear dynamic response required |
-| **Stall speed** | **≤ 45 km/h** | See correction C16 |
-| Wing `CLmax` design value | **0.589** | I-07 `[D]`; current CLEAN/V1 analytical masses predict 44.1/44.9 km/h; E2 measured closure remains mandatory |
-| Local section `clmax` screen | **≥ 0.65** | I-07/I-15; not the aircraft `CLmax` (C34) |
+| Final low-speed/stall requirement | M3/M5 | Candidate mass/area/`CLmax`, launch and handling trade |
+| Normal-cruise 80 km/h suitability | M3/M4 | Aerodynamic and propulsion Pareto results |
+| Practical bank-response acceptance band | M5 | Predeclared simulation/test-card criterion |
+| Final limit/ultimate/gust envelope and speed limits | M5/M6 | Operational cases plus complete load and aeroelastic models |
+| Motor, propeller, ESC and servo selections | M1/M4/M5/M7 | Catalog evidence, bench tests and coupled margins |
+| 6S versus 8S release disposition | M1/M2/M3/M4 | Energy, loss, mass, CG, thermal and propulsion comparison |
+| R versus CLEAN directional architecture | M3/M5/M9 | Fin/rudder model, ground evidence and controlled flight A/B test |
 
-> **Corrections C16/C34.** The original requirement was ≤ 40 km/h, derived with AUW
-> 1350 g (4S1P, 48 g/dm²). When AUW rose to 1620 g the calculation was not re-done.
-> C16 relaxed the requirement to 45 km/h but then used the local-section `clmax = 0.65`
-> as if it were whole-wing `CLmax`. I-07 supplies the correct distinction: local section
-> screen **0.65**, released wing design value **0.589**. The latter gives 45.0 km/h at
-> the V1 allocation mass. The coupled **1601.98 g** V1 model gives 44.74 km/h and
-> passes analytically; measured F2 mass remains mandatory.
->
-> **Relaxed to ≤ 45 km/h**, justified by precedent: the Peregrine at 52 g/dm² and the Mojito at ~60 are hand-launched.
+## 13. Evidence and reproduction
 
-## 3.2 Requirements derived from modularity
+Primary supporting evidence:
 
-See [ADR-0032](../decisions/ADR-0032-modularity.md) for the full development.
+- [Master Design Plan](05-master-plan.md) — gate order, ownership and CAD handoff;
+- [Consolidated NF Design Guide audit](../design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md)
+  and its [design-method synthesis](../design/NF-Design-Guide-2024-Repository-Audit-Part-06-Design-Method-Synthesis.md);
+- [I-14 hand-launch feasibility](../research/I-14-hand-launch-stall-margin.md) — release and
+  post-release method;
+- [I-32 6S/8S trade](../research/I-32-6s-8s-p42a-pack-and-aircraft-trade.md) — inherited
+  mass, packaging and voltage evidence; and
+- [measured reference aircraft](02-measured-references.md) — empirical
+  context without copying their missions.
 
-- **R-NP** — common family neutral point. **Arbitrary panels are not admitted.**
-- **R-JOINT** — joint torsional stiffness ≥ 5× that of the adjacent section. Joint at 30 % of half-span, two pins.
+Reproduce the controlling checks with:
 
-## 3.3 R-CG — Article #1 balance and future battery modules
+```bash
+python3 calculations/mission_contract.py
+python3 calculations/verify_calculations.py --fast
+python3 calculations/contract_lint.py
+```
 
-| Pack | Cells | Energy | Mass | AUW | Wing loading |
-|---|---|---|---|---|---|
-| **6S1P P42A (Article #1)** | 6 | **90.7 Wh** | **445 g** | **1553.25 g CLEAN** | **55.1 g/dm²** |
-
-> **R-CG:** the Article #1 carrier shall hold CG within ±5 mm with the 6S1P pack. The
-> CLEAN component-level solution places it at x = **−337.74 mm** (travel
-> −371.20…−336.10). The coupled twin-fin V1 solver retains that travel, adds no forward
-> support, and converges at battery x = **−363.27 mm** and target xCG −93.784 mm.
-> F2 must close measured mass, stiffness and battery travel. A 4S aircraft
-> requires approximately 713 Kv rather than the 500–550 Kv 6S motor and therefore is a
-> separate power module. The former requirement to interchange 4S1P/4S2P/6S1P/6S2P in
-> one cradle is superseded by ADR-0042.
-
-- The 21700 cells **do not stack**: single 21 mm layer. At 13.5 % t/c and c_root 260 mm there is ~35 mm — roomy. **At 11 % it did not fit.**
-- Future 4S/2P modules must re-close propulsion, fit, CG, mass and stall independently.
-
-## 3.4 Structure
-
-| Requirement | Value |
-|---|---|
-| Material | Conventional PETG, light color |
-| Perimeters / infill | 2 (0.9 mm) / **gyroid 5 %** |
-| Section | Three cells: D-box + center + hinge |
-| Carbon | Bending tube + joint pin. **Not primary torsional** |
-| Divergence criterion | V_div ≥ 1.5 × V_NE |
-| Joints | Tenon + specific PETG adhesive, area ≥ 3× the skin section |
-| Elevons | **Mass balancing mandatory**, no-freeplay linkage |
-
-## 3.5 Avionics
-
-| Requirement | Value |
-|---|---|
-| Controller | INAV 9.1+ or ArduPlane. Geometry-agnostic |
-| **Pitot** | **Mandatory.** Without it, E2 and E7 are not valid |
-| Blackbox | SD or flash. Instrument of the whole test program |
-| GPS and magnetometer | Out of the root current path |
-| Launch | Autolaunch via acceleration detection |
-
-## 3.6 Directional configuration (ADR-0038)
-
-The platform publishes **two directional configurations** for the reference design,
-differing only in an optional passive twin-fin CORE assembly (no rudder servos, linkages
-or FC change):
-
-| | SALAMANDRA-CLEAN | SALAMANDRA-V1 |
-|---|---|---|
-| Vertical stabilizer | None | 2× CORE-rooted fixed swept-trapezoid fins at y = ±140 mm, forward of fixed propeller hazard; S_v,total = 6.1437 dm² (V1a) |
-| Cnβ total | **−0.00055…−0.00141/deg — negative** (FC recovery unproven; not the first-flight configuration, G10/C31) | V1a power-on/off **−0.00029…+0.00119/deg** (nominal +0.0005) `[D]`/`[E]`; marginal, lower corner open |
-| Role | O1 efficiency build (≤ 1.15 Wh/km) | Recommended build for the Article #1 test programme |
-| Cost | — | 48.73–56.92 g complete twin-fin/support screen `[E]` · ΔCD0 +0.0034 (+23.1% `[E]`) · coupled V_stall 44.74 km/h |
-
-**Rudder (movable): not required** — authority analysis shows it cannot hold a 20 km/h
-crosswind slip at stall and the mission coordinates turns through roll (I-20 §5.4;
-Mojito precedent `[M]` carries a fixed stabilizer and no rudder servo). Reopened as a
-future variant only if the E-flight programme (E8) demonstrates a yaw-handling failure
-mode.
-
-Full analysis: [I-29](../research/I-29-twin-fin-architecture-correction.md),
-[I-20 (superseded architecture)](../research/I-20-yaw-stability-centerline-fin.md),
-[ADR-0038](../decisions/ADR-0038-fixed-fin-variant.md), `calculations/yaw_stability.py`.
-Closure of the directional gap (G10) is by flight test (E8).
-
----
-
-# 4. Dominant risk
-
-**It is not aerodynamic. It is structural: torsional stiffness against aeroelastic divergence.**
-
-Full development in [I-05](../research/I-05-divergence-flutter.md).
-
-**Open risk unverified: flutter** (G7). The identified critical mode is the elevon's, and **it is not solved with stiffness** — it is inertial. See [ADR-0025](../decisions/ADR-0025-elevon-balancing.md).
+Passing these commands proves that the declared contract is internally consistent. It does
+not prove that a future aircraft meets it; that requires the analyses and physical evidence
+at Gates M1–M9.

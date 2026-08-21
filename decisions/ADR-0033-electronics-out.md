@@ -1,6 +1,12 @@
 # ADR-0033 — Motor and battery out of the design
 
-**Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** Decided
+**Status:** ⬜ Superseded for Article #1 by
+[ADR-0048](ADR-0048-article-1-mission-and-configurations.md); retained as an open-platform
+principle · **Date:** 2026-07-28 · **Confidence:** Decided for v0.6
+
+> **2026-08-21 reset:** community variants may remain open, but the reference Article #1
+> must bind a reproducible pack, motor, propeller, ESC, power-conversion, servo and avionics
+> configuration. Those items participate in mass, CG, energy and safety closure.
 
 ## Context
 

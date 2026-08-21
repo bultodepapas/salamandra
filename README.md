@@ -11,8 +11,8 @@ carries its source and the reasoning is the deliverable.**
 
 <!-- END GENERATED: drawing-hero -->
 
-**Revision 1.21** · 21 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
-**Programme reset — Gate M0 open** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
+**Revision 1.22** · 21 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
+**Programme reset — Gate M0 closed; Gate M1 open** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
 
 **Engineering hold — 21 August 2026.** The released r1 wing geometry does not close
 the complete low-speed/CG trim envelope. Do not issue new wing CAD for manufacture.
@@ -32,6 +32,7 @@ not the automatically selected final aircraft.
 | If you want to… | Go to |
 |---|---|
 | **Understand what is being defined first and what follows** | [**Master design plan**](docs/05-master-plan.md) — canonical programme control |
+| **Read the active mission and requirements** | [**Article #1 requirements v2.0**](docs/00-objectives-and-requirements.md) — Gate-M0 product, configuration and mission contract |
 | **Understand the idea** | [What this project is](#what-this-project-is) |
 | **See the aircraft** | [Salamandra, Article #1](#the-aircraft--salamandra-article-1) · [drawing set](#drawing-set--generated-design-review-sheets) |
 | **Review the historical v0.6 CAD baseline** | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) — held until Master Plan Gate M7 |
@@ -76,31 +77,37 @@ It currently targets a PETG forward-swept flying wing, but that is only the firs
 
 ## The aircraft — Salamandra, Article #1
 
-**Salamandra** is the first reference design on the platform: a PETG forward-swept flying
-wing, modular and configurable, built around a standard center module with interchangeable
-wing panels. Efficient FPV cruise flight, with electronics chosen by the builder.
+**Salamandra** is the first reference design on the platform: a single-motor, PETG,
+tailless FPV aircraft intended to minimize practical total energy per distance while
+remaining controllable, durable and useful to manoeuvre. Forward sweep is the lead
+historical candidate, not a requirement of the redesign.
 
 > **Reset status:** the numbers below describe the controlled v0.6 analytical baseline.
 > They remain valuable comparison data, but span, sweep, airfoil, controls, directional
 > module and OML are being reselected through equal-requirements trades in the
 > [Master Design Plan](docs/05-master-plan.md). They are not manufacturing authority.
 
-### Measurable objective
+### Active measurable objective
 
-| | Value |
+| Item | Revision-2 contract |
 |---|---|
-| Market reference | **TBS Mojito** — 1.40 Wh/km measured, USD 189.95 |
-| **Target** | **≤ 1.15 Wh/km** at 95 km/h |
-| Where it comes from | **Propeller matching**, +20 % demonstrated on UIUC data `[D]` |
+| Metric boundary | Total battery-terminal Wh/km: propulsion, conversion, avionics and FPV |
+| Mission states | Candidate-best-range, 65 km/h, nominal 80 km/h and legacy 95 km/h |
+| Selection | Safety/controllability gates first; then Pareto comparison across all states |
+| Legacy comparator | **≤1.15 Wh/km at 95 km/h** from v0.6; retained for continuity, not as the sole objective |
+| Range/endurance | Reported outcomes of usable energy, consumption and declared reserve; no fixed requirement |
 
 The initial analysis showed that the Mojito **is not energy-efficient** — it consumes
 0.74 Wh/(km·kg), the same as a USD 40 foam wing; its achievement is sustaining that at
-2–3× the speed. This design's efficiency does not come from optimistic aerodynamics: it
-comes from the propulsion chain, which is where the data say the gap is.
+2–3× the speed. That comparison remains useful evidence that propulsion matching matters.
+Revision 2 tests propulsion, aerodynamics and hotel loads together over the complete state
+vector, rather than assuming in advance where every gain will come from.
 
-**It is falsifiable.** It is measured with [E2](tests/) and [E3](tests/).
+**It is falsifiable.** The measurement boundary and configuration order are defined in the
+[active requirements](docs/00-objectives-and-requirements.md) and
+[ADR-0048](decisions/ADR-0048-article-1-mission-and-configurations.md).
 
-### Cruise configuration
+### Historical v0.6 comparison configuration
 
 | Parameter | Value | Decision |
 |---|---|---|
@@ -289,7 +296,8 @@ programme gates.
 
 | Document | Use it for | Intended reader | Authority |
 |---|---|---|---|
-| [**Master Design Plan v2.0**](docs/05-master-plan.md) | Defining the mission, hardware baseline, architecture trade, evidence gates and CAD handoff order | Project lead, engineering reviewer and CAD lead | **Canonical programme control** |
+| [**Master Design Plan v2.1**](docs/05-master-plan.md) | Defining the mission, hardware baseline, architecture trade, evidence gates and CAD handoff order | Project lead, engineering reviewer and CAD lead | **Canonical programme control** |
+| [**Article #1 requirements v2.0**](docs/00-objectives-and-requirements.md) | Reading the active product intent, configurations, mission states, constraints and inherited-value disposition | Every contributor | **Canonical mission and product specification** |
 | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) | Reconstructing/reviewing the held v0.6 geometry, interfaces and equipment envelopes | CAD designer | Historical v0.6 CAD baseline; not active production authority |
 | [**Advanced Design Guide v0.24**](design/Salamandra-Design-Guide-Advanced-v0.1.md) | Detailed engineering limits, calculation results, release migration and complete technical context | Lead designer and engineering reviewer | **Canonical advanced engineering reference** |
 | [**Design Guide Justification**](design/Design-Guide-Justification-v0.1.md) | Understanding why each selected value exists and what evidence supports it | Reviewer or contributor challenging a requirement | Rationale and evidence companion |
@@ -339,8 +347,8 @@ working tree.
 
 | Master gate | Status |
 |---|---|
-| **M0 — Mission, scoring and configuration** | 🔄 **Open — next task** |
-| **M1 — Bought-in hardware and measurement chain** | 🔄 Partial catalog evidence; physical integration open |
+| **M0 — Mission, scoring and configuration** | ✅ **Closed — specification v2.0, ADR-0048 and executable contract** |
+| **M1 — Bought-in hardware and measurement chain** | 🔄 **Open — next design gate; partial catalog evidence exists** |
 | **M2 — Mass skeleton and battery rail** | 🔄 Existing v0.6 work must be rebuilt for 6S/R/CLEAN plus 8S study |
 | **M3 — Equal-requirements architecture trade** | ⬜ Current forward-swept aircraft is candidate A |
 | **M4 — Printed section/aerodynamic evidence** | ⬜ Blocked by M3 |
@@ -409,7 +417,7 @@ CAD remains held until the master-plan gates select and validate an architecture
 
 | Folder | What it contains |
 |---|---|
-| [`design/`](design/) | **Concise Salamandra Design Guide v0.24** — the primary CAD execution specification; plus the canonical Advanced Design Guide, justification and open points |
+| [`design/`](design/) | Historical v0.6 Design Guides, detailed evidence and the consolidated NF audit; production CAD is held until M7 |
 | [`docs/`](docs/) | Specification, status, conventions and the [canonical master design plan](docs/05-master-plan.md) |
 | [`decisions/`](decisions/) | **One file per decision (ADR)**: context, alternatives, consequences |
 | [`research/`](research/) | **Research threads**: what was searched, what was found, what sources |

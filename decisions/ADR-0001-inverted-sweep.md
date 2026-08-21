@@ -1,7 +1,13 @@
 # ADR-0001 — Forward-swept flying wing
 
-**Status:** ✅ Active · **Date:** 2026-07-27 · **Confidence:** High · **Reversible:** No
+**Status:** ⬜ Superseded for the redesigned Article #1 by
+[ADR-0048](ADR-0048-article-1-mission-and-configurations.md); retained as the v0.6
+candidate record · **Date:** 2026-07-27 · **Confidence:** High · **Reversible:** Yes under M3
 **Research:** [I-02 — Tailless trim and forward sweep](../research/I-02-tailless-trim.md)
+
+> **2026-08-21 reset:** forward sweep is candidate A, not a redesign requirement. Its
+> aerodynamic, packaging and aeroelastic effects must be compared with straight and
+> aft-swept candidates under the same mission contract.
 
 ## Context
 

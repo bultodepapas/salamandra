@@ -1,6 +1,6 @@
 # Salamandra master design plan
 
-**Revision 2.0** · 21 August 2026 · **Programme reset — Gate M0 open**
+**Revision 2.1** · 21 August 2026 · **Programme reset — Gate M0 closed; Gate M1 open**
 
 **Document role:** canonical programme-control document for defining, designing,
 validating and handing Salamandra Article #1 to a human CAD designer.
@@ -28,10 +28,11 @@ research threads, SVG sheets and v0.6 geometry are controlled inputs to the new 
 Where documents conflict:
 
 1. this plan owns **programme intent, sequence, gate status and authorization**;
-2. [`00-objectives-and-requirements.md`](00-objectives-and-requirements.md) is the
-   inherited specification to be reissued at Gate M0;
-3. `calculations/design_config.py` owns only the current v0.6 numerical baseline until a
-   new candidate is selected;
+2. [`00-objectives-and-requirements.md`](00-objectives-and-requirements.md) owns the
+   active Article #1 mission and product requirements;
+3. `calculations/mission_contract.py` owns the redesign mission/configuration constants,
+   while `calculations/design_config.py` owns only the current v0.6 numerical baseline
+   until a new candidate is selected;
 4. ADRs own accepted technical decisions for their declared configuration; and
 5. the concise Design Guide owns CAD execution only after this plan authorizes a new
    controlled edition.
@@ -72,13 +73,14 @@ are reported outcomes of measured usable pack energy and the measured power curv
 
 The legacy `≤1.15 Wh/km at 95 km/h` requirement remains a useful external comparator and
 falsifiable reporting point. It is not the only optimization state and does not justify
-an aircraft that is poor elsewhere. Gate M0 shall define the complete cruise matrix and
-its weights before geometry optimization begins.
+an aircraft that is poor elsewhere. Gate M0 defines the E0–E3 comparison matrix and
+Pareto selection rule; no stakeholder weights are assumed.
 
-**Agility is deliberately not reduced to “must perform a roll.”** Gate M0 shall define
-handling acceptance from reference-aircraft telemetry and pilot-observable manoeuvres.
-The design models control reserve, inertia and modes only to prevent an inefficient or
-unsafe result; it does not optimize an arbitrary headline roll rate.
+**Agility is deliberately not reduced to “must perform a roll.”** Gate M0 defines the
+required handling evidence and trim reserve; Gate M5 freezes a quantitative bank-response
+test card from the selected aircraft model before flight. The design models control
+reserve, inertia and modes to prevent an inefficient or unsafe result; it does not
+optimize an arbitrary headline roll rate.
 
 ### 1.3 Hard product constraints
 
@@ -100,8 +102,9 @@ Article #1 shall preserve a reversible directional-control experiment:
 
 | Configuration | Purpose | Release order |
 |---|---|---|
-| **SALAMANDRA-R** | Removable vertical-tail module with passive fin area and a rudder-capable trailing portion. It is the first-flight configuration. The rudder may be locked neutral during part of the test matrix to separate passive-fin benefit from active-control benefit. | First |
-| **SALAMANDRA-CLEAN** | No vertical-tail module. Measures the real efficiency and yaw-handling consequence of the clean flying wing. | Only after SALAMANDRA-R identifies a safe baseline |
+| **SALAMANDRA-6S-R** | Removable vertical-tail module with passive fin area and a rudder-capable trailing portion. It is the first-flight configuration. The rudder may be locked neutral during part of the test matrix to separate passive-fin benefit from active-control benefit. | First |
+| **SALAMANDRA-6S-CLEAN** | No vertical-tail module. Measures the real efficiency and yaw-handling consequence of the clean flying wing. | Only after SALAMANDRA-6S-R identifies a safe baseline |
+| **SALAMANDRA-8S-STUDY** | Separate complete voltage, mass, loss, packaging and propulsion architecture study. | Not a first-flight configuration |
 
 The number, location, area and movable fraction of the vertical surfaces are **open design
 outputs**. The existing passive twin-fin V1a is one candidate. ADR-0038 does not force it
@@ -175,7 +178,7 @@ therefore uses three statuses:
 | ESC | 6S, ≥30 A class with current/temperature margin | Approximately 35 g reference envelope; telemetry desirable | Bench voltage, current, rpm, efficiency, thermal state, braking and failure behaviour |
 | Flight controller | **SpeedyBee F405 WING** reference; Matek F405-WING-V2 fallback | Pitot/I2C, current sensing, barometer, microSD blackbox, adequate PWM/UART; use the full WING board, not the MINI by assumption | Procured-board pin/resource test and current calibration; firmware target verified at build time |
 | Elevon servos | **2× digital metal-gear 12–15 g class**; Corona DS-939MG reference | One per elevon; ≥1.643 kgf·cm current factored static screen; low free play and adequate holding stiffness dominate | Measure actual batch mass, travel, speed, deadband, stiffness, current and heat; final torque/rate from the selected control surface |
-| Rudder servo | Same class or smaller, **reserved only** | Bounding mass/envelope included in SALAMANDRA-R mass skeleton | Select only after rudder authority, hinge load and required rate are known |
+| Rudder servo | Same class or smaller, **reserved only** | Bounding mass/envelope included in SALAMANDRA-6S-R mass skeleton | Select only after rudder authority, hinge load and required rate are known |
 | FPV | **DJI O4 Air Unit** | Front camera 13.44×12.36×16.50 mm; VTX 30×30×6 mm; 50 mm coax; 8.95 g installed bare mass; cooling required | Physical connector/bend/FOV mock-up and measured power at selected settings |
 | Navigation | M10-class GPS + magnetometer | External field-of-view and electromagnetic keep-out; separate from high-current path | Bench interference and installed compass/current test |
 | Air data | MS4525-class digital pitot | Mandatory I2C resource and pressure-tube route | Calibration, leak test and comparison against a reference pressure source |
@@ -319,21 +322,25 @@ is allowed only when every branch uses the same controlled configuration.
 **Purpose:** convert the intent in §1 into falsifiable requirements before another shape is
 optimized.
 
-Required work:
+**Status:** complete on 21 August 2026.
 
-1. define the cruise evaluation matrix: minimum-power/endurance state, normal FPV cruise
-   state and the 95 km/h legacy comparator;
-2. define how total `Wh/km` is weighted without converting range into a requirement;
-3. define launch, approach, landing, wind, terrain and operating-altitude assumptions;
-4. define handling acceptance from references or measured telemetry, including trim,
-   control reserve, bank-command response, stall recovery and unacceptable oscillation;
-5. define R and CLEAN configuration roles and test order;
-6. define mass, stall, structural, yaw and safety rejection criteria; and
-7. reissue `docs/00` and mark inherited ADRs retained, superseded or candidate-specific.
+Completed work:
 
-**Exit evidence:** one approved requirements/configuration manifest with units,
-uncertainties and acceptance methods. No final span, sweep, airfoil or motor is selected
-at this gate.
+1. defined launch/approach states, candidate-best-range, 65/80 km/h reporting states and
+   the 95 km/h historical comparator;
+2. selected total battery-terminal `Wh/km` and Pareto comparison without an unsupported
+   scalar weighting or range/endurance target;
+3. defined standard comparison conditions and the measurements required in actual weather;
+4. defined handling through passive stability, trim/control reserve, bank response,
+   actuator behavior and recovery, without inventing a roll-rate requirement;
+5. defined 6S-R, 6S-CLEAN and 8S-STUDY roles and the flight-test order;
+6. separated hard requirements, provisional screens and historical comparators; and
+7. reissued `docs/00`, added ADR-0048 and created an executable mission contract.
+
+**Exit evidence:** [Revision-2 requirements](00-objectives-and-requirements.md),
+[ADR-0048](../decisions/ADR-0048-article-1-mission-and-configurations.md) and
+[`mission_contract.py`](../calculations/mission_contract.py), verified by the calculation
+harness. No final span, sweep, airfoil or motor was selected at this gate.
 
 ### M1 — bought-in hardware and measurement chain
 
@@ -500,7 +507,7 @@ Required work:
    hashes; and
 7. issue a signed first-flight readiness review.
 
-**Exit evidence:** one conforming SALAMANDRA-R article inside the approved mass, CG,
+**Exit evidence:** one conforming SALAMANDRA-6S-R article inside the approved mass, CG,
 geometry, structural, modal, thermal and software configuration. “It printed” is not an
 exit criterion.
 
@@ -511,7 +518,7 @@ exit criterion.
 The sequence is conservative and configuration-controlled:
 
 1. restrained power and taxi/launch rehearsals;
-2. first stabilized SALAMANDRA-R flight inside the ground-cleared envelope;
+2. first stabilized SALAMANDRA-6S-R flight inside the ground-cleared envelope;
 3. low-amplitude longitudinal and lateral system identification;
 4. stall/approach and launch/landing characterization;
 5. motor-off glide polar and propulsion/energy measurements;
@@ -622,8 +629,8 @@ Do not make the first complete aircraft carry every unknown.
 | Propulsion bench rig | Motor/ESC/propeller efficiency, rpm, heat and vibration | M1/M5 |
 | Systems “iron bird” | Complete power, FC, servo, pitot, logging and failsafe chain | M1/M8 |
 | Production semispan/CORE/R module | Proof, assembly, access and modal correlation | M8 |
-| SALAMANDRA-R Article #1 | Safe first flight and system identification | M9 |
-| SALAMANDRA-CLEAN conversion | Controlled directional/efficiency A/B test | M9 |
+| SALAMANDRA-6S-R Article #1 | Safe first flight and system identification | M9 |
+| SALAMANDRA-6S-CLEAN conversion | Controlled directional/efficiency A/B test | M9 |
 
 ---
 
@@ -632,7 +639,7 @@ Do not make the first complete aircraft carry every unknown.
 The first functional prototype is:
 
 - the selected tailless architecture, not automatically the current −15° planform;
-- a 6S1P P42A-class, single-pusher, front-camera SALAMANDRA-R article;
+- a 6S1P P42A-class, single-pusher, front-camera SALAMANDRA-6S-R article;
 - predominantly PETG and printed with the released process;
 - built from the human native-CAD handoff and conforming to its configuration manifest;
 - fitted with pitot, calibrated current/voltage measurement, blackbox, GPS, receiver and
@@ -652,9 +659,10 @@ redesign.
 
 Work shall proceed in this order:
 
-1. **MP-01 — Reissue objectives.** Rewrite `docs/00` from §1, remove the arbitrary
-   range/endurance requirements and define the M0 mission/handling acceptance matrix.
-2. **MP-02 — Decision reset ledger.** Mark every active ADR as retained, candidate-only,
+1. **MP-01 — Reissue objectives — COMPLETE.** Revision 2 removes the arbitrary
+   range/endurance requirements, defines the M0 mission/handling matrix and is enforced by
+   `mission_contract.py` plus ADR-0048.
+2. **MP-02 — Decision reset ledger — NEXT.** Mark every active ADR as retained, candidate-only,
    reopened or superseded for the redesign.
 3. **MP-03 — Hardware manifest.** Create one machine-readable 6S/R/CLEAN equipment and
    power manifest, with an 8S study overlay.
@@ -678,8 +686,8 @@ Work shall proceed in this order:
 12. **MP-12 — Issue the CAD package.** Publish the new Design Guide/SVG set and start the
     controlled human CAD build.
 
-The next engineering task is **MP-01**, not another refinement of the current wing loft or
-fuselage OML.
+The next engineering task is **MP-02**, followed by the M1 hardware manifest and
+measurement chain—not another refinement of the current wing loft or fuselage OML.
 
 ---
 
@@ -687,8 +695,8 @@ fuselage OML.
 
 | Gate | Status | Existing useful evidence | Principal missing evidence |
 |---|---|---|---|
-| **M0** | **Open** | Strong inherited objectives, NF audit and explicit user intent | Revised mission/scoring/handling/configuration contract |
-| **M1** | Partial | I-16/I-17/I-18/I-19/I-32 catalogs and power models | Procured-part measurements and integrated iron bird |
+| **M0** | **Closed** | Revision-2 specification, ADR-0048 and executable mission contract | No M0 evidence missing; changes require controlled reopen |
+| **M1** | **Open — next design gate** | I-16/I-17/I-18/I-19/I-32 catalogs and power models | Versioned candidate manifest, procured-part measurements and integrated iron bird |
 | **M2** | Partial, to rebuild | Equipment ledger, balance solvers, SLM-EQP-001, I-31/I-32 | Unified measured 6S/R/CLEAN skeleton and 20 mm travel proof |
 | **M3** | Open | Current forward-sweep trade and v0.6 candidate A | Equal-requirements straight and aft-swept optimized candidates |
 | **M4** | Blocked by M3 | r1/r2a calculations and E2A plan | Selected printed sections and measured `CL/CD/Cm` |

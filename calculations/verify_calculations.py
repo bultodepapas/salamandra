@@ -46,6 +46,7 @@ import inav_fc_match
 import launch_speed
 import low_speed_trim_redesign
 import mass_budget
+import mission_contract
 import propulsion_match
 import servo_torque
 import sweep_trade
@@ -57,6 +58,7 @@ import yaw_stability
 ROOT = Path(__file__).resolve().parent.parent
 
 LOCAL_SCRIPTS = (
+    "mission_contract.py",
     "design_config.py",
     "aircraft_scene.py",
     "drawing_index.py",
@@ -140,6 +142,31 @@ def _solved_equipment():
 def check_geometry(add):
     for name, passed in design_config.validate_geometry().items():
         add(f"geometry: {name}", passed, "design_config invariant")
+
+
+def check_mission(add):
+    for name, passed in mission_contract.validation_checks().items():
+        add(f"mission: {name}", passed, "Gate-M0 mission contract")
+    add(
+        "mission: battery travel agrees with the existing 6S/8S trade",
+        close(
+            mission_contract.MINIMUM_BATTERY_TRAVEL_TOTAL_MM,
+            2.0 * battery_6s_8s_trade.TRAVEL_EACH_WAY_MM,
+        ),
+        (
+            f"mission={mission_contract.MINIMUM_BATTERY_TRAVEL_TOTAL_MM:.1f} mm; "
+            f"trade=±{battery_6s_8s_trade.TRAVEL_EACH_WAY_MM:.1f} mm"
+        ),
+    )
+    add(
+        "mission: inherited launch acceleration target remains I-14-owned",
+        launch_speed.K_REF
+        > mission_contract.LAUNCH_RELEASE_MINIMUM_VS_RATIO,
+        (
+            f"release≥{mission_contract.LAUNCH_RELEASE_MINIMUM_VS_RATIO:.2f} Vs; "
+            f"post-release target={launch_speed.K_REF:.2f} Vs"
+        ),
+    )
 
 
 def check_mass(add):
@@ -641,6 +668,7 @@ def check_aircraft_scene(add):
 # Contract registry and isolated runner
 # ---------------------------------------------------------------------------
 CONTRACT_GROUPS = (
+    ("mission", check_mission),
     ("geometry", check_geometry),
     ("mass", check_mass),
     ("aero contract", check_aero_contract),

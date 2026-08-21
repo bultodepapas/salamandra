@@ -1,7 +1,13 @@
 # ADR-0010 — Mission branch: fast cruise
 
-**Status:** ✅ Active · **Date:** 2026-07-28 · **Confidence:** Decided · **Reversible:** No
+**Status:** ⬜ Superseded by
+[ADR-0048](ADR-0048-article-1-mission-and-configurations.md) · **Date:** 2026-07-28 ·
+**Confidence:** Decided for v0.6 · **Reversible:** Yes under M0/M2
 **Research:** [I-01](../research/I-01-aspect-ratio-reynolds.md), [I-03](../research/I-03-propulsion-chain.md)
+
+> **2026-08-21 reset:** Wh/km remains the performance metric, but a single fast-cruise
+> branch no longer governs. Revision 2 compares total Wh/km over E0–E3 and treats range and
+> endurance as outcomes.
 
 ## Context
 

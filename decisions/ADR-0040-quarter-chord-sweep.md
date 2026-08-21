@@ -1,10 +1,15 @@
 # ADR-0040 — Quarter-chord sweep reduced to −15°
 
-**Status:** 🔄 Provisional · **Date:** 2026-08-17 · **Confidence:** Medium `[D]`/`[E]`
+**Status:** ⬜ Superseded for the redesigned Article #1 by
+[ADR-0048](ADR-0048-article-1-mission-and-configurations.md); retained as the v0.6
+forward-sweep candidate · **Date:** 2026-08-17 · **Confidence:** Medium `[D]`/`[E]`
 **Reversible:** Yes, before the first production CAD release
 **Research:** [I-21 — Sweep trade and elastic-axis correction](../research/I-21-sweep-trade-and-elastic-axis-correction.md)
 **Calculation:** [sweep_trade.py](../calculations/sweep_trade.py)
 **Feeds:** guide §§3/5/9, OP-01, OP-03, OP-23, OP-29, ADR-0003
+
+**2026-08-21 reset:** -15 degrees is candidate A inside the M3 architecture trade, not
+the canonical redesigned planform. Existing calculations remain valid for that candidate.
 
 > **2026-08-18 update:** the sweep selection remains active. The trade has been rerun
 > with ADR-0041/0045 and the 1.59626 kg V1 lower model. Current physical-elevon trim is

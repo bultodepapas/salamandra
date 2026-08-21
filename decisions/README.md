@@ -18,7 +18,7 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 
 | # | Decision | State | Confidence | Reversible |
 |---|---|---|---|---|
-| [0001](ADR-0001-inverted-sweep.md) | Forward-swept flying wing | ✅ | High | No |
+| [0001](ADR-0001-inverted-sweep.md) | Forward-swept flying wing (v0.6 candidate) | ⬜ Superseded by 0048 | High | Yes under M3 |
 | [0002](ADR-0002-closed-shell.md) | Closed three-cell shell structure | ✅ | Medium `[I]` | No |
 | [0003](ADR-0003-wash-in-twist.md) | Wash-in type twist | 🔄 | High | Partial |
 | [0004](ADR-0004-aspect-ratio.md) | Aspect ratio 6.0 | 🔄 | Medium `[E]` | No |
@@ -27,7 +27,7 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | [0007](ADR-0007-propeller.md) | Propeller P/D 0.8–1.0 matched by J | ✅ | High | Yes |
 | [0008](ADR-0008-reject-7x12-propeller.md) | Reject the 7×12 propeller | ✅ | High | Yes |
 | [0009](ADR-0009-drag-decomposition.md) | Separate drag decomposition; never a single Oswald | ✅ | High | No |
-| [0010](ADR-0010-mission-branch.md) | Branch A — fast cruise | ✅ | Decided | No |
+| [0010](ADR-0010-mission-branch.md) | Branch A — fast cruise | ⬜ Superseded by 0048 | Decided for v0.6 | Yes |
 | [0012](ADR-0012-light-color.md) | Light color mandatory | ✅ | High | Yes |
 | [0015](ADR-0015-carbon-non-torsional.md) | Carbon as bending and pin, not torsion | ✅ | High `[D]` | Yes |
 | [0016](ADR-0016-reject-pla-plus.md) | Reject PLA+ | ✅ | High `[M]` | — |
@@ -43,14 +43,14 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | [0030](ADR-0030-plastic-torsion-path.md) | Plastic path as base; torsion tube option B | 🔄 | Medium | Yes |
 | [0031](ADR-0031-carbon-pin.md) | Carbon pin in the joints | ✅ | High | Yes |
 | [0032](ADR-0032-modularity.md) | Modular CORE + PANEL architecture | ✅ | High | No |
-| [0033](ADR-0033-electronics-out.md) | Motor and battery out of the design | ✅ | Decided | — |
+| [0033](ADR-0033-electronics-out.md) | Motor and battery out of the design | ⬜ Superseded for Article #1 by 0048 | Decided for v0.6 | Yes |
 | [0034](ADR-0034-motor-mount-angle.md) | Motor mount angle as a design parameter | 🔄 | Medium | Yes |
 | [0035](ADR-0035-tpu-hinges.md) | TPU-printed hinges | 🔄 | Medium | Yes |
 | [0036](ADR-0036-open-community-platform.md) | Open, community-driven aircraft platform (AI-assisted research) | ✅ | Decided | No |
 | [0037](ADR-0037-licence.md) | Licence: CERN-OHL-S-2.0 + CC BY-SA 4.0 | ✅ | Decided | Yes |
-| [0038](ADR-0038-fixed-fin-variant.md) | Dual directional config: finless baseline + fixed-fin variant V1 (no rudder) | 🔄 | Medium `[D]`/`[E]` | Yes |
+| [0038](ADR-0038-fixed-fin-variant.md) | Dual directional config: finless baseline + fixed-fin variant V1 (no rudder) | ⬜ Superseded by 0048; v0.6 candidate | Medium `[D]`/`[E]` | Yes |
 | [0039](ADR-0039-filament-dowel-pins.md) | Filament dowel pins in the glued segment joints | ✅ | High `[D]`/`[E]` | Yes |
-| [0040](ADR-0040-quarter-chord-sweep.md) | Quarter-chord sweep reduced to −15° | 🔄 | Medium `[D]`/`[E]` | Yes, before CAD freeze |
+| [0040](ADR-0040-quarter-chord-sweep.md) | Quarter-chord sweep reduced to −15° | ⬜ Superseded by 0048; v0.6 candidate | Medium `[D]`/`[E]` | Yes under M3 |
 | [0041](ADR-0041-salamandra-r1-airfoil-family.md) | Salamandra r1 coupled root/tip airfoil family | ⬜ Held by ADR-0047; coupon reference | Medium `[D]` | Yes, before tooling |
 | [0042](ADR-0042-cruise-propulsion-equilibrium.md) | Bound cruise propulsion by total power; close equilibrium with E2 drag | ✅ | Medium `[D]`/`[E]` | Yes |
 | [0043](ADR-0043-article-1-mass-allocation.md) | Article #1 mass allocation; CLEAN/V1 analytically close 45 km/h, physical F2 open | 🔄 | Medium `[M]`/`[D]`/`[E]` | Yes |
@@ -58,6 +58,7 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | [0045](ADR-0045-article-1-elevon-geometry.md) | Shorten Article #1 elevons to 35–90 % half-span | ⬜ Held by ADR-0047; E2A starting geometry | Medium `[D]`/`[E]`/`[I]` | Yes, before tooling |
 | [0046](ADR-0046-single-declaration-contract.md) | One declaration site per physical quantity, enforced by lint and mutation | ✅ | High `[M]` | Yes, but reverting reopens C39–C43 |
 | [0047](ADR-0047-low-speed-trim-redesign-candidate.md) | Place r1 on low-speed trim hold; test r2a at 5% nominal static margin | 🔄 | Low `[D]`/`[I]` | Yes, before wing CAD/tooling |
+| [0048](ADR-0048-article-1-mission-and-configurations.md) | Article #1 mission, total-energy metric and 6S-R/CLEAN/8S-STUDY order | ✅ | High `[D]`; architecture Medium `[D]`/`[E]` | Yes, before M3 |
 
 ### Superseded or cancelled
 
@@ -67,6 +68,10 @@ One decision, one file. Each ADR declares **context, alternatives considered, de
 | 0011, 0013, 0014, 0017, 0019, 0020 | Replaced by [0021](ADR-0021-base-material.md) after evaluating five materials |
 | 0022 | **Cancelled** by project decision — see [ADR-0022](ADR-0022-carbon-veil-cancelled.md) |
 | 0029 | Absorbed into [0002](ADR-0002-closed-shell.md) |
+| 0001, 0040 | Forward sweep and −15° remain v0.6 candidate evidence; [0048](ADR-0048-article-1-mission-and-configurations.md) reopens sweep architecture under M3 |
+| 0010 | [0048](ADR-0048-article-1-mission-and-configurations.md) replaces the single fast-cruise branch with a multi-state total-energy mission |
+| 0033 | [0048](ADR-0048-article-1-mission-and-configurations.md) requires a bound reference electrical/propulsion configuration while preserving open community variants |
+| 0038 | [0048](ADR-0048-article-1-mission-and-configurations.md) replaces the no-rudder first-flight concept with a rudder-capable 6S-R interface; V1a remains comparison evidence |
 
 > **0015 was corrected, not cancelled.** The original version claimed that carbon tubes add no torsion. See correction C11 in the [CHANGELOG](../CHANGELOG.md).
 >
