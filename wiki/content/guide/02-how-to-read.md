@@ -12,10 +12,15 @@ the corrections that changed earlier conclusions.
 
 | Question | Owning record | What it does not own |
 |---|---|---|
-| What must CAD implement now? | [Design guide](../salamandra/design-guide/) | Full derivations or historical alternatives |
+| What may the programme do next? | [Master Plan](../reference/05-master-plan/) | A claim that an open gate is already closed |
+| What aircraft are we trying to build? | [Article #1 requirements](../reference/00-objectives-and-requirements/) | Final geometry or an unmeasured component release |
+| What hardware is currently bounded? | [Hardware manifest](../reference/17-article-1-hardware-manifest/) | Physical acceptance or final placement |
+| How is MP-04 executed? | [I-33](../research/i-33-mp04-propulsion-procurement-and-hardware-characterisation/) and [H01–H22](../tests/mp04-hardware-characterisation/) | Measurements before specimens and raw evidence exist |
+| What must CAD implement now? | Nothing for production; the [historical Design Guide](../salamandra/design-guide/) is review authority only | Permission to bypass M1–M7 |
 | Why was this option selected? | [ADR](../decisions/) | New research or raw test data |
 | What does the evidence show? | [Research thread](../research/) | The final project decision |
-| Which value is still provisional? | [Open points](../salamandra/design-guide-open-points/) | The test procedure itself |
+| Which active value is still provisional? | Owning contract plus Master Plan exit evidence | Permission to treat catalog or estimated input as measured |
+| Which v0.6 value was provisional? | [Historical Open Points](../salamandra/design-guide-open-points/) | Active redesign authority |
 | What is unknown and why does it matter? | [Gap register](../gaps/) | A claim that the gap is closed |
 | How will the gap be measured? | [Test programme](../tests/) | A result before the test is run |
 | How is a derived value reproduced? | [Calculations](../calculations/) | Measured truth beyond the model's inputs |
@@ -23,14 +28,14 @@ the corrections that changed earlier conclusions.
 
 Keeping these roles separate prevents a common failure: a calculated estimate being
 repeated until it sounds measured, or a historical decision being mistaken for the
-current baseline.
+active redesign authority.
 
 ## Repository map
 
 | Path | Role |
 |---|---|
-| `design/` | Controlling guide, justification and open-point companion |
-| `docs/` | Objectives, conventions, plans, technical notes and release records |
+| `design/` | Historical v0.6 guides, method audits and future CAD-handoff evidence |
+| `docs/` | Active requirements and Master Plan plus conventions, technical notes and release records |
 | `decisions/` | One architecture/design decision record per adopted or rejected choice |
 | `research/` | Investigation threads, source review, methods and limitations |
 | `gaps/` | Unknowns, impact, owner and closure condition |
@@ -41,7 +46,7 @@ current baseline.
 
 ## Trace one claim end to end
 
-For a current design value, follow this sequence:
+For an active redesign value, follow this sequence:
 
 ```text
 source or declared assumption
@@ -50,39 +55,47 @@ calculation and validation case
         ↓
 research finding and limitations
         ↓
-ADR decision and reversal trigger
+programme gate and, when selected, ADR decision
         ↓
-Design Guide control value
+measured mass skeleton and released CAD brief
         ↓
 CAD / test article
         ↓
 measured result → gap closure or correction
 ```
 
-Example: the current neutral-point result comes from the −15° planform in
-`design_config.py`, is calculated by the panel VLM, independently checked by
-Weissinger-L, reviewed in I-21, adopted by ADR-0040 and published in the guide as
-**−75.8 mm / 25.72 % MAC**, with a **2.9 mm** method-to-method difference. The
-central-body effect and flight identification remain explicit limitations.
+Example: the P42A source establishes 3.6 V nominal and 4.2 V full charge per cell. The
+battery contract derives 21.6/25.2 V for 6S; I-33 uses that bus to screen motor Kv,
+full-charge RPM and ESC voltage headroom. The manifest then bounds procurement mass and
+envelopes, while H04/H06 require the actual specimens, wiring, efficiency and thermal map.
+Only accepted measurements may enter the MP-06 mass skeleton. The chain names products
+without pretending they are selected flight hardware.
 
-## Recognize the three kinds of “current”
+## Recognize the four kinds of “current”
 
-- **Current release:** {{RELEASE_TAG}} defines the package that may be used together.
-- **Current guide:** v{{GUIDE_VERSION}} is the controlling human-readable CAD and
-  engineering specification.
-- **Current numerical contract:** `calculations/design_config.py` owns shared constants.
+- **Current programme authority:** Master Plan v2.4 owns sequence, gate status and what
+  work is authorized.
+- **Current product contract:** requirements v2.0 and `mission_contract.py` own Article #1
+  intent, configurations and scoring.
+- **Current M1 interface:** the hardware manifest, I-33 and H01–H22 own candidate systems
+  and their physical closure method.
+- **Current tagged release:** {{RELEASE_TAG}} / Design Guide v{{GUIDE_VERSION}} is the
+  internally reproducible **historical v0.6 comparison baseline**.
 
-If any of these disagree, stop. The release notes define migration; no document should
-be “fixed” by averaging values.
+If these appear to disagree, the first three govern the redesign. Preserve the tagged
+release as history; never repair a conflict by averaging values.
 
 ## Interpret status language precisely
 
 - **Released** means controlled and internally checked within stated assumptions.
+- **Authorized** means the Master Plan permits that scope of work at the current gate.
 - **Closed for CAD** means geometry may proceed; it does not imply measured acceptance.
 - **Provisional** means a current working value with a named trigger.
 - **Measured gate open** means the computational or documentary work is complete but
   physical evidence is still required.
 - **Superseded** means preserved for audit only.
+- **Historical comparison** means reproducible prior work with no automatic redesign
+  authority.
 - **Cancelled or rejected** means considered and deliberately not adopted.
 
 ## Conventions that prevent expensive mistakes

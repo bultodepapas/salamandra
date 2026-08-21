@@ -8,6 +8,10 @@ The drawing set is a bridge between analysis and native CAD. It gives designers 
 dimensioned, reviewable starting point while keeping every unresolved shape visibly
 provisional. These are **technical sketches, not manufacturing drawings**.
 
+> **Redesign focus:** every published sheet depicts the historical v0.6 candidate. Use it
+> for method review and comparison only. MP-04 uses the separate OpenSCAD hardware
+> dummies; new production aircraft drawings wait for Master Plan Gate M7.
+
 ## Current drawing set
 
 The sheets below are published from `geometry/drawings/manifest.json`, which
@@ -65,7 +69,8 @@ constraints. Do not derive a cutting, drilling or printable part directly from t
 The research and rationale are in [I-25](../research/i-25-svg-technical-drawing-workflow/);
 the complete source/print contract is in the
 [drawing-set README](https://github.com/bultodepapas/salamandra/blob/main/geometry/drawings/README.md).
-Native CAD plus F2/S3 evidence remains the release path.
+For v0.6, native CAD plus F2/S3 evidence was the release path. For the redesign, measured
+hardware, architecture selection and the M1–M7 chain precede a new controlled drawing set.
 
 ## Codex and VS Code workflow
 

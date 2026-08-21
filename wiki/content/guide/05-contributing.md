@@ -12,11 +12,11 @@ engineering record, not from its file type.
 
 | Priority | Contribution | Current example |
 |---:|---|---|
-| 1 | Measurement that replaces an estimate or inference | Printed-wing `GXY`/`GJ`, elastic axis, lift/drag/moment or complete-aircraft mass |
-| 2 | Correction with stronger evidence | A source or calculation that overturns a controlling value |
-| 3 | Independent replication | Second implementation, build or flight log with complete configuration |
-| 4 | CAD and integration | CORE, PANEL, mounts, cradles or tooling that obey current interfaces |
-| 5 | New variant or creative part | Alternative panel, body, equipment adapter or visual modification |
+| 1 | MP-04 physical evidence | H01–H22 specimen measurements, calibrated instruments, raw files and installed mass/envelopes |
+| 2 | Packaging and propulsion fixtures | Ballasted hard dummies, guarded thrust stand, RPM/power/temperature instrumentation and repeatable reductions |
+| 3 | Correction or independent replication | Stronger source, second calculation or repeat measurement that tests a controlling input |
+| 4 | Reversible electronics integration | Iron bird, harness, cooling, logging, RF and pneumatic work that does not freeze the OML |
+| 5 | Future CAD or creative part | Concept or tooling clearly marked non-production until the owning Master Plan gate opens |
 
 All five are welcome. The ordering reflects how directly the contribution raises the
 confidence of the platform.
@@ -46,7 +46,8 @@ Data without configuration metadata cannot be compared across builders.
 
 ```bash
 python calculations/verify_calculations.py
-python calculations/verify_calculations.py --all-scripts
+python calculations/verify_calculations.py --fast
+python calculations/mutation_test.py
 python -m ruff check calculations
 python -m compileall -q calculations
 ```
@@ -56,11 +57,13 @@ cached or skipped result.
 
 ### CAD, printed part or configuration
 
-1. Identify the target configuration and Design Guide version.
-2. Reference every controlling interface and any affected ADR or open point.
-3. Include native CAD when possible, plus exchange and printable outputs.
-4. Report mass properties, material, slicer assumptions, tolerances and assembly method.
-5. Do not present a part as a released replacement until its fit, mass and relevant
+1. Identify the target configuration and Master Plan gate.
+2. During MP-04, limit work to reversible dummies, fixtures, coupons and electronics
+   integration; production wing/body CAD is held.
+3. Reference every active interface, evidence tag and affected H-gate or open point.
+4. Include native CAD when possible, plus exchange/printable outputs and generator source.
+5. Report mass properties, material, slicer assumptions, tolerances and assembly method.
+6. Do not present a part as a released replacement until its fit, mass and relevant
    structural or flight gates pass.
 
 A creative or decorative part may be submitted “as is”; label it clearly when no

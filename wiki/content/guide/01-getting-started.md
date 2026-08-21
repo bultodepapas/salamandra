@@ -1,105 +1,110 @@
 ---
 title: Getting started
-description: A five-minute path to the current Salamandra baseline, its evidence model, its tools and the physical gates that remain open.
+description: A five-minute path through Salamandra's Master Plan, active MP-04 hardware campaign, evidence model and historical v0.6 baseline.
 editUrl: https://github.com/bultodepapas/salamandra/edit/main/wiki/content/guide/01-getting-started.md
 ---
 
 This page gives you a working model of Salamandra in about five minutes. The most
-important habit is simple: **identify the release before using a number**.
+important habit is now: **identify which programme gate and configuration owns a value
+before using it**.
 
-## 1. Know what you are reading
+## 1. Know what is being designed
 
-Salamandra is an open platform for 3D-printed fixed-wing FPV aircraft. Its first
-reference design is a modular PETG forward-swept flying wing:
+Salamandra Article #1 is a single-motor, front-camera, predominantly PETG tailless FPV
+aircraft. Its first priority is safe, controllable testing; its performance objective is
+the lowest practicable total battery-terminal Wh/km while retaining useful handling and
+field durability.
 
-- **CORE** — common center module, battery cradle, avionics and pusher mount.
-- **PANEL** — removable wing panels designed against a common neutral-point rule.
-- **SALAMANDRA-CLEAN** — finless efficiency configuration.
-- **SALAMANDRA-V1** — fixed-fin test configuration, conditional on closing its mass gate.
+The current configurations are:
 
-The current controlled baseline is **{{RELEASE_TAG}} / Design Guide v{{GUIDE_VERSION}}**.
-It supports continued CAD and analysis within explicit limits; it does not claim flight
-qualification.
+- **SALAMANDRA-6S-R** — first-flight baseline with a removable rudder-capable directional
+  module;
+- **SALAMANDRA-6S-CLEAN** — later comparison without the vertical module; and
+- **SALAMANDRA-8S-STUDY** — separate architecture study, not a first-flight build.
 
-## 2. Follow the authority stack
+Forward sweep, the old `CORE`/`PANEL` architecture and the v0.6 fuselage are candidates,
+not requirements. Production CAD is held.
 
-When two documents appear to disagree, use this order:
+## 2. Follow the active authority stack
 
-1. [Current release notes]({{CURRENT_RELEASE_URL}}) — scope, migration rules and released
-   limitations.
-2. [Design Guide v{{GUIDE_VERSION}}](../salamandra/design-guide/) — controlling geometry,
-   interfaces, mass targets, operating limits and load definitions.
-3. `calculations/design_config.py` — numerical source of truth for values shared by
-   multiple analyses.
-4. [Advanced Design Guide](../salamandra/design-guide-advanced/) — calculations,
-   release migration and detailed engineering boundaries.
-5. [ADRs](../decisions/) — decisions and reversal triggers.
-6. [Research threads](../research/) — evidence, methods, sources and limitations.
-7. [Open points](../salamandra/design-guide-open-points/) — provisional values and the
-   event that may change each one.
+When documents appear to disagree, use this order:
 
-Never average conflicting releases or combine a historical input with the current
-baseline. Raise the conflict instead.
+1. [Master Design Plan v2.4](../reference/05-master-plan/) — programme intent, sequence,
+   gate status and authorization.
+2. [Article #1 requirements](../reference/00-objectives-and-requirements/) and
+   `mission_contract.py` — product objective, configurations, mission states and scoring.
+3. [Hardware and power manifest](../reference/17-article-1-hardware-manifest/) — candidate
+   6S-R/CLEAN equipment, separate 8S study overlay and H01–H22 ownership.
+4. [I-33 MP-04 campaign](../research/i-33-mp04-propulsion-procurement-and-hardware-characterisation/)
+   plus the [measurement protocol](../tests/mp04-hardware-characterisation/) — procurement
+   specimens, test method and physical evidence schema.
+5. [ADR redesign disposition](../decisions/redesign-disposition/) — whether each historical
+   decision is retained, method-only, candidate-only, reopened, superseded or cancelled.
+6. [Historical release notes]({{CURRENT_RELEASE_URL}}), Design Guide and `design_config.py`
+   — v0.6 comparison baseline only until a later gate explicitly reselects a value.
 
-## 3. Choose the shortest route
+Never combine an active mission value with a historical geometry value and call the result
+the redesigned aircraft.
+
+## 3. Understand the current work
+
+M0 is closed. MP-01 through MP-03 established the mission, reset the ADR authority and
+published the candidate hardware/power manifest. **MP-04 is active.** Its digital
+infrastructure is ready, but physical evidence is still open.
+
+| Ready now | Still required |
+|---|---|
+| 6S/8S voltage and Kv/RPM screen | Traceable procured specimens |
+| MN3110 KV470 / MN4010 KV475 shortlist | Measured motor constants and thermal map |
+| APD 80F3[X]v2 6S reference | Installed capacitor/leads, protocol and fault proof |
+| APC 8x8E / 8x6E / conditional 9x7.5E articles | Guarded thrust, RPM, power and temperature map |
+| H01–H22 JSON schema | Accepted measurements with evidence files and UTC timestamps |
+| OpenSCAD envelope shells | Printed, ballasted and measured packaging dummies |
+
+The next action is Tranche A packaging work followed by the guarded Tranche B 6S bench
+chain. 8S Tranche C remains held until a quantified benefit justifies it.
+
+## 4. Choose the shortest route
 
 | Your task | First page | Follow with |
 |---|---|---|
-| Model the aircraft | [Concise Design Guide](../salamandra/design-guide/) | [Advanced Design Guide](../salamandra/design-guide-advanced/) only when a requirement needs interpretation |
-| Understand a design choice | [ADR index](../decisions/) | The ADR's linked research and calculation |
-| Check what remains unknown | [Gap register](../gaps/) | [Test programme](../tests/) |
+| Direct programme work | [Master Plan](../reference/05-master-plan/) | The current gate's exit evidence |
+| Buy or test hardware | [I-33](../research/i-33-mp04-propulsion-procurement-and-hardware-characterisation/) | [H01–H22 protocol](../tests/mp04-hardware-characterisation/) |
+| Review candidate equipment | [Hardware manifest](../reference/17-article-1-hardware-manifest/) | Candidate calculator and source notes |
 | Reproduce a result | [Calculation index](../calculations/) | [Reproduction guide](../calculations/reproduction-guide/) |
-| Add a part, test or correction | [Contributing](./05-contributing/) | The affected ADR and gap |
+| Interpret prior CAD | [Historical Design Guide](../salamandra/design-guide/) | [ADR disposition](../decisions/redesign-disposition/) |
+| Add evidence or a fixture | [Contributing](./05-contributing/) | The affected H-gate, research thread and raw data |
 
-## 4. Read provenance tags correctly
+## 5. Read provenance tags correctly
 
 | Tag | Meaning | What it permits |
 |---|---|---|
-| `[M]` | Measured, with a published or project source | Use within the stated test conditions and uncertainty |
+| `[M]` | Measured, with source and conditions | Use only inside the stated configuration and uncertainty |
 | `[D]` | Derived from declared inputs by calculation | Rerun the method and inspect input provenance |
-| `[E]` | Estimated on explicit assumptions | Use for reversible work; verify before an irreversible choice |
-| `[I]` | Reasoned inference not yet verified | Treat as a hypothesis or design direction |
+| `[E]` | Estimated on explicit assumptions | Reversible planning only; verify before commitment |
+| `[I]` | Reasoned inference not yet verified | Hypothesis, trade input or research direction |
 
-These are **provenance classes**, not a four-step ranking. A derived result can still be
-limited by an estimated input. The [glossary](./04-glossary/) explains the notation and
-the difference between section, wing and aircraft quantities.
+A manufacturer mass is `[M]` for the catalog specimen but does not become Salamandra's
+installed mass. H01–H22 must include the actual component, shortened leads, connectors,
+mounts and service loops.
 
-## 5. Verify a derived number
+## 6. Reproduce the active state
 
-Run the cross-module contract before an individual analysis:
-
-```bash
-python calculations/verify_calculations.py
-python calculations/verify_calculations.py --all-scripts
-```
-
-Then run the owning model. For the released planform and shared invariants:
+Run these commands from the repository root:
 
 ```bash
-python calculations/design_config.py
+python3 calculations/hardware_manifest.py
+python3 calculations/hardware_candidate_trade.py
+python3 calculations/hardware_measurements.py --check
+python3 calculations/generate_hardware_dummies.py --check
+python3 calculations/verify_calculations.py
+python3 calculations/mutation_test.py
 ```
 
-For the Article #1 manoeuvre and gust-reference screen:
+The default verifier runs both the cross-module contracts and every deterministic local
+CLI. XFOIL and physical tests remain explicit external gates; they are never silently
+reported as complete.
 
-```bash
-python calculations/flight_envelope.py
-```
-
-The verifier checks that geometry, mass, battery, CG, stall, power, propulsion, controls,
-stability and structural models describe the same aircraft. XFOIL workflows and physical
-tests remain explicit external gates; they are never silently reported as complete.
-
-## 6. Know what remains open
-
-The current high-value physical gates are:
-
-- **E2 / G2:** measured lift, drag, moment and stall acceptance for Salamandra r1.
-- **F2 / OP-24:** CAD mass properties and complete-aircraft scale measurement; the V1
-  lower model exceeds its 45 km/h stall allocation by about 6.3 g.
-- **S3 / OP-29–30:** printed `GXY`, wing torsional stiffness and elastic-axis measurement
-  before expanding the 105 km/h initial speed limit.
-- **G11 / E9:** nonlinear dynamic gust response and a defensible negative-lift branch.
-- **D2 / E3:** motor–ESC–propeller bench map and measured 95 km/h energy consumption.
-
-Next: [How to read this repository](./02-how-to-read/) explains the record structure;
-[Architecture](./03-architecture/) explains how the tools and evidence connect.
+Next: [How to read the record](./02-how-to-read/) explains document roles;
+[Architecture](./03-architecture/) shows how mission, hardware, models and evidence
+connect.

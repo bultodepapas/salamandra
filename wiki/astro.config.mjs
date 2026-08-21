@@ -23,7 +23,7 @@ export default defineConfig({
     starlight({
       title: 'Salamandra',
       description:
-        'Open 3D-printed FPV aircraft engineering with a traceable design record, reproducible analyses and explicit physical acceptance gates.',
+        'Evidence-first 3D-printed FPV aircraft design: mission, measured hardware, mass skeleton, architecture trade and controlled CAD handoff.',
       favicon: '/favicon.svg',
       head: [
         {
@@ -56,22 +56,42 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Current baseline',
+          label: 'Current programme',
           items: [
             {
-              label: 'Current release',
-              link: '/reference/11-release-v04/',
-              badge: { text: 'v0.4.0', variant: 'success' },
+              label: 'Master Plan',
+              link: '/reference/05-master-plan/',
+              badge: { text: 'v2.4', variant: 'success' },
+            },
+            { label: 'Article #1 requirements', link: '/reference/00-objectives-and-requirements/' },
+            { label: 'Hardware manifest', link: '/reference/17-article-1-hardware-manifest/' },
+            {
+              label: 'MP-04 campaign',
+              link: '/research/i-33-mp04-propulsion-procurement-and-hardware-characterisation/',
+              badge: { text: 'active', variant: 'caution' },
+            },
+            {
+              label: 'H01–H22 protocol',
+              link: '/tests/mp04-hardware-characterisation/',
+              badge: { text: '0/22', variant: 'caution' },
+            },
+            { label: 'ADR redesign disposition', link: '/decisions/redesign-disposition/' },
+          ],
+        },
+        {
+          label: 'Historical v0.6 baseline',
+          collapsed: true,
+          items: [
+            {
+              label: 'Release v0.6.0',
+              link: '/reference/16-release-v06/',
+              badge: { text: 'history', variant: 'note' },
             },
             { label: 'Salamandra overview', link: '/salamandra/' },
-            { label: 'Design guide', link: '/salamandra/design-guide/' },
+            { label: 'Design guide v0.24', link: '/salamandra/design-guide/' },
             { label: 'Justification', link: '/salamandra/design-guide-justification/' },
-            {
-              label: 'Open gates',
-              link: '/salamandra/design-guide-open-points/',
-              badge: { text: 'physical', variant: 'caution' },
-            },
-            { label: 'Test programme', link: '/tests/' },
+            { label: 'Open points', link: '/salamandra/design-guide-open-points/' },
+            { label: 'Generated drawings', link: '/guide/06-drawings/' },
           ],
         },
         {
@@ -81,6 +101,7 @@ export default defineConfig({
             { label: 'Decision index', link: '/decisions/' },
             { label: 'Research index', link: '/research/' },
             { label: 'Gap register', link: '/gaps/' },
+            { label: 'Test programme', link: '/tests/' },
             { label: 'Measured references', link: '/reference/02-measured-references/' },
           ],
         },

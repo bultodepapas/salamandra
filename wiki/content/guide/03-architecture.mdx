@@ -8,31 +8,38 @@ import Mermaid from '@components/Mermaid.astro';
 
 Salamandra separates human authority, numerical authority, model-specific assumptions
 and physical evidence. That separation is deliberate: it makes a conflict visible before
-it reaches CAD or a test article.
+it reaches procurement, CAD or a test article. The redesign now adds an explicit programme
+layer above the historical release.
 
 ## Source-of-truth layers
 
 <Mermaid diagram={`
 flowchart TB
   accTitle: Salamandra source-of-truth layers
-  accDescr: Release notes and the Design Guide control the human-readable baseline. Shared numbers live in design_config. Model scripts consume that contract. The verifier checks cross-module consistency. The wiki publishes canonical records without editing them.
-  REL["Release notes<br/>scope and migration"] --> GUIDE["Design Guide v{{GUIDE_VERSION}}<br/>human-readable authority"]
-  GUIDE <--> CONFIG["design_config.py<br/>shared numerical contract"]
-  CONFIG --> MODELS["Model scripts<br/>local assumptions + validation"]
-  MODELS --> VERIFY["verify_calculations.py<br/>cross-module contracts"]
-  RESEARCH["Research · ADRs · gaps · tests"] --> GUIDE
-  RESEARCH --> MODELS
-  GUIDE --> CAD["CAD / test article"]
-  CAD --> TEST["Measured evidence"]
-  TEST --> RESEARCH
-  WIKI["gen-site.mjs<br/>publication projection"] -. reads .-> GUIDE
-  WIKI -. reads .-> RESEARCH
+  accDescr: The Master Plan controls programme sequence. Requirements and executable contracts own mission and hardware interfaces. Physical measurements feed the mass skeleton before architecture selection and CAD. The v0.6 release remains a historical comparison branch.
+  PLAN["Master Plan v2.4<br/>intent · gates · authorization"] --> REQ["Requirements v2.0<br/>product and mission"]
+  REQ <--> MISSION["mission_contract.py<br/>configurations + scoring"]
+  PLAN --> MANIFEST["hardware_manifest.py<br/>candidate M1 interface"]
+  MANIFEST --> SCREEN["I-33 + candidate trade<br/>procurement screen"]
+  SCREEN --> HREC["H01–H22 record<br/>physical evidence schema"]
+  HREC --> MEASURE["procured hardware<br/>bench + packaging data"]
+  MEASURE --> SKELETON["MP-06 mass/CG skeleton<br/>20 mm battery travel"]
+  MISSION --> TRADE["equal-requirements<br/>architecture trade"]
+  SKELETON --> TRADE
+  HIST["v0.6 release + Design Guide<br/>historical candidate A"] -. methods + comparison .-> TRADE
+  TRADE --> EVIDENCE["printed aero · control<br/>structure · OML gates"]
+  EVIDENCE --> CAD["human native CAD<br/>only after M7"]
+  VERIFY["verify_calculations.py<br/>cross-module contracts"] -. checks .-> MISSION
+  VERIFY -. checks .-> MANIFEST
+  VERIFY -. checks .-> SCREEN
+  WIKI["gen-site.mjs<br/>publication projection"] -. reads .-> PLAN
+  WIKI -. reads .-> HIST
 `} />
 
-The Design Guide and `design_config.py` must agree. The guide provides meaning, units,
-scope and instructions; the Python module provides exact shared constants and executable
-invariants. A model-specific estimate belongs in its owning script, not in the shared
-contract.
+The Master Plan and active executable contracts must agree. `design_config.py` still owns
+the internally consistent v0.6 numerical baseline, but it cannot silently export span,
+sweep, airfoil or CG into the redesign. A new shared geometry contract follows architecture
+selection; it does not precede it.
 
 ## Evidence is a loop, not a ladder
 
@@ -56,29 +63,33 @@ flowchart LR
 A derived value can inherit uncertainty from an estimated input. Reproducible arithmetic
 does not convert `[E]` into `[M]`; only evidence does.
 
-## How a parameter enters the design
+## How a parameter enters the redesign
 
-The current neutral-point chain is a useful example:
+The current 6S propulsion chain is the useful example:
 
-1. The planform contract fixes span, area, taper and −15° quarter-chord sweep.
-2. The panel VLM calculates **NP = −75.8 mm / 25.72 % MAC**.
-3. A structurally independent Weissinger-L method gives **−72.9 mm / 27.0 % MAC**;
-   the difference is **2.9 mm**.
-4. I-21 records the trade, assumptions and central-body limitation.
-5. ADR-0040 adopts the sweep, neutral point and **−93.8 mm** target CG.
-6. Design Guide v{{GUIDE_VERSION}} publishes the CAD control values.
-7. Balance and flight identification remain the physical closure path.
+1. Molicel's P42A source provides 3.6 V nominal and 4.2 V full charge per cell.
+2. The battery contract derives **21.6/25.2 V for 6S** and **28.8/33.6 V for 8S**.
+3. `propulsion_match.py` retains the v0.6 O1 comparator boundary at 8,484 rpm while
+   explicitly waiting for measured aircraft drag.
+4. `hardware_candidate_trade.py` screens Kv/RPM, full-charge blade speed, ESC voltage
+   headroom, mass and external envelopes.
+5. I-33 names MN3110 KV470 / MN4010 KV475 and APD 80F3[X]v2 as **specimens to test**.
+6. The manifest assigns their candidate mass/envelope bounds to H04/H06.
+7. Only the completed bench map and installed measurements can select the powertrain and
+   feed MP-06 packaging.
 
-The calculation is closed enough for controlled CAD work, while the unmeasured
-central-body and flight effects remain visible. “Closed” is always scoped.
+Catalog data closes procurement ambiguity. It does not close the flight selection.
 
 ## Toolchain responsibilities
 
 | Layer | Tool | Responsibility | Must not claim |
 |---|---|---|---|
-| Shared inputs | `design_config.py` | Geometry, atmosphere, mission points, speed roles, loads and released masses | Model-specific physics |
-| Aerodynamics | In-house VLM, Weissinger-L, XFOIL 6.99 | Potential-flow checks, independent NP check, section-polar generation | Measured printed-aircraft performance |
-| Coupled sizing | Balance, mass, propulsion, control, yaw, divergence and load scripts | Propagate declared inputs and expose sensitivities | Flight qualification |
+| Programme | Master Plan v2.4 | Dependency order, gate status and authorization | Technical closure without its exit evidence |
+| Mission | Requirements + `mission_contract.py` | Product constraints, configurations, mission states and Pareto rule | Final geometry |
+| M1 systems | Manifest, I-33, candidate/measurement/dummy tools | Candidate hardware, procurement, fixtures and H01–H22 schema | Released installed parts or closed M1 |
+| Historical shared inputs | `design_config.py` | Internally consistent v0.6 geometry, loads and comparison values | Automatic redesign authority |
+| Aerodynamics | In-house VLM, Weissinger-L, XFOIL | Candidate screens and section/wing methods | Measured printed-aircraft performance |
+| Coupled sizing | Balance, mass, propulsion, control, yaw, divergence and load scripts | Propagate declared inputs and expose sensitivities | Flight qualification or a selected new architecture |
 | System verification | `verify_calculations.py` | Cross-module equality and deterministic CLI execution | External XFOIL or physical-gate completion |
 | Publication | Astro Starlight, `gen-site.mjs`, `check-refs.mjs` | Mount canonical records, build indexes, rewrite links and check references | New engineering authority |
 | Physical closure | E-, F-, S- and D-series work | Convert assumptions into measured evidence | A pass outside the tested configuration |
@@ -97,7 +108,7 @@ Astro Starlight
 static site + Pagefind search + sitemap + llms.txt
 ```
 
-At build time, the generator derives the current release, guide version, correction
+At build time, the generator derives the latest tagged release, guide version, correction
 number and record counts from canonical sources. It also generates indexes for
 {{ADR_FILE_COUNT}} published ADR files, {{RESEARCH_FILE_COUNT}} research threads and
 {{SCRIPT_FILE_COUNT}} Python tools. Wiki-only onboarding pages use those generated values
@@ -106,14 +117,15 @@ instead of hand-maintained release labels.
 ## Gates that protect the record
 
 - `check-refs.mjs --strict` rejects broken local Markdown/MDX links and unknown ADR, I,
-  G or E identifiers.
+  G or E identifiers, including the separate E0–E3 mission-state register.
 - `gen-site.mjs --strict` rejects unresolved publication links except declared forward
   references.
 - `astro check` validates the content schema and components.
 - Markdown lint protects structural consistency in the committed onboarding pages.
 - The production build creates Pagefind search and the sitemap from the same content CI
   will deploy.
-- The calculation verifier proves that model boundaries share one released aircraft.
+- The calculation verifier proves that active mission/hardware contracts and the
+  historical model boundaries remain internally consistent without conflating them.
 
 Corrections through **C{{LATEST_CORRECTION}}** remain part of the product: a correction
 updates current authority while preserving the historical claim that was overturned.

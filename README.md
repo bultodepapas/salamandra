@@ -1,7 +1,13 @@
-# Salamandra · open 3D-printed FPV aircraft platform
+# Salamandra · evidence-first 3D-printed FPV aircraft programme
 
-**A free, community-driven platform for fixed-wing FPV aircraft — where every number
-carries its source and the reasoning is the deliverable.**
+**Mission first. Measure hardware before shaping the aircraft. Release CAD only after the
+evidence closes. Every number keeps its source and the reasoning is the deliverable.**
+
+> **CURRENT FOCUS — MP-04 PHYSICAL HARDWARE.** Article #1 is being designed from its
+> mission and measured equipment skeleton outward. The 6S procurement shortlist,
+> H01–H22 evidence schema and printable envelope/ballast dummies are ready; procurement,
+> measurement and the guarded propulsion bench map are next. The v0.6 aircraft below is
+> a historical comparison candidate, not the selected final geometry.
 
 <!-- BEGIN GENERATED: drawing-hero · calculations/drawing_index.py · do not edit by hand -->
 
@@ -11,8 +17,9 @@ carries its source and the reasoning is the deliverable.**
 
 <!-- END GENERATED: drawing-hero -->
 
-**Revision 1.24** · 21 August 2026 · **Release [`v0.6.0`](docs/16-release-v0.6.md)** ·
-**Programme reset — Gate M0 closed; Gate M1 open** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
+**Revision 1.25** · 21 August 2026 · **Historical release
+[`v0.6.0`](docs/16-release-v0.6.md)** · **Master Plan v2.4 — M0 closed; M1/MP-04
+active** · [CERN-OHL-S-2.0 + CC BY-SA 4.0](#licence)
 
 **Engineering hold — 21 August 2026.** The released r1 wing geometry does not close
 the complete low-speed/CG trim envelope. Do not issue new wing CAD for manufacture.
@@ -27,6 +34,25 @@ not the automatically selected final aircraft.
 
 ---
 
+## Current focus
+
+| Programme control | Current state |
+|---|---|
+| Product objective | Minimize measured total battery-terminal Wh/km subject to safety, controllability, useful agility, PETG durability and reproducibility |
+| First prototype | **SALAMANDRA-6S-R**: 6S1P P42A, single pusher, front DJI O4 camera and a removable rudder-capable directional module |
+| Controlled experiment | **SALAMANDRA-6S-CLEAN** follows only after the R configuration establishes a safe baseline; **8S-STUDY** is not a first-flight configuration |
+| Current gate | **M1 open / MP-04 active** — catalog research and executable test infrastructure complete; physical evidence open |
+| 6S propulsion specimens | T-Motor MN3110 KV470 and MN4010 KV475; APD 80F3[X]v2 reference; APC 8x8E datum plus 8x6E and conditional 9x7.5E sensitivity articles |
+| Physical next action | Print and ballast Tranche-A dummies, identify/procure specimens, execute H01–H22 and produce the guarded 6S motor/ESC/propeller map |
+| Explicit hold | No production wing, fuselage or OML CAD until measured hardware feeds MP-06 and the later architecture/aerodynamic gates select the aircraft |
+
+The canonical work order is the [Master Design Plan v2.4](docs/05-master-plan.md). The
+current procurement and test method is
+[I-33](research/I-33-mp04-propulsion-procurement-and-hardware-characterisation.md); the
+blank record remains intentionally at **0/22 accepted gates**.
+
+---
+
 ## Start here
 
 | If you want to… | Go to |
@@ -34,8 +60,11 @@ not the automatically selected final aircraft.
 | **Understand what is being defined first and what follows** | [**Master design plan**](docs/05-master-plan.md) — canonical programme control |
 | **Read the active mission and requirements** | [**Article #1 requirements v2.0**](docs/00-objectives-and-requirements.md) — Gate-M0 product, configuration and mission contract |
 | **Review the candidate electronics and power architecture** | [**Article #1 hardware manifest**](docs/17-article-1-hardware-manifest.md) — MP-03 6S-R/CLEAN baseline and separate 8S study overlay |
+| **Execute the current work** | [**I-33 MP-04 campaign**](research/I-33-mp04-propulsion-procurement-and-hardware-characterisation.md) — procurement tranches, propulsion shortlist, firmware regression matrix and bench grid |
+| **Record physical evidence** | [**H01–H22 protocol and blank record**](tests/MP04-hardware-characterisation/README.md) — cannot close M1 without accepted specimen data |
+| **Print packaging fixtures** | [**Generated OpenSCAD dummies**](geometry/equipment-dummies/README.md) — external envelopes with ballast cavities, never flight hardware |
 | **Understand the idea** | [What this project is](#what-this-project-is) |
-| **See the aircraft** | [Salamandra, Article #1](#the-aircraft--salamandra-article-1) · [drawing set](#drawing-set--generated-design-review-sheets) |
+| **Inspect the historical candidate** | [Salamandra v0.6 comparison baseline](#historical-v06-comparison-configuration) · [drawing set](#drawing-set--generated-design-review-sheets) |
 | **Review the historical v0.6 CAD baseline** | [**Salamandra Design Guide v0.24**](design/Salamandra-Design-Guide-v0.1.md) — held until Master Plan Gate M7 |
 | **Know what is still unknown** | [`gaps/`](gaps/README.md) · [Open Points](design/Design-Guide-Open-Points-v0.1.md) |
 | **Review the NF book audit and release programme** | [**Consolidated NF Design Guide audit**](design/NF-Design-Guide-2024-Consolidated-Audit-and-Release-Programme.md) — one prioritized engineering and verification roadmap |
@@ -60,7 +89,9 @@ This project is different in two ways:
    library of aircraft, components, variants and experiments — with this repository as the
    central archive.
 
-It currently targets a PETG forward-swept flying wing, but that is only the first design.
+Article #1 remains a PETG tailless FPV aircraft. Forward sweep is a preferred visual and
+technical candidate, but it must compete against straight and aft-swept tailless families
+under identical requirements before it can become the new CAD baseline.
 
 **It is fully free and as open as possible:**
 
@@ -131,30 +162,29 @@ vector, rather than assuming in advance where every gain will come from.
 | Avionics | INAV 9.1+ or ArduPlane · **pitot mandatory** | — |
 | **Directional** | **CLEAN (finless, O1 build) / V1 (fixed fin, first variant)** | [ADR-0038](decisions/ADR-0038-fixed-fin-variant.md) |
 
-### Modular architecture
+### Active configurations and design order
 
+| Configuration | Purpose | Authority |
+|---|---|---|
+| **SALAMANDRA-6S-R** | First-flight development baseline with a removable rudder-capable directional module | First release order; exact surface geometry remains M5 work |
+| **SALAMANDRA-6S-CLEAN** | Measures the efficiency and yaw-handling consequence of removing the vertical module | Flies only after 6S-R establishes a safe baseline |
+| **SALAMANDRA-8S-STUDY** | Separate mass, voltage, packaging and propulsion study | No first-flight or current procurement authority |
+
+The redesign follows a systems-first dependency chain:
+
+```text
+mission and scoring
+  -> measured bought-in hardware and power tree
+  -> mass/CG skeleton with at least 20 mm battery travel
+  -> equal-requirements forward/straight/aft sweep trade
+  -> printed aerodynamics, controls, stability and structure
+  -> fuselage OML around the converged skeleton
+  -> human native CAD and ground qualification
 ```
-CORE-1          Center module. Wing joiners up to ~30 % of half-span,
-                battery bay with longitudinal adjustment, avionics, motor mount.
 
-PANEL-xxxx-y    xxxx = resulting total wingspan · y = airfoil family
-```
-
-| Config | Panels | Suggested battery | Use | Status |
-|---|---|---|---|---|
-| **Range** | 1600 | 4S2P Li-Ion 21700 | Maximum range | Design |
-| **Cruise** | 1300 | 6S1P Li-Ion 21700 | **Article #1** | Design |
-| **Sport** | 1100 | 6S LiPo | Fast flight | Design |
-
-**Directional variants ([ADR-0038](decisions/ADR-0038-fixed-fin-variant.md)):**
-`SALAMANDRA-CLEAN` (finless, O1 efficiency build) and `SALAMANDRA-V1` (two passive
-CORE-rooted fixed fins wholly forward of the fixed propeller hazard, no movable rudder —
-first platform variant, I-30, recommended after F2 closure). The twin-fin/support assembly
-is a CORE module; panels are untouched.
-
-> ⚠️ See [ADR-0032](decisions/ADR-0032-modularity.md): the panels **are not arbitrary**.
-> Each set is designed against a common neutral point. The same discipline applies to every
-> new configuration contributed to the platform.
+The v0.6 `CORE`/`PANEL`, Range/Cruise/Sport and passive twin-fin concepts remain valuable
+historical candidates. They do not silently constrain the new architecture; each returns
+only if the later gates select it on evidence.
 
 ### Where the platform can go
 
@@ -173,10 +203,11 @@ is a CORE module; panels are untouched.
 
 ## Drawing set — generated design-review sheets
 
-The complete Article #1 set. These A3 metric sheets are **generated, not drawn**:
+The complete historical v0.6 Article #1 set. These A3 metric sheets are **generated, not
+drawn** and are retained as comparison evidence:
 [`calculations/generate_blueprints.py`](calculations/generate_blueprints.py) renders them
-from the canonical planform, the calculated balance solution, the equipment ledger and the
-released airfoil coordinates.
+from the v0.6 planform, calculated balance solution, equipment ledger and released
+historical airfoil coordinates.
 
 They are **technical sketches, not manufacturing drawings**. Dark and blue linework is
 traceable geometry, amber dashed linework is provisional, and every sheet states
@@ -323,7 +354,7 @@ document updates, required CI-equivalent checks, release PR, annotated Git tag a
 post-release verification. A release is never created from a dirty or partially merged
 working tree.
 
-> **📦 Current release — `v0.6.0`: twin-fin directional architecture and the parametric
+> **📦 Latest tagged historical release — `v0.6.0`: twin-fin directional architecture and the parametric
 > fuselage programme.**
 >
 > For the tagged v0.6 release, the concise Design Guide was the authoritative CAD entry

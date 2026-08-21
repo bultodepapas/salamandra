@@ -4,6 +4,41 @@ Continues the project's correction log. **Errors are documented because they aff
 
 ---
 
+## [1.51] — 2026-08-21
+
+**C60 — The canonical Master Plan had shifted Salamandra to mission-first,
+hardware-first redesign, but the README and wiki still presented the tagged v0.6
+forward-swept geometry and Design Guide as the current design authority. A newcomer could
+therefore start production CAD or optimize historical geometry while M1 was still open.**
+
+- Advanced the repository README to revision 1.25 and changed its focal hierarchy to
+  Master Plan v2.4 → active requirements → MP-03 manifest → I-33/MP-04 → H01–H22 physical
+  evidence. The first-screen status now names the 6S-R/CLEAN/8S-STUDY configuration order,
+  current procurement specimens and explicit production-CAD hold.
+- Replaced the obsolete Range/Cruise/Sport and binding CORE/PANEL presentation with the
+  active configuration contract and the systems-first dependency chain. Forward sweep,
+  the passive twin-fin module and the complete v0.6 drawing set remain visible as
+  historical candidates rather than silently governing the redesign.
+- Rebuilt the wiki home and five-minute onboarding path around M0 closed, M1 open and
+  MP-04 active. The authority stack now begins with the Master Plan and requirements;
+  v0.6 release notes, Design Guide and `design_config.py` are explicitly the historical
+  comparison branch.
+- Reworked the architecture diagram and traceability example around the P42A voltage →
+  Kv/RPM/ESC screen → manifest → H04/H06 measurements → MP-06 mass-skeleton chain. Catalog
+  qualification now visibly stops before installed-hardware or flight selection.
+- Updated the glossary, drawing authority note and contribution priorities for
+  6S-R/CLEAN/8S-STUDY, E0–E3, H01–H22 and the current fixture/measurement work.
+- Replaced the stale hard-coded v0.4 sidebar route with the Master Plan, hardware manifest,
+  MP-04 campaign and 0/22 physical protocol. v0.6 now has a separate collapsed historical
+  section.
+- Corrected wiki reproduction examples that invoked the nonexistent
+  `verify_calculations.py --all-scripts` option. The default command runs deterministic
+  CLIs; `--fast` is the interface-only path and `mutation_test.py` proves falsifiability.
+- Updated generated reference, calculation, Salamandra and `llms.txt` indexes so public
+  search and agent navigation preserve the same focal hierarchy as the repository.
+
+---
+
 ## [1.50] — 2026-08-21
 
 **C59 — The propulsion screen treated the P42A series pack as a 3.7 V/cell LiPo and

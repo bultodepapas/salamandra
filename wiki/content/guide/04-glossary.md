@@ -33,36 +33,43 @@ decision without prior verification.
 | `R-…` | Requirement or interface rule |
 | `CX` | Correction in the changelog |
 | `OP-XX` | Open point tied directly to the Design Guide |
+| `MP-XX` | Master Plan work package with an explicit dependency and exit state |
+| `H01`–`H22` | MP-04 physical hardware-characterisation gates |
 
 ## Configurations and modules
 
-- **Article #1** — the first 1,300 mm Cruise configuration controlled by the current
-  release. It is a design and test article, not a certified aircraft.
-- **CORE** — common center module containing wing interfaces, battery support, avionics
-  and propulsion mounting.
-- **PANEL** — removable wing panel. A new panel must satisfy the shared neutral-point and
-  interface rules; panels are not arbitrary swaps.
-- **SALAMANDRA-CLEAN** — finless configuration used for the O1 efficiency objective. Its
-  yaw stability is currently estimated as unstable and must not be confused with V1.
-- **SALAMANDRA-V1** — fixed centerline-fin test configuration, with no rudder. It is the
-  recommended first variant after its F2 mass gate closes.
+- **Article #1** — the first instrumented Salamandra prototype produced by the Master
+  Plan. Its final span, sweep and OML have not been selected.
+- **SALAMANDRA-6S-R** — first-flight configuration: 6S1P, front camera, single pusher and
+  a removable rudder-capable directional module. Exact surface sizing remains M5 work.
+- **SALAMANDRA-6S-CLEAN** — post-baseline experiment with the vertical module removed.
+  It does not fly before 6S-R establishes a safe baseline.
+- **SALAMANDRA-8S-STUDY** — separate voltage, mass, packaging and propulsion architecture
+  study. It has no current first-flight or procurement authority.
+- **CORE / PANEL** — historical v0.6 modular architecture. It remains a candidate method,
+  not a binding interface for the redesign.
+- **CLEAN / V1** — historical v0.6 finless and passive twin-fin comparison labels. Do not
+  substitute them for the active 6S-R / 6S-CLEAN configuration contract.
 
 ## Coordinates, signs and units
 
 | Quantity | Convention |
 |---|---|
-| Origin | Root quarter-chord point on the centerline, at section mid-plane |
+| Origin | Candidate-specific aircraft datum; the v0.6 reference uses the root quarter-chord point |
 | `x` | Positive aft, toward the trailing edge |
-| `y` | Positive starboard; half-span is 0 to +650 mm |
+| `y` | Positive starboard; v0.6 half-span is 0 to +650 mm |
 | `z` | Positive up |
-| Sweep | Negative is forward; Article #1 uses −15° at quarter chord |
-| Twist | Positive is wash-in; the tip is at higher incidence |
+| Sweep | Negative is forward; v0.6 uses −15° at quarter chord, while redesign sweep is open |
+| Twist | Positive is wash-in; v0.6 prints wash-in, while redesign twist is open |
 | Dihedral | Positive puts the tips up |
 | Calculation units | SI; presentation may use mm, g, km/h and g/dm² |
 
 ## Speeds and loads
 
-- **Cruise speed** — 95 km/h mission point used for the O1 energy objective.
+- **E0–E3** — redesign efficiency states: candidate best range, 65 km/h report point,
+  nominal 80 km/h FPV cruise and historical 95 km/h continuity comparison.
+- **Cruise speed** — candidate-dependent in the redesign; 95 km/h is a historical v0.6
+  comparator, not the sole objective.
 - **`V_limit`** — current operational cap for the initial flight programme: 105 km/h.
   It is governed by unmeasured aeroelastic properties.
 - **Article `V_NE`** — 160 km/h never-exceed value for Article #1. It is not authorized
@@ -79,12 +86,12 @@ decision without prior verification.
 
 ## Aerodynamics and stability
 
-- **FSW** — forward-swept wing. The configuration offers useful tailless trim and
-  span-load possibilities but introduces a severe aeroelastic-divergence risk.
-- **MAC** — mean aerodynamic chord, 224.9 mm for Article #1.
-- **Neutral point (NP)** — longitudinal aerodynamic neutral point. The current panel-VLM
+- **FSW** — forward-swept wing. It is redesign candidate A: visually preferred and
+  technically interesting, but not selected before the equal-requirements trade.
+- **MAC** — mean aerodynamic chord; 224.9 mm for the historical v0.6 candidate.
+- **Neutral point (NP)** — longitudinal aerodynamic neutral point. The v0.6 panel-VLM
   result is −75.8 mm / 25.72 % MAC; the Weissinger-L check is −72.9 mm / 27.0 % MAC.
-- **Center of gravity (CG)** — mass-balance location. The released target is −93.8 mm,
+- **Center of gravity (CG)** — mass-balance location. The historical v0.6 target is −93.8 mm,
   ahead of the neutral point in the project's positive-aft coordinate system.
 - **Static margin (SM)** — NP minus CG expressed as a fraction of MAC; the target is 8 %.
 - **`cl` versus `CL`** — lowercase denotes a two-dimensional section coefficient;
@@ -97,8 +104,8 @@ decision without prior verification.
   pitching moment for tailless trim.
 - **Wash-in** — increasing incidence toward the tip. Article #1 prints +3.0° and retains
   the parameter for measured refinement.
-- **Elevon** — surface combining pitch and roll control. Salamandra uses balanced,
-  dual-actuated elevons and no rudder in either released directional configuration.
+- **Elevon** — surface combining pitch and roll control. Article #1 retains a two-servo
+  working baseline; final geometry follows the selected wing and M5 evidence.
 - **`Cnβ`** — directional static-stability derivative. Positive is stabilizing under the
   project's convention.
 
@@ -113,11 +120,11 @@ decision without prior verification.
   order twist. The current location is a bracket, not a measured shear center.
 - **R-JOINT** — stiffness rule for the removable CORE↔PANEL joint; the connection must
   remain stiff enough that modularity does not consume the divergence margin.
-- **O1 boundary** — at 95 km/h, the APC E 8×8 point that fits the total energy budget
-  after avionics power is reserved: `J = 0.923`, 8,443 rpm and maximum allowable drag
-  2.06 N. It is not a predicted aircraft equilibrium until E2 supplies drag.
-- **Wh/km** — battery energy per distance, the mission-efficiency metric. O1 requires
-  no more than 1.15 Wh/km at 95 km/h.
+- **O1 boundary** — historical 95 km/h APC E 8×8 comparison after avionics power is
+  reserved: `J = 0.918`, 8,484 rpm and 2.12 N maximum allowable drag. It is not a
+  predicted aircraft equilibrium until E2 supplies drag.
+- **Wh/km** — battery-terminal energy per air distance, including propulsion, conversion,
+  avionics and FPV. The former 1.15 Wh/km at 95 km/h is retained only as the E3 comparator.
 
 ## Tools
 

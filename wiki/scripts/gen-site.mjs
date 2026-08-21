@@ -608,9 +608,9 @@ See also: [first investigation](./first-investigation/).
 
 function genSalamandraIndex() {
   const items = [
-    ['Design guide', 'design-guide', `Version ${GUIDE_VERSION}: controlling CAD geometry, interfaces, limits and load definitions.`],
-    ['Justification', 'design-guide-justification', 'Derivations, evidence and sources behind the controlling values.'],
-    ['Open points', 'design-guide-open-points', 'Unresolved assumptions, physical acceptance gates and the trigger for each change.'],
+    ['Historical Design Guide', 'design-guide', `Version ${GUIDE_VERSION}: reproducible v0.6 CAD geometry under the Master Plan hold.`],
+    ['Justification', 'design-guide-justification', 'Derivations, evidence and sources behind the historical candidate values.'],
+    ['Open points', 'design-guide-open-points', 'Unresolved v0.6 assumptions and physical acceptance gates retained for comparison.'],
   ];
   const table = items
     .map(([label, slug, desc]) => `| [${label}](${slug}/) | ${desc} |`)
@@ -618,18 +618,21 @@ function genSalamandraIndex() {
   writeOut(
     'salamandra/index.md',
     indexPage(
-      'Salamandra — reference design',
-      'The forward-swept flying wing, first platform design.',
-      `# Salamandra reference design
+      'Salamandra — historical v0.6 candidate',
+      'The reproducible forward-swept v0.6 comparison baseline retained under the Master Plan redesign.',
+      `# Salamandra historical v0.6 candidate
 
 Salamandra is the platform's first reference aircraft: a modular PETG forward-swept
-flying wing with a common CORE and interchangeable PANEL wings. The current controlled
-baseline is **${CURRENT_RELEASE.tag} / Design Guide v${GUIDE_VERSION}**. Its mission target
-is **≤ 1.15 Wh/km at 95 km/h**, to be tested through the E2/D2/E3 evidence chain.
+flying wing with a common CORE and interchangeable PANEL wings. The tagged
+**${CURRENT_RELEASE.tag} / Design Guide v${GUIDE_VERSION}** package remains internally
+reproducible, but the Master Plan v2.4 treats it as candidate A rather than the selected
+redesign. Its former **≤ 1.15 Wh/km at 95 km/h** objective is now only the E3 continuity
+comparator.
 
-> This release is an engineering baseline, **not flight qualification**. Use the
-> [current release notes](${destToUrl(CURRENT_RELEASE_DEST)}) before CAD, structural
-> sizing or test planning, and keep all physical gates in the open-points register.
+> This release is an audit and comparison baseline, **not current production-CAD
+> authority or flight qualification**. Begin new work with the
+> [Master Plan](${destToUrl('reference/05-master-plan.md')}); use the
+> [v0.6 release notes](${destToUrl(CURRENT_RELEASE_DEST)}) to reconstruct historical work.
 
 | Document | Content |
 |---|---|
@@ -652,7 +655,7 @@ function genReferenceIndex() {
       const url = destToUrl(`reference/${f.toLowerCase()}`);
       const isRelease = /release-v/i.test(f);
       const role = f === CURRENT_RELEASE.file
-        ? 'Current release'
+        ? 'Latest tagged release — historical baseline'
         : isRelease
           ? 'Historical release'
           : f.toLowerCase() === 'readme.md'
@@ -675,12 +678,13 @@ function genReferenceIndex() {
     'reference/index.md',
     indexPage(
       'Reference documents',
-      `The ${CURRENT_RELEASE.tag} baseline, specifications, conventions, plans and release history.`,
+      `The Master Plan, active specifications, conventions and historical ${CURRENT_RELEASE.tag} release record.`,
       `# Reference documents
 
 Controlled specifications, conventions, plans and release history. Start with the
-**current release**; older release notes are audit records and must not be mixed with the
-current numerical baseline.
+**Master Design Plan** and active Article #1 requirements. The latest tagged release is
+the reproducible v0.6 comparison baseline; it is not production authority for the
+redesign, and older release notes remain audit records.
 
 > Generated from \`docs/\` at build time.
 
@@ -730,7 +734,8 @@ function genCalculationsIndex() {
       `Auto-generated index of ${scripts.length} validated, rerunnable analysis scripts.`,
       `# Reproducible calculations
 
-Derived values in the released design are produced by rerunnable Python analyses.
+Derived values in the active contracts and historical design are produced by rerunnable
+Python analyses.
 Measured inputs retain source provenance; estimates remain explicitly tagged and are not
 made more certain merely because a script propagates them.
 
@@ -741,21 +746,23 @@ made more certain merely because a script propagates them.
 
 \`\`\`bash
 python calculations/verify_calculations.py
-python calculations/verify_calculations.py --all-scripts
+python calculations/verify_calculations.py --fast
+python calculations/mutation_test.py
 \`\`\`
 
-The first command checks cross-module equality for geometry, mass, balance, stall,
-power, propulsion, controls, stability and loads. The second executes every deterministic
-local command-line analysis. XFOIL and physical tests remain explicit external gates.
+The default verifier checks cross-module equality and executes every deterministic local
+command-line analysis. \`--fast\` restricts it to the interface contracts; the mutation
+campaign proves that deliberate defects are detected. XFOIL and physical tests remain
+explicit external gates.
 
 ## High-value entry points
 
 \`\`\`bash
-python calculations/design_config.py          # canonical shared inputs and invariants
-python calculations/flight_envelope.py        # manoeuvre and gust-reference screen
-python calculations/mass_budget.py --config all
-python calculations/balance_cg.py
-python calculations/propulsion_match.py
+python calculations/mission_contract.py          # active Article #1 mission
+python calculations/hardware_manifest.py         # M1 candidate interface
+python calculations/hardware_candidate_trade.py # MP-04 procurement screen
+python calculations/hardware_measurements.py --check
+python calculations/generate_hardware_dummies.py --check
 \`\`\`
 
 ## Scripts
@@ -812,7 +819,7 @@ function genLlmsTxt() {
   const lines = [
     '# Salamandra',
     '',
-    '> Open, community-driven 3D-printed FPV aircraft platform. The reasoning is the product:',
+    '> Evidence-first, community-driven 3D-printed FPV aircraft programme. The reasoning is the product:',
     '> every decision carries its rationale, source and provenance tag (`[M]`/`[D]`/`[E]`/`[I]`).',
     '> Derived values are rerunnable; measured inputs retain provenance; unresolved assumptions remain visible.',
     ...section('Getting started', [
@@ -824,10 +831,11 @@ function genLlmsTxt() {
       ['Contributing', 'guide/05-contributing', 'Order of value of contributions and the workflow'],
     ]),
     ...section('Design', [
-      ['Salamandra design', 'salamandra', 'The forward-swept flying wing reference design'],
-      [`Design guide v${GUIDE_VERSION}`, 'salamandra/design-guide', `The ${CURRENT_RELEASE.tag} controlling CAD and engineering specification`],
-      ['Design guide justification', 'salamandra/design-guide-justification', 'Why every number is what it is'],
-      ['Open points', 'salamandra/design-guide-open-points', 'What still constrains the design'],
+      ['Master Design Plan', 'reference/05-master-plan', 'Programme sequence, gates and current authorization'],
+      ['MP-04 campaign', 'research/i-33-mp04-propulsion-procurement-and-hardware-characterisation', 'Current procurement and physical-characterisation work'],
+      ['H01–H22 protocol', 'tests/mp04-hardware-characterisation', 'Machine-readable physical evidence and closure method'],
+      ['Historical Salamandra v0.6', 'salamandra', 'The forward-swept comparison candidate retained for audit'],
+      [`Historical Design Guide v${GUIDE_VERSION}`, 'salamandra/design-guide', `Reproducible ${CURRENT_RELEASE.tag} geometry under hold`],
     ]),
     ...section('Reference', [
       ['Decision record (ADR)', 'decisions', 'One file per decision: context, alternatives, consequences'],
@@ -836,9 +844,10 @@ function genLlmsTxt() {
       ['Experimental program', 'tests', 'The tests that turn estimates into measurements'],
       ['Calculations', 'calculations', 'Validated, rerunnable analysis scripts'],
       ['Reproduction guide', 'calculations/reproduction-guide', 'Commands and validation discipline'],
-      ['Objectives and requirements', 'reference/00-objectives-and-requirements', 'The Phase-0 specification'],
-      [`Current release ${CURRENT_RELEASE.tag}`, CURRENT_RELEASE_PAGE, 'Authority, migration rules, released values and remaining gates'],
-      ['Phase-1 plan', 'reference/03-phase-1-plan', 'Geometry and stability work plan'],
+      ['Objectives and requirements', 'reference/00-objectives-and-requirements', 'The active Gate-M0 product contract'],
+      ['Hardware and power manifest', 'reference/17-article-1-hardware-manifest', 'The active pre-measurement M1 interface'],
+      [`Historical release ${CURRENT_RELEASE.tag}`, CURRENT_RELEASE_PAGE, 'Latest tagged comparison package and migration record'],
+      ['Historical Phase-1 plan', 'reference/03-phase-1-plan', 'Superseded geometry and stability work sequence'],
     ]),
     ...section('Platform', [
       ['Project readme', 'platform/readme', 'Status and full navigation'],
