@@ -19,7 +19,7 @@
     "lint": "markdownlint-cli2 --config ../.markdownlint.json \"content/**/*.md\" \"content/**/*.mdx\""
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.41.7",
+    "@astrojs/starlight": "^0.42.4",
     "astro": "^7.2.0",
     "mermaid": "^11.16.1"
   },
