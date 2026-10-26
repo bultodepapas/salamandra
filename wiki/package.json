@@ -24,7 +24,7 @@
     "mermaid": "^11.16.1"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.12",
     "markdownlint-cli2": "^0.23.2",
     "typescript": "^6.0.3"
   }
